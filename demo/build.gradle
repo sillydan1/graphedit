@@ -1,0 +1,26 @@
+plugins {
+   id 'application'
+}
+
+dependencies {
+   implementation project(':basic')
+   implementation group: 'com.beust', name: 'jcommander', version: '1.82'
+}
+
+jar {
+   manifest {
+      attributes(
+            "Implementation-Title": "GraphEdit demonstration commandline interface (not for public consumption)",
+            "Implementation-Version": archiveVersion,
+            "Implementation-Vendor": "gtz.dk",
+            "Implementation-URL": "https://github.com/sillydan1/graphedit",
+            "Main-Class": "dk.gtz.graphedit.demo.Main"
+            )
+   }
+}
+
+application {
+   mainClass = "dk.gtz.graphedit.demo.Main"
+   applicationDefaultJvmArgs = []
+}
+

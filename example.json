@@ -1,0 +1,49 @@
+{
+    "metadata": {
+        "name": "Example Model",
+        "uuid": "<uuid>",
+        "author": "agj",
+        "copyright": "..."
+    },
+    "syntax": {
+        "declarations": "a := 0\nb := false",
+        "vertices": {
+            "<uuid>": {
+                "type": "Location",
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                }
+            },
+            "<uuid>": {
+                "type": "Guard",
+                "position": {
+                    "x": 3.0,
+                    "y": 3.0
+                },
+                "tagContent": "a <= 0",
+                "tagPosition": {
+                    "x": 7.0,
+                    "y": 7.0
+                }
+            }
+        },
+        "edges": {
+            "<uuid>": {
+                "type": "Edge",
+                "source": "<uuid>",
+                "target": "<uuid>"
+            },
+            "<uuid>": {
+                "type": "TaggableEdge",
+                "source": "<uuid>",
+                "target": "<uuid>",
+                "tags": [
+                    "<uuid>",
+                    "<uuid>",
+                    "<uuid>"
+                ]
+            }
+        }
+    }
+}

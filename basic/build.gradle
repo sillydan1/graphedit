@@ -1,0 +1,20 @@
+plugins {
+
+}
+
+dependencies {
+    // implementation project(':basic') // for basic project dependencies
+    // add dependencies here
+}
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "GraphEdit Base Package",
+                "Implementation-Version": archiveVersion,
+                "Implementation-Vendor": "gtz.dk",
+                "Implementation-URL": "https://github.com/sillydan1/graphedit"
+        )
+    }
+}
+

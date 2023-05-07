@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+def gitCommitSha = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def gitCommitShaLong = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+allprojects {
+    group = 'dk.gtz.graphedit'
+    version = '1.0.0' + gitCommitSha()
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    ext.gitCommitSha = gitCommitSha
+    ext.gitCommitShaLong = gitCommitShaLong
+
+    java {
+        sourceCompatibility = gradle.ext.javaVersion
+        targetCompatibility = gradle.ext.javaVersion
+    }
+
+    dependencies {
+        implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '2.0.5'
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.5'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
