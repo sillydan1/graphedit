@@ -2,16 +2,23 @@ package dk.gtz.graphedit.model;
 
 import java.util.UUID;
 
-public abstract class Edge {
+/**
+ * An edge from some source to some target. May connect any syntactic element
+ */
+public class Edge {
 	private final UUID source;
-    private final UUID target;
+	private final UUID target;
 
-    public Edge(UUID source, UUID target) {
-        this.source = source;
-        this.target = target;
-    }
+	public Edge(UUID source, UUID target) {
+		this.source = source;
+		this.target = target;
+	}
 
-    public UUID getSource() {
+	public Edge() {
+		this(UUID.randomUUID(), UUID.randomUUID());
+	}
+
+	public UUID getSource() {
 		return source;
 	}
 

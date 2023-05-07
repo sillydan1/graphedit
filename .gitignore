@@ -28,3 +28,6 @@ gradlew.bat
 gradlew
 gradle/
 
+# Testing files
+example.json
+

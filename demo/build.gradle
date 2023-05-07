@@ -5,18 +5,8 @@ plugins {
 dependencies {
    implementation project(':basic')
    implementation group: 'com.beust', name: 'jcommander', version: '1.82'
-}
-
-jar {
-   manifest {
-      attributes(
-            "Implementation-Title": "GraphEdit demonstration commandline interface (not for public consumption)",
-            "Implementation-Version": archiveVersion,
-            "Implementation-Vendor": "gtz.dk",
-            "Implementation-URL": "https://github.com/sillydan1/graphedit",
-            "Main-Class": "dk.gtz.graphedit.demo.Main"
-            )
-   }
+   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
+   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0'
 }
 
 application {

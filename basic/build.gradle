@@ -4,7 +4,8 @@ plugins {
 
 dependencies {
     // implementation project(':basic') // for basic project dependencies
-    // add dependencies here
+   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
+   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0'
 }
 
 jar {
