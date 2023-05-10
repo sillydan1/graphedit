@@ -13,8 +13,9 @@ public class Main {
     public static void main(String[] argv) throws Exception {
         var args = new Args();
         var b = JCommander.newBuilder()
-            .addObject(args)
             .programName("demo")
+            .acceptUnknownOptions(true)
+            .addObject(args)
             .build();
         b.parse(argv);
         if(args.help) {

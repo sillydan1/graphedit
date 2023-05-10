@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-   implementation project(':basic')
+   implementation project(':core')
    implementation group: 'com.beust', name: 'jcommander', version: '1.82'
    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0'

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    // implementation project(':basic') // for basic project dependencies
    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0'
 }
@@ -11,7 +10,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                "Implementation-Title": "GraphEdit Base Package",
+                "Implementation-Title": "GraphEdit Core Package",
                 "Implementation-Version": archiveVersion,
                 "Implementation-Vendor": "gtz.dk",
                 "Implementation-URL": "https://github.com/sillydan1/graphedit"
