@@ -2,28 +2,18 @@ package dk.gtz.graphedit.demo;
 
 import java.util.HashMap;
 import java.util.UUID;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.beust.jcommander.JCommander;
 import dk.gtz.graphedit.model.*;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 
-public class Main extends Application {
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        // TODO: This is just a version of the baeldung tutorial. Replace with something that actually is correct!
-        var loader = new FXMLLoader(Main.class.getResource("fxml/SearchController.fxml"));
-        var page = (AnchorPane) loader.load();
-        var scene = new Scene(page);
-
-        primaryStage.setTitle("Title goes here");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+public class Main {
+    private static Logger logger = (Logger)LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] argv) throws Exception {
         var args = new Args();
@@ -33,19 +23,22 @@ public class Main extends Application {
             .addObject(args)
             .build();
         b.parse(argv);
+        logger.setLevel(Level.toLevel(args.verbosity));
         if(args.help) {
             b.usage();
             return;
         }
+        logger.debug("welcome to {} {}", "hest", "1.0.0");
+        Demo.main(argv);
+    }
 
+    private static void serializationDemo() throws Exception {
         IModelSerializer serializer = new JacksonModelSerializer();
         var model = getExampleModel();
         var serModel = serializer.serialize(model);
-        System.out.println(serModel);
+        logger.info(serModel);
         var deserModel = serializer.deserialize(serModel);
-        System.out.println(deserModel.metadata().get("syntax"));
-
-        launch(argv);
+        logger.info(deserModel.metadata().get("syntax"));
     }
 
     private static Model getExampleModel() {

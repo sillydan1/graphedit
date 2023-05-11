@@ -8,6 +8,7 @@ build: ${WRP}
 installDist: ${WRP}
 	${WRP} installDist 
 
+# NOTE: if you wish to run with arguments, use gradlew run --args="arg1 arg2" instead of this makefile
 run: ${WRP}
 	${WRP} run
 
