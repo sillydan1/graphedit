@@ -11,7 +11,7 @@ Includes all the core functionality for GraphEdit...
  - [x] JFX basics
  - [x] Log4j / Logback
  - [x] BuildConfig
- - [ ] Log sink for any type of log message (using log4j's verbosity enum)
+ - [x] Log sink for any type of log message (using log4j's verbosity enum)
  - [ ] JFX
  - [ ] Set up the basic window
  - [ ] Implement the basics of a View (MVVM)

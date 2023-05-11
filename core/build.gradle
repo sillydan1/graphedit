@@ -1,8 +1,21 @@
 plugins {
+   id 'org.openjfx.javafxplugin' version '0.0.13'
+}
 
+javafx {
+    version = '20'
+    modules = ['javafx.controls',
+               'javafx.fxml',
+               'javafx.graphics',
+               'javafx.base']
 }
 
 dependencies {
+   implementation group: 'org.openjfx', name: 'javafx', version: '20.0.1'
+   implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1'
+   implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1'
+   implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1'
+
    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0'
 }

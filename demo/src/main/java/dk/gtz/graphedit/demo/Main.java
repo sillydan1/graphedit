@@ -8,6 +8,8 @@ import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
+
+import dk.gtz.graphedit.logging.EditorLog;
 import dk.gtz.graphedit.model.*;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
@@ -23,12 +25,13 @@ public class Main {
             .addObject(args)
             .build();
         b.parse(argv);
-        logger.setLevel(Level.toLevel(args.verbosity));
+        ((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.toLevel(args.verbosity));
         if(args.help) {
             b.usage();
             return;
         }
-        logger.debug("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
+        EditorLog.subscribe(msg -> { System.out.println("A message happenned!: " + msg); });
+        logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         Demo.main(argv);
     }
 

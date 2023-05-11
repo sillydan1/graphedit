@@ -5,7 +5,7 @@ plugins {
 }
 
 javafx {
-    version = '19'
+    version = '20'
     modules = ['javafx.controls',
                'javafx.fxml',
                'javafx.graphics',
@@ -13,11 +13,11 @@ javafx {
 }
 
 buildConfig {
-    buildConfigField('String', 'APP_NAME', "\"${project.name}\"")
-    buildConfigField('String', 'APP_VERSION', provider { "\"${project.version}\"" } )
+    buildConfigField("String", "APP_NAME", "\"${project.name}\"")
+    buildConfigField("String", "APP_VERSION", provider { "\"${project.version}\"" } )
     buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
-    // buildConfigField('String', 'COMMIT_SHA', "\"${project.commitsha}\"")
-    // buildConfigField('String', 'COMMIT_SHA_LONG', "\"${project.commitshalong}\"")
+    buildConfigField("String", "COMMIT_SHA", "\"${gitCommitSha()}\"")
+    buildConfigField("String", "COMMIT_SHA_LONG", "\"${gitCommitShaLong()}\"")
     className("BuildConfig")
     packageName("dk.gtz.graphedit.demo")
     useJavaOutput()
