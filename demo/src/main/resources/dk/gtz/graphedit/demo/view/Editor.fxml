@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import com.jfoenix.controls.JFXRippler?>
+<StackPane
+    HBox.hgrow="ALWAYS"
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.demo.view.EditorController">
+<BorderPane>
+    <top>
+        <Label text="Hello World"/>
+    </top>
+    <left>
+        <Label text="Hello World"/>
+    </left>
+    <center>
+        <Label text="Hello World"/>
+    </center>
+    <right>
+        <Label text="Hello World"/>
+    </right>
+    <bottom>
+        <Label text="Hello World"/>
+    </bottom>
+</BorderPane>
+</StackPane>
+

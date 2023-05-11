@@ -1,52 +1,52 @@
 plugins {
-    id 'java'
+    id 'java';
 }
 
 def gitCommitSha = { ->
-    def stdout = new ByteArrayOutputStream()
+    def stdout = new ByteArrayOutputStream();
     exec {
-        commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8'
-        standardOutput = stdout
+        commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8';
+        standardOutput = stdout;
     }
-    return stdout.toString().trim()
+    return stdout.toString().trim();
 }
 
 def gitCommitShaLong = { ->
-    def stdout = new ByteArrayOutputStream()
+    def stdout = new ByteArrayOutputStream();
     exec {
-        commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40'
-        standardOutput = stdout
+        commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40';
+        standardOutput = stdout;
     }
-    return stdout.toString().trim()
+    return stdout.toString().trim();
 }
 
 allprojects {
-    group = 'dk.gtz.graphedit'
-    version = 'v1.0.0+' + gitCommitSha()
+    group = 'dk.gtz.graphedit';
+    version = 'v1.0.0+' + gitCommitSha();
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java';
 
-    ext.gitCommitSha = gitCommitSha
-    ext.gitCommitShaLong = gitCommitShaLong
+    ext.gitCommitSha = gitCommitSha;
+    ext.gitCommitShaLong = gitCommitShaLong;
 
     java {
-        sourceCompatibility = gradle.ext.javaVersion
-        targetCompatibility = gradle.ext.javaVersion
+        sourceCompatibility = gradle.ext.javaVersion;
+        targetCompatibility = gradle.ext.javaVersion;
     }
 
     dependencies {
-        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.7'
-        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.7';
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
     }
 
     repositories {
-        mavenCentral()
+        mavenCentral();
     }
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform();
 }
 

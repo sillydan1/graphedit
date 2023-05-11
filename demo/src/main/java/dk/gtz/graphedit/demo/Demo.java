@@ -3,11 +3,12 @@ package dk.gtz.graphedit.demo;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.demo.view.EditorController;
 import dk.gtz.graphedit.logging.EditorLog;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Demo extends Application {
@@ -15,12 +16,11 @@ public class Demo extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO: This is just a version of the baeldung tutorial. Replace with something that actually is correct!
-        var loader = new FXMLLoader(Main.class.getResource("fxml/SearchController.fxml"));
-        var page = (AnchorPane) loader.load();
+        var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
+        var page = (StackPane) loader.load();
         var scene = new Scene(page);
 
-        primaryStage.setTitle("Title goes here");
+        primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
         primaryStage.setScene(scene);
         primaryStage.show();
         ((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLog());
