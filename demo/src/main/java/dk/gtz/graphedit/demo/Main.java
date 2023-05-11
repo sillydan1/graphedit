@@ -2,14 +2,29 @@ package dk.gtz.graphedit.demo;
 
 import java.util.HashMap;
 import java.util.UUID;
-
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import com.beust.jcommander.JCommander;
 import dk.gtz.graphedit.model.*;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 
-public class Main {
-    // TODO: This should be written as a unit test! (most likely, everything we demo here should be unit tested)
+public class Main extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // TODO: This is just a version of the baeldung tutorial. Replace with something that actually is correct!
+        var loader = new FXMLLoader(Main.class.getResource("fxml/SearchController.fxml"));
+        var page = (AnchorPane) loader.load();
+        var scene = new Scene(page);
+
+        primaryStage.setTitle("Title goes here");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
     public static void main(String[] argv) throws Exception {
         var args = new Args();
         var b = JCommander.newBuilder()
@@ -29,6 +44,8 @@ public class Main {
         System.out.println(serModel);
         var deserModel = serializer.deserialize(serModel);
         System.out.println(deserModel.metadata().get("syntax"));
+
+        launch(argv);
     }
 
     private static Model getExampleModel() {
