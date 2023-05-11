@@ -9,7 +9,11 @@ Includes all the core functionality for GraphEdit...
  - [x] Serialization / deserialization of the graph model
  - [x] Create issue on [jdtls](https://github.com/eclipse/eclipse.jdt.ls) repo about not implementing the [progress](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#progress) feature - it's getting a bit annoying to use
  - [x] JFX basics
- - [ ] Implement the basics of a View (MVVM) (will take a while)
+ - [ ] Log4j
+ - [ ] Log sink for any type of log message (using log4j's verbosity enum)
+ - [ ] JFX
+ - [ ] Set up the basic window
+ - [ ] Implement the basics of a View (MVVM)
  - [ ] Project configuration
  - [ ] Get feature parity with H-Uppaal
    - [ ] Project search
