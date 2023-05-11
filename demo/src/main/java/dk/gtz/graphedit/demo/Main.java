@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] argv) throws Exception {
         var args = new Args();
         var b = JCommander.newBuilder()
-            .programName("demo")
+            .programName(BuildConfig.APP_NAME)
             .acceptUnknownOptions(true)
             .addObject(args)
             .build();
@@ -28,7 +28,7 @@ public class Main {
             b.usage();
             return;
         }
-        logger.debug("welcome to {} {}", "hest", "1.0.0");
+        logger.debug("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         Demo.main(argv);
     }
 

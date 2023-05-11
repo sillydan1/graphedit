@@ -10,7 +10,7 @@ Includes all the core functionality for GraphEdit...
  - [x] Create issue on [jdtls](https://github.com/eclipse/eclipse.jdt.ls) repo about not implementing the [progress](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#progress) feature - it's getting a bit annoying to use
  - [x] JFX basics
  - [x] Log4j / Logback
- - [ ] BuildConfig
+ - [x] BuildConfig
  - [ ] Log sink for any type of log message (using log4j's verbosity enum)
  - [ ] JFX
  - [ ] Set up the basic window

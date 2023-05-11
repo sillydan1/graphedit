@@ -1,6 +1,7 @@
 plugins {
    id 'application'
    id 'org.openjfx.javafxplugin' version '0.0.13'
+   id 'com.github.gmazzo.buildconfig' version '4.0.4'
 }
 
 javafx {
@@ -9,6 +10,17 @@ javafx {
                'javafx.fxml',
                'javafx.graphics',
                'javafx.base']
+}
+
+buildConfig {
+    buildConfigField('String', 'APP_NAME', "\"${project.name}\"")
+    buildConfigField('String', 'APP_VERSION', provider { "\"${project.version}\"" } )
+    buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+    // buildConfigField('String', 'COMMIT_SHA', "\"${project.commitsha}\"")
+    // buildConfigField('String', 'COMMIT_SHA_LONG', "\"${project.commitshalong}\"")
+    className("BuildConfig")
+    packageName("dk.gtz.graphedit.demo")
+    useJavaOutput()
 }
 
 dependencies {
