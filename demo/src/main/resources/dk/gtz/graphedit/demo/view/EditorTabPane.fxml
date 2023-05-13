@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.demo.view.EditorTabPaneController">
+    <MFXButton text="Hello World"/>
+</StackPane>
+

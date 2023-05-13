@@ -2,13 +2,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import com.jfoenix.controls.JFXRippler?>
+<?import dk.gtz.graphedit.demo.view.*?>
 <StackPane
-    HBox.hgrow="ALWAYS"
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.demo.view.EditorController">
-<BorderPane>
+<BorderPane HBox.hgrow="ALWAYS">
     <top>
         <Label text="Hello World"/>
     </top>
@@ -16,7 +15,7 @@
         <Label text="Hello World"/>
     </left>
     <center>
-        <Label text="Hello World"/>
+        <fx:include source="EditorTabPane.fxml"/>
     </center>
     <right>
         <Label text="Hello World"/>
