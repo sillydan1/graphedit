@@ -16,7 +16,7 @@ dependencies {
     implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
     implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
 
-    implementation group: 'io.github.palexdev', name: 'materialfx', version: '11.16.1';
+    implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '1.2.0';
 
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';

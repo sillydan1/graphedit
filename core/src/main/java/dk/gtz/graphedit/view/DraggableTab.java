@@ -3,8 +3,6 @@ package dk.gtz.graphedit.view;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -136,7 +134,6 @@ public class DraggableTab extends Tab {
 				        newStage.hide();
 				});
 		        var spawnScene = new Scene(pane);
-		        MFXThemeManager.addOn(spawnScene, Themes.DEFAULT, Themes.LEGACY);
 		        newStage.setScene(spawnScene);
 		        newStage.initStyle(StageStyle.UTILITY);
 		        newStage.setX(t.getScreenX());
