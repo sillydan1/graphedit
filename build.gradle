@@ -1,5 +1,6 @@
 plugins {
     id 'java';
+    id 'com.github.gmazzo.buildconfig' version '4.0.4';
 }
 
 def gitCommitSha = { ->
@@ -27,6 +28,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java';
+    apply plugin: 'com.github.gmazzo.buildconfig'
 
     ext.gitCommitSha = gitCommitSha;
     ext.gitCommitShaLong = gitCommitShaLong;
@@ -34,6 +36,17 @@ subprojects {
     java {
         sourceCompatibility = gradle.ext.javaVersion;
         targetCompatibility = gradle.ext.javaVersion;
+    }
+
+    buildConfig {
+        buildConfigField("String", "APP_NAME", "\"${project.name}\"");
+        buildConfigField("String", "APP_VERSION", provider { "\"${project.version}\"" } );
+        buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L");
+        buildConfigField("String", "COMMIT_SHA", "\"${gitCommitSha()}\"");
+        buildConfigField("String", "COMMIT_SHA_LONG", "\"${gitCommitShaLong()}\"");
+        className("BuildConfig");
+        packageName("dk.gtz.graphedit");
+        useJavaOutput();
     }
 
     dependencies {

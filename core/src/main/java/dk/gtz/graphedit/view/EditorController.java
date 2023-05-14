@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.demo.view;
+package dk.gtz.graphedit.view;
 
 import javafx.fxml.FXML;
 

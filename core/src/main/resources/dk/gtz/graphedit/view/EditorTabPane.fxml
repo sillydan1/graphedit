@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane 
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx" 
+    fx:controller="dk.gtz.graphedit.view.EditorTabPaneController">
+<TabPane fx:id="tabpane">
+    <tabs>
+        <DraggableTab>
+            <MFXButton text="Hello World"/>
+        </DraggableTab>
+        <DraggableTab>
+            <MFXButton text="Hello World"/>
+        </DraggableTab>
+    </tabs>
+</TabPane>
+</StackPane>
+

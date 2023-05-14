@@ -1,7 +1,6 @@
 plugins {
    id 'application';
    id 'org.openjfx.javafxplugin' version '0.0.13';
-   id 'com.github.gmazzo.buildconfig' version '4.0.4';
 }
 
 javafx {
@@ -12,17 +11,6 @@ javafx {
            'javafx.base'];
 }
 
-buildConfig {
-   buildConfigField("String", "APP_NAME", "\"${project.name}\"");
-   buildConfigField("String", "APP_VERSION", provider { "\"${project.version}\"" } );
-   buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L");
-   buildConfigField("String", "COMMIT_SHA", "\"${gitCommitSha()}\"");
-   buildConfigField("String", "COMMIT_SHA_LONG", "\"${gitCommitShaLong()}\"");
-   className("BuildConfig");
-   packageName("dk.gtz.graphedit.demo");
-   useJavaOutput();
-}
-
 dependencies {
    implementation project(':core');
 
@@ -30,11 +18,8 @@ dependencies {
    implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
    implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
    implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
-   implementation group: 'org.kordamp.ikonli', name: 'ikonli-core', version: '12.3.1';
-   implementation group: 'org.kordamp.ikonli', name: 'ikonli-material-pack', version: '12.3.1';
-   implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '12.3.1';
 
-   implementation group: 'io.github.palexdev', name: 'materialfx', version: '11.16.1'
+   implementation group: 'io.github.palexdev', name: 'materialfx', version: '11.16.1';
 
    implementation group: 'com.beust', name: 'jcommander', version: '1.82';
    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
