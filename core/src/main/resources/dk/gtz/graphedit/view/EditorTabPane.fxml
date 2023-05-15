@@ -6,7 +6,7 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx" 
     fx:controller="dk.gtz.graphedit.view.EditorTabPaneController">
-<TabPane fx:id="tabpane">
+<TabPane fx:id="tabpane" styleClass="floating">
     <tabs>
         <DraggableTab>
             <Button text="Hello World"/>

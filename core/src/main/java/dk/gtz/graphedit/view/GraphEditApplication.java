@@ -2,11 +2,10 @@ package dk.gtz.graphedit.view;
 
 import org.slf4j.LoggerFactory;
 
-import atlantafx.base.theme.PrimerDark;
-import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.logging.EditorLog;
 import dk.gtz.graphedit.BuildConfig;
+import dk.gtz.graphedit.logging.EditorLog;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,8 +17,7 @@ public class GraphEditApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-	Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
-	Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+	Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
 
 	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
 	var page = (StackPane) loader.load();

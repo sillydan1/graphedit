@@ -10,7 +10,6 @@ public class EditorTabPaneController {
 
     @FXML
     private void initialize() {
-        System.out.println("Hello World!");
     }
 }
 

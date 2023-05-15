@@ -125,6 +125,7 @@ public class DraggableTab extends Tab {
 		            return;
 		        var newStage = new Stage();
 		        var pane = new TabPane();
+			pane.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 		        tabPanes.add(pane);
 		        newStage.setOnHiding(t1 -> tabPanes.remove(pane));
 		        getTabPane().getTabs().remove(DraggableTab.this);

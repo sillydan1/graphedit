@@ -8,7 +8,14 @@
     fx:controller="dk.gtz.graphedit.view.EditorController">
 <BorderPane HBox.hgrow="ALWAYS">
     <top>
-        <Label text="Hello World"/>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="New"/>
+                <MenuItem text="New"/>
+                <MenuItem text="New"/>
+                <MenuItem onAction="#toggleTheme" text="Toggle Theme"/>
+            </Menu>
+        </MenuBar>
     </top>
     <left>
         <Label text="Hello World"/>
