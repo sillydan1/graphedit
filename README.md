@@ -14,6 +14,7 @@ Includes all the core functionality for GraphEdit...
  - [x] Log sink for any type of log message (using log4j's verbosity enum)
  - [x] JFoenix (Nope)
  - [x] MaterialFX <-- Much better library (actively maintained)
+ - [ ] Set up the core architecture (MVVM)
  - [ ] Set up the basic window
  - [ ] Implement the basics of a View (MVVM)
  - [ ] Project configuration

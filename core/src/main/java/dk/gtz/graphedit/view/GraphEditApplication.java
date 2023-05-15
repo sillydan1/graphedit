@@ -7,7 +7,6 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.BuildConfig;
-import dk.gtz.graphedit.logging.EditorLog;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
