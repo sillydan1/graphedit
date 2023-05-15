@@ -10,10 +10,15 @@
     <top>
         <MenuBar>
             <Menu text="File">
-                <MenuItem text="New"/>
-                <MenuItem text="New"/>
-                <MenuItem text="New"/>
+                <MenuItem text="Open File"/>
+                <MenuItem text="Open Project"/>
+                <MenuItem text="Quit"/>
+            </Menu>
+            <Menu text="Editor">
                 <MenuItem onAction="#toggleTheme" text="Toggle Theme"/>
+            </Menu>
+            <Menu text="WIP">
+                <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab"/>
             </Menu>
         </MenuBar>
     </top>

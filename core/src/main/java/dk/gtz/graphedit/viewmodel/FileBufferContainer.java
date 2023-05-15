@@ -11,8 +11,8 @@ import dk.gtz.graphedit.exceptions.NotFoundException;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.Model;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleMapProperty;
-import javafx.collections.MapChangeListener;
 
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
@@ -24,8 +24,9 @@ public class FileBufferContainer implements IBufferContainer {
         this.serializer = serializer;
     }
 
-    private void addListener(MapChangeListener<? super String, ? super Model> listener) {
-        openBuffers.addListener(listener);
+    @Override
+    public MapProperty<String, Model> getBuffers() {
+        return openBuffers;
     }
 
     @Override

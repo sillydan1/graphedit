@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
 import atlantafx.base.theme.NordLight;
+import dk.gtz.graphedit.skyhook.DI;
 import javafx.application.Application;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
@@ -24,6 +26,12 @@ public class EditorController {
 	    Application.setUserAgentStylesheet(new NordLight().getUserAgentStylesheet());
 	else
 	    Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
+    }
+
+    @FXML
+    private void addPlaceholderTab() {
+	var controller = DI.get(EditorTabPaneController.class);
+	controller.tabpane.getTabs().add(0, new DraggableTab("Placeholder"));
     }
 }
 
