@@ -4,6 +4,8 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.view.EditorController;
+import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.logging.EditorLog;
 import javafx.application.Application;
@@ -26,7 +28,7 @@ public class GraphEditApplication extends Application {
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
 	primaryStage.setScene(scene);
 	primaryStage.show();
-	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLog());
+	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
     }
 
     @Override

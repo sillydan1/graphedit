@@ -8,7 +8,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import javafx.application.Platform;
 
-public class EditorLog extends AppenderBase<ILoggingEvent> {
+public class EditorLogAppender extends AppenderBase<ILoggingEvent> {
     private static List<Consumer<String>> subscribers = new ArrayList<>();
 
     @Override
