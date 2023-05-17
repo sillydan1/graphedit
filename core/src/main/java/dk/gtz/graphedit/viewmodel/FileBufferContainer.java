@@ -11,21 +11,22 @@ import dk.gtz.graphedit.exceptions.NotFoundException;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.Model;
 import dk.gtz.graphedit.serialization.IModelSerializer;
-import javafx.beans.property.MapProperty;
-import javafx.beans.property.SimpleMapProperty;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
-    private final SimpleMapProperty<String, Model> openBuffers;
+    private final ObservableMap<String, Model> openBuffers;
     private final IModelSerializer serializer;
 
     public FileBufferContainer(IModelSerializer serializer) {
-        openBuffers = new SimpleMapProperty<>();
+        openBuffers = FXCollections.observableHashMap(); 
         this.serializer = serializer;
     }
 
     @Override
-    public MapProperty<String, Model> getBuffers() {
+    public ObservableMap<String, Model> getBuffers() {
         return openBuffers;
     }
 
@@ -38,8 +39,10 @@ public class FileBufferContainer implements IBufferContainer {
 
     @Override
     public void close(String filename) {
-        if(openBuffers.containsKey(filename))
-            openBuffers.remove(filename);
+        Platform.runLater(() -> {
+            if(openBuffers.containsKey(filename))
+                openBuffers.remove(filename);
+        });
     }
 
     @Override
@@ -54,10 +57,15 @@ public class FileBufferContainer implements IBufferContainer {
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserialize(b.toString());
-            openBuffers.put(filename, newModel);
+            open(filename, newModel);
         } catch (SerializationException | FileNotFoundException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    @Override
+    public void open(String filename, Model model) {
+        Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
 

@@ -4,9 +4,13 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.view.EditorController;
-import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.BuildConfig;
+import dk.gtz.graphedit.logging.EditorLogAppender;
+import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.serialization.JacksonModelSerializer;
+import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.viewmodel.FileBufferContainer;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +22,7 @@ public class GraphEditApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+	setupApplication();
 	Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
 
 	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
@@ -30,6 +35,11 @@ public class GraphEditApplication extends Application {
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
     }
 
+    private void setupApplication() {
+	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
+	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+    }
+
     @Override
     public void stop() {
 	logger.trace("shutting down...");
@@ -38,6 +48,5 @@ public class GraphEditApplication extends Application {
     public static void main(final String[] args) {
 	launch(args);
     }
-
 }
 
