@@ -42,6 +42,7 @@ public class GraphEditApplication extends Application {
 
     @Override
     public void stop() {
+	// TODO: Something along the lines of "save and exit? yes/no"
 	logger.trace("shutting down...");
     }
 

@@ -8,16 +8,7 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx" 
     fx:controller="dk.gtz.graphedit.view.EditorTabPaneController">
-<TabPane fx:id="tabpane" styleClass="floating">
-    <tabs>
-        <DraggableTab>
-            <Button text="Hello World"/>
-        </DraggableTab>
-        <DraggableTab>
-            <Button text="Hello World2"/>
-        </DraggableTab>
-    </tabs>
-</TabPane>
+<TabPane fx:id="tabpane" styleClass="floating"/>
 <Text fx:id="placeholder" text="empty"/>
 </VBox>
 

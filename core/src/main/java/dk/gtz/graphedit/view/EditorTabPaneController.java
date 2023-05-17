@@ -4,7 +4,6 @@ import dk.gtz.graphedit.model.Model;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -30,6 +29,7 @@ public class EditorTabPaneController {
         var bb = Bindings.isEmpty(tabpane.getTabs());
         placeholder.visibleProperty().bind( bb );
         placeholder.managedProperty().bind( bb );
+	// TODO: This behavior makes it impossible to drag detached tabs into the main window when empty... I will fix this later
         root.alignmentProperty().bind( Bindings.when( bb ).then( Pos.CENTER ).otherwise( Pos.TOP_LEFT ) );
     }
     
