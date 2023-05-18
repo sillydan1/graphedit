@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.demo;
 
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -22,20 +23,20 @@ public class SerializationDemo {
         logger.info(deserModel.metadata().get("syntax"));
     }
 
-    private static Model getExampleModel() {
+    private static ModelProjectResource getExampleModel() {
         var decls = "a := 0";
-        var vertices = new HashMap<UUID,Vertex>();
-        vertices.put(UUID.randomUUID(), new Vertex());
+        var vertices = new HashMap<UUID,ModelVertex>();
+        vertices.put(UUID.randomUUID(), new ModelVertex(new Point()));
 
-        var edges = new HashMap<UUID,Edge>();
-        edges.put(UUID.randomUUID(), new Edge());
+        var edges = new HashMap<UUID,ModelEdge>();
+        edges.put(UUID.randomUUID(), new ModelEdge(UUID.randomUUID(), UUID.randomUUID()));
 
-        var model = new Graph(decls, vertices, edges);
+        var model = new ModelGraph(decls, vertices, edges);
 
         var metaData = new HashMap<String,String>();
         metaData.put("syntax", "exampleSyntax");
         metaData.put("version", "v1.0.0");
-        return new Model(metaData, model);
+        return new ModelProjectResource(metaData, model);
     }
 }
 

@@ -5,5 +5,5 @@ import java.util.Map;
 /**
  * Full file-on-disk model. Will include everything a graphedit project file needs
  */
-public record Model(Map<String,String> metadata, Graph syntax) {}
+public record ModelProjectResource(Map<String,String> metadata, ModelGraph syntax) {}
 

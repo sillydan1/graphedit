@@ -6,8 +6,8 @@ import java.util.UUID;
 /**
  * Container for all syntactic elements in a graph.
  */
-public record Graph(
+public record ModelGraph(
                 String declarations,
-                Map<UUID,Vertex> vertices,
-                Map<UUID,Edge> edges) {}
+                Map<UUID,ModelVertex> vertices,
+                Map<UUID,ModelEdge> edges) {}
 

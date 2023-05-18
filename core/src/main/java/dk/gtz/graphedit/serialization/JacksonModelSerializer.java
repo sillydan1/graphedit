@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
-import dk.gtz.graphedit.model.Model;
+import dk.gtz.graphedit.model.ModelProjectResource;
 
 public class JacksonModelSerializer implements IModelSerializer {
     private final ObjectMapper objectMapper;
@@ -35,7 +35,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public String serialize(Model model) throws SerializationException {
+    public String serialize(ModelProjectResource model) throws SerializationException {
 	try {
 	    return objectMapper.writeValueAsString(model);
 	} catch (JsonProcessingException e) {
@@ -44,9 +44,9 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public Model deserialize(String serializedContent) throws SerializationException {
+    public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
 	try {
-	    return objectMapper.readValue(serializedContent, Model.class);
+	    return objectMapper.readValue(serializedContent, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}

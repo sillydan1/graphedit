@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
 import atlantafx.base.theme.NordLight;
-import dk.gtz.graphedit.model.Graph;
-import dk.gtz.graphedit.model.Model;
+import dk.gtz.graphedit.model.ModelGraph;
+import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import javafx.application.Application;
@@ -37,7 +37,7 @@ public class EditorController {
     private void addPlaceholderTab() throws Exception {
 	DI.get(IBufferContainer.class).open(
 		UUID.randomUUID().toString(),
-		new Model(new HashMap<>(), new Graph("", new HashMap<>(), new HashMap<>())));
+		new ModelProjectResource(new HashMap<>(), new ModelGraph("", new HashMap<>(), new HashMap<>())));
     }
 }
 
