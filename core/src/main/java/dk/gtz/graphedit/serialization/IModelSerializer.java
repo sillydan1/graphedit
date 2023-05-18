@@ -3,11 +3,11 @@ package dk.gtz.graphedit.serialization;
 import java.io.IOException;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
-import dk.gtz.graphedit.model.Model;
+import dk.gtz.graphedit.model.ModelProjectResource;
 
 public interface IModelSerializer {
-    public String serialize(Model model) throws SerializationException;
+    public String serialize(ModelProjectResource model) throws SerializationException;
 
-    public Model deserialize(String serializedContent) throws SerializationException;
+    public ModelProjectResource deserialize(String serializedContent) throws SerializationException;
 }
 

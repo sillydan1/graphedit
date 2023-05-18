@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.NotFoundException;
 import dk.gtz.graphedit.exceptions.SerializationException;
-import dk.gtz.graphedit.model.Model;
+import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -17,7 +17,7 @@ import javafx.collections.ObservableMap;
 
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
-    private final ObservableMap<String, Model> openBuffers;
+    private final ObservableMap<String, ModelProjectResource> openBuffers;
     private final IModelSerializer serializer;
 
     public FileBufferContainer(IModelSerializer serializer) {
@@ -26,12 +26,12 @@ public class FileBufferContainer implements IBufferContainer {
     }
 
     @Override
-    public ObservableMap<String, Model> getBuffers() {
+    public ObservableMap<String, ModelProjectResource> getBuffers() {
         return openBuffers;
     }
 
     @Override
-    public Model get(String filename) throws NotFoundException {
+    public ModelProjectResource get(String filename) throws NotFoundException {
         if(!openBuffers.containsKey(filename))
             throw new NotFoundException("no such buffer: %s".formatted(filename));
         return openBuffers.get(filename);
@@ -64,7 +64,7 @@ public class FileBufferContainer implements IBufferContainer {
     }
 
     @Override
-    public void open(String filename, Model model) {
+    public void open(String filename, ModelProjectResource model) {
         Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
