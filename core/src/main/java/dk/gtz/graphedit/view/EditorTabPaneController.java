@@ -1,8 +1,8 @@
 package dk.gtz.graphedit.view;
 
-import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.binding.Bindings;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
@@ -34,7 +34,7 @@ public class EditorTabPaneController {
     }
     
     private void initTabpaneBufferContainer() {
-	DI.get(IBufferContainer.class).getBuffers().addListener((MapChangeListener<String,ModelProjectResource>)c -> {
+	DI.get(IBufferContainer.class).getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
 	    var changedKey = c.getKey();
 	    if(c.wasAdded())
 		tabpane.getTabs().add(new DraggableTab(changedKey)); // TODO: also have the model

@@ -12,6 +12,7 @@ import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 
@@ -37,7 +38,10 @@ public class EditorController {
     private void addPlaceholderTab() throws Exception {
 	DI.get(IBufferContainer.class).open(
 		UUID.randomUUID().toString(),
-		new ModelProjectResource(new HashMap<>(), new ModelGraph("", new HashMap<>(), new HashMap<>())));
+		new ViewModelProjectResource(
+		    new ModelProjectResource(
+			new HashMap<>(),
+			new ModelGraph("", new HashMap<>(), new HashMap<>()))));
     }
 }
 

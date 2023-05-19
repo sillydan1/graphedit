@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.NotFoundException;
 import dk.gtz.graphedit.exceptions.SerializationException;
-import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -17,7 +16,7 @@ import javafx.collections.ObservableMap;
 
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
-    private final ObservableMap<String, ModelProjectResource> openBuffers;
+    private final ObservableMap<String, ViewModelProjectResource> openBuffers;
     private final IModelSerializer serializer;
 
     public FileBufferContainer(IModelSerializer serializer) {
@@ -26,12 +25,12 @@ public class FileBufferContainer implements IBufferContainer {
     }
 
     @Override
-    public ObservableMap<String, ModelProjectResource> getBuffers() {
+    public ObservableMap<String, ViewModelProjectResource> getBuffers() {
         return openBuffers;
     }
 
     @Override
-    public ModelProjectResource get(String filename) throws NotFoundException {
+    public ViewModelProjectResource get(String filename) throws NotFoundException {
         if(!openBuffers.containsKey(filename))
             throw new NotFoundException("no such buffer: %s".formatted(filename));
         return openBuffers.get(filename);
@@ -57,14 +56,14 @@ public class FileBufferContainer implements IBufferContainer {
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserialize(b.toString());
-            open(filename, newModel);
+            open(filename, new ViewModelProjectResource(newModel));
         } catch (SerializationException | FileNotFoundException e) {
             logger.error(e.getMessage());
         }
     }
 
     @Override
-    public void open(String filename, ModelProjectResource model) {
+    public void open(String filename, ViewModelProjectResource model) {
         Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
