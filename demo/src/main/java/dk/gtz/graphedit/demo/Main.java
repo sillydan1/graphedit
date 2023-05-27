@@ -6,8 +6,8 @@ import com.beust.jcommander.JCommander;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.BuildConfig;
+import dk.gtz.graphedit.view.GraphEditApplication;
 
 public class Main {
     private static Logger logger = (Logger)LoggerFactory.getLogger(Main.class);

@@ -1,0 +1,15 @@
+{
+    "metadata": [
+        "java.util.HashMap",
+        {
+            "version": "v1.0.0"
+        }
+    ],
+    "name": "example project",
+    "rootDirectory": "/Users/agj/Git/private/graphedit/demo",
+    "excludeFiles": [
+        "java.util.ArrayList",
+        []
+    ]
+}
+

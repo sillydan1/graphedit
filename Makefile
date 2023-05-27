@@ -10,7 +10,7 @@ installDist: ${WRP}
 
 # NOTE: if you wish to run with arguments, use gradlew run --args="arg1 arg2" instead of this makefile
 run: ${WRP}
-	${WRP} run
+	${WRP} run --args="-v TRACE"
 
 clean: ${WRP}
 	${WRP} clean

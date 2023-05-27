@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.serialization;
 
-import java.io.IOException;
-
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelProjectResource;
 

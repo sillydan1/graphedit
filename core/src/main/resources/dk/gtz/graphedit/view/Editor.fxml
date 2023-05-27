@@ -23,7 +23,7 @@
         </MenuBar>
     </top>
     <left>
-        <Label text="Hello World"/>
+        <fx:include source="FileView.fxml"/>
     </left>
     <center>
         <fx:include source="EditorTabPane.fxml"/>

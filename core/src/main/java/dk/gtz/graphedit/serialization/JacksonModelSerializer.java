@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.serialization;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -17,7 +15,7 @@ public class JacksonModelSerializer implements IModelSerializer {
 	this.objectMapper = getMapper();
     }
 
-    private ObjectMapper getMapper() {
+    public ObjectMapper getMapper() {
 	var om = new ObjectMapper();
 	om.registerModule(new Jdk8Module());
 	var ptv = BasicPolymorphicTypeValidator.builder()

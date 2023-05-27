@@ -1,16 +1,20 @@
 package dk.gtz.graphedit.view;
 
+import java.io.File;
+
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.logging.EditorLogAppender;
+import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -24,20 +28,22 @@ public class GraphEditApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
 	setupApplication();
 	Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
-
-	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
-	var page = (StackPane) loader.load();
-	var scene = new Scene(page);
-
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
-	primaryStage.setScene(scene);
+	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
     }
 
-    private void setupApplication() {
+    private void setupApplication() throws Exception {
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+
+	// TODO: add a project-picker preloader with a list of recent projects and a "just open my most recent thing"-toggle
+	var projectDirectory = System.getProperty("user.dir") + File.separator + "project.json";
+	logger.trace("loading project file: {}", projectDirectory);
+	var mapper = ((JacksonModelSerializer)DI.get(IModelSerializer.class)).getMapper();
+	var project = mapper.readValue(new File(projectDirectory), ModelProject.class);
+	DI.add(ViewModelProject.class, new ViewModelProject(project));
     }
 
     @Override
@@ -48,6 +54,12 @@ public class GraphEditApplication extends Application {
 
     public static void main(final String[] args) {
 	launch(args);
+    }
+
+    private Scene loadMainScene() throws Exception {
+	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
+	var page = (StackPane) loader.load();
+	return new Scene(page);
     }
 }
 

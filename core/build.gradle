@@ -15,6 +15,9 @@ dependencies {
     implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
     implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
     implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
+    implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '12.3.1';
+    implementation group: 'org.kordamp.ikonli', name: 'ikonli-bootstrapicons-pack', version: '12.3.1';
+
 
     implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '1.2.0';
 
