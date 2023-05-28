@@ -14,14 +14,23 @@ Includes all the core functionality for GraphEdit...
  - [x] Log sink for any type of log message (using log4j's verbosity enum)
  - [x] JFoenix (Nope)
  - [x] MaterialFX <-- Much better library (actively maintained)
- - [ ] Set up the core architecture (MVVM)
+ - [x] AtlantaFX <-- Even better, no need for special stuff
+ - [x] Set up the core architecture (MVVM)
  - [ ] Set up the basic window
- - [ ] Implement the basics of a View (MVVM)
+   - [x] Tab pane
+   - [x] project file explorer
+   - [ ] graph editor / viewer
+   - [ ] Toolbar
+   - [ ] properties / queries pane
+   - [ ] Log viewer
+   - [ ] Preloader
+   - [ ] graph editor polish
  - [ ] Project configuration
  - [ ] Get feature parity with H-Uppaal
    - [ ] Project search
    - [ ] Good logging
    - [ ] Run configurations (will replace engine "integrations")
+ - [ ] Seperate into projects, polish and project structure cleanup
  - [ ] Release `v1.0.0`
  - [ ] JNI interface for direct engine interaction
  - [ ] Lint specification
