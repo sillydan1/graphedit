@@ -14,6 +14,7 @@ import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 public class EditorController {
@@ -42,6 +43,11 @@ public class EditorController {
 		    new ModelProjectResource(
 			new HashMap<>(),
 			new ModelGraph("", new HashMap<>(), new HashMap<>()))));
+    }
+
+    @FXML
+    private void quit() {
+	Platform.exit();
     }
 }
 

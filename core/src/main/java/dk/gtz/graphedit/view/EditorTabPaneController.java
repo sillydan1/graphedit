@@ -6,6 +6,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.binding.Bindings;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -18,6 +19,7 @@ public class EditorTabPaneController {
     public Text placeholder;
     @FXML
     public VBox root;
+    private VBox editor;
 
     @FXML
     private void initialize() {
@@ -32,12 +34,20 @@ public class EditorTabPaneController {
 	// TODO: This behavior makes it impossible to drag detached tabs into the main window when empty... I will fix this later
         root.alignmentProperty().bind( Bindings.when( bb ).then( Pos.CENTER ).otherwise( Pos.TOP_LEFT ) );
     }
+
+    private void loadModelEditor() throws Exception {
+    }
     
     private void initTabpaneBufferContainer() {
 	DI.get(IBufferContainer.class).getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
 	    var changedKey = c.getKey();
-	    if(c.wasAdded())
-		tabpane.getTabs().add(new DraggableTab(changedKey)); // TODO: also have the model
+	    if(c.wasAdded()) {
+		var changedVal = c.getValueAdded();
+		var tab = new DraggableTab(changedKey);
+		var editorController = new ModelEditorController(changedVal);
+		tab.setContent(editorController);
+		tabpane.getTabs().add(tab);
+	    }
 	    if(c.wasRemoved())
 		tabpane.getTabs().removeIf(t -> t.getText().equals(changedKey));
 	});
