@@ -8,6 +8,7 @@ import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.logging.EditorLogAppender;
+import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
@@ -19,6 +20,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class GraphEditApplication extends Application {
@@ -31,6 +33,7 @@ public class GraphEditApplication extends Application {
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
+	Toast.initialize(primaryStage);
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
     }
 
@@ -59,7 +62,8 @@ public class GraphEditApplication extends Application {
     private Scene loadMainScene() throws Exception {
 	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
 	var page = (StackPane) loader.load();
-	return new Scene(page);
+        var screenBounds = Screen.getPrimary().getVisualBounds();
+        return new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
     }
 }
 

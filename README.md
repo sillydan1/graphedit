@@ -30,7 +30,7 @@ Includes all the core functionality for GraphEdit...
    - [ ] Project search
    - [ ] Good logging
    - [ ] Run configurations (will replace engine "integrations")
- - [ ] Seperate into projects, polish and project structure cleanup
+ - [ ] Separate into projects, fix todos, write proper readme, code polish and project structure cleanup
  - [ ] Release `v1.0.0`
  - [ ] JNI interface for direct engine interaction
  - [ ] Lint specification

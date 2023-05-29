@@ -16,8 +16,9 @@
             <Menu text="Editor">
                 <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
             </Menu>
-            <Menu text="WIP">
-                <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab"/>
+            <Menu text="Dev">
+                <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab" accelerator="Shortcut+T"/>
+                <MenuItem onAction="#toastTest" text="Spawn a toast" accelerator="Shortcut+Y"/>
             </Menu>
         </MenuBar>
     </top>

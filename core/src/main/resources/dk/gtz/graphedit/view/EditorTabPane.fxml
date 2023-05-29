@@ -8,7 +8,7 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx" 
     fx:controller="dk.gtz.graphedit.view.EditorTabPaneController">
-<TabPane fx:id="tabpane" styleClass="floating"/>
-<Text fx:id="placeholder" text="empty"/>
+<Text fx:id="placeholder" text="no open models"/>
+<TabPane fx:id="tabpane" styleClass="floating" VBox.vgrow="ALWAYS"/>
 </VBox>
 
