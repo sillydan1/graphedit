@@ -6,7 +6,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.binding.Bindings;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
