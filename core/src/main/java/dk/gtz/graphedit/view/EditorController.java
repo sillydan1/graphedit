@@ -43,9 +43,9 @@ public class EditorController {
     private void addPlaceholderTab() throws Exception {
 	var exampleVertices = new HashMap<UUID,ModelVertex>();
 	var exampleEdges = new HashMap<UUID,ModelEdge>();
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(50, 0)));
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(100, 100)));
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(200, 120)));
+	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(0, 0)));
+	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(-343, -550)));
+	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(343, 550)));
 	
 	DI.get(IBufferContainer.class).open(
 		UUID.randomUUID().toString(),

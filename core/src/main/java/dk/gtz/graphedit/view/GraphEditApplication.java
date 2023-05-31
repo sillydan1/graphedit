@@ -63,7 +63,9 @@ public class GraphEditApplication extends Application {
 	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
 	var page = (StackPane) loader.load();
         var screenBounds = Screen.getPrimary().getVisualBounds();
-        return new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
+        var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
+	scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+	return scene;
     }
 }
 
