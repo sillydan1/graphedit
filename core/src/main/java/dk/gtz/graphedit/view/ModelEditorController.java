@@ -1,7 +1,10 @@
 package dk.gtz.graphedit.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +18,9 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
 
@@ -24,9 +29,13 @@ public class ModelEditorController extends StackPane {
     private final ViewModelProjectResource resource;
     private Group drawGroup;
     private Affine drawGroupTransform;
+    private Map<UUID, Node> vertices;
+    private Map<UUID, Node> edges;
 
     public ModelEditorController(ViewModelProjectResource resource) {
 	this.resource = resource;
+	vertices = new HashMap<>();
+	edges = new HashMap<>();
 	initialize();
     }
 
@@ -40,6 +49,7 @@ public class ModelEditorController extends StackPane {
 	drawGroup = new Group();
 	drawGroupTransform = new Affine();
 	drawGroup.getChildren().addAll(initializeLocations());
+	drawGroup.getChildren().addAll(initializeEdges());
 	drawGroup.getTransforms().add(drawGroupTransform);
 	// TODO: move this into a seperate controller/fxml thingy
 
@@ -89,6 +99,24 @@ public class ModelEditorController extends StackPane {
 	    vertexPresentation.getStyleClass().add("scale");
 
 	    nodes.add(vertexPresentation);
+	    vertices.put(vertex.getKey(), vertexPresentation);
+	}
+	return nodes;
+    }
+
+    private List<Node> initializeEdges() {
+	var nodes = new ArrayList<Node>();
+	for(var edge : resource.syntax().edges().entrySet()) {
+	    var edgePresentation = new Line();
+	    edgePresentation.setStroke(Color.WHITE);
+	    var sourceVertex = vertices.get(edge.getValue().source().getValue());
+	    var targetVertex = vertices.get(edge.getValue().target().getValue());
+	    edgePresentation.startXProperty().bind(sourceVertex.translateXProperty());
+	    edgePresentation.startYProperty().bind(sourceVertex.translateYProperty());
+	    edgePresentation.endXProperty().bind(targetVertex.translateXProperty());
+	    edgePresentation.endYProperty().bind(targetVertex.translateYProperty());
+	    nodes.add(edgePresentation);
+	    edges.put(edge.getKey(), edgePresentation);
 	}
 	return nodes;
     }

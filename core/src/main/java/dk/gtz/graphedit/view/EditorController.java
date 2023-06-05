@@ -42,10 +42,19 @@ public class EditorController {
     @FXML
     private void addPlaceholderTab() throws Exception {
 	var exampleVertices = new HashMap<UUID,ModelVertex>();
+	var vert1 = UUID.randomUUID();
+	exampleVertices.put(vert1, new ModelVertex(new Point(0, 0)));
+	var vert2 = UUID.randomUUID();
+	exampleVertices.put(vert2, new ModelVertex(new Point(-343, -550)));
+	var vert3 = UUID.randomUUID();
+	exampleVertices.put(vert3, new ModelVertex(new Point(343, 550)));
+	var vert4 = UUID.randomUUID();
+	exampleVertices.put(vert4, new ModelVertex(new Point(500, 50)));
+
 	var exampleEdges = new HashMap<UUID,ModelEdge>();
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(0, 0)));
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(-343, -550)));
-	exampleVertices.put(UUID.randomUUID(), new ModelVertex(new Point(343, 550)));
+	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert1, vert2));
+	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert2, vert3));
+	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert3, vert4));
 	
 	DI.get(IBufferContainer.class).open(
 		UUID.randomUUID().toString(),
