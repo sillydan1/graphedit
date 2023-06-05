@@ -12,6 +12,7 @@ import atlantafx.base.theme.NordLight;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelGraph;
+import dk.gtz.graphedit.model.ModelPoint;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.skyhook.DI;
@@ -43,13 +44,13 @@ public class EditorController {
     private void addPlaceholderTab() throws Exception {
 	var exampleVertices = new HashMap<UUID,ModelVertex>();
 	var vert1 = UUID.randomUUID();
-	exampleVertices.put(vert1, new ModelVertex(new Point(0, 0)));
+	exampleVertices.put(vert1, new ModelVertex(new ModelPoint(0, 0)));
 	var vert2 = UUID.randomUUID();
-	exampleVertices.put(vert2, new ModelVertex(new Point(-343, -550)));
+	exampleVertices.put(vert2, new ModelVertex(new ModelPoint(-343, -550)));
 	var vert3 = UUID.randomUUID();
-	exampleVertices.put(vert3, new ModelVertex(new Point(343, 550)));
+	exampleVertices.put(vert3, new ModelVertex(new ModelPoint(343, 550)));
 	var vert4 = UUID.randomUUID();
-	exampleVertices.put(vert4, new ModelVertex(new Point(500, 50)));
+	exampleVertices.put(vert4, new ModelVertex(new ModelPoint(500, 50)));
 
 	var exampleEdges = new HashMap<UUID,ModelEdge>();
 	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert1, vert2));

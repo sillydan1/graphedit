@@ -34,6 +34,7 @@ public class GraphEditApplication extends Application {
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
 	Toast.initialize(primaryStage);
+	DI.add(MouseTracker.class, new MouseTracker(primaryStage));
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
     }
 

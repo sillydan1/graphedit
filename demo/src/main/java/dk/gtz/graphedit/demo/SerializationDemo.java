@@ -26,7 +26,7 @@ public class SerializationDemo {
     private static ModelProjectResource getExampleModel() {
         var decls = "a := 0";
         var vertices = new HashMap<UUID,ModelVertex>();
-        vertices.put(UUID.randomUUID(), new ModelVertex(new Point()));
+        vertices.put(UUID.randomUUID(), new ModelVertex(new ModelPoint(0,0)));
 
         var edges = new HashMap<UUID,ModelEdge>();
         edges.put(UUID.randomUUID(), new ModelEdge(UUID.randomUUID(), UUID.randomUUID()));

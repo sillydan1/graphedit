@@ -1,27 +1,20 @@
 package dk.gtz.graphedit.view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
 
 public class ModelEditorController extends StackPane {
@@ -29,13 +22,9 @@ public class ModelEditorController extends StackPane {
     private final ViewModelProjectResource resource;
     private Group drawGroup;
     private Affine drawGroupTransform;
-    private Map<UUID, Node> vertices;
-    private Map<UUID, Node> edges;
 
     public ModelEditorController(ViewModelProjectResource resource) {
 	this.resource = resource;
-	vertices = new HashMap<>();
-	edges = new HashMap<>();
 	initialize();
     }
 
@@ -80,43 +69,30 @@ public class ModelEditorController extends StackPane {
 
     private List<Node> initializeLocations() {
 	var nodes = new ArrayList<Node>();
-	for(var vertex : resource.syntax().vertices().entrySet()) {
-	    // TODO: move this into a seperate controller/fxml thingy
-	    var vertexPresentation = new StackPane();
-	    var point = vertex.getValue().position();
-	    var circle = new Circle(20.0);
-	    circle.strokeTypeProperty().set(StrokeType.INSIDE);
-	    circle.getStyleClass().add("vertex-node");
-	    vertexPresentation.getChildren().add(circle);
-
-	    var label = new Label(vertex.getKey().toString());
-	    label.getStyleClass().add("outline");
-
-	    vertexPresentation.getChildren().add(label);
-	    vertexPresentation.setTranslateX(point.get().x);
-	    vertexPresentation.setTranslateY(point.get().y);
-	    vertexPresentation.setCursor(Cursor.HAND);
-	    vertexPresentation.getStyleClass().add("scale");
-
-	    nodes.add(vertexPresentation);
-	    vertices.put(vertex.getKey(), vertexPresentation);
-	}
+	for(var vertex : resource.syntax().vertices().entrySet())
+	    nodes.add(new VertexController(vertex.getKey(), vertex.getValue(), drawGroupTransform));
 	return nodes;
     }
 
     private List<Node> initializeEdges() {
 	var nodes = new ArrayList<Node>();
 	for(var edge : resource.syntax().edges().entrySet()) {
+	    // TODO: move this into a seperate controller/fxml thingy
 	    var edgePresentation = new Line();
 	    edgePresentation.setStroke(Color.WHITE);
-	    var sourceVertex = vertices.get(edge.getValue().source().getValue());
-	    var targetVertex = vertices.get(edge.getValue().target().getValue());
-	    edgePresentation.startXProperty().bind(sourceVertex.translateXProperty());
-	    edgePresentation.startYProperty().bind(sourceVertex.translateYProperty());
-	    edgePresentation.endXProperty().bind(targetVertex.translateXProperty());
-	    edgePresentation.endYProperty().bind(targetVertex.translateYProperty());
+	    var sourceVertex = resource.syntax().vertices().getValue().get(edge.getValue().source().getValue());
+	    var targetVertex = resource.syntax().vertices().getValue().get(edge.getValue().target().getValue());
+	    // set the location initially
+	    edgePresentation.setStartX(sourceVertex.position().getX());
+	    edgePresentation.setStartY(sourceVertex.position().getY());
+	    edgePresentation.setEndX(targetVertex.position().getX());
+	    edgePresentation.setEndY(targetVertex.position().getY());
+	    // subscribe on events
+	    edgePresentation.startXProperty().bind(sourceVertex.position().getXProperty());
+	    edgePresentation.startYProperty().bind(sourceVertex.position().getYProperty());
+	    edgePresentation.endXProperty().bind(targetVertex.position().getXProperty());
+	    edgePresentation.endYProperty().bind(targetVertex.position().getYProperty());
 	    nodes.add(edgePresentation);
-	    edges.put(edge.getKey(), edgePresentation);
 	}
 	return nodes;
     }
