@@ -72,5 +72,9 @@ public class ProjectFilesViewController {
 	    logger.error(e.getMessage(), e);
 	}
     }
+
+    public void toggle() {
+	root.setVisible(!root.visibleProperty().get());
+    }
 }
 

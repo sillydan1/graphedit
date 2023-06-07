@@ -17,13 +17,14 @@
                 <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
             </Menu>
             <Menu text="Dev">
+                <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="O"/>
                 <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab" accelerator="Shortcut+T"/>
                 <MenuItem onAction="#toastTest" text="Spawn a toast" accelerator="Shortcut+Y"/>
             </Menu>
         </MenuBar>
     </top>
     <left>
-        <fx:include source="FileView.fxml"/>
+        <fx:include fx:id="filePane" source="FileView.fxml"/>
     </left>
     <center>
         <fx:include source="EditorTabPane.fxml"/>

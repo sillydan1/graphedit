@@ -27,6 +27,9 @@ public class EditorController {
     private boolean useLightTheme = false;
 
     @FXML
+    private ProjectFilesViewController filePaneController;
+
+    @FXML
     private void initialize() {
 
     }
@@ -73,6 +76,11 @@ public class EditorController {
     @FXML
     private void quit() {
 	Platform.exit();
+    }
+
+    @FXML
+    private void featureHolder() {
+	filePaneController.toggle();
     }
 }
 
