@@ -3,6 +3,7 @@ package dk.gtz.graphedit.view;
 import java.util.UUID;
 
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -45,10 +46,13 @@ public class VertexController extends StackPane {
     private void initializeStyle() {
 	setTranslateX(vertexValue.position().getX());
 	setTranslateY(vertexValue.position().getY());
-	translateXProperty().bind(vertexValue.position().getXProperty());
-	translateYProperty().bind(vertexValue.position().getYProperty());
+
+	var vertexXProperty = vertexValue.position().getXProperty();
+	var vertexYProperty = vertexValue.position().getYProperty();
+	translateXProperty().bind(Bindings.createDoubleBinding(() -> vertexXProperty.get() - (widthProperty().get() / 2), vertexXProperty, widthProperty()));
+	translateYProperty().bind(Bindings.createDoubleBinding(() -> vertexYProperty.get() - (heightProperty().get() / 2), vertexYProperty, heightProperty()));
 	setCursor(Cursor.HAND);
-	getStyleClass().add("scale");
+	// TODO: on hover scale with an animation
     }
 
     private void initializeInteractionEvents() {
