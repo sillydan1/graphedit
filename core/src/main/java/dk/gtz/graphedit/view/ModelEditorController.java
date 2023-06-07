@@ -37,8 +37,8 @@ public class ModelEditorController extends StackPane {
     private void initializeDrawGroup() {
 	drawGroup = new Group();
 	drawGroupTransform = new Affine();
-	drawGroup.getChildren().addAll(initializeLocations());
 	drawGroup.getChildren().addAll(initializeEdges());
+	drawGroup.getChildren().addAll(initializeLocations());
 	drawGroup.getTransforms().add(drawGroupTransform);
 	// TODO: move this into a seperate controller/fxml thingy
 
@@ -76,24 +76,8 @@ public class ModelEditorController extends StackPane {
 
     private List<Node> initializeEdges() {
 	var nodes = new ArrayList<Node>();
-	for(var edge : resource.syntax().edges().entrySet()) {
-	    // TODO: move this into a seperate controller/fxml thingy
-	    var edgePresentation = new Line();
-	    edgePresentation.setStroke(Color.WHITE);
-	    var sourceVertex = resource.syntax().vertices().getValue().get(edge.getValue().source().getValue());
-	    var targetVertex = resource.syntax().vertices().getValue().get(edge.getValue().target().getValue());
-	    // set the location initially
-	    edgePresentation.setStartX(sourceVertex.position().getX());
-	    edgePresentation.setStartY(sourceVertex.position().getY());
-	    edgePresentation.setEndX(targetVertex.position().getX());
-	    edgePresentation.setEndY(targetVertex.position().getY());
-	    // subscribe on events
-	    edgePresentation.startXProperty().bind(sourceVertex.position().getXProperty());
-	    edgePresentation.startYProperty().bind(sourceVertex.position().getYProperty());
-	    edgePresentation.endXProperty().bind(targetVertex.position().getXProperty());
-	    edgePresentation.endYProperty().bind(targetVertex.position().getYProperty());
-	    nodes.add(edgePresentation);
-	}
+	for(var edge : resource.syntax().edges().entrySet())
+	    nodes.add(new EdgeController(edge.getKey(), edge.getValue(), resource));
 	return nodes;
     }
 }
