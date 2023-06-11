@@ -20,3 +20,7 @@
         linear-gradient(from 0.0px 0.5px to  0.0px 10.5px, repeat, -color-accent-fg 5%, transparent 5%);
 }
 
+.stroke-primary {
+    -fx-stroke: -color-accent-fg;
+}
+
