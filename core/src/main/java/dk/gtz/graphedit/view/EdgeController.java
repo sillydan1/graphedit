@@ -5,10 +5,9 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
-import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -38,28 +37,10 @@ public class EdgeController extends Group {
 	var targetVertex = resource.syntax().vertices().getValue().get(edgeValue.target().getValue());
 	var sourcePosition = sourceVertex.position();
 	var targetPosition = targetVertex.position();
-	edgePresentation.startXProperty().bind(sourceVertex.position().getXProperty());
-	edgePresentation.startYProperty().bind(sourceVertex.position().getYProperty());
-	edgePresentation.endXProperty().bind(Bindings.createDoubleBinding(() -> {
-	    var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
-	    var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
-	    var angle = Math.atan2(diffY, diffX);
-	    var cosDiffX = Math.cos(angle);
-	    return targetPosition.getXProperty().get() - (targetVertex.shape().widthProperty().get() * targetVertex.shape().scaleXProperty().get() * cosDiffX);
-	}, 
-	sourcePosition.getXProperty(), sourcePosition.getYProperty(), 
-	targetPosition.getXProperty(), targetPosition.getYProperty(),
-	targetVertex.shape().widthProperty(), targetVertex.shape().scaleXProperty()));
-	edgePresentation.endYProperty().bind(Bindings.createDoubleBinding(() -> {
-	    var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
-	    var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
-	    var angle = Math.atan2(diffY, diffX);
-	    var sinDiffY = Math.sin(angle);
-	    return targetPosition.getYProperty().get() - (targetVertex.shape().heightProperty().get() * targetVertex.shape().scaleYProperty().get() * sinDiffY);
-	}, 
-	sourcePosition.getYProperty(), sourcePosition.getXProperty(),
-	targetPosition.getYProperty(), targetPosition.getXProperty(),
-	targetVertex.shape().heightProperty(), targetVertex.shape().scaleYProperty()));
+	edgePresentation.startXProperty().bind(BindingsUtil.createOvalXBinding(targetPosition, sourcePosition, sourceVertex.shape()));
+	edgePresentation.startYProperty().bind(BindingsUtil.createOvalYBinding(targetPosition, sourcePosition, sourceVertex.shape()));
+	edgePresentation.endXProperty().bind(BindingsUtil.createOvalXBinding(sourcePosition, targetPosition, targetVertex.shape()));
+	edgePresentation.endYProperty().bind(BindingsUtil.createOvalYBinding(sourcePosition, targetPosition, targetVertex.shape()));
 	return edgePresentation;
     }
 
@@ -91,9 +72,7 @@ public class EdgeController extends Group {
 	var rotate = new Rotate();
 	rotate.pivotXProperty().bind(pivotX);
 	rotate.pivotYProperty().bind(pivotY);
-	rotate.angleProperty().bind(Bindings.createDoubleBinding(() -> 
-		    (Math.atan2(line.getEndY() - line.getStartY(), line.getEndX() - line.getStartX()) * 180 / Math.PI),
-		    line.endYProperty(), line.endXProperty(), line.startXProperty(), line.startYProperty()));
+	rotate.angleProperty().bind(BindingsUtil.createRotationAtLineEndBinding(line));
 	nodeToTransform.getTransforms().add(rotate);
     }
 }

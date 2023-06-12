@@ -61,8 +61,8 @@ public class VertexController extends StackPane {
     private void bindTranslatePropertiesToViewmodel() {
 	var vertexXProperty = vertexValue.position().getXProperty();
 	var vertexYProperty = vertexValue.position().getYProperty();
-	translateXProperty().bind(Bindings.createDoubleBinding(() -> vertexXProperty.get() - (widthProperty().get()  / 2), vertexXProperty, widthProperty()));
-	translateYProperty().bind(Bindings.createDoubleBinding(() -> vertexYProperty.get() - (heightProperty().get() / 2), vertexYProperty, heightProperty()));
+	translateXProperty().bind(vertexXProperty.subtract(widthProperty().divide(2)));
+	translateYProperty().bind(vertexYProperty.subtract(heightProperty().divide(2)));
     }
 
     private void bindSizePropertiesToViewmodel() {
