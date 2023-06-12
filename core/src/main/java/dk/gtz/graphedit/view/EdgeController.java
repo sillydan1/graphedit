@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -35,10 +36,30 @@ public class EdgeController extends Group {
 	edgePresentation.getStyleClass().add("stroke-primary");
 	var sourceVertex = resource.syntax().vertices().getValue().get(edgeValue.source().getValue());
 	var targetVertex = resource.syntax().vertices().getValue().get(edgeValue.target().getValue());
+	var sourcePosition = sourceVertex.position();
+	var targetPosition = targetVertex.position();
 	edgePresentation.startXProperty().bind(sourceVertex.position().getXProperty());
 	edgePresentation.startYProperty().bind(sourceVertex.position().getYProperty());
-	edgePresentation.endXProperty().bind(targetVertex.position().getXProperty());
-	edgePresentation.endYProperty().bind(targetVertex.position().getYProperty());
+	edgePresentation.endXProperty().bind(Bindings.createDoubleBinding(() -> {
+	    var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+	    var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+	    var angle = Math.atan2(diffY, diffX);
+	    var cosDiffX = Math.cos(angle);
+	    return targetPosition.getXProperty().get() - (targetVertex.shape().widthProperty().get() * targetVertex.shape().scaleXProperty().get() * cosDiffX);
+	}, 
+	sourcePosition.getXProperty(), sourcePosition.getYProperty(), 
+	targetPosition.getXProperty(), targetPosition.getYProperty(),
+	targetVertex.shape().widthProperty(), targetVertex.shape().scaleXProperty()));
+	edgePresentation.endYProperty().bind(Bindings.createDoubleBinding(() -> {
+	    var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+	    var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+	    var angle = Math.atan2(diffY, diffX);
+	    var sinDiffY = Math.sin(angle);
+	    return targetPosition.getYProperty().get() - (targetVertex.shape().heightProperty().get() * targetVertex.shape().scaleYProperty().get() * sinDiffY);
+	}, 
+	sourcePosition.getYProperty(), sourcePosition.getXProperty(),
+	targetPosition.getYProperty(), targetPosition.getXProperty(),
+	targetVertex.shape().heightProperty(), targetVertex.shape().scaleYProperty()));
 	return edgePresentation;
     }
 

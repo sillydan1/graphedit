@@ -37,7 +37,10 @@ public class VertexController extends StackPane {
     }
 
     private Circle initializeVertexRepresentation() {
-	var circle = new Circle(20.0);
+	var diameter = 20.0;
+	var circle = new Circle(diameter);
+	vertexValue.shape().widthProperty().set(diameter);
+	vertexValue.shape().heightProperty().set(diameter);
 	circle.strokeTypeProperty().set(StrokeType.INSIDE);
 	circle.getStyleClass().add("vertex-node");
 	return circle;
@@ -51,6 +54,7 @@ public class VertexController extends StackPane {
 
     private void initializeStyle() {
 	bindTranslatePropertiesToViewmodel();
+	bindSizePropertiesToViewmodel();
 	addCursorHoverEffect();
     }
 
@@ -59,6 +63,13 @@ public class VertexController extends StackPane {
 	var vertexYProperty = vertexValue.position().getYProperty();
 	translateXProperty().bind(Bindings.createDoubleBinding(() -> vertexXProperty.get() - (widthProperty().get()  / 2), vertexXProperty, widthProperty()));
 	translateYProperty().bind(Bindings.createDoubleBinding(() -> vertexYProperty.get() - (heightProperty().get() / 2), vertexYProperty, heightProperty()));
+    }
+
+    private void bindSizePropertiesToViewmodel() {
+	vertexValue.shape().scaleXProperty().set(scaleXProperty().get());
+	vertexValue.shape().scaleYProperty().set(scaleYProperty().get());
+	scaleXProperty().bind(vertexValue.shape().scaleXProperty());
+	scaleYProperty().bind(vertexValue.shape().scaleYProperty());
     }
     
     private void addCursorHoverEffect() {
@@ -70,10 +81,10 @@ public class VertexController extends StackPane {
     }
 
     private Timeline createScaleTimeline(double scaleBegin, double scaleEnd, Duration timelineTime) {
-        var scale1x = new KeyValue(scaleXProperty(), scaleBegin, Interpolator.EASE_BOTH);
-        var scale1y = new KeyValue(scaleYProperty(), scaleBegin, Interpolator.EASE_BOTH);
-        var scale2x = new KeyValue(scaleXProperty(), scaleEnd, Interpolator.EASE_BOTH);
-        var scale2y = new KeyValue(scaleYProperty(), scaleEnd, Interpolator.EASE_BOTH);
+        var scale1x = new KeyValue(vertexValue.shape().scaleXProperty(), scaleBegin, Interpolator.EASE_BOTH);
+        var scale1y = new KeyValue(vertexValue.shape().scaleYProperty(), scaleBegin, Interpolator.EASE_BOTH);
+        var scale2x = new KeyValue(vertexValue.shape().scaleXProperty(), scaleEnd, Interpolator.EASE_BOTH);
+        var scale2y = new KeyValue(vertexValue.shape().scaleYProperty(), scaleEnd, Interpolator.EASE_BOTH);
         var kx1 = new KeyFrame(Duration.millis(0), scale1x);
         var ky1 = new KeyFrame(Duration.millis(0), scale1y);
         var kx2 = new KeyFrame(timelineTime, scale2x);
