@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.view;
 
+import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.undo.IUndoSystem;
+import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
@@ -8,6 +11,7 @@ import javafx.scene.transform.Affine;
 
 public class DragUtil {
     public static void makeDraggable(Node mouseSubject, ViewModelPoint point, Affine viewportAffine) {
+        var undoSystem = DI.get(IUndoSystem.class);
         // Must be properties due to java's final/effectively final lambda restriction
         var oldX = new SimpleDoubleProperty();
         var oldY = new SimpleDoubleProperty();
@@ -35,6 +39,11 @@ public class DragUtil {
         });
 
         mouseSubject.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+            undoSystem.push(new Undoable("move action", 
+                        () -> { 
+                            point.getXProperty().set(oldPointX.get());
+                        }, 
+                        () -> {  }));
         });
     }
 }
