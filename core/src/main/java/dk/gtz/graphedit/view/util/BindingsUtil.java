@@ -31,6 +31,8 @@ public class BindingsUtil {
 	shape.heightProperty(), shape.scaleYProperty());
     }
 
+    // TODO: implement 'createRectangularX/YBinding' functions
+
     public static DoubleBinding createRotationAtLineEndBinding(Line line) {
 	return Bindings.createDoubleBinding(() -> 
 		    (Math.atan2(line.getEndY() - line.getStartY(), line.getEndX() - line.getStartX()) * 180 / Math.PI),

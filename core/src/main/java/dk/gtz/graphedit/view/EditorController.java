@@ -16,6 +16,7 @@ import dk.gtz.graphedit.model.ModelPoint;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.application.Application;
@@ -66,6 +67,16 @@ public class EditorController {
 		    new ModelProjectResource(
 			new HashMap<>(),
 			new ModelGraph("", exampleVertices, exampleEdges))));
+    }
+
+    @FXML
+    private void undo() {
+	DI.get(IUndoSystem.class).undo();
+    }
+
+    @FXML
+    private void redo() {
+	DI.get(IUndoSystem.class).redo();
     }
 
     @FXML

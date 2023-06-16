@@ -9,17 +9,21 @@
 <BorderPane HBox.hgrow="ALWAYS">
     <top>
         <MenuBar>
-            <Menu text="File">
+            <Menu text="file">
                 <MenuItem text="Open Project"/>
                 <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
             </Menu>
-            <Menu text="Editor">
+            <Menu text="edit">
+                <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
+                <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
+            </Menu>
+            <Menu text="editor">
                 <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
             </Menu>
-            <Menu text="Dev">
+            <Menu text="dev">
                 <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="O"/>
                 <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab" accelerator="Shortcut+T"/>
-                <MenuItem onAction="#toastTest" text="Spawn a toast" accelerator="Shortcut+Y"/>
+                <MenuItem onAction="#toastTest" text="Spawn a toast" accelerator="Shortcut+R"/>
             </Menu>
         </MenuBar>
     </top>
