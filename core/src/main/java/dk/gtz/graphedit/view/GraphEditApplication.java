@@ -5,6 +5,7 @@ import java.io.File;
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.NordDark;
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.logging.EditorLogAppender;
@@ -35,10 +36,10 @@ public class GraphEditApplication extends Application {
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
-	Toast.initialize(primaryStage);
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage));
-	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
+	setupLogging();
     }
+
 
     private void setupApplication() throws Exception {
 	DI.add(IUndoSystem.class, new StackUndoSystem());
@@ -51,6 +52,13 @@ public class GraphEditApplication extends Application {
 	var mapper = ((JacksonModelSerializer)DI.get(IModelSerializer.class)).getMapper();
 	var project = mapper.readValue(new File(projectDirectory), ModelProject.class);
 	DI.add(ViewModelProject.class, new ViewModelProject(project));
+    }
+
+    private void setupLogging() {
+	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
+	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
+	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
+	EditorLogAppender.subscribe(Level.INFO, Toast::info);
     }
 
     @Override
@@ -69,6 +77,7 @@ public class GraphEditApplication extends Application {
         var screenBounds = Screen.getPrimary().getVisualBounds();
         var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
 	scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+	Toast.initialize(page);
 	return scene;
     }
 }

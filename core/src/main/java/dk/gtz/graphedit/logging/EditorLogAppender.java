@@ -4,25 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import javafx.application.Platform;
 
 public class EditorLogAppender extends AppenderBase<ILoggingEvent> {
-    private static List<Consumer<String>> subscribers = new ArrayList<>();
+    private static record LogConsumer(Level level, Consumer<String> consumer) {}
+    private static List<LogConsumer> subscribers = new ArrayList<>();
 
     @Override
     protected void append(ILoggingEvent eventObject) { }
 
     @Override
     public synchronized void doAppend(ILoggingEvent eventObject) {
-	var msgCpy = eventObject.getMessage();
-	subscribers.forEach(r -> Platform.runLater(() -> r.accept(msgCpy)));
+	var messageCopy = eventObject.getMessage();
+	subscribers.stream()
+	    .filter(e -> e.level() == eventObject.getLevel())
+	    .forEach(r -> Platform.runLater(() -> r.consumer().accept(messageCopy)));
     }
 
     // TODO: How to unsubscribe again?
-    public static void subscribe(Consumer<String> logConsumer) {
-	subscribers.add(logConsumer);
+    public static void subscribe(Level levelFilter, Consumer<String> logConsumer) {
+	subscribers.add(new LogConsumer(levelFilter, logConsumer));
     }
 }
 

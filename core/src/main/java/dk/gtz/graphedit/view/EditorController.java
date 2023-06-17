@@ -88,6 +88,7 @@ public class EditorController {
     private void save() {
 	var serializer = DI.get(IModelSerializer.class);
 	var buffers = DI.get(IBufferContainer.class).getBuffers().entrySet();
+	logger.trace("save starting");
 	buffers.parallelStream().forEach((buffer) -> {
 	    try {
 		var filePath = buffer.getKey();
@@ -97,13 +98,13 @@ public class EditorController {
 		var p = Paths.get(filePath);
 		Files.createDirectories(p.getParent());
 		Files.write(p, serializedModel.getBytes());
-		logger.trace("save complete");
 	    } catch (SerializationException e) {
 		logger.error("failed to serialize model '{}' reason: {}", buffer.getKey(), e.getMessage());
 	    } catch (IOException e) {
 		logger.error("failed to save file '{}' reason: {}", buffer.getKey(), e.getMessage());
 	    }
 	});
+	logger.trace("save complete");
     }
 
     @FXML
@@ -111,9 +112,18 @@ public class EditorController {
 
     }
 
+    private int toastTestCounter = 0;
     @FXML
     private void toastTest() throws Exception {
-	Toast.show("Hello World!");
+	if(toastTestCounter == 0)
+	    Toast.info("Hello World!");
+	if(toastTestCounter == 1)
+	    Toast.success("Hello World!");
+	if(toastTestCounter == 2)
+	    Toast.warn("Hello World!");
+	if(toastTestCounter == 3)
+	    Toast.error("Hello World!");
+	toastTestCounter = (toastTestCounter + 1) % 4;
     }
 
     @FXML
