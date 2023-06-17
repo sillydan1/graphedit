@@ -9,8 +9,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import atlantafx.base.theme.NordDark;
-import atlantafx.base.theme.NordLight;
+import atlantafx.base.theme.CupertinoDark;
+import atlantafx.base.theme.CupertinoLight;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelEdge;
@@ -21,31 +21,44 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
+import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
-    private boolean useLightTheme = false;
+    private boolean useLightTheme = PreferenceUtil.getUseLightTheme();
 
     @FXML
     private ProjectFilesViewController filePaneController;
 
     @FXML
-    private void initialize() {
+    private VBox menubarTopBox;
 
+    @FXML
+    private void initialize() {
+	hideTopbarOnSupportedPlatforms();
+    }
+
+    private void hideTopbarOnSupportedPlatforms() {
+        if (isSystemMenuBarSupported()) {
+            menubarTopBox.setVisible(false);
+            menubarTopBox.setManaged(false);
+        }
     }
 
     @FXML
     private void toggleTheme() {
 	useLightTheme = !useLightTheme;
 	if(useLightTheme)
-	    Application.setUserAgentStylesheet(new NordLight().getUserAgentStylesheet());
+	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 	else
-	    Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
+	    Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+	PreferenceUtil.setUseLightTheme(useLightTheme);
     }
 
     @FXML
@@ -104,7 +117,7 @@ public class EditorController {
 		logger.error("failed to save file '{}' reason: {}", buffer.getKey(), e.getMessage());
 	    }
 	});
-	logger.trace("save complete");
+	Toast.success("save complete");
     }
 
     @FXML
@@ -134,6 +147,20 @@ public class EditorController {
     @FXML
     private void featureHolder() {
 	filePaneController.toggle();
+    }
+
+    // TODO: Move into general utilities library
+    private boolean isSystemMenuBarSupported() {
+	var os = System.getProperty("os.name").toLowerCase();
+	var platform = System.getProperty("javafx.platform");
+	if(os.contains("win"))
+	    return true;
+	if(os.contains("mac"))
+	    return true;
+	if(os.contains("nix") || os.contains("nux"))
+	    if(platform != null && platform.equals("gtk"))
+		return true;
+	return false;
     }
 }
 
