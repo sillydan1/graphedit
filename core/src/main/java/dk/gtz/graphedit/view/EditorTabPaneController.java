@@ -33,9 +33,6 @@ public class EditorTabPaneController {
 	// TODO: This behavior makes it impossible to drag detached tabs into the main window when empty... I will fix this later
         root.alignmentProperty().bind( Bindings.when( bb ).then( Pos.CENTER ).otherwise( Pos.TOP_LEFT ) );
     }
-
-    private void loadModelEditor() throws Exception {
-    }
     
     private void initTabpaneBufferContainer() {
 	DI.get(IBufferContainer.class).getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {

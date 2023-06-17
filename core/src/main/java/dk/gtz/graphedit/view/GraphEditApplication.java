@@ -1,13 +1,11 @@
 package dk.gtz.graphedit.view;
 
 import java.io.File;
-import java.util.prefs.Preferences;
 
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
-import atlantafx.base.theme.NordDark;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
@@ -17,6 +15,10 @@ import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.tool.SelectTool;
+import dk.gtz.graphedit.tool.Toolbox;
+import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.StackUndoSystem;
 import dk.gtz.graphedit.view.util.PreferenceUtil;
@@ -36,6 +38,7 @@ public class GraphEditApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 	setupApplication();
+	setupToolbox();
 	setupPreferences();
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
 	primaryStage.setScene(loadMainScene());
@@ -55,6 +58,13 @@ public class GraphEditApplication extends Application {
 	var mapper = ((JacksonModelSerializer)DI.get(IModelSerializer.class)).getMapper();
 	var project = mapper.readValue(new File(projectDirectory), ModelProject.class);
 	DI.add(ViewModelProject.class, new ViewModelProject(project));
+    }
+
+    private void setupToolbox() {
+	logger.trace("loading tools");
+	var toolbox = new Toolbox("", new ViewTool());
+	toolbox.addDefaultTool(new SelectTool());
+	DI.add(IToolbox.class, toolbox); 
     }
 
     private void setupPreferences() {

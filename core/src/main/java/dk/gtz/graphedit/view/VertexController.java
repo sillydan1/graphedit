@@ -2,12 +2,14 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
+import dk.gtz.graphedit.tool.ITool;
+import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -22,18 +24,18 @@ public class VertexController extends StackPane {
     private final ViewModelVertex vertexValue;
     private final Affine viewportAffine;
 
-    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine) {
+    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ObjectProperty<ITool> selectedTool) {
 	this.vertexKey = vertexKey;
 	this.vertexValue = vertex;
 	this.viewportAffine = viewportAffine;
-	initialize();
+	initialize(selectedTool);
     }
 
-    private void initialize() {
+    private void initialize(ObjectProperty<ITool> selectedTool) {
 	getChildren().add(initializeVertexRepresentation());
 	getChildren().add(initializeLabel());
 	initializeStyle();
-	initializeInteractionEvents();
+	initializeVertexEventHandlers(selectedTool);
     }
 
     private Circle initializeVertexRepresentation() {
@@ -92,8 +94,8 @@ public class VertexController extends StackPane {
 	return new Timeline(kx1, ky1, kx2, ky2);
     }
 
-    private void initializeInteractionEvents() {
-	DragUtil.makeDraggable(this, vertexValue.position(), viewportAffine);
+    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool) {
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexValue, viewportAffine)));
     }
 }
 

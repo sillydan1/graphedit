@@ -5,29 +5,37 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.tool.ITool;
+import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 
 public class EdgeController extends Group {
     private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
     private final UUID edgeKey;
     private final ViewModelEdge edgeValue;
+    private final Affine viewportAffine;
 
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource) {
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ObjectProperty<ITool> selectedTool) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
-	initialize(resource);
+	this.viewportAffine = viewportAffine;
+	initialize(resource, selectedTool);
     }
 
-    private void initialize(ViewModelProjectResource resource) {
+    private void initialize(ViewModelProjectResource resource, ObjectProperty<ITool> selectedTool) {
 	var line = initializeLinePresentation(resource);
 	getChildren().addAll(line, initializeLeftArrow(line), initializeRightArrow(line));
+	initializeEdgeEventHandlers(selectedTool);
     }
 
     private Line initializeLinePresentation(ViewModelProjectResource resource) {
@@ -74,6 +82,10 @@ public class EdgeController extends Group {
 	rotate.pivotYProperty().bind(pivotY);
 	rotate.angleProperty().bind(BindingsUtil.createRotationAtLineEndBinding(line));
 	nodeToTransform.getTransforms().add(rotate);
+    }
+
+    private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeValue, viewportAffine)));
     }
 }
 
