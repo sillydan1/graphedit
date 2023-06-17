@@ -12,6 +12,7 @@
             <Menu text="file">
                 <MenuItem text="Open Project"/>
                 <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
+                <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
             </Menu>
             <Menu text="edit">
                 <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>

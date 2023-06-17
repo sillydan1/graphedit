@@ -47,16 +47,17 @@ public class FileBufferContainer implements IBufferContainer {
     @Override
     public void open(String filename) {
         try {
-            if(openBuffers.containsKey(filename))
+            var f = new File(filename);
+            var fp = f.getAbsolutePath();
+            if(openBuffers.containsKey(fp))
                 return; // TODO: trigger a file focus event (focus feature not implemented yet)
             var b = new StringBuilder();
-            var f = new File(filename);
             var s = new Scanner(f);
             while(s.hasNextLine())
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserialize(b.toString());
-            open(filename, new ViewModelProjectResource(newModel));
+            open(fp, new ViewModelProjectResource(newModel));
         } catch (SerializationException | FileNotFoundException e) {
             logger.error(e.getMessage());
         }
