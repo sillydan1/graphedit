@@ -64,7 +64,7 @@ public final class Toast {
 	notification.setOnMouseEntered(e -> timeline.pause());
 	notification.setOnMouseExited(e -> timeline.playFromStart());
 	toaster.getChildren().add(notification);
-    	Animations.fadeInDown(notification, Duration.millis(250)).playFromStart();
+    	Animations.fadeIn(notification, Duration.millis(250)).playFromStart();
     }
 }
 
