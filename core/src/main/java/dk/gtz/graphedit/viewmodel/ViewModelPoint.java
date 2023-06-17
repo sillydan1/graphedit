@@ -32,5 +32,9 @@ public class ViewModelPoint {
     public DoubleProperty getYProperty() {
         return y;
     }
+
+    public ModelPoint toModel() {
+        return new ModelPoint(getX(), getY());
+    }
 }
 

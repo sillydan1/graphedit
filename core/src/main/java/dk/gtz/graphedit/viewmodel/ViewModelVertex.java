@@ -6,5 +6,9 @@ public record ViewModelVertex(ViewModelPoint position, ViewModelVertexShape shap
     public ViewModelVertex(ModelVertex vertex) {
         this(new ViewModelPoint(vertex.position()), new ViewModelVertexShape());
     }
+
+    public ModelVertex toModel() {
+        return new ModelVertex(position.toModel());
+    }
 }
 

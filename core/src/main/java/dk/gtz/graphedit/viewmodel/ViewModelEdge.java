@@ -9,5 +9,9 @@ public record ViewModelEdge(SimpleObjectProperty<UUID> source, SimpleObjectPrope
     public ViewModelEdge(ModelEdge edge) {
         this(new SimpleObjectProperty<>(edge.source()), new SimpleObjectProperty<>(edge.target()));
     }
+
+    public ModelEdge toModel() {
+        return new ModelEdge(source.get(), target.get());
+    }
 }
 
