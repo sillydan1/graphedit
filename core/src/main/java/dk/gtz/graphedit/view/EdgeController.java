@@ -5,11 +5,16 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
+import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
+import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
@@ -20,35 +25,52 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 
 public class EdgeController extends Group {
+    private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
     private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
+    private final MouseTracker tracker;
     private final UUID edgeKey;
     private final ViewModelEdge edgeValue;
+    private final ViewModelProjectResource resource;
     private final Affine viewportAffine;
+    private final Line line;
 
     public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ObjectProperty<ITool> selectedTool) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
-	initialize(resource, selectedTool);
+	this.tracker = DI.get(MouseTracker.class);
+	this.resource = resource;
+	this.line = initialize(selectedTool);
     }
 
-    private void initialize(ViewModelProjectResource resource, ObjectProperty<ITool> selectedTool) {
-	var line = initializeLinePresentation(resource);
+    private Line initialize(ObjectProperty<ITool> selectedTool) {
+	var line = initializeLinePresentation();
 	getChildren().addAll(line, initializeLeftArrow(line), initializeRightArrow(line));
 	initializeEdgeEventHandlers(selectedTool);
+	initializeBindPointChangeHandlers();
+	return line;
     }
 
-    private Line initializeLinePresentation(ViewModelProjectResource resource) {
+    private PointShape getPointShape(UUID lookupId) {
+	if(lookupId.equals(tracker.getTrackerUUID()))
+	    return new PointShape(new ViewModelPoint(
+			// TODO: This subtract and divide stuff should be extracted into BindingsUtil
+			Bindings.createDoubleBinding(() -> tracker.getXProperty().subtract(viewportAffine.getTx()).divide(viewportAffine.getMxx()).get(), tracker.getXProperty()),
+			Bindings.createDoubleBinding(() -> tracker.getYProperty().subtract(viewportAffine.getTy()).divide(viewportAffine.getMyy()).get(), tracker.getYProperty())),
+		    new ViewModelVertexShape(1,1,10,10,ViewModelShapeType.OVAL));
+	var sourceVertex = resource.syntax().vertices().getValue().get(lookupId);
+	return new PointShape(sourceVertex.position(), sourceVertex.shape());
+    }
+
+    private Line initializeLinePresentation() {
 	var edgePresentation = new Line();
 	edgePresentation.getStyleClass().add("stroke-primary");
-	var sourceVertex = resource.syntax().vertices().getValue().get(edgeValue.source().getValue());
-	var targetVertex = resource.syntax().vertices().getValue().get(edgeValue.target().getValue());
-	var sourcePosition = sourceVertex.position();
-	var targetPosition = targetVertex.position();
-	edgePresentation.startXProperty().bind(BindingsUtil.createOvalXBinding(targetPosition, sourcePosition, sourceVertex.shape()));
-	edgePresentation.startYProperty().bind(BindingsUtil.createOvalYBinding(targetPosition, sourcePosition, sourceVertex.shape()));
-	edgePresentation.endXProperty().bind(BindingsUtil.createOvalXBinding(sourcePosition, targetPosition, targetVertex.shape()));
-	edgePresentation.endYProperty().bind(BindingsUtil.createOvalYBinding(sourcePosition, targetPosition, targetVertex.shape()));
+	var source = getPointShape(edgeValue.source().get());
+	var target = getPointShape(edgeValue.target().get());
+	edgePresentation.startXProperty().bind(BindingsUtil.createOvalXBinding(target.point(), source.point(), source.shape()));
+	edgePresentation.startYProperty().bind(BindingsUtil.createOvalYBinding(target.point(), source.point(), source.shape()));
+	edgePresentation.endXProperty().bind(BindingsUtil.createOvalXBinding(source.point(), target.point(), target.shape()));
+	edgePresentation.endYProperty().bind(BindingsUtil.createOvalYBinding(source.point(), target.point(), target.shape()));
 	return edgePresentation;
     }
 
@@ -86,6 +108,28 @@ public class EdgeController extends Group {
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeValue, viewportAffine)));
+    }
+
+    private void initializeBindPointChangeHandlers() {
+	edgeValue.source().addListener((e,o,n) -> onChangeSourceBindPoint(n));
+	edgeValue.target().addListener((e,o,n) -> onChangeTargetBindPoint(n));
+    }
+
+    private void onChangeSourceBindPoint(UUID newSource) {
+	changeTargetBindPoints(newSource, edgeValue.target().get());
+    }
+
+    private void onChangeTargetBindPoint(UUID newTarget) {
+	changeTargetBindPoints(edgeValue.source().get(), newTarget);
+    }
+
+    private void changeTargetBindPoints(UUID sourceId, UUID targetId) {
+	var source = getPointShape(sourceId);
+	var target = getPointShape(targetId);
+	line.startXProperty().bind(BindingsUtil.createOvalXBinding(target.point(), source.point(), source.shape()));
+	line.startYProperty().bind(BindingsUtil.createOvalYBinding(target.point(), source.point(), source.shape()));
+	line.endXProperty().bind(BindingsUtil.createOvalXBinding(source.point(), target.point(), target.shape()));
+	line.endYProperty().bind(BindingsUtil.createOvalYBinding(source.point(), target.point(), target.shape()));
     }
 }
 

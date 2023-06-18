@@ -1,7 +1,7 @@
 package dk.gtz.graphedit.view;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
@@ -10,14 +10,17 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.view.events.ViewportKeyEvent;
+import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Group;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
@@ -31,7 +34,7 @@ public class ModelEditorController extends BorderPane {
     private final ViewModelProjectResource resource;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
-    private Group drawGroup;
+    private MapGroup<UUID> drawGroup;
     private Affine drawGroupTransform;
     private ObjectProperty<ITool> selectedTool;
 
@@ -46,8 +49,8 @@ public class ModelEditorController extends BorderPane {
 	initializeToolbar();
 	initializeDrawGroup();
 	initializeToolEventHandlers();
-	// TODO: Subscribe to changes in syntax().vertices map
-	// TODO: Subscribe to changes in syntax().edges map
+	initializeVertexCollectionChangeHandlers();
+	initializeEdgeCollectionChangeHandlers();
     }
 
     private void initializeViewport() {
@@ -64,14 +67,14 @@ public class ModelEditorController extends BorderPane {
     }
 
     private void initializeDrawGroup() {
-	drawGroup = new Group();
+	drawGroup = new MapGroup<>();
 	drawGroupTransform = new Affine();
-	drawGroup.getChildren().addAll(initializeEdges());
-	drawGroup.getChildren().addAll(initializeLocations());
+	drawGroup.addChildren(initializeEdges());
+	drawGroup.addChildren(initializeLocations());
 	drawGroup.getTransforms().add(drawGroupTransform);
 	// TODO: move this into a seperate controller/fxml thingy
 
-	var drawPane = new Pane(drawGroup);
+	var drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
 	drawPane.prefWidthProperty().bind(widthProperty());
@@ -96,22 +99,49 @@ public class ModelEditorController extends BorderPane {
 	drawGroupTransform.appendScale(event.getZoomFactor(), event.getZoomFactor(), adjustedCenterX, adjustedCenterY);
     }
 
-    private List<Node> initializeLocations() {
-	var nodes = new ArrayList<Node>();
+    private Map<UUID,Node> initializeLocations() {
+	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet())
-	    nodes.add(new VertexController(vertex.getKey(), vertex.getValue(), drawGroupTransform, selectedTool));
+	    nodes.put(vertex.getKey(), createVertex(vertex.getKey(), vertex.getValue()));
 	return nodes;
     }
 
-    private List<Node> initializeEdges() {
-	var nodes = new ArrayList<Node>();
+    private Node createVertex(UUID vertexKey, ViewModelVertex vertexValue) {
+	return new VertexController(vertexKey, vertexValue, drawGroupTransform, resource.syntax(), selectedTool); // TODO: Should be an injectable factory pattern, so people can customize this
+    }
+
+    private Map<UUID,Node> initializeEdges() {
+	var nodes = new HashMap<UUID,Node>();
 	for(var edge : resource.syntax().edges().entrySet())
-	    nodes.add(new EdgeController(edge.getKey(), edge.getValue(), resource, drawGroupTransform, selectedTool));
+	    nodes.put(edge.getKey(), createEdge(edge.getKey(), edge.getValue()));
 	return nodes;
+    }
+
+    private Node createEdge(UUID edgeKey, ViewModelEdge edgeValue) {
+	return new EdgeController(edgeKey, edgeValue, resource, drawGroupTransform, selectedTool);
     }
 
     private void initializeToolEventHandlers() {
-	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(e));
+	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, resource.syntax())));
+	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> selectedTool.get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax()))));
+    }
+
+    private void initializeVertexCollectionChangeHandlers() {
+	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
+	    if(c.wasAdded())
+		drawGroup.addChild(c.getKey(), createVertex(c.getKey(), c.getValueAdded()));
+	    if(c.wasRemoved())
+		drawGroup.removeChild(c.getKey());
+	});
+    }
+
+    private void initializeEdgeCollectionChangeHandlers() {
+	resource.syntax().edges().addListener((MapChangeListener<UUID,ViewModelEdge>)c -> {
+	    if(c.wasAdded())
+		drawGroup.addChild(c.getKey(), createEdge(c.getKey(), c.getValueAdded()));
+	    if(c.wasRemoved())
+		drawGroup.removeChild(c.getKey());
+	});
     }
 }
 

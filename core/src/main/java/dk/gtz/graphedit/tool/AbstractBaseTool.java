@@ -4,7 +4,8 @@ import java.util.Optional;
 
 import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import javafx.scene.input.MouseEvent;
+import dk.gtz.graphedit.view.events.ViewportKeyEvent;
+import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 
 public abstract class AbstractBaseTool implements ITool {
     @Override
@@ -13,12 +14,15 @@ public abstract class AbstractBaseTool implements ITool {
     }
 
     @Override
-    public void onViewportMouseEvent(MouseEvent e) {}
+    public void onViewportMouseEvent(ViewportMouseEvent e) {}
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {}
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {}
+
+    @Override
+    public void onKeyEvent(ViewportKeyEvent e) {}
 }
 

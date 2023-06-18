@@ -7,7 +7,11 @@ import javafx.beans.property.SimpleObjectProperty;
 
 public record ViewModelEdge(SimpleObjectProperty<UUID> source, SimpleObjectProperty<UUID> target) {
     public ViewModelEdge(ModelEdge edge) {
-        this(new SimpleObjectProperty<>(edge.source()), new SimpleObjectProperty<>(edge.target()));
+        this(edge.source(), edge.target());
+    }
+    
+    public ViewModelEdge(UUID source, UUID target) {
+        this(new SimpleObjectProperty<>(source), new SimpleObjectProperty<>(target));
     }
 
     public ModelEdge toModel() {

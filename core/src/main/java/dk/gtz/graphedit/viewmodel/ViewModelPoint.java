@@ -1,6 +1,7 @@
 package dk.gtz.graphedit.viewmodel;
 
 import dk.gtz.graphedit.model.ModelPoint;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
@@ -15,6 +16,17 @@ public class ViewModelPoint {
     public ViewModelPoint(double x, double y) {
         this.x = new SimpleDoubleProperty(x);
         this.y = new SimpleDoubleProperty(y);
+    }
+
+    public ViewModelPoint(DoubleProperty x, DoubleProperty y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public ViewModelPoint(DoubleBinding x, DoubleBinding y) {
+        this(x.get(), y.get());
+        this.x.bind(x);
+        this.y.bind(y);
     }
 
     public double getX() {

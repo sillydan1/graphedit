@@ -15,6 +15,7 @@ import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
@@ -37,13 +38,11 @@ public class GraphEditApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	setupApplication();
 	setupToolbox();
 	setupPreferences();
-	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
-	primaryStage.setScene(loadMainScene());
-	primaryStage.show();
-	DI.add(MouseTracker.class, new MouseTracker(primaryStage));
+	setupStage(primaryStage);
 	setupLogging();
     }
 
@@ -61,10 +60,12 @@ public class GraphEditApplication extends Application {
     }
 
     private void setupToolbox() {
-	logger.trace("loading tools");
-	var toolbox = new Toolbox("", new ViewTool());
-	toolbox.addDefaultTool(new SelectTool());
-	DI.add(IToolbox.class, toolbox); 
+	DI.add(IToolbox.class, () -> {
+	    var toolbox = new Toolbox("", new ViewTool());
+	    toolbox.addDefaultTool(new SelectTool());
+	    toolbox.add(new EdgeCreateTool());
+	    return toolbox;
+	}); 
     }
 
     private void setupPreferences() {
@@ -73,6 +74,12 @@ public class GraphEditApplication extends Application {
 	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 	else
 	    Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+    }
+
+    private void setupStage(Stage primaryStage) throws Exception {
+	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	primaryStage.setScene(loadMainScene());
+	primaryStage.show();
     }
 
     private void setupLogging() {

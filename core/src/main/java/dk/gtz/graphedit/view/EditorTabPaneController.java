@@ -18,7 +18,6 @@ public class EditorTabPaneController {
     public Text placeholder;
     @FXML
     public VBox root;
-    private VBox editor;
 
     @FXML
     private void initialize() {
@@ -28,10 +27,10 @@ public class EditorTabPaneController {
 
     private void initPlaceholderText() {
         var bb = Bindings.isEmpty(tabpane.getTabs());
-        placeholder.visibleProperty().bind( bb );
-        placeholder.managedProperty().bind( bb );
-	// TODO: This behavior makes it impossible to drag detached tabs into the main window when empty... I will fix this later
-        root.alignmentProperty().bind( Bindings.when( bb ).then( Pos.CENTER ).otherwise( Pos.TOP_LEFT ) );
+        placeholder.visibleProperty().bind(bb);
+        placeholder.managedProperty().bind(bb);
+	// TODO: This behavior makes it impossible to drag detached tabs into the main window when empty
+        root.alignmentProperty().bind(Bindings.when(bb).then(Pos.CENTER).otherwise(Pos.TOP_LEFT));
     }
     
     private void initTabpaneBufferContainer() {
