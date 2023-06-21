@@ -107,7 +107,7 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeValue, viewportAffine)));
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax())));
     }
 
     private void initializeBindPointChangeHandlers() {

@@ -16,6 +16,7 @@ import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
+import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
@@ -65,6 +66,7 @@ public class GraphEditApplication extends Application {
 	    var toolbox = new Toolbox("", new ViewTool());
 	    toolbox.addDefaultTool(new SelectTool());
 	    toolbox.add(new EdgeCreateTool());
+	    toolbox.add(new EdgeDeleteTool());
 	    toolbox.add(new VertexCreateTool());
 	    return toolbox;
 	}); 
