@@ -15,7 +15,6 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelGraph;
-import dk.gtz.graphedit.model.ModelPoint;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
@@ -64,20 +63,7 @@ public class EditorController {
     @FXML
     private void addPlaceholderTab() throws Exception {
 	var exampleVertices = new HashMap<UUID,ModelVertex>();
-	var vert1 = UUID.randomUUID();
-	exampleVertices.put(vert1, new ModelVertex(new ModelPoint(0, 0)));
-	var vert2 = UUID.randomUUID();
-	exampleVertices.put(vert2, new ModelVertex(new ModelPoint(-343, -550)));
-	var vert3 = UUID.randomUUID();
-	exampleVertices.put(vert3, new ModelVertex(new ModelPoint(343, 550)));
-	var vert4 = UUID.randomUUID();
-	exampleVertices.put(vert4, new ModelVertex(new ModelPoint(500, 50)));
-
 	var exampleEdges = new HashMap<UUID,ModelEdge>();
-	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert1, vert2));
-	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert2, vert3));
-	exampleEdges.put(UUID.randomUUID(), new ModelEdge(vert3, vert4));
-
 	var filePath = "/tmp/graphedit/%s.json".formatted(UUID.randomUUID().toString());
 	DI.get(IBufferContainer.class).open(
 		filePath,

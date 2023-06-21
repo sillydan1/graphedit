@@ -1,5 +1,10 @@
 package dk.gtz.graphedit.tool;
 
+import java.util.Optional;
+
+import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
+import org.kordamp.ikonli.javafx.FontIcon;
+
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
@@ -8,9 +13,10 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public abstract class AbstractVertexDragMoveTool extends AbstractBaseTool {
+public class VertexDragMoveTool extends AbstractBaseTool {
     private final DoubleProperty oldX = new SimpleDoubleProperty();
     private final DoubleProperty oldY = new SimpleDoubleProperty();
     private final DoubleProperty oldPointX = new SimpleDoubleProperty();
@@ -19,8 +25,18 @@ public abstract class AbstractVertexDragMoveTool extends AbstractBaseTool {
     private final ObjectProperty<Runnable> redoAction = new SimpleObjectProperty<>(null);
     private final IUndoSystem undoSystem;
 
-    public AbstractVertexDragMoveTool() {
+    public VertexDragMoveTool() {
         undoSystem = DI.get(IUndoSystem.class);
+    }
+
+    @Override
+    public Optional<String> getTooltip() {
+        return Optional.of("edit the position of vertices");
+    }
+
+    @Override
+    public Node getGraphic() {
+        return new FontIcon(BootstrapIcons.ARROWS_MOVE);
     }
 
     @Override

@@ -21,7 +21,7 @@ import javafx.scene.input.MouseEvent;
 
 public class VertexCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(VertexCreateTool.class);
-    private IUndoSystem undoSystem;
+    private final IUndoSystem undoSystem;
 
     public VertexCreateTool() {
         this.undoSystem = DI.get(IUndoSystem.class);
@@ -32,15 +32,18 @@ public class VertexCreateTool extends AbstractBaseTool {
         return Optional.of("Create new vertex");
     }
 
-	@Override
-	public Node getGraphic() {
+    @Override
+    public Node getGraphic() {
         return new FontIcon(BootstrapIcons.PLUS_CIRCLE);
-	}
+    }
 
     @Override
     public void onViewportMouseEvent(ViewportMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
-            create(new ViewModelPoint(e.event().getX(), e.event().getY()), e.graph());
+            create(new ViewModelPoint(
+                        (e.event().getX() - e.viewportAffine().getTx()) / e.viewportAffine().getMxx(),
+                        (e.event().getY() - e.viewportAffine().getTy()) / e.viewportAffine().getMyy()),
+                    e.graph());
     }
 
     public void create(ViewModelPoint point, ViewModelGraph graph) {

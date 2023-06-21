@@ -5,23 +5,20 @@ import java.util.Optional;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import javafx.scene.Node;
 
+/**
+ * The simplest tool. You can only view the model 
+ */
 public class ViewTool extends AbstractBaseTool {
-	@Override
-	public Optional<String> getTooltip() {
-        return Optional.of("View the model");
-	}
-
-	@Override
-	public Node getGraphic() {
-        return new FontIcon(BootstrapIcons.EYE);
-	}
+    @Override
+    public Optional<String> getTooltip() {
+	return Optional.of("view the model");
+    }
 
     @Override
-    public void onVertexMouseEvent(VertexMouseEvent e) {
-        // do nothing. we can only view
+    public Node getGraphic() {
+	return new FontIcon(BootstrapIcons.EYE);
     }
 }
 
