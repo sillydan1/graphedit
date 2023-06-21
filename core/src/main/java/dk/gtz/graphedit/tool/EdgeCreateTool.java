@@ -47,7 +47,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) { // TODO: Tools should also get keyboard events (e.g. esc for cancel)
         if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-            if(currentEdge.isEmpty()) {
+            if(!isCurrentlyCreatingEdge()) {
                 create(e.vertexId(), e.graph());
                 return;
             }
@@ -59,7 +59,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
         }
 
         if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-            if(currentEdge.isEmpty())
+            if(!isCurrentlyCreatingEdge())
                 return;
             if(e.vertexId().equals(currentEdge.get().source().get()))
                 return;
@@ -81,12 +81,16 @@ public class EdgeCreateTool extends AbstractBaseTool {
                 cancel(e.graph());
     }
 
-    private void cancel(ViewModelGraph graph) {
+    public boolean isCurrentlyCreatingEdge() {
+        return currentEdge.isPresent();
+    }
+
+    public void cancel(ViewModelGraph graph) {
         graph.edges().remove(currenEdgeId.get());
         clear();
     }
 
-    private void release(UUID releaseTarget, ViewModelGraph graph) {
+    public void release(UUID releaseTarget, ViewModelGraph graph) {
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
@@ -96,7 +100,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
         clear();
     }
 
-    private void create(UUID sourceTarget, ViewModelGraph graph) {
+    public void create(UUID sourceTarget, ViewModelGraph graph) {
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
         currentEdge = Optional.of(new ViewModelEdge(sourceTarget, tracker.getTrackerUUID())); // TODO: Creation should be done by a factory

@@ -43,7 +43,7 @@ public class VertexCreateTool extends AbstractBaseTool {
             create(new ViewModelPoint(e.event().getX(), e.event().getY()), e.graph());
     }
 
-    private void create(ViewModelPoint point, ViewModelGraph graph) {
+    public void create(ViewModelPoint point, ViewModelGraph graph) {
         var vertex = new ViewModelVertex(point, new ViewModelVertexShape());
         var id = UUID.randomUUID();
         graph.vertices().put(id, vertex);
