@@ -21,6 +21,7 @@ import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
 import dk.gtz.graphedit.tool.VertexCreateTool;
+import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.StackUndoSystem;
@@ -68,6 +69,7 @@ public class GraphEditApplication extends Application {
 	    toolbox.add(new EdgeCreateTool());
 	    toolbox.add(new EdgeDeleteTool());
 	    toolbox.add(new VertexCreateTool());
+	    toolbox.add(new VertexDeleteTool());
 	    return toolbox;
 	}); 
     }
