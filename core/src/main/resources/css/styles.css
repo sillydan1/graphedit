@@ -14,6 +14,10 @@
     -fx-color: -color-accent-emphasis;
 }
 
+.vertex-node-selected {
+    -fx-stroke: -color-warning-emphasis;
+}
+
 .grid-bg {
     -fx-background-color: -color-bg-default,
         linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, -color-accent-fg 5%, transparent 5%),
@@ -22,5 +26,9 @@
 
 .stroke-primary {
     -fx-stroke: -color-accent-fg;
+}
+
+.stroke-primary-selected {
+    -fx-stroke: -color-warning-emphasis;
 }
 

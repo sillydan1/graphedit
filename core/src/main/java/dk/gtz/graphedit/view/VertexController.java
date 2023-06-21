@@ -2,6 +2,9 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
@@ -21,9 +24,11 @@ import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
 public class VertexController extends StackPane {
+    private final Logger logger = LoggerFactory.getLogger(VertexController.class);
     private final UUID vertexKey;
     private final ViewModelVertex vertexValue;
     private final Affine viewportAffine;
+    private Circle circle;
 
     public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ObjectProperty<ITool> selectedTool) {
 	this.vertexKey = vertexKey;
@@ -41,7 +46,7 @@ public class VertexController extends StackPane {
 
     private Circle initializeVertexRepresentation() {
 	var diameter = 20.0;
-	var circle = new Circle(diameter);
+	circle = new Circle(diameter);
 	vertexValue.shape().widthProperty().set(diameter);
 	vertexValue.shape().heightProperty().set(diameter);
 	circle.strokeTypeProperty().set(StrokeType.INSIDE);
@@ -97,6 +102,12 @@ public class VertexController extends StackPane {
 
     private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph) {
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, graph)));
+	vertexValue.getIsSelected().addListener((e,o,n) -> {
+	    if(n)
+		circle.getStyleClass().add("vertex-node-selected");
+	    else
+		circle.getStyleClass().remove("vertex-node-selected");
+	});
     }
 }
 

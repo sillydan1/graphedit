@@ -7,6 +7,7 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
+import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
@@ -28,14 +29,15 @@ public class EdgeDeleteTool extends AbstractBaseTool {
         return Optional.of("delete an edge from the graph");
     }
 
-	@Override
-	public Node getGraphic() {
+    @Override
+    public Node getGraphic() {
         var outerIcon = new FontIcon(BootstrapIcons.X);
+        outerIcon.getStyleClass().add(Styles.DANGER);
         var innerIcon = new FontIcon(BootstrapIcons.ARROW_DOWN_RIGHT_CIRCLE);
         var icon = new StackedFontIcon();
         icon.getChildren().addAll(innerIcon, outerIcon);
         return icon;
-	}
+    }
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {

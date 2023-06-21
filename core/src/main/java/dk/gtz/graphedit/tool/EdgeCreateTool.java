@@ -86,6 +86,8 @@ public class EdgeCreateTool extends AbstractBaseTool {
     }
 
     public void cancel(ViewModelGraph graph) {
+        if(currenEdgeId.isEmpty())
+            return;
         graph.edges().remove(currenEdgeId.get());
         clear();
     }

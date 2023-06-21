@@ -38,7 +38,7 @@
         <fx:include source="EditorTabPane.fxml"/>
     </center>
     <right>
-        <Label text="Hello World"/>
+        <fx:include source="Inspector.fxml"/> 
     </right>
     <bottom>
         <Label text="Hello World"/>

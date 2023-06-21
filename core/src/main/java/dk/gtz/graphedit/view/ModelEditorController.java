@@ -81,8 +81,7 @@ public class ModelEditorController extends BorderPane {
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	var gridPane = new GridPane(20.0); // TODO: gridsize should be adjustable
-	gridPane.onChange(drawGroupTransform);
+	var gridPane = new GridPane(20.0, drawGroupTransform); // TODO: gridsize should be adjustable
 	viewport.getChildren().add(gridPane);
 	gridPane.toBack();
     }

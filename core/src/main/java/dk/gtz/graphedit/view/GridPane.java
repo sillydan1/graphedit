@@ -13,11 +13,11 @@ public class GridPane extends Pane {
     private double gridscaleX;
     private double gridscaleY;
 
-    public GridPane(double gridsize) {
-	this(gridsize, gridsize);
+    public GridPane(double gridsize, Affine transform) {
+	this(gridsize, gridsize, transform);
     }
 
-    public GridPane(double gridsizeX, double gridsizeY) {
+    public GridPane(double gridsizeX, double gridsizeY, Affine transform) {
 	super();
 	this.gridsizeX = gridsizeX;
 	this.gridsizeY = gridsizeY;
@@ -25,6 +25,7 @@ public class GridPane extends Pane {
 	this.offsetY = 0.0;
 	this.gridscaleX = 1.0;
 	this.gridscaleY = 1.0;
+	initializeTransformEventHandler(transform);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class GridPane extends Pane {
 	}
     }
 
-    public void onChange(Affine newTransform) {
+    private void initializeTransformEventHandler(Affine newTransform) {
 	newTransform.addEventHandler(TransformChangedEvent.TRANSFORM_CHANGED, (e) -> {
 	    gridscaleX = newTransform.getMxx();
 	    gridscaleY = newTransform.getMyy();

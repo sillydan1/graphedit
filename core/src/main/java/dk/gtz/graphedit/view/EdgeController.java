@@ -108,6 +108,12 @@ public class EdgeController extends Group {
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax())));
+	edgeValue.getIsSelected().addListener((e,o,n) -> {
+	    if(n)
+		line.getStyleClass().add("stroke-primary-selected");
+	    else
+		line.getStyleClass().remove("stroke-primary-selected");
+	});
     }
 
     private void initializeBindPointChangeHandlers() {

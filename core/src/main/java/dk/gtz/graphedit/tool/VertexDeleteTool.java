@@ -8,6 +8,7 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
+import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
@@ -29,14 +30,15 @@ public class VertexDeleteTool extends AbstractBaseTool {
         return Optional.of("delete vertex from the graph");
     }
 
-	@Override
-	public Node getGraphic() {
+    @Override
+    public Node getGraphic() {
         var outerIcon = new FontIcon(BootstrapIcons.X);
+        outerIcon.getStyleClass().add(Styles.DANGER);
         var innerIcon = new FontIcon(BootstrapIcons.PLUS_CIRCLE);
         var icon = new StackedFontIcon();
         icon.getChildren().addAll(innerIcon, outerIcon);
         return icon;
-	}
+    }
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {

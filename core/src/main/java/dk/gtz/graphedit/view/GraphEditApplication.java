@@ -29,8 +29,11 @@ import dk.gtz.graphedit.undo.StackUndoSystem;
 import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -54,6 +57,8 @@ public class GraphEditApplication extends Application {
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
+	DI.add("selectedElements", selectedElementsList);
 
 	// TODO: add a project-picker preloader with a list of recent projects and a "just open my most recent thing"-toggle
 	var projectDirectory = System.getProperty("user.dir") + File.separator + "project.json";
@@ -65,13 +70,14 @@ public class GraphEditApplication extends Application {
 
     private void setupToolbox() {
 	DI.add(IToolbox.class, () -> {
-	    var toolbox = new Toolbox("", new ViewTool());
-	    toolbox.addDefaultTool(new VertexDragMoveTool());
-	    toolbox.add(new SelectTool());
-	    toolbox.add(new EdgeCreateTool());
-	    toolbox.add(new EdgeDeleteTool());
-	    toolbox.add(new VertexCreateTool());
-	    toolbox.add(new VertexDeleteTool());
+	    var toolbox = new Toolbox("inspect", new ViewTool());
+	    toolbox.addDefaultTool(new SelectTool());
+	    toolbox.add("edit",
+		    new VertexDragMoveTool(),
+		    new EdgeCreateTool(),
+		    new EdgeDeleteTool(),
+		    new VertexCreateTool(),
+		    new VertexDeleteTool());
 	    return toolbox;
 	}); 
     }
@@ -95,6 +101,7 @@ public class GraphEditApplication extends Application {
 	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
 	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
 	EditorLogAppender.subscribe(Level.INFO, Toast::info);
+	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
     }
 
     @Override
