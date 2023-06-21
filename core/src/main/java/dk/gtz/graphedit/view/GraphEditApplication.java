@@ -19,6 +19,7 @@ import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
+import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.StackUndoSystem;
@@ -64,6 +65,7 @@ public class GraphEditApplication extends Application {
 	    var toolbox = new Toolbox("", new ViewTool());
 	    toolbox.addDefaultTool(new SelectTool());
 	    toolbox.add(new EdgeCreateTool());
+	    toolbox.add(new VertexCreateTool());
 	    return toolbox;
 	}); 
     }
