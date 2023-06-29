@@ -20,7 +20,7 @@ Includes all the core functionality for GraphEdit...
    - [x] Tab pane
    - [x] project file explorer
    - [x] graph editor / viewer
-   - [ ] Toolbar
+   - [x] Toolbar
    - [ ] properties / queries pane
    - [ ] Log viewer
    - [ ] Preloader

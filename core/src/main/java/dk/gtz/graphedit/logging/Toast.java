@@ -41,8 +41,6 @@ public final class Toast {
     }
 
     private static void notify(String msg, FontIcon icon, Duration showDuration, String... styles) {
-	// NOTE: It is important to not use logger.info/warn/error here - since you'd get an infinite loop then
-	logger.trace(msg);
 	var notification = new Notification(msg, icon);
 	notification.getStyleClass().add(Styles.ELEVATED_1);
 	notification.getStyleClass().addAll(styles);

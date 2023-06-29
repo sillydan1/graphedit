@@ -82,19 +82,19 @@ public class InspectorController {
     }
 
     private Node getPropertyInspector(ObjectProperty property) {
-	return new Label("unsupported type");
+	return new Label("unsupported type"); // TODO: Implement this
     }
 
     private Node getPropertyInspector(MapProperty property) {
-	return new Label("unsupported type");
+	return new Label("unsupported type"); // TODO: Implement this
     }
 
     private Node getPropertyInspector(ListProperty property) {
-	return new Label("unsupported type");
+	return new Label("unsupported type"); // TODO: Implement this
     }
 
     private Node getPropertyInspector(SetProperty property) {
-	return new Label("unsupported type");
+	return new Label("unsupported type"); // TODO: Implement this
     }
 
     private Node getPropertyInspector(StringProperty property) {

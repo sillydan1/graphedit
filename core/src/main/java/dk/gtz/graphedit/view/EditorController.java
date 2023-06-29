@@ -115,13 +115,13 @@ public class EditorController {
     @FXML
     private void toastTest() throws Exception {
 	if(toastTestCounter == 0)
-	    Toast.info("Hello World!");
+	    logger.info("Hello World! [Lars](not valid)");
 	if(toastTestCounter == 1)
 	    Toast.success("Hello World!");
 	if(toastTestCounter == 2)
-	    Toast.warn("Hello World!");
+	    logger.warn("Hello World! [Lars]("+UUID.randomUUID().toString()+") dhwjka");
 	if(toastTestCounter == 3)
-	    Toast.error("Hello World!");
+	    logger.error("Hello World!");
 	toastTestCounter = (toastTestCounter + 1) % 4;
     }
 

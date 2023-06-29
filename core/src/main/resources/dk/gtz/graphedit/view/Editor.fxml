@@ -41,7 +41,7 @@
         <fx:include source="Inspector.fxml"/> 
     </right>
     <bottom>
-        <Label text="Hello World"/>
+        <fx:include source="LogTabPane.fxml"/> 
     </bottom>
 </BorderPane>
 </StackPane>

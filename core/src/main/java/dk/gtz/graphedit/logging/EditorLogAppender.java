@@ -18,7 +18,7 @@ public class EditorLogAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     public synchronized void doAppend(ILoggingEvent eventObject) {
-	var messageCopy = eventObject.getMessage();
+	var messageCopy = eventObject.getMessage(); // TODO: This is not actually formatted yet. So strings will look like so: "hello '{}'" instead of "hello 'foo'"
 	subscribers.stream()
 	    .filter(e -> e.level() == eventObject.getLevel())
 	    .forEach(r -> Platform.runLater(() -> r.consumer().accept(messageCopy)));

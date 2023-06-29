@@ -107,7 +107,9 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
+	// TODO: Make it easier to click on edges
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax())));
+	// TODO: This only highlights the main line. Not the arrow-part. Make it do that.
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
 		line.getStyleClass().add("stroke-primary-selected");
