@@ -84,13 +84,13 @@ public class DraggableTab extends Tab {
 		    if(data == null || data.insertPane().getTabs().isEmpty())
 		        markerStage.hide();
 		    else {
-		        int index = data.index();
-		        boolean end = false;
+		        var index = data.index();
+		        var end = false;
 		        if(index == data.insertPane().getTabs().size()) {
 		            end = true;
 		            index--;
 		        }
-		        Rectangle2D rect = getAbsoluteRect(data.insertPane().getTabs().get(index));
+		        var rect = getAbsoluteRect(data.insertPane().getTabs().get(index));
 		        if(end)
 		            markerStage.setX(rect.getMaxX() + 13);
 		        else 
@@ -135,6 +135,7 @@ public class DraggableTab extends Tab {
 				        newStage.hide();
 				});
 		        var spawnScene = new Scene(pane);
+			spawnScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 		        newStage.setScene(spawnScene);
 		        newStage.initStyle(StageStyle.UTILITY);
 		        newStage.setX(t.getScreenX());
@@ -226,6 +227,5 @@ public class DraggableTab extends Tab {
         var upperBound = r2.getMaxX() - r2.getWidth() / 2;
         return xPoint >= lowerBound && xPoint <= upperBound;
     }
-
 }
 
