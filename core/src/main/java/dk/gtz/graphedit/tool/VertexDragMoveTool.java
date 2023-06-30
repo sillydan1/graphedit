@@ -9,6 +9,8 @@ import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -75,12 +77,21 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         var moveDiffY = (newY - oldY.get()) / e.viewportAffine().getMyy();
         point.getXProperty().set(oldPointX.get() + moveDiffX);
         point.getYProperty().set(oldPointY.get() + moveDiffY);
+        if(e.editorSettings().gridSnap().get())
+            snapToGrid(point, e.editorSettings());
+
         var xcpy = point.getX();
         var ycpy = point.getY();
         redoAction.set(() -> { 
             point.getXProperty().set(xcpy);
             point.getYProperty().set(ycpy);
         });
+    }
+
+    // TODO: Move this to somewhere so it can be used by other tools as well
+    private void snapToGrid(ViewModelPoint point, ViewModelEditorSettings settings) {
+        point.getXProperty().set(point.getX() - (point.getX() % settings.gridSizeX().get()));
+        point.getYProperty().set(point.getY() - (point.getY() % settings.gridSizeY().get()));
     }
 
     private void handleMouseReleasedEvent(VertexMouseEvent e) {

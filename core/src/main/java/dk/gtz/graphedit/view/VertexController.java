@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.animation.Interpolator;
@@ -30,18 +31,18 @@ public class VertexController extends StackPane {
     private final Affine viewportAffine;
     private Circle circle;
 
-    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ObjectProperty<ITool> selectedTool) {
+    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
 	this.vertexKey = vertexKey;
 	this.vertexValue = vertex;
 	this.viewportAffine = viewportAffine;
-	initialize(selectedTool, graph);
+	initialize(selectedTool, graph, editorSettings);
     }
 
-    private void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph) {
+    private void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
 	getChildren().add(initializeVertexRepresentation());
 	getChildren().add(initializeLabel());
 	initializeStyle();
-	initializeVertexEventHandlers(selectedTool, graph);
+	initializeVertexEventHandlers(selectedTool, graph, editorSettings);
     }
 
     private Circle initializeVertexRepresentation() {
@@ -100,8 +101,8 @@ public class VertexController extends StackPane {
 	return new Timeline(kx1, ky1, kx2, ky2);
     }
 
-    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, graph)));
+    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, graph, editorSettings)));
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
 		circle.getStyleClass().add("vertex-node-selected");

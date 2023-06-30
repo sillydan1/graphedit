@@ -10,6 +10,7 @@ import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
@@ -34,19 +35,19 @@ public class EdgeController extends Group {
     private final Affine viewportAffine;
     private final Line line;
 
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ObjectProperty<ITool> selectedTool) {
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
 	this.tracker = DI.get(MouseTracker.class);
 	this.resource = resource;
-	this.line = initialize(selectedTool);
+	this.line = initialize(selectedTool, editorSettings);
     }
 
-    private Line initialize(ObjectProperty<ITool> selectedTool) {
+    private Line initialize(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
 	var line = initializeLinePresentation();
 	getChildren().addAll(line, initializeLeftArrow(line), initializeRightArrow(line));
-	initializeEdgeEventHandlers(selectedTool);
+	initializeEdgeEventHandlers(selectedTool, editorSettings);
 	initializeBindPointChangeHandlers();
 	return line;
     }
@@ -106,9 +107,9 @@ public class EdgeController extends Group {
 	nodeToTransform.getTransforms().add(rotate);
     }
 
-    private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool) {
+    private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
 	// TODO: Make it easier to click on edges
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax())));
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax(), editorSettings)));
 	// TODO: This only highlights the main line. Not the arrow-part. Make it do that.
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)

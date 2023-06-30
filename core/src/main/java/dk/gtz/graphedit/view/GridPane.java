@@ -1,13 +1,14 @@
 package dk.gtz.graphedit.view;
 
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.TransformChangedEvent;
 
 public class GridPane extends Pane {
-    private final double gridsizeX;
-    private final double gridsizeY;
+    private double gridsizeX;
+    private double gridsizeY;
     private double offsetX;
     private double offsetY;
     private double gridscaleX;
@@ -52,6 +53,12 @@ public class GridPane extends Pane {
 	    line.styleProperty().set("-fx-stroke: -color-bg-subtle");
 	    getChildren().add(line);
 	}
+    }
+
+    public void setGridSize(double gridsizeX, double gridsizeY) {
+	this.gridsizeX = gridsizeX;
+	this.gridsizeY = gridsizeY;
+	Platform.runLater(this::layoutChildren);
     }
 
     private void initializeTransformEventHandler(Affine newTransform) {

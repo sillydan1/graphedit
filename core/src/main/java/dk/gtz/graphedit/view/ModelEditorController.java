@@ -13,6 +13,7 @@ import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.application.Platform;
@@ -32,6 +33,7 @@ import javafx.scene.transform.Affine;
 public class ModelEditorController extends BorderPane {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
     private final ViewModelProjectResource resource;
+    private final ViewModelEditorSettings settings;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
@@ -39,7 +41,12 @@ public class ModelEditorController extends BorderPane {
     private ObjectProperty<ITool> selectedTool;
 
     public ModelEditorController(ViewModelProjectResource resource) {
+	this(resource, new ViewModelEditorSettings(20.0d, 20.0d, true));
+    }
+
+    public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings) {
 	this.resource = resource;
+	this.settings = settings;
 	this.selectedTool = new SimpleObjectProperty<>();
 	initialize();
     }
@@ -81,7 +88,9 @@ public class ModelEditorController extends BorderPane {
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	var gridPane = new GridPane(20.0, drawGroupTransform); // TODO: gridsize should be adjustable
+	var gridPane = new GridPane(settings.gridSizeX().get(), settings.gridSizeY().get(), drawGroupTransform); // TODO: gridsize should be adjustable
+	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
+	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
 	gridPane.toBack();
     }
@@ -106,7 +115,7 @@ public class ModelEditorController extends BorderPane {
     }
 
     private Node createVertex(UUID vertexKey, ViewModelVertex vertexValue) {
-	return new VertexController(vertexKey, vertexValue, drawGroupTransform, resource.syntax(), selectedTool); // TODO: Should be an injectable factory pattern, so people can customize this
+	return new VertexController(vertexKey, vertexValue, drawGroupTransform, resource.syntax(), settings, selectedTool); // TODO: Should be an injectable factory pattern, so people can customize this
     }
 
     private Map<UUID,Node> initializeEdges() {
@@ -117,12 +126,12 @@ public class ModelEditorController extends BorderPane {
     }
 
     private Node createEdge(UUID edgeKey, ViewModelEdge edgeValue) {
-	return new EdgeController(edgeKey, edgeValue, resource, drawGroupTransform, selectedTool);
+	return new EdgeController(edgeKey, edgeValue, resource, drawGroupTransform, settings, selectedTool);
     }
 
     private void initializeToolEventHandlers() {
-	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, resource.syntax())));
-	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> selectedTool.get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax()))));
+	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, resource.syntax(), settings)));
+	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> selectedTool.get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
     }
 
     private void initializeVertexCollectionChangeHandlers() {
