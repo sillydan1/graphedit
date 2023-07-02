@@ -46,10 +46,13 @@ import javafx.stage.Stage;
 public class GraphEditApplication extends Application {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
 
-    public static void main(final String[] args) {
+    public static void launchWitoutPreloader(final String[] args) {
+	launch(args);
+    }
+
+    public static void launchUsingPreloader(final String[] args) {
 	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
 	launch(args);
-        // LauncherImpl.launchApplication(GraphEditApplication.class, GraphEditPreloader.class, args);
     }
 
     @Override

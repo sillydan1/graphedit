@@ -26,7 +26,10 @@ public class Main {
             return;
         }
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
-        GraphEditApplication.main(argv);
+        if(args.skipPreloader)
+            GraphEditApplication.launchWitoutPreloader(argv);
+        else
+            GraphEditApplication.launchUsingPreloader(argv);
     }
 }
 

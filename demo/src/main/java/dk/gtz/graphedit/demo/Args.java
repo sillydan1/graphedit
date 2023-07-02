@@ -7,5 +7,7 @@ public class Args {
     public Boolean help = false;
     @Parameter(names = { "-v", "--verbosity" }, description = "Set verbosity level")
     public String verbosity = "INFO";
+    @Parameter(names = { "-P", "--skip-preloader" }, description = "Skip the preloader and open the most recent project")
+    public Boolean skipPreloader = false;
 }
 
