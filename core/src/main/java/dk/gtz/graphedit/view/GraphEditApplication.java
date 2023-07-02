@@ -107,6 +107,7 @@ public class GraphEditApplication extends Application {
     }
 
     private void setupPreferences() {
+	DI.add(ISyntaxFactory.class, new DemoSyntaxFactory());
 	var useLightTheme = PreferenceUtil.getUseLightTheme();
 	if(useLightTheme)
 	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());

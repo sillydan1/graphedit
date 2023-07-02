@@ -16,6 +16,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -26,10 +27,10 @@ import javafx.util.Duration;
 
 public class VertexController extends StackPane {
     private final Logger logger = LoggerFactory.getLogger(VertexController.class);
-    private final UUID vertexKey;
-    private final ViewModelVertex vertexValue;
-    private final Affine viewportAffine;
-    private Circle circle;
+    protected final UUID vertexKey;
+    protected final ViewModelVertex vertexValue;
+    protected final Affine viewportAffine;
+    protected Node graphic;
 
     public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
 	this.vertexKey = vertexKey;
@@ -39,15 +40,16 @@ public class VertexController extends StackPane {
     }
 
     private void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
-	getChildren().add(initializeVertexRepresentation());
+	this.graphic = initializeVertexRepresentation();
+	getChildren().add(graphic);
 	getChildren().add(initializeLabel());
 	initializeStyle();
 	initializeVertexEventHandlers(selectedTool, graph, editorSettings);
     }
 
-    private Circle initializeVertexRepresentation() {
+    protected Node initializeVertexRepresentation() {
 	var diameter = 20.0;
-	circle = new Circle(diameter);
+	var circle = new Circle(diameter);
 	vertexValue.shape().widthProperty().set(diameter);
 	vertexValue.shape().heightProperty().set(diameter);
 	circle.strokeTypeProperty().set(StrokeType.INSIDE);
@@ -55,7 +57,7 @@ public class VertexController extends StackPane {
 	return circle;
     }
 
-    private Label initializeLabel() {
+    protected Label initializeLabel() {
 	var label = new Label(vertexKey.toString());
 	label.getStyleClass().add("outline");
 	return label;
@@ -105,9 +107,9 @@ public class VertexController extends StackPane {
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, graph, editorSettings)));
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
-		circle.getStyleClass().add("vertex-node-selected");
+		graphic.getStyleClass().add("vertex-node-selected");
 	    else
-		circle.getStyleClass().remove("vertex-node-selected");
+		graphic.getStyleClass().remove("vertex-node-selected");
 	});
     }
 }

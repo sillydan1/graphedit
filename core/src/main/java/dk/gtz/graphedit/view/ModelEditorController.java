@@ -34,19 +34,21 @@ public class ModelEditorController extends BorderPane {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
+    private final ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
     private Affine drawGroupTransform;
     private ObjectProperty<ITool> selectedTool;
 
-    public ModelEditorController(ViewModelProjectResource resource) {
-	this(resource, new ViewModelEditorSettings(20.0d, 20.0d, true));
+    public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
+	this(resource, new ViewModelEditorSettings(20.0d, 20.0d, true), syntaxFactory);
     }
 
-    public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings) {
+    public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
 	this.resource = resource;
 	this.settings = settings;
+	this.syntaxFactory = syntaxFactory;
 	this.selectedTool = new SimpleObjectProperty<>();
 	initialize();
     }
@@ -110,23 +112,15 @@ public class ModelEditorController extends BorderPane {
     private Map<UUID,Node> initializeLocations() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet())
-	    nodes.put(vertex.getKey(), createVertex(vertex.getKey(), vertex.getValue()));
+	    nodes.put(vertex.getKey(), syntaxFactory.createVertex(vertex.getKey(), vertex.getValue(), this));
 	return nodes;
-    }
-
-    private Node createVertex(UUID vertexKey, ViewModelVertex vertexValue) {
-	return new VertexController(vertexKey, vertexValue, drawGroupTransform, resource.syntax(), settings, selectedTool); // TODO: Should be an injectable factory pattern, so people can customize this
     }
 
     private Map<UUID,Node> initializeEdges() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var edge : resource.syntax().edges().entrySet())
-	    nodes.put(edge.getKey(), createEdge(edge.getKey(), edge.getValue()));
+	    nodes.put(edge.getKey(), syntaxFactory.createEdge(edge.getKey(), edge.getValue(), this));
 	return nodes;
-    }
-
-    private Node createEdge(UUID edgeKey, ViewModelEdge edgeValue) {
-	return new EdgeController(edgeKey, edgeValue, resource, drawGroupTransform, settings, selectedTool);
     }
 
     private void initializeToolEventHandlers() {
@@ -137,7 +131,7 @@ public class ModelEditorController extends BorderPane {
     private void initializeVertexCollectionChangeHandlers() {
 	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
 	    if(c.wasAdded())
-		drawGroup.addChild(c.getKey(), createVertex(c.getKey(), c.getValueAdded()));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createVertex(c.getKey(), c.getValueAdded(), this));
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
 	});
@@ -146,10 +140,26 @@ public class ModelEditorController extends BorderPane {
     private void initializeEdgeCollectionChangeHandlers() {
 	resource.syntax().edges().addListener((MapChangeListener<UUID,ViewModelEdge>)c -> {
 	    if(c.wasAdded())
-		drawGroup.addChild(c.getKey(), createEdge(c.getKey(), c.getValueAdded()));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createEdge(c.getKey(), c.getValueAdded(), this));
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
 	});
+    }
+
+    public ViewModelProjectResource getProjectResource() {
+	return resource;
+    }
+
+    public Affine getViewportTransform() {
+	return drawGroupTransform;
+    }
+
+    public ViewModelEditorSettings getEditorSettings() {
+	return settings;
+    }
+
+    public ObjectProperty<ITool> getSelectedTool() {
+	return selectedTool;
     }
 }
 

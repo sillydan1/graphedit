@@ -39,7 +39,7 @@ public class EditorTabPaneController {
 	    if(c.wasAdded()) {
 		var changedVal = c.getValueAdded();
 		var tab = new DraggableTab(changedKey);
-		var editorController = new ModelEditorController(changedVal); // TODO: This should be loaded as an fxml file instead
+		var editorController = new ModelEditorController(changedVal, DI.get(ISyntaxFactory.class));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
 	    }

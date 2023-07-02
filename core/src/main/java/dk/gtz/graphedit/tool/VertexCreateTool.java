@@ -15,6 +15,8 @@ import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
+import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
+import dk.gtz.graphedit.viewmodel.ViewModelTextVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import javafx.scene.Node;
@@ -46,7 +48,10 @@ public class VertexCreateTool extends AbstractBaseTool {
             var point = new ViewModelPoint(posX, posY);
             if(e.editorSettings().gridSnap().get())
                 snapToGrid(point, e.editorSettings());
-            create(point, e.graph());
+            if(e.event().isShiftDown())
+                createTextVertex(point, e.graph());
+            else
+                createCircleVertex(point, e.graph());
         }
     }
 
@@ -56,8 +61,17 @@ public class VertexCreateTool extends AbstractBaseTool {
         point.getYProperty().set(point.getY() - (point.getY() % settings.gridSizeY().get()));
     }
 
-    public void create(ViewModelPoint point, ViewModelGraph graph) {
-        var vertex = new ViewModelVertex(point, new ViewModelVertexShape());
+    public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph) {
+        var vertex = new ViewModelVertex(point, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+        var id = UUID.randomUUID();
+        graph.vertices().put(id, vertex);
+        undoSystem.push(new Undoable("vertex create action",
+                    () -> graph.vertices().remove(id),
+                    () -> graph.vertices().put(id, vertex)));
+    }
+
+    public void createTextVertex(ViewModelPoint point, ViewModelGraph graph) {
+        var vertex = new ViewModelTextVertex(point, new ViewModelVertexShape(ViewModelShapeType.RECTANGLE));
         var id = UUID.randomUUID();
         graph.vertices().put(id, vertex);
         undoSystem.push(new Undoable("vertex create action",

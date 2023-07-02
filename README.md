@@ -24,7 +24,7 @@ Includes all the core functionality for GraphEdit...
    - [x] properties / queries pane
    - [x] Log viewer
    - [x] Preloader
-   - [ ] Text-editable example vertex
+   - [x] Text-editable example vertex
  - [ ] Project configuration (geproject.json or something like that)
  - [ ] Get feature parity with H-Uppaal
    - [ ] Project search

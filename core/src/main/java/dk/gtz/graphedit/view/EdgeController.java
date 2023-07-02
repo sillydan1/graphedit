@@ -68,10 +68,10 @@ public class EdgeController extends Group {
 	edgePresentation.getStyleClass().add("stroke-primary");
 	var source = getPointShape(edgeValue.source().get());
 	var target = getPointShape(edgeValue.target().get());
-	edgePresentation.startXProperty().bind(BindingsUtil.createOvalXBinding(target.point(), source.point(), source.shape()));
-	edgePresentation.startYProperty().bind(BindingsUtil.createOvalYBinding(target.point(), source.point(), source.shape()));
-	edgePresentation.endXProperty().bind(BindingsUtil.createOvalXBinding(source.point(), target.point(), target.shape()));
-	edgePresentation.endYProperty().bind(BindingsUtil.createOvalYBinding(source.point(), target.point(), target.shape()));
+	edgePresentation.startXProperty().bind(BindingsUtil.createShapedXBinding(target.point(), source.point(), source.shape()));
+	edgePresentation.startYProperty().bind(BindingsUtil.createShapedYBinding(target.point(), source.point(), source.shape()));
+	edgePresentation.endXProperty().bind(BindingsUtil.createShapedXBinding(source.point(), target.point(), target.shape()));
+	edgePresentation.endYProperty().bind(BindingsUtil.createShapedYBinding(source.point(), target.point(), target.shape()));
 	return edgePresentation;
     }
 
@@ -135,10 +135,10 @@ public class EdgeController extends Group {
     private void changeTargetBindPoints(UUID sourceId, UUID targetId) {
 	var source = getPointShape(sourceId);
 	var target = getPointShape(targetId);
-	line.startXProperty().bind(BindingsUtil.createOvalXBinding(target.point(), source.point(), source.shape()));
-	line.startYProperty().bind(BindingsUtil.createOvalYBinding(target.point(), source.point(), source.shape()));
-	line.endXProperty().bind(BindingsUtil.createOvalXBinding(source.point(), target.point(), target.shape()));
-	line.endYProperty().bind(BindingsUtil.createOvalYBinding(source.point(), target.point(), target.shape()));
+	line.startXProperty().bind(BindingsUtil.createShapedXBinding(target.point(), source.point(), source.shape()));
+	line.startYProperty().bind(BindingsUtil.createShapedYBinding(target.point(), source.point(), source.shape()));
+	line.endXProperty().bind(BindingsUtil.createShapedXBinding(source.point(), target.point(), target.shape()));
+	line.endYProperty().bind(BindingsUtil.createShapedYBinding(source.point(), target.point(), target.shape()));
     }
 }
 
