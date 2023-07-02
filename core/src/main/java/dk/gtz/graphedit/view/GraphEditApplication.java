@@ -26,6 +26,9 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.StackUndoSystem;
+import dk.gtz.graphedit.view.preloader.GraphEditPreloader;
+import dk.gtz.graphedit.view.preloader.LoadStateNotification;
+import dk.gtz.graphedit.view.preloader.FinishNotification;
 import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -43,14 +46,32 @@ import javafx.stage.Stage;
 public class GraphEditApplication extends Application {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
 
+    public static void main(final String[] args) {
+	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
+	launch(args);
+        // LauncherImpl.launchApplication(GraphEditApplication.class, GraphEditPreloader.class, args);
+    }
+
+    @Override
+    public void init() {
+	// This is run before the preloader is loaded
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+	notifyPreloader(new LoadStateNotification("starting"));
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
+	notifyPreloader(new LoadStateNotification("setup application"));
 	setupApplication();
+	notifyPreloader(new LoadStateNotification("setup toolbox"));
 	setupToolbox();
+	notifyPreloader(new LoadStateNotification("setup preferences"));
 	setupPreferences();
-	setupStage(primaryStage);
+	notifyPreloader(new LoadStateNotification("setup logging"));
 	setupLogging();
+	notifyPreloader(new LoadStateNotification("setting the stage"));
+	setupStage(primaryStage);
+	notifyPreloader(new FinishNotification());
     }
 
     private void setupApplication() throws Exception {
@@ -60,9 +81,9 @@ public class GraphEditApplication extends Application {
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
 
-	// TODO: add a project-picker preloader with a list of recent projects and a "just open my most recent thing"-toggle
+	// TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
 	var projectDirectory = System.getProperty("user.dir") + File.separator + "project.json";
-	logger.trace("loading project file: {}", projectDirectory);
+	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectDirectory)));
 	var mapper = ((JacksonModelSerializer)DI.get(IModelSerializer.class)).getMapper();
 	var project = mapper.readValue(new File(projectDirectory), ModelProject.class);
 	DI.add(ViewModelProject.class, new ViewModelProject(project));
@@ -108,10 +129,6 @@ public class GraphEditApplication extends Application {
     public void stop() {
 	// TODO: Something along the lines of "save and exit? yes/no"
 	logger.trace("shutting down...");
-    }
-
-    public static void main(final String[] args) {
-	launch(args);
     }
 
     private Scene loadMainScene() throws Exception {
