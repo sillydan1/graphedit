@@ -16,30 +16,36 @@ Includes all the core functionality for GraphEdit...
  - [x] MaterialFX <-- Much better library (actively maintained)
  - [x] AtlantaFX <-- Even better, no need for special stuff
  - [x] Set up the core architecture (MVVM)
- - [ ] Set up the basic window
+ - [x] Set up the basic window
    - [x] Tab pane
    - [x] project file explorer
    - [x] graph editor / viewer
    - [x] Toolbar
    - [x] properties / queries pane
    - [x] Log viewer
-   - [ ] Preloader
-   - [ ] graph editor polish
- - [ ] Project configuration
+   - [x] Preloader
+   - [ ] Text-editable example vertex
+ - [ ] Project configuration (geproject.json or something like that)
  - [ ] Get feature parity with H-Uppaal
    - [ ] Project search
-   - [ ] Good logging
+   - [ ] clickable links with focus-stealing capabilities
    - [ ] Run configurations (will replace engine "integrations")
- - [ ] Separate into projects
+ - [ ] Separate codebase into projects
  - [ ] fix todos
  - [ ] write proper readme
  - [ ] code polish and project structure cleanup
  - [ ] Feature polish
    - [ ] Combined modelling tool
+   - [ ] graph editor polish
    - [ ] Tool keybinds
    - [ ] Custom keybinds
    - [ ] Design a logo
  - [ ] Release `v1.0.0`
+ - [ ] Additional Syntaxes
+   - [ ] NTTA
+   - [ ] HAWK
+   - [ ] P/N
+   - [ ] TIOA 
  - [ ] JNI interface for direct engine interaction
  - [ ] Lint specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
