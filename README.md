@@ -21,8 +21,8 @@ Includes all the core functionality for GraphEdit...
    - [x] project file explorer
    - [x] graph editor / viewer
    - [x] Toolbar
-   - [ ] properties / queries pane
-   - [ ] Log viewer
+   - [x] properties / queries pane
+   - [x] Log viewer
    - [ ] Preloader
    - [ ] graph editor polish
  - [ ] Project configuration
@@ -30,12 +30,21 @@ Includes all the core functionality for GraphEdit...
    - [ ] Project search
    - [ ] Good logging
    - [ ] Run configurations (will replace engine "integrations")
- - [ ] Separate into projects, fix todos, write proper readme, code polish and project structure cleanup
+ - [ ] Separate into projects
+ - [ ] fix todos
+ - [ ] write proper readme
+ - [ ] code polish and project structure cleanup
+ - [ ] Feature polish
+   - [ ] Combined modelling tool
+   - [ ] Tool keybinds
+   - [ ] Custom keybinds
+   - [ ] Design a logo
  - [ ] Release `v1.0.0`
  - [ ] JNI interface for direct engine interaction
  - [ ] Lint specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
  - [ ] `ILint` and `ILinter` engine
+ - [ ] Replace logo with an actual pretty one
 
 ## Default
 A set of default presentations, viewmodel and model objects to be injected as an example project
