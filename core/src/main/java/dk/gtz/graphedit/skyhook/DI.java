@@ -43,5 +43,21 @@ public class DI {
             return (T)namedSuppliers.get(key).get();
         throw new NotFoundException("DI unable to resolve named dependency '%s'".formatted(key));
     }
+
+    public static <T> boolean contains(Class<? super T> key) {
+        if(dependencies.containsKey(key))
+            return true;
+        if(suppliers.containsKey(key))
+            return true;
+        return false;
+    }
+
+    public static boolean contains(String key) {
+        if(namedDependencies.containsKey(key))
+            return true;
+        if(namedSuppliers.containsKey(key))
+            return true;
+        return false;
+    }
 }
 

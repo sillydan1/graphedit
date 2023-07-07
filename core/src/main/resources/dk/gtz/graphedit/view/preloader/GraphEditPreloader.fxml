@@ -9,6 +9,9 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.preloader.GraphEditPreloaderController">
+<top>
+    
+</top>
 <center>
     <ImageView fx:id="logo"/>
 </center>
