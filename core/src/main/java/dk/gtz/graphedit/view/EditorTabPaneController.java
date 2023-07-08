@@ -39,6 +39,7 @@ public class EditorTabPaneController {
 	    if(c.wasAdded()) {
 		var changedVal = c.getValueAdded();
 		var tab = new DraggableTab(changedKey);
+		tab.setOnClosed(e -> DI.get(IBufferContainer.class).close(changedKey)); // TODO: Reconsider closing the buffer here. It creates some weirdness in the undo-tree. Maybe it would be better to separate the concepts View/Window and Buffer, just like vim?
 		var editorController = new ModelEditorController(changedVal, DI.get(ISyntaxFactory.class));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);

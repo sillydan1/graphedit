@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.view;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.util.IconUtils;
@@ -38,6 +35,7 @@ public class ProjectFilesViewController {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
     private ViewModelProject openProject;
     private IModelSerializer serializer;
+    private IBufferContainer openBuffers;
 
     @FXML
     public VBox root;
@@ -46,6 +44,7 @@ public class ProjectFilesViewController {
     private void initialize() {
 	openProject = DI.get(ViewModelProject.class);
 	serializer = DI.get(IModelSerializer.class);
+	openBuffers = DI.get(IBufferContainer.class);
 	root.getChildren().add(createTreeView(openProject.name().get(), openProject.rootDirectory().get()));
     }
     
@@ -118,8 +117,11 @@ public class ProjectFilesViewController {
 		logger.error("cannot open unsupported filetype '{}'", fileType);
 		return;
 	    }
+	    if(openBuffers.contains(p.toString()))
+		// TODO: focus on the tab
+		return;
 	    var model = serializer.deserialize(readFileContent(p));
-	    DI.get(IBufferContainer.class).open(p.toString(), new ViewModelProjectResource(model));
+	    openBuffers.open(p.toString(), new ViewModelProjectResource(model));
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
 	}

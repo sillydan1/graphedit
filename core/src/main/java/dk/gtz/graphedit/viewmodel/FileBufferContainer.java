@@ -31,9 +31,14 @@ public class FileBufferContainer implements IBufferContainer {
 
     @Override
     public ViewModelProjectResource get(String filename) throws NotFoundException {
-        if(!openBuffers.containsKey(filename))
+        if(!contains(filename))
             throw new NotFoundException("no such buffer: %s".formatted(filename));
         return openBuffers.get(filename);
+    }
+
+    @Override
+    public boolean contains(String filename) {
+        return openBuffers.containsKey(filename);
     }
 
     @Override
