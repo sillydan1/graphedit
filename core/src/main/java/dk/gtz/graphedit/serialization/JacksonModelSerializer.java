@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.serialization;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -48,6 +50,11 @@ public class JacksonModelSerializer implements IModelSerializer {
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
+    }
+
+    @Override
+    public List<String> getSupportedContentTypes() {
+	return List.of("application/json");
     }
 }
 
