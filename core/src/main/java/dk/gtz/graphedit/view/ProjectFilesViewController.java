@@ -3,8 +3,6 @@ package dk.gtz.graphedit.view;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -18,7 +16,6 @@ import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.util.IconUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
-import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -45,7 +42,7 @@ public class ProjectFilesViewController {
 	openProject = DI.get(ViewModelProject.class);
 	serializer = DI.get(IModelSerializer.class);
 	openBuffers = DI.get(IBufferContainer.class);
-	root.getChildren().add(createTreeView(openProject.name().get(), openProject.rootDirectory().get()));
+	root.getChildren().add(createTreeView(openProject.name().get(), Path.of(openProject.rootDirectory().get())));
     }
     
     private FontIcon getPathFontIcon(Path p) {
@@ -59,8 +56,8 @@ public class ProjectFilesViewController {
 	}
     }
 
-    private TreeView<FileTreeEntry> createTreeView(String projectName, String directoryPath) {
-	var root = new TreeItem<>(new FileTreeEntry(Path.of(directoryPath)), new FontIcon(BootstrapIcons.APP));
+    private TreeView<FileTreeEntry> createTreeView(String projectName, Path directoryPath) {
+	var root = new TreeItem<>(new FileTreeEntry(directoryPath), new FontIcon(BootstrapIcons.APP));
 	addFileTreeItems(directoryPath, root);
 	root.setExpanded(true);
 
@@ -76,14 +73,14 @@ public class ProjectFilesViewController {
 	return view;
     }
 
-    private void addFileTreeItems(String dirPath, TreeItem<FileTreeEntry> parent) {
+    private void addFileTreeItems(Path dirPath, TreeItem<FileTreeEntry> parent) {
 	try {
-	    for(var path : Files.newDirectoryStream(Paths.get(dirPath))) {
+	    for(var path : Files.newDirectoryStream(dirPath)) {
 		if(Files.isHidden(path))
 		    continue; // TODO: add a toggle in the settings menu, also maybe respect .gitignore/.graphedit.ignore idk.
 		var subDir = new TreeItem<FileTreeEntry>(new FileTreeEntry(path), getPathFontIcon(path));
 		if(Files.isDirectory(path))
-		    addFileTreeItems(path.toString(), subDir);
+		    addFileTreeItems(path, subDir);
 		parent.getChildren().add(subDir);
 	    }
 	} catch (IOException e) {
@@ -93,16 +90,6 @@ public class ProjectFilesViewController {
 
     public void toggle() {
 	root.setVisible(!root.visibleProperty().get());
-    }
-
-    // TODO: move this into a FileUtils
-    private String readFileContent(Path p) throws IOException {
-	var myReader = new Scanner(p.toFile());
-	var sb = new StringBuilder();
-	while (myReader.hasNextLine())
-	    sb.append(myReader.nextLine());
-	myReader.close();
-	return sb.toString();
     }
 
     private void onFileClicked(Path p) {
@@ -117,11 +104,7 @@ public class ProjectFilesViewController {
 		logger.error("cannot open unsupported filetype '{}'", fileType);
 		return;
 	    }
-	    if(openBuffers.contains(p.toString()))
-		// TODO: focus on the tab
-		return;
-	    var model = serializer.deserialize(readFileContent(p));
-	    openBuffers.open(p.toString(), new ViewModelProjectResource(model));
+	    openBuffers.open(p.toString());
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
 	}
