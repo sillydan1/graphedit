@@ -1,5 +1,6 @@
 # graphedit
 A graph editor for the 21st century
+The hackable graph editor
 
 ## Core
 Includes all the core functionality for GraphEdit...
@@ -25,32 +26,41 @@ Includes all the core functionality for GraphEdit...
    - [x] Log viewer
    - [x] Preloader
    - [x] Text-editable example vertex
- - [ ] Project configuration & actual file-browser integration (geproject.json or something like that)
+   - [ ] Project configuration & actual file-browser integration (geproject.json or something like that)
  - [ ] Get feature parity with H-Uppaal
-   - [ ] Project search
+   - [ ] Project search (telescope-like)
    - [ ] clickable links with focus-stealing capabilities
    - [ ] Run configurations (will replace engine "integrations")
- - [ ] Separate codebase into projects
- - [ ] fix todos
- - [ ] write proper readme
- - [ ] code polish and project structure cleanup
- - [ ] Feature polish
+ - [ ] Code polish and project structure cleanup
+   - [ ] Separate codebase into projects (yalibs for libraries)
+   - [ ] Fix todos
    - [ ] Combined modelling tool
    - [ ] graph editor polish
    - [ ] Tool keybinds
    - [ ] Custom keybinds
-   - [ ] Design a logo
+ - [ ] Beurocracy Cleanup
+   - [ ] A documentation wiki 
+   - [ ] Readme polish
+   - [ ] Commission a logo
+   - [ ] Roadmap
+   - [ ] Changelog
  - [ ] Release `v1.0.0`
  - [ ] Additional Syntaxes
    - [ ] NTTA
    - [ ] HAWK
    - [ ] P/N
    - [ ] TIOA 
- - [ ] JNI interface for direct engine interaction
- - [ ] Lint specification
+ - [ ] Release `v1.1.0`
  - [ ] LSP like specification (use docusaurus, or github wiki)
- - [ ] `ILint` and `ILinter` engine
- - [ ] Replace logo with an actual pretty one
+   - [ ] Protobuf specification (that way, you are language agnostic)
+   - [ ] Implement `ILsp` / `ILspEngine` interfaces
+   - [ ] Lint protobuf specification
+   - [ ] Implement `ILint` / `ILinter` interfaces
+ - [ ] Release `v1.2.0`
+ - [ ] DAP like specification
+   - [ ] Protobuf specification (that way, you are language agnostic)
+   - [ ] Implement `IDap` / `IDapEngine` interfaces
+ - [ ] Release `v1.3.0`
 
 ## Default
 A set of default presentations, viewmodel and model objects to be injected as an example project
