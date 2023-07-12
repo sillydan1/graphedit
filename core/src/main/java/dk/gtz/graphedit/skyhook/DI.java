@@ -1,19 +1,35 @@
 package dk.gtz.graphedit.skyhook;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.exceptions.NotFoundException;
+import dk.gtz.graphedit.view.util.IAction;
 
 public class DI {
+    private static Logger logger = LoggerFactory.getLogger(DI.class);
     private static Map<Class<?>,Object> dependencies = new HashMap<>();
     private static Map<Class<?>,Supplier<Object>> suppliers = new HashMap<>();
     private static Map<String,Object> namedDependencies = new HashMap<>();
     private static Map<String,Supplier<Object>> namedSuppliers = new HashMap<>();
+    private static Map<Class<?>,List<IAction>> onAddActions = new HashMap<>();
 
     public static <T> void add(Class<? extends T> key, T obj) {
         dependencies.put(key, obj);
+        if(onAddActions.containsKey(key))
+            onAddActions.get(key).forEach(a -> {
+                try {
+                    a.run(obj);
+                } catch(Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            });
     }
 
     public static <T> void add(Class<? extends T> key, Supplier<Object> supplier) {
@@ -58,6 +74,12 @@ public class DI {
         if(namedSuppliers.containsKey(key))
             return true;
         return false;
+    }
+
+    public static <T> void onAdd(Class<? extends T> key, IAction action) {
+        if(!onAddActions.containsKey(key))
+            onAddActions.put(key, new ArrayList<IAction>());
+        onAddActions.get(key).add(action);
     }
 }
 

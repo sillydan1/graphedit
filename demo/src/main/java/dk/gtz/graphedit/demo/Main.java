@@ -27,7 +27,7 @@ public class Main {
         }
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         if(args.skipPreloader)
-            GraphEditApplication.launchWitoutPreloader(argv);
+            GraphEditApplication.launchWithoutPreloader(argv);
         else
             GraphEditApplication.launchUsingPreloader(argv);
     }

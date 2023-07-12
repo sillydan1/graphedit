@@ -27,10 +27,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
-    private boolean useLightTheme = PreferenceUtil.getUseLightTheme();
+    private boolean useLightTheme = PreferenceUtil.lightTheme();
 
     @FXML
     private ProjectFilesViewController filePaneController;
@@ -57,7 +58,7 @@ public class EditorController {
 	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 	else
 	    Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-	PreferenceUtil.setUseLightTheme(useLightTheme);
+	PreferenceUtil.lightTheme(useLightTheme);
     }
 
     @FXML
@@ -133,6 +134,24 @@ public class EditorController {
     @FXML
     private void featureHolder() {
 	filePaneController.toggle();
+    }
+
+    @FXML
+    private void openProject() {
+	var fileChooser = new FileChooser();
+	fileChooser.setTitle("Open Project");
+	var chosenFile = fileChooser.showOpenDialog(menubarTopBox.getScene().getWindow());
+	if(chosenFile == null)
+	    return;
+	try {
+	    logger.trace("loading new project {}", chosenFile.getAbsolutePath().toString());
+	    var serializer = DI.get(IModelSerializer.class);
+	    serializer.deserializeProject(chosenFile);
+	    PreferenceUtil.lastOpenedProject(chosenFile.getAbsolutePath().toString());
+	    DI.get(IRestartableApplication.class).restart();
+	} catch (SerializationException | IOException e) {
+	    logger.error("Failed opening project: " + e.getMessage());
+	}
     }
 
     // TODO: Move into general utilities library

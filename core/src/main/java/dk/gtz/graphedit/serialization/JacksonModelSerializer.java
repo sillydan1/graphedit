@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.serialization;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
 
 public class JacksonModelSerializer implements IModelSerializer {
@@ -47,6 +50,33 @@ public class JacksonModelSerializer implements IModelSerializer {
     public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
 	try {
 	    return objectMapper.readValue(serializedContent, ModelProjectResource.class);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public ModelProjectResource deserialize(File file) throws SerializationException, IOException {
+	try {
+	    return objectMapper.readValue(file, ModelProjectResource.class);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public ModelProject deserializeProject(String serializedContent) throws SerializationException {
+	try {
+	    return objectMapper.readValue(serializedContent, ModelProject.class);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public ModelProject deserializeProject(File file) throws SerializationException, IOException {
+	try {
+	    return objectMapper.readValue(file, ModelProject.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}

@@ -6,11 +6,11 @@ import java.nio.file.Path;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
-import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.util.IconUtils;
@@ -29,7 +29,7 @@ public class ProjectFilesViewController {
 	}
     }
 
-    private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(ProjectFilesViewController.class);
     private ViewModelProject openProject;
     private IModelSerializer serializer;
     private IBufferContainer openBuffers;
@@ -94,6 +94,10 @@ public class ProjectFilesViewController {
 
     private void onFileClicked(Path p) {
 	try {
+	    if(!Files.isRegularFile(p)) {
+		logger.trace("not a file. ignoring click. {}", p.toString());
+		return;
+	    }
 	    logger.debug("opening file {}", p.toString());
 	    var fileType = Files.probeContentType(p);
 	    if(fileType == null) {

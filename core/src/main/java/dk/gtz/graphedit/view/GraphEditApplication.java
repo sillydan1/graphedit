@@ -43,10 +43,12 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class GraphEditApplication extends Application {
+public class GraphEditApplication extends Application implements IRestartableApplication {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
+    private Stage primaryStage;
 
-    public static void launchWitoutPreloader(final String[] args) {
+    public static void launchWithoutPreloader(final String[] args) {
+	System.clearProperty("javafx.preloader");
 	launch(args);
     }
 
@@ -58,14 +60,17 @@ public class GraphEditApplication extends Application {
     @Override
     public void init() {
 	// This is run before the preloader is loaded
+	DI.add(IRestartableApplication.class, this);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+	this.primaryStage = primaryStage;
 	notifyPreloader(new LoadStateNotification("starting"));
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	notifyPreloader(new LoadStateNotification("setup application"));
 	setupApplication();
+	loadProject();
 	notifyPreloader(new LoadStateNotification("setup toolbox"));
 	setupToolbox();
 	notifyPreloader(new LoadStateNotification("setup preferences"));
@@ -77,18 +82,32 @@ public class GraphEditApplication extends Application {
 	notifyPreloader(new FinishNotification());
     }
 
+    @Override
+    public void restart() {
+	primaryStage.close();
+	try {
+	    var newStage = new Stage();
+	    start(newStage);
+	    primaryStage = newStage;
+	} catch(Exception e) {
+	    primaryStage.show();
+	    logger.error(e.getMessage());
+	}
+    }
+
     private void setupApplication() throws Exception {
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
+    }
 
-	// TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
-	var projectDirectory = System.getProperty("user.dir") + File.separator + "project.json";
-	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectDirectory)));
-	var mapper = ((JacksonModelSerializer)DI.get(IModelSerializer.class)).getMapper();
-	var project = mapper.readValue(new File(projectDirectory), ModelProject.class);
+    // TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
+    private void loadProject() throws Exception {
+	var projectFile = PreferenceUtil.lastOpenedProject();
+	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFile)));
+	var project = DI.get(IModelSerializer.class).deserializeProject(new File(projectFile));
 	DI.add(ViewModelProject.class, new ViewModelProject(project));
     }
 
@@ -108,7 +127,7 @@ public class GraphEditApplication extends Application {
 
     private void setupPreferences() {
 	DI.add(ISyntaxFactory.class, new DemoSyntaxFactory());
-	var useLightTheme = PreferenceUtil.getUseLightTheme();
+	var useLightTheme = PreferenceUtil.lightTheme();
 	if(useLightTheme)
 	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 	else
