@@ -133,7 +133,7 @@ public class EditorController {
 
     @FXML
     private void featureHolder() {
-	filePaneController.toggle();
+	filePaneController.createNewModelFile();
     }
 
     @FXML

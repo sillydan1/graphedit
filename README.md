@@ -26,13 +26,11 @@ Includes all the core functionality for GraphEdit...
    - [x] Log viewer
    - [x] Preloader
    - [x] Text-editable example vertex
-   - [ ] Project configuration & actual file-browser integration (geproject.json or something like that)
+   - [x] Project configuration & actual file-browser integration (geproject.json or something like that)
     - [x] Shortcut + Shift + O > file chooser > open project will restart the application and open the project
     - [x] double-clicking a model file will open the model
-    - [ ] double-clicking a directory will toggle the directory
-    - [ ] have a keyboard accelerator for new model file (create in selected path - warn if none selected)
-    - [ ] right-click menu
-    - [ ] right-click new > model > type will create a new empty model file of the chosen type (don't open)
+    - [x] double-clicking a directory will toggle the directory
+    - [x] have a keyboard accelerator for new model file (create in selected path - warn if none selected)
  - [ ] Get feature parity with H-Uppaal
    - [ ] Project search (telescope-like)
    - [ ] clickable links with focus-stealing capabilities
@@ -44,6 +42,9 @@ Includes all the core functionality for GraphEdit...
    - [ ] graph editor polish
    - [ ] Tool keybinds
    - [ ] Custom keybinds
+   - [ ] Project file pane
+     - [ ] right-click menu
+     - [ ] right-click new > model > type will create a new empty model file of the chosen type (don't open)
  - [ ] Beurocracy Cleanup
    - [ ] A documentation wiki 
    - [ ] Readme polish
