@@ -49,9 +49,10 @@ Includes all the core functionality for GraphEdit...
    - [ ] A documentation wiki 
    - [ ] Readme polish
    - [ ] Commission a logo
+   - [ ] javadoc
    - [ ] Roadmap
    - [ ] Changelog
- - [ ] Release `v1.0.0`
+ - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Additional Syntaxes
    - [ ] NTTA
@@ -69,6 +70,9 @@ Includes all the core functionality for GraphEdit...
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `IDap` / `IDapEngine` interfaces
  - [ ] Release `v1.3.0`
+ - [ ] Add plugin API and [LuaJava](https://github.com/gudzpoz/luajava/tree/main)
+   - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
+ - [ ] Release `v2.0.0`
 
 ## Default
 A set of default presentations, viewmodel and model objects to be injected as an example project
