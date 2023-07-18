@@ -14,6 +14,7 @@
                     <MenuItem onAction="#openProject" text="Open Project" accelerator="Shortcut+Shift+O"/>
                     <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
                     <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
+                    <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
                 </Menu>
                 <Menu text="edit">
                     <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
