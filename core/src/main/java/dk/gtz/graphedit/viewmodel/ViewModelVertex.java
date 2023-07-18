@@ -1,20 +1,23 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class ViewModelVertex implements IInspectable, ISelectable {
+public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;
+    private final List<Runnable> focusEventHandlers;
 
     public ViewModelVertex(ViewModelPoint position, ViewModelVertexShape shape) {
         this.position = position;
         this.shape = shape;
         this.isSelected = new SimpleBooleanProperty(false);
+        this.focusEventHandlers = new ArrayList<>();
     }
 
     public ViewModelVertex(ModelVertex vertex) {
@@ -36,6 +39,16 @@ public class ViewModelVertex implements IInspectable, ISelectable {
     @Override
     public BooleanProperty getIsSelected() {
         return isSelected;
+    }
+
+    @Override
+    public void addFocusListener(Runnable focusEventHandler) {
+        focusEventHandlers.add(focusEventHandler);
+    }
+
+    @Override
+    public void focus() {
+        focusEventHandlers.forEach(Runnable::run);
     }
 
     /**

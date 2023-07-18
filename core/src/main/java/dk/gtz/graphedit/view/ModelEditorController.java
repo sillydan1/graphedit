@@ -1,17 +1,21 @@
 package dk.gtz.graphedit.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.util.Animations;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
@@ -30,7 +34,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Affine;
 
-public class ModelEditorController extends BorderPane {
+public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
@@ -40,6 +44,7 @@ public class ModelEditorController extends BorderPane {
     private MapGroup<UUID> drawGroup;
     private Affine drawGroupTransform;
     private ObjectProperty<ITool> selectedTool;
+    private List<Runnable> onFocusEventHandlers;
 
     public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
 	this(resource, new ViewModelEditorSettings(20.0d, 20.0d, true), syntaxFactory);
@@ -50,6 +55,7 @@ public class ModelEditorController extends BorderPane {
 	this.settings = settings;
 	this.syntaxFactory = syntaxFactory;
 	this.selectedTool = new SimpleObjectProperty<>();
+	this.onFocusEventHandlers = new ArrayList<>();
 	initialize();
     }
 
@@ -111,15 +117,31 @@ public class ModelEditorController extends BorderPane {
 
     private Map<UUID,Node> initializeLocations() {
 	var nodes = new HashMap<UUID,Node>();
-	for(var vertex : resource.syntax().vertices().entrySet())
+	for(var vertex : resource.syntax().vertices().entrySet()) {
 	    nodes.put(vertex.getKey(), syntaxFactory.createVertex(vertex.getKey(), vertex.getValue(), this));
+	    vertex.getValue().addFocusListener(() -> {
+		var halfWidth = getWidth() * 0.5;
+		var halfHeight = getHeight() * 0.5;
+		// TODO: scale to fit
+		this.drawGroupTransform.setTx(halfWidth - vertex.getValue().position().getX());
+		this.drawGroupTransform.setTy(halfHeight - vertex.getValue().position().getY());
+		this.focus();
+	    });
+	}
 	return nodes;
     }
 
     private Map<UUID,Node> initializeEdges() {
 	var nodes = new HashMap<UUID,Node>();
-	for(var edge : resource.syntax().edges().entrySet())
+	for(var edge : resource.syntax().edges().entrySet()) {
+	    edge.getValue().addFocusListener(() -> {
+		var halfWidth = getWidth() * 0.5;
+		var halfHeight = getHeight() * 0.5;
+		// TODO: Focus and scale
+		this.focus();
+	    });
 	    nodes.put(edge.getKey(), syntaxFactory.createEdge(edge.getKey(), edge.getValue(), this));
+	}
 	return nodes;
     }
 
@@ -160,6 +182,16 @@ public class ModelEditorController extends BorderPane {
 
     public ObjectProperty<ITool> getSelectedTool() {
 	return selectedTool;
+    }
+
+    @Override
+    public void addFocusListener(Runnable focusEventHandler) {
+	onFocusEventHandlers.add(focusEventHandler);
+    }
+
+    @Override
+    public void focus() {
+	onFocusEventHandlers.forEach(Runnable::run);
     }
 }
 

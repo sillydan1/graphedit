@@ -45,6 +45,11 @@ public class VertexController extends StackPane {
 	getChildren().add(initializeLabel());
 	initializeStyle();
 	initializeVertexEventHandlers(selectedTool, graph, editorSettings);
+	var pulseTimeline = createPulseTimeline(1.1, Duration.millis(300));
+	this.vertexValue.addFocusListener(() -> {
+	    pulseTimeline.playFromStart();
+	    this.requestFocus();
+	});
     }
 
     protected Node initializeVertexRepresentation() {
@@ -111,6 +116,22 @@ public class VertexController extends StackPane {
 	    else
 		graphic.getStyleClass().remove("vertex-node-selected");
 	});
+    }
+
+    private Timeline createPulseTimeline(double intensity, Duration timelineTime) {
+        var scale1x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2x = new KeyValue(vertexValue.shape().scaleXProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale1y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2y = new KeyValue(vertexValue.shape().scaleYProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var kx1 = new KeyFrame(Duration.millis(0), scale1x);
+        var kx2 = new KeyFrame(timelineTime.multiply(0.5), scale2x);
+        var kx3 = new KeyFrame(timelineTime, scale3x);
+        var ky1 = new KeyFrame(Duration.millis(0), scale1y);
+        var ky2 = new KeyFrame(timelineTime.multiply(0.5), scale2y);
+        var ky3 = new KeyFrame(timelineTime, scale3y);
+	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
     }
 }
 
