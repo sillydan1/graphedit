@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.MapProperty;
 
 import atlantafx.base.controls.ToggleSwitch;
 import dk.gtz.graphedit.skyhook.DI;
+import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.IInspectable;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import javafx.beans.Observable;
@@ -21,8 +22,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
@@ -43,9 +44,10 @@ public class InspectorController {
     }
 
     private void addAllSelected() {
-	for(var element : selectedElements)
+	for(var element : selectedElements) {
 	    if(element instanceof IInspectable inspectable)
 		addInspectable(inspectable);
+	}
     }
 
     private void initializeSelectionEventHandlers() {
@@ -58,8 +60,14 @@ public class InspectorController {
     private void addInspectable(IInspectable inspectable) {
 	var inspectableProperties = inspectable.getInspectableObjects();
 	var inspectors = new ArrayList<Node>();
+	inspectors.add(new Label(inspectable.getClass().getSimpleName()));
+	if(inspectable instanceof IFocusable selectable) {
+	    var btn = new Button("FOCUS");
+	    btn.setOnAction(e -> selectable.focus());
+	    inspectors.add(btn);
+	}
 	for(var p : inspectableProperties) {
-	    var group = new Group();
+	    var group = new VBox();
 	    group.getChildren().add(new Label(p.name()));
 	    group.getChildren().add(getObservableInspector(p.property()));
 	    inspectors.add(group);

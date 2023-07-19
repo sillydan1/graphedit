@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.view;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
@@ -12,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class EditorTabPaneController {
+    private static Logger logger = LoggerFactory.getLogger(EditorTabPaneController.class);
     @FXML
     public TabPane tabpane;
     @FXML
@@ -43,6 +47,10 @@ public class EditorTabPaneController {
 		var editorController = new ModelEditorController(changedVal, DI.get(ISyntaxFactory.class));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
+		editorController.addFocusListener(() -> {
+		    tabpane.getSelectionModel().select(tab);
+		    tabpane.requestFocus();
+		});
 	    }
 	    if(c.wasRemoved())
 		tabpane.getTabs().removeIf(t -> t.getText().equals(changedKey));
