@@ -32,8 +32,9 @@ Includes all the core functionality for GraphEdit...
     - [x] double-clicking a directory will toggle the directory
     - [x] have a keyboard accelerator for new model file (create in selected path - warn if none selected)
  - [ ] Get feature parity with H-Uppaal
+   - [x] Focus stealing
    - [ ] Project search (telescope-like)
-   - [ ] clickable links with focus-stealing capabilities
+   - [ ] clickable links
    - [ ] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
    - [ ] Separate codebase into projects (yalibs for libraries)
@@ -60,6 +61,7 @@ Includes all the core functionality for GraphEdit...
    - [ ] P/N
    - [ ] TIOA 
  - [ ] Release `v1.1.0`
+ - [ ] Trace-traverser & specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `ILsp` / `ILspEngine` interfaces

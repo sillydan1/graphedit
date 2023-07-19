@@ -6,44 +6,44 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.EditorController">
-<BorderPane HBox.hgrow="ALWAYS">
-    <top>
-        <VBox fx:id="menubarTopBox">
-            <MenuBar useSystemMenuBar="true">
-                <Menu text="file">
-                    <MenuItem onAction="#openProject" text="Open Project" accelerator="Shortcut+Shift+O"/>
-                    <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
-                    <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
-                    <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
-                </Menu>
-                <Menu text="edit">
-                    <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
-                    <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
-                </Menu>
-                <Menu text="editor">
-                    <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
-                </Menu>
-                <Menu text="dev">
-                    <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="O"/>
-                    <MenuItem onAction="#addPlaceholderTab" text="Add new placeholder tab" accelerator="Shortcut+T"/>
-                    <SeparatorMenuItem/>
-                    <MenuItem onAction="#toastTest" text="Spawn a toast" accelerator="Shortcut+R"/>
-                </Menu>
-            </MenuBar>
-        </VBox>
-    </top>
-    <left>
-        <fx:include fx:id="filePane" source="FileView.fxml"/>
-    </left>
-    <center>
-        <fx:include source="EditorTabPane.fxml"/>
-    </center>
-    <right>
-        <fx:include source="Inspector.fxml"/> 
-    </right>
-    <bottom>
-        <fx:include source="LogTabPane.fxml"/> 
-    </bottom>
-</BorderPane>
+<StackPane fx:id="root">
+    <BorderPane HBox.hgrow="ALWAYS">
+        <top>
+            <VBox fx:id="menubarTopBox">
+                <MenuBar useSystemMenuBar="true">
+                    <Menu text="file">
+                        <MenuItem onAction="#openProject" text="Open Project" accelerator="Shortcut+Shift+O"/>
+                        <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
+                        <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
+                    </Menu>
+                    <Menu text="edit">
+                        <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
+                        <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
+                    </Menu>
+                    <Menu text="editor">
+                        <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                    </Menu>
+                    <Menu text="dev">
+                        <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="Shortcut+O"/>
+                    </Menu>
+                </MenuBar>
+            </VBox>
+        </top>
+        <left>
+            <fx:include fx:id="filePane" source="FileView.fxml"/>
+        </left>
+        <center>
+            <fx:include source="EditorTabPane.fxml"/>
+        </center>
+        <right>
+            <fx:include source="Inspector.fxml"/> 
+        </right>
+        <bottom>
+            <fx:include source="LogTabPane.fxml"/> 
+        </bottom>
+    </BorderPane>
+</StackPane>
 </StackPane>
 
