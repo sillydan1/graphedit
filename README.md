@@ -1,9 +1,7 @@
 # graphedit
-A graph editor for the 21st century
-The hackable graph editor
 
-## Core
-Includes all the core functionality for GraphEdit...
+<details>
+  <summary>Progess & Roadmap</summary>
 
 **Progress**
  - [x] Basic graph model implementation
@@ -52,6 +50,7 @@ Includes all the core functionality for GraphEdit...
    - [ ] Commission a logo
    - [ ] javadoc
    - [ ] Roadmap
+   - [ ] Manpages
    - [ ] Changelog
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
@@ -76,9 +75,26 @@ Includes all the core functionality for GraphEdit...
    - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
  - [ ] Release `v2.0.0`
 
+</details>
+
+A graph editor for the 21st century
+The hackable graph editor
+ 
+## Core
+Includes all the core functionality for GraphEdit...
+
 ## Default
 A set of default presentations, viewmodel and model objects to be injected as an example project
 
 ## Demo
 A project meant for exploration and demonstration of the other libraries. Shouldn't be used and should be removed before `v1.0.0` is released.
+
+## CONTRIBUTION
+This should be a separate file.
+
+### Git
+Commits should strive to follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format (merge commits nonwithstanding). Idealy each commit should at least be compileable and runnable as well, but with refactors, it can be understandable if this is not possible. A commit should represent a meaningful change, so "wip" commits are discouraged, and we encourage to squash and/or rename commits as needed.
+
+#### PRs
+Pull requests should be up-to-date with the target branch at review-time. Rebases are encouraged, but if target-branch merge commits are permitted as well when appropriate.
 
