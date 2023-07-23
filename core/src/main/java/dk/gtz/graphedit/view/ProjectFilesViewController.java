@@ -154,10 +154,12 @@ public class ProjectFilesViewController {
 	    logger.warn("cannot create new model file, since no destination folder is selected");
 	    return;
 	}
-	var basePath = selected.getValue().path().toString();
+	var basePath = selected.getValue().path();
+	if(!Files.isDirectory(basePath))
+	    basePath = basePath.getParent();
 	var dialog = new TextInputDialog();
 	dialog.setTitle("new model file");
-	dialog.setHeaderText(selected.getValue().path().toString());
+	dialog.setHeaderText(basePath.toString());
 	dialog.setContentText("new filename:");
 	dialog.initOwner(root.getScene().getWindow()); // TODO: experiment with null window
 	var fileName = dialog.showAndWait();
