@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.SearchPaneController">
+<VBox fx:id="root" spacing="10" alignment="CENTER" 
+    minWidth="450"
+    minHeight="450"
+    maxWidth="450"
+    maxHeight="450">
+    <HBox spacing="10" alignment="BASELINE_LEFT">
+        <Button fx:id="searchButton" styleClass="button-icon"/>
+        <TextField fx:id="searchField" promptText="search" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="closeButton" text="close"/>
+    </HBox>
+</VBox>
+</StackPane>
+

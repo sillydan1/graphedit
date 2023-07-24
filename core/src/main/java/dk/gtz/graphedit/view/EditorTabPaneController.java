@@ -51,6 +51,10 @@ public class EditorTabPaneController {
 		    tabpane.getSelectionModel().select(tab);
 		    tabpane.requestFocus();
 		});
+		c.getValueAdded().addFocusListener(() -> {
+		    tabpane.getSelectionModel().select(tab);
+		    tabpane.requestFocus();
+		});
 	    }
 	    if(c.wasRemoved())
 		tabpane.getTabs().removeIf(t -> t.getText().equals(changedKey));

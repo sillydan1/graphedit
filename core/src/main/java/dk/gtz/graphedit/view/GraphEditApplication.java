@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
@@ -11,7 +12,6 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
-import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.skyhook.DI;
@@ -26,9 +26,9 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.StackUndoSystem;
+import dk.gtz.graphedit.view.preloader.FinishNotification;
 import dk.gtz.graphedit.view.preloader.GraphEditPreloader;
 import dk.gtz.graphedit.view.preloader.LoadStateNotification;
-import dk.gtz.graphedit.view.preloader.FinishNotification;
 import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -38,6 +38,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -136,6 +137,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupStage(Stage primaryStage) throws Exception {
 	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	setupModalPane();
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
     }
@@ -161,7 +163,20 @@ public class GraphEditApplication extends Application implements IRestartableApp
         var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
 	scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 	Toast.initialize(page);
+	page.getChildren().add(DI.get(ModalPane.class));
 	return scene;
+    }
+
+    private void setupModalPane() {
+	var modalPane = new ModalPane();
+	modalPane.setId("modal pane");
+	modalPane.displayProperty().addListener((e,o,n) -> {
+	    if(n)
+		return;
+	    modalPane.setAlignment(Pos.CENTER);
+	    modalPane.usePredefinedTransitionFactories(null);
+	});
+	DI.add(ModalPane.class, modalPane);
     }
 }
 
