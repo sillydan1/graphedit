@@ -152,8 +152,17 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeVertexCollectionChangeHandlers() {
 	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
-	    if(c.wasAdded())
+	    if(c.wasAdded()) {
 		drawGroup.addChild(c.getKey(), syntaxFactory.createVertex(c.getKey(), c.getValueAdded(), this));
+		c.getValueAdded().addFocusListener(() -> {
+		    var halfWidth = getWidth() * 0.5;
+		    var halfHeight = getHeight() * 0.5;
+		    // TODO: scale to fit
+		    this.drawGroupTransform.setTx(halfWidth - c.getValueAdded().position().getX());
+		    this.drawGroupTransform.setTy(halfHeight - c.getValueAdded().position().getY());
+		    this.focus();
+		});
+	    }
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
 	});
@@ -161,8 +170,15 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeEdgeCollectionChangeHandlers() {
 	resource.syntax().edges().addListener((MapChangeListener<UUID,ViewModelEdge>)c -> {
-	    if(c.wasAdded())
+	    if(c.wasAdded()) {
+		c.getValueAdded().addFocusListener(() -> {
+		    var halfWidth = getWidth() * 0.5;
+		    var halfHeight = getHeight() * 0.5;
+		    // TODO: Focus and scale
+		    this.focus();
+		});
 		drawGroup.addChild(c.getKey(), syntaxFactory.createEdge(c.getKey(), c.getValueAdded(), this));
+	    }
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
 	});

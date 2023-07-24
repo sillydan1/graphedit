@@ -13,13 +13,13 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable {
     private final SimpleObjectProperty<UUID> source;
     private final SimpleObjectProperty<UUID> target;
     private final BooleanProperty isSelected;
-    private final List<Runnable> onFocusEventHandlers;
+    private final List<Runnable> focusEventHandlers;
 
     public ViewModelEdge(SimpleObjectProperty<UUID> source, SimpleObjectProperty<UUID> target) {
         this.source = source;
         this.target = target;
         this.isSelected = new SimpleBooleanProperty(false);
-        this.onFocusEventHandlers = new ArrayList<>();
+        this.focusEventHandlers = new ArrayList<>();
     }
 
     public ViewModelEdge(ModelEdge edge) {
@@ -49,12 +49,12 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable {
 
     @Override
     public void addFocusListener(Runnable focusEventHandler) {
-        onFocusEventHandlers.add(focusEventHandler);
+        focusEventHandlers.add(focusEventHandler);
     }
 
     @Override
     public void focus() {
-        onFocusEventHandlers.forEach(Runnable::run);
+        focusEventHandlers.forEach(Runnable::run);
     }
 
     /**
