@@ -1,14 +1,19 @@
 package dk.gtz.graphedit.view;
 
+import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.log.Hyperlink;
 import dk.gtz.graphedit.view.log.HyperlinkTextArea;
 import dk.gtz.graphedit.view.log.TextStyle;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.IFocusable;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 
@@ -18,9 +23,11 @@ public class LogTabController extends StackPane {
     private HyperlinkTextArea textArea;
     private VirtualizedScrollPane<HyperlinkTextArea> scrollPane;
     private Pattern linkMatcher;
+    private IBufferContainer bufferContainer;
 
     public LogTabController() {
 	linkMatcher = getPattern();
+        bufferContainer = DI.get(IBufferContainer.class);
 	initializeTextArea();
     }
 
@@ -48,7 +55,24 @@ public class LogTabController extends StackPane {
     }
 
     private void onLinkClick(Hyperlink link) {
-	logger.debug("you clicked on a link!");
+        try {
+            var lookupId = UUID.fromString(link.getLink());
+            var result = getFocusable(lookupId);
+            result.ifPresent(IFocusable::focus);
+        } catch(Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    private Optional<IFocusable> getFocusable(UUID lookupId) {
+        for(var buffer : bufferContainer.getBuffers().entrySet()) {
+            var syntax = buffer.getValue().syntax();
+            if(syntax.vertices().containsKey(lookupId))
+                return Optional.of(syntax.vertices().get(lookupId));
+            if(syntax.edges().containsKey(lookupId))
+                return Optional.of(syntax.edges().get(lookupId));
+        }
+        return Optional.empty();
     }
 
     public void onLogAdded(String logMessage) {
@@ -57,7 +81,7 @@ public class LogTabController extends StackPane {
         while(matcher.find()) {
             textArea.appendText(logMessage.substring(index, matcher.start()));
             index = matcher.end();
-            textArea.appendWithLink(matcher.group("display"), matcher.group());
+            textArea.appendWithLink(matcher.group("display"), matcher.group("identifier"));
         }
         textArea.appendText(logMessage.substring(index) + "\n");
     }
