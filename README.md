@@ -31,7 +31,7 @@
     - [x] have a keyboard accelerator for new model file (create in selected path - warn if none selected)
  - [ ] Get feature parity with H-Uppaal
    - [x] Focus stealing
-   - [ ] Project search (telescope-like)
+   - [x] Project search (telescope-like)
    - [ ] clickable links
    - [ ] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
