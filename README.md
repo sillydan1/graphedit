@@ -32,7 +32,7 @@
  - [ ] Get feature parity with H-Uppaal
    - [x] Focus stealing
    - [x] Project search (telescope-like)
-   - [ ] clickable links
+   - [x] clickable links
    - [ ] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
    - [ ] Separate codebase into projects (yalibs for libraries)
