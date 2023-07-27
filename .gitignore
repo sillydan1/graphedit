@@ -32,3 +32,6 @@ gradle/
 # Testing files
 example.json
 
+# MacOS
+**/.DS_Store
+
