@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,7 @@ import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.theme.Tweaks;
+import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.serialization.IModelSerializer;
@@ -23,21 +21,12 @@ import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class EditorController {
@@ -122,6 +111,29 @@ public class EditorController {
 
     @FXML
     private void featureHolder() {
+    }
+
+    @FXML
+    private void openAboutPane() {
+	var aboutNode = new VBox(
+		createText(BuildConfig.APP_NAME, Styles.TITLE_1),
+		createText(BuildConfig.APP_VERSION, Styles.TITLE_3),
+		new Text("TODO: longer description")
+		);
+	aboutNode.setMinSize(450, 450);
+	aboutNode.setMaxSize(450, 450);
+	aboutNode.getStyleClass().add(Styles.BG_DEFAULT);
+	modalPane.show(aboutNode);
+    }
+
+    private Text createText(String text, String style) {
+	var returnValue = new Text(text);
+	returnValue.getStyleClass().add(style);
+	return returnValue;
+    }
+
+    @FXML
+    private void openSearchPane() {
 	try {
 	    var loader = new FXMLLoader(EditorController.class.getResource("SearchPane.fxml"));
 	    var content = (Pane)loader.load();

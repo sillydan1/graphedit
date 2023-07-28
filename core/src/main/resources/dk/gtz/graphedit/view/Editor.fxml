@@ -22,8 +22,14 @@
                         <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
                         <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
                     </Menu>
-                    <Menu text="editor">
+                    <Menu text="project">
+                        <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
+                    </Menu>
+                    <Menu text="view">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                    </Menu>
+                    <Menu text="help">
+                        <MenuItem onAction="#openAboutPane" text="About"/>
                     </Menu>
                     <Menu text="dev">
                         <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="Shortcut+O"/>
