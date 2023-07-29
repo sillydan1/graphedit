@@ -29,11 +29,11 @@
     - [x] double-clicking a model file will open the model
     - [x] double-clicking a directory will toggle the directory
     - [x] have a keyboard accelerator for new model file (create in selected path - warn if none selected)
- - [ ] Get feature parity with H-Uppaal
+ - [x] Get feature parity with H-Uppaal
    - [x] Focus stealing
    - [x] Project search (telescope-like)
    - [x] clickable links
-   - [ ] Run configurations (will replace engine "integrations")
+   - [x] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
    - [ ] Separate codebase into projects (yalibs for libraries)
    - [ ] Fix todos
