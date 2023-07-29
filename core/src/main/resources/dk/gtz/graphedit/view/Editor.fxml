@@ -22,8 +22,13 @@
                         <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
                         <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
                     </Menu>
-                    <Menu text="project">
+                    <Menu fx:id="projectMenu" text="project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem onAction="#runSelectedRunTarget" text="Run Selected RunTarget" accelerator="Shortcut+R"/>
+                        <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+R"/>
+                        <Menu fx:id="runTargetsMenu" text="RunTargets"/>
+                        <SeparatorMenuItem/>
                     </Menu>
                     <Menu text="view">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>

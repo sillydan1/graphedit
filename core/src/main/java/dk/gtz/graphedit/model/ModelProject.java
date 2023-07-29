@@ -7,7 +7,8 @@ public record ModelProject(
 		Map<String,String> metadata, 
 		String name,
 		String rootDirectory, // TODO: This should be removed, or at least be considered relative to the project file
-		List<String> excludeFiles
+		List<String> excludeFiles,
+		List<ModelRunTarget> runTargets
 		// What syntax to use for each file (maybe)
 		) {}
 
