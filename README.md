@@ -36,12 +36,18 @@
    - [x] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
    - [ ] Separate codebase into projects (yalibs for libraries)
+     - [ ] `yadi`
+     - [ ] `yaerrors`
+     - [ ] `yaaction`
+     - [ ] `yastreamgobbler`
+     - [ ] `yaundo`
    - [ ] Fix todos
    - [ ] Combined modelling tool
    - [ ] graph editor polish
    - [ ] Tool keybinds
    - [ ] Custom keybinds
    - [ ] Project file pane
+     - [ ] Proper fill-out
      - [ ] right-click menu
      - [ ] right-click new > model > type will create a new empty model file of the chosen type (don't open)
  - [ ] Beurocracy Cleanup
