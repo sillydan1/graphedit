@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.util.BindingsUtil;
@@ -15,6 +14,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
+import dk.yalibs.yadi.DI;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;

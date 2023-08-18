@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.IFocusable;
+import dk.yalibs.yadi.DI;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

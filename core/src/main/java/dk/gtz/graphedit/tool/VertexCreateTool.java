@@ -8,7 +8,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
@@ -19,6 +18,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelTextVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
+import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 

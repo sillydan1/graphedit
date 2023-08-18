@@ -7,12 +7,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.events.EdgeMouseEvent;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.yalibs.yadi.DI;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;

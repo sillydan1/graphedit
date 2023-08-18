@@ -8,12 +8,12 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.view.log.Hyperlink;
 import dk.gtz.graphedit.view.log.HyperlinkTextArea;
 import dk.gtz.graphedit.view.log.TextStyle;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.IFocusable;
+import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import com.fasterxml.jackson.databind.ser.std.MapProperty;
 
 import atlantafx.base.controls.ToggleSwitch;
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.IInspectable;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.yalibs.yadi.DI;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;

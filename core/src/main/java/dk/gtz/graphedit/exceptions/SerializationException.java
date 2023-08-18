@@ -1,6 +1,6 @@
 package dk.gtz.graphedit.exceptions;
 
-public class SerializationException extends Exception {
+public class SerializationException extends RuntimeException {
     public SerializationException(String message) {
         super(message);
     }

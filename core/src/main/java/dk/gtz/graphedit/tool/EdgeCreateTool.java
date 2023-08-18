@@ -8,7 +8,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.view.MouseTracker;
@@ -17,10 +16,11 @@ import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
+import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 public class EdgeCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(EdgeCreateTool.class);

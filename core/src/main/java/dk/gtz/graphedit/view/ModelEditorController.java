@@ -8,9 +8,7 @@ import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 
-import atlantafx.base.util.Animations;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
@@ -20,6 +18,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

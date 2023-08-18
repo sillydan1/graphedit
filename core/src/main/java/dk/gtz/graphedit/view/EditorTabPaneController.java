@@ -3,9 +3,9 @@ package dk.gtz.graphedit.view;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
+import dk.yalibs.yadi.DI;
 import javafx.beans.binding.Bindings;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;

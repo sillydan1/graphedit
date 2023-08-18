@@ -3,10 +3,10 @@ package dk.gtz.graphedit.view;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.skyhook.DI;
 import dk.gtz.graphedit.undo.IUndoSystem;
 import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
+import dk.yalibs.yadi.DI;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
