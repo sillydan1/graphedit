@@ -38,7 +38,7 @@
    - [ ] Separate codebase into projects (yalibs for libraries) [guide](https://central.sonatype.org/publish/publish-gradle/)
      - [x] `yadi`
      - [x] `yaerrors`
-     - [ ] `yaaction`
+     - [x] `yafunc`
      - [ ] `yastreamgobbler`
      - [ ] `yaundo`
    - [ ] Fix todos
