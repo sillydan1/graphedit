@@ -35,12 +35,12 @@
    - [x] clickable links
    - [x] Run configurations (will replace engine "integrations")
  - [ ] Code polish and project structure cleanup
-   - [ ] Separate codebase into projects (yalibs for libraries) [guide](https://central.sonatype.org/publish/publish-gradle/)
+   - [x] Separate codebase into projects (yalibs for libraries) [guide](https://central.sonatype.org/publish/publish-gradle/)
      - [x] `yadi`
      - [x] `yaerrors`
      - [x] `yafunc`
-     - [ ] `yastreamgobbler`
-     - [ ] `yaundo`
+     - [x] `yastreamgobbler`
+     - [x] `yaundo`
    - [ ] Fix todos
    - [ ] Combined modelling tool
    - [ ] graph editor polish
