@@ -7,9 +7,9 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.exceptions.NotFoundException;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
