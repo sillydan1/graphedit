@@ -9,12 +9,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.undo.IUndoSystem;
-import dk.gtz.graphedit.undo.Undoable;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
+import dk.yalibs.yaundo.IUndoSystem;
+import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
