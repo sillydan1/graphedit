@@ -121,7 +121,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	    vertex.getValue().addFocusListener(() -> {
 		var halfWidth = getWidth() * 0.5;
 		var halfHeight = getHeight() * 0.5;
-		// TODO: scale to fit
 		this.drawGroupTransform.setTx(halfWidth - vertex.getValue().position().getX());
 		this.drawGroupTransform.setTy(halfHeight - vertex.getValue().position().getY());
 		this.focus();
@@ -134,9 +133,14 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	var nodes = new HashMap<UUID,Node>();
 	for(var edge : resource.syntax().edges().entrySet()) {
 	    edge.getValue().addFocusListener(() -> {
+		var sourcePos = resource.syntax().vertices().get(edge.getValue().source().get()).position();
+		var targetPos = resource.syntax().vertices().get(edge.getValue().target().get()).position();
+		var direction = targetPos.subtract(sourcePos).scale(0.5f);
+		var center = sourcePos.add(direction);
 		var halfWidth = getWidth() * 0.5;
 		var halfHeight = getHeight() * 0.5;
-		// TODO: Focus and scale
+		this.drawGroupTransform.setTx(halfWidth - center.getX());
+		this.drawGroupTransform.setTy(halfHeight - center.getY());
 		this.focus();
 	    });
 	    nodes.put(edge.getKey(), syntaxFactory.createEdge(edge.getKey(), edge.getValue(), this));
@@ -156,7 +160,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		c.getValueAdded().addFocusListener(() -> {
 		    var halfWidth = getWidth() * 0.5;
 		    var halfHeight = getHeight() * 0.5;
-		    // TODO: scale to fit
 		    this.drawGroupTransform.setTx(halfWidth - c.getValueAdded().position().getX());
 		    this.drawGroupTransform.setTy(halfHeight - c.getValueAdded().position().getY());
 		    this.focus();
@@ -171,9 +174,14 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	resource.syntax().edges().addListener((MapChangeListener<UUID,ViewModelEdge>)c -> {
 	    if(c.wasAdded()) {
 		c.getValueAdded().addFocusListener(() -> {
+		    var sourcePos = resource.syntax().vertices().get(c.getValueAdded().source().get()).position();
+		    var targetPos = resource.syntax().vertices().get(c.getValueAdded().target().get()).position();
+		    var direction = targetPos.subtract(sourcePos).scale(0.5f);
+		    var center = sourcePos.add(direction);
 		    var halfWidth = getWidth() * 0.5;
 		    var halfHeight = getHeight() * 0.5;
-		    // TODO: Focus and scale
+		    this.drawGroupTransform.setTx(halfWidth - center.getX());
+		    this.drawGroupTransform.setTy(halfHeight - center.getY());
 		    this.focus();
 		});
 		drawGroup.addChild(c.getKey(), syntaxFactory.createEdge(c.getKey(), c.getValueAdded(), this));

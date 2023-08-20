@@ -57,5 +57,17 @@ public class ViewModelPoint {
         getXProperty().set(getX() - (getX() % settings.gridSizeX().get()));
         getYProperty().set(getY() - (getY() % settings.gridSizeY().get()));
     }
+
+    public ViewModelPoint subtract(ViewModelPoint other) {
+        return new ViewModelPoint(getX() - other.getX(), getY() - other.getY());
+    }
+
+    public ViewModelPoint add(ViewModelPoint other) {
+        return new ViewModelPoint(getX() + other.getX(), getY() + other.getY());
+    }
+
+    public ViewModelPoint scale(float scalar) {
+        return new ViewModelPoint(getX() * scalar, getY() * scalar);
+    }
 }
 
