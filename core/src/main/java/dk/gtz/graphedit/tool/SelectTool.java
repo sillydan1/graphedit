@@ -28,6 +28,16 @@ public class SelectTool extends AbstractBaseTool {
     }
 
     @Override
+    public String getHelpDescription() {
+        return """
+            Tool to select syntactic elements.
+
+            When selected, click either a vertex or an edge to mark it as selected.
+            You can select more than one element at a time by holding down <CTRL> whilst clicking on a syntactic element.
+            """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
         return Optional.of("select syntactic elements");
     }

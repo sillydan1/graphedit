@@ -11,7 +11,7 @@ import javafx.scene.Node;
 public interface ITool {
     Optional<String> getTooltip();
     Node getGraphic();
-    // TODO: String getHelpDescription();
+    String getHelpDescription();
     void onViewportMouseEvent(ViewportMouseEvent e);
     void onVertexMouseEvent(VertexMouseEvent e);
     void onEdgeMouseEvent(EdgeMouseEvent e);

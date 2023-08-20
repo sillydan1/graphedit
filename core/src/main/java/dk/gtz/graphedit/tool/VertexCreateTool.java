@@ -30,6 +30,15 @@ public class VertexCreateTool extends AbstractBaseTool {
     }
 
     @Override
+    public String getHelpDescription() {
+        return """
+            Tool to create vertices.
+
+            When selected, click anywhere on the canvas to create a vertex.
+            """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
         return Optional.of("Create new vertex");
     }
@@ -54,6 +63,7 @@ public class VertexCreateTool extends AbstractBaseTool {
         }
     }
 
+    // TODO: This should be an injected factory, so you can create different kinds of vertex create tools
     public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph) {
         var vertex = new ViewModelVertex(point, new ViewModelVertexShape(ViewModelShapeType.OVAL));
         var id = UUID.randomUUID();

@@ -6,8 +6,6 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
-import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
@@ -29,6 +27,16 @@ public class VertexDragMoveTool extends AbstractBaseTool {
 
     public VertexDragMoveTool() {
         undoSystem = DI.get(IUndoSystem.class);
+    }
+
+    @Override
+    public String getHelpDescription() {
+        return """
+            Tool to manipulate the position of vertices.
+
+            When selected, press down on a vertex and move the mouse around to manipulate to position of said vertex.
+            Note that the action completes when vertex is released.
+            """;
     }
 
     @Override
@@ -78,7 +86,7 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         point.getXProperty().set(oldPointX.get() + moveDiffX);
         point.getYProperty().set(oldPointY.get() + moveDiffY);
         if(e.editorSettings().gridSnap().get())
-            snapToGrid(point, e.editorSettings());
+            point.snapToGrid(e.editorSettings());
 
         var xcpy = point.getX();
         var ycpy = point.getY();
@@ -86,12 +94,6 @@ public class VertexDragMoveTool extends AbstractBaseTool {
             point.getXProperty().set(xcpy);
             point.getYProperty().set(ycpy);
         });
-    }
-
-    // TODO: Move this to somewhere so it can be used by other tools as well
-    private void snapToGrid(ViewModelPoint point, ViewModelEditorSettings settings) {
-        point.getXProperty().set(point.getX() - (point.getX() % settings.gridSizeX().get()));
-        point.getYProperty().set(point.getY() - (point.getY() % settings.gridSizeY().get()));
     }
 
     private void handleMouseReleasedEvent(VertexMouseEvent e) {

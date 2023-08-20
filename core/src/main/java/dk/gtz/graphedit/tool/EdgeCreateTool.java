@@ -35,6 +35,18 @@ public class EdgeCreateTool extends AbstractBaseTool {
     }
 
     @Override
+    public String getHelpDescription() {
+        return """
+            Tool to create edges between vertices.
+
+            When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
+            You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing <ESC>
+
+            Note that the action completes at edge completion (second click) rather than edge creation (first click).
+            """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
         return Optional.of("Create new edge between two vertices");
     }
@@ -45,7 +57,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
     }
 
     @Override
-    public void onVertexMouseEvent(VertexMouseEvent e) { // TODO: Tools should also get keyboard events (e.g. esc for cancel)
+    public void onVertexMouseEvent(VertexMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
             if(!isCurrentlyCreatingEdge()) {
                 create(e.vertexId(), e.graph());

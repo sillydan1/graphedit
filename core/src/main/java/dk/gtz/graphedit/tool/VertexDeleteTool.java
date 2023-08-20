@@ -26,6 +26,15 @@ public class VertexDeleteTool extends AbstractBaseTool {
     }
 
     @Override
+    public String getHelpDescription() {
+        return """
+            Tool to delete vertices.
+
+            When selected, click an vertex to delete it.
+            """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
         return Optional.of("delete vertex from the graph");
     }

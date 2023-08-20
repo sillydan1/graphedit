@@ -25,6 +25,15 @@ public class EdgeDeleteTool extends AbstractBaseTool {
     }
 
     @Override
+    public String getHelpDescription() {
+        return """
+            Tool to delete edges between vertices.
+
+            When selected, click an edge to delete it.
+            """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
         return Optional.of("delete an edge from the graph");
     }

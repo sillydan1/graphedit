@@ -12,6 +12,15 @@ import javafx.scene.Node;
  */
 public class ViewTool extends AbstractBaseTool {
     @Override
+    public String getHelpDescription() {
+	return """
+	    Tool to view the model.
+
+	    Has no interaction events.
+	    """;
+    }
+
+    @Override
     public Optional<String> getTooltip() {
 	return Optional.of("view the model");
     }
