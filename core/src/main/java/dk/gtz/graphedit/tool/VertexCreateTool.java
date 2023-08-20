@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
-import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
@@ -47,18 +46,12 @@ public class VertexCreateTool extends AbstractBaseTool {
             var posY = (e.event().getY() - e.viewportAffine().getTy()) / e.viewportAffine().getMyy();
             var point = new ViewModelPoint(posX, posY);
             if(e.editorSettings().gridSnap().get())
-                snapToGrid(point, e.editorSettings());
+                point.snapToGrid(e.editorSettings());
             if(e.event().isShiftDown())
                 createTextVertex(point, e.graph());
             else
                 createCircleVertex(point, e.graph());
         }
-    }
-
-    // TODO: Move this to somewhere so it can be used by other tools as well
-    private void snapToGrid(ViewModelPoint point, ViewModelEditorSettings settings) {
-        point.getXProperty().set(point.getX() - (point.getX() % settings.gridSizeX().get()));
-        point.getYProperty().set(point.getY() - (point.getY() % settings.gridSizeY().get()));
     }
 
     public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph) {

@@ -48,5 +48,14 @@ public class ViewModelPoint {
     public ModelPoint toModel() {
         return new ModelPoint(getX(), getY());
     }
+
+    /**
+     * Snap the position to the provided grid settings
+     * @param settings the view settings containing grid settings to snap to
+     */
+    public void snapToGrid(ViewModelEditorSettings settings) {
+        getXProperty().set(getX() - (getX() % settings.gridSizeX().get()));
+        getYProperty().set(getY() - (getY() % settings.gridSizeY().get()));
+    }
 }
 
