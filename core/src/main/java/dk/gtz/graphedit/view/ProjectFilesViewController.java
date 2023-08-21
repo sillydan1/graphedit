@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.javafx.StackedFontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,16 +25,25 @@ import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.view.util.GlobFileMatcher;
 import dk.gtz.graphedit.view.util.IconUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
+import javafx.stage.PopupWindow.AnchorLocation;
 
 public class ProjectFilesViewController {
     private static record FileTreeEntry(Path path) {
@@ -49,6 +59,11 @@ public class ProjectFilesViewController {
     private IBufferContainer openBuffers;
     private TreeView<FileTreeEntry> fileTree;
     private WatchService watchService;
+    private GlobFileMatcher gitignoreMatcher;
+    private SimpleBooleanProperty useGitignoreMatcher;
+    private GlobFileMatcher grapheditIgnoreMatcher;
+    private SimpleBooleanProperty useGrapheditIgnoreMatcher;
+    private SimpleBooleanProperty showHiddenFiles;
 
     @FXML
     public VBox root;
@@ -58,20 +73,87 @@ public class ProjectFilesViewController {
 	openProject = DI.get(ViewModelProject.class);
 	serializer = DI.get(IModelSerializer.class);
 	openBuffers = DI.get(IBufferContainer.class);
+	useGitignoreMatcher = new SimpleBooleanProperty(true);
+	useGrapheditIgnoreMatcher = new SimpleBooleanProperty(true);
+	showHiddenFiles = new SimpleBooleanProperty(false);
+	initializeGlobMatchers();
 	fileTree = createTreeView(openProject.name().get(), Path.of(openProject.rootDirectory().get()));
-	root.getChildren().add(fileTree);
+	var toolbar = createToolbar();
+	root.getChildren().addAll(toolbar, fileTree);
 	watchForFileTreeChanges();
     }
-    
-    private FontIcon getPathFontIcon(Path p) {
+
+    private void initializeGlobMatchers() {
 	try {
-	    if(Files.isDirectory(p))
+	    gitignoreMatcher = new GlobFileMatcher(Path.of(openProject.rootDirectory().get() + "/.gitignore"));
+	} catch (IOException ignored) {
+	    logger.debug(ignored.getMessage());
+	    gitignoreMatcher = new GlobFileMatcher();
+	}
+	try {
+	    grapheditIgnoreMatcher = new GlobFileMatcher(Path.of(openProject.rootDirectory().get() + "/.graphedit.ignore"));
+	} catch (IOException ignored) {
+	    logger.debug(ignored.getMessage());
+	    grapheditIgnoreMatcher = new GlobFileMatcher();
+	}
+    }
+
+    private Node createToolbar() {
+	// TODO: Write a yalib for actual gitignore support (see: https://github.com/neva-dev/gitignore-file-filter) (no, gitignore is not regex or purely glob-based, see https://git-scm.com/docs/gitignore#_pattern_format)
+	// var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	// gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	// gitignoreHideButton.selectedProperty().set(useGitignoreMatcher.get());
+	// useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty());
+	// var gitignoreTip = new Tooltip("Show gitignored files");
+	// gitignoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	// gitignoreTip.setPrefWidth(200);
+	// gitignoreTip.setWrapText(true);
+	// gitignoreHideButton.setTooltip(gitignoreTip);
+
+	var grapheditIgnoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	grapheditIgnoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	grapheditIgnoreHideButton.selectedProperty().set(useGrapheditIgnoreMatcher.get());
+	useGrapheditIgnoreMatcher.bind(grapheditIgnoreHideButton.selectedProperty());
+	var grapheditIgnoreTip = new Tooltip("Show graphedit ignored files");
+	grapheditIgnoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	grapheditIgnoreTip.setPrefWidth(200);
+	grapheditIgnoreTip.setWrapText(true);
+	grapheditIgnoreHideButton.setTooltip(grapheditIgnoreTip);
+
+	var showHiddenFilesButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	showHiddenFilesButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	showHiddenFilesButton.selectedProperty().set(showHiddenFiles.get());
+	showHiddenFiles.bind(showHiddenFilesButton.selectedProperty());
+	var showHiddenFilesTip = new Tooltip("Show hidden files");
+	showHiddenFilesTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	showHiddenFilesTip.setPrefWidth(200);
+	showHiddenFilesTip.setWrapText(true);
+	showHiddenFilesButton.setTooltip(showHiddenFilesTip);
+
+	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton);
+	result.setOrientation(Orientation.HORIZONTAL);
+	return result;
+    }
+    
+    private Node getPathFontIcon(Path path) {
+	try {
+	    if(gitignoreMatcher.matches(path))
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+	    if(grapheditIgnoreMatcher.matches(path))
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.EYE), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+	    if(Files.isDirectory(path))
 		return new FontIcon(BootstrapIcons.FOLDER);
-	    return IconUtils.getFileTypeIcon(Files.probeContentType(p));
+	    return IconUtils.getFileTypeIcon(Files.probeContentType(path));
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	    return new FontIcon(BootstrapIcons.FILE);
 	}
+    }
+
+    private StackedFontIcon createStackedFontIcon(FontIcon outer, FontIcon inner) {
+	var result = new StackedFontIcon();
+	result.getChildren().addAll(outer, inner);
+	return result;
     }
 
     private TreeView<FileTreeEntry> createTreeView(String projectName, Path directoryPath) {
@@ -98,6 +180,10 @@ public class ProjectFilesViewController {
 	    var watcherThread = new Thread(this::watchDirectory);
 	    watcherThread.setDaemon(true);
 	    watcherThread.start();
+
+	    useGitignoreMatcher.addListener((e,o,n) -> Platform.runLater(this::updateTreeView));
+	    useGrapheditIgnoreMatcher.addListener((e,o,n) -> Platform.runLater(this::updateTreeView));
+	    showHiddenFiles.addListener((e,o,n) -> Platform.runLater(this::updateTreeView));
         } catch (IOException e) {
 	    logger.error(e.getMessage(), e);
         }
@@ -120,6 +206,13 @@ public class ProjectFilesViewController {
         }
     }
 
+    private void updateTreeView() {
+        var newItem = new TreeItem<>(new FileTreeEntry(fileTree.getRoot().getValue().path()));
+	addFileTreeItems(fileTree.getRoot().getValue().path(), newItem);
+	newItem.setExpanded(true);
+	fileTree.setRoot(newItem);
+    }
+
     private void updateTreeView(WatchEvent.Kind<?> eventKind, Path fullPath) {
 	// TODO: This currently does a full re-load. It shouldn't.
         var newItem = new TreeItem<>(new FileTreeEntry(fileTree.getRoot().getValue().path()));
@@ -131,8 +224,12 @@ public class ProjectFilesViewController {
     private void addFileTreeItems(Path dirPath, TreeItem<FileTreeEntry> parent) {
 	try {
 	    for(var path : Files.newDirectoryStream(dirPath)) {
-		if(Files.isHidden(path))
-		    continue; // TODO: add a toggle in the settings menu, also maybe respect .gitignore/.graphedit.ignore idk.
+		if(useGitignoreMatcher.get() && gitignoreMatcher.matches(path))
+		    continue;
+		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path))
+		    continue;
+		if(!showHiddenFiles.get() && Files.isHidden(path))
+		    continue;
 		var subDir = new TreeItem<FileTreeEntry>(new FileTreeEntry(path), getPathFontIcon(path));
 		if(Files.isDirectory(path))
 		    addFileTreeItems(path, subDir);

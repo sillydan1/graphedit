@@ -35,7 +35,6 @@ public class ModelEditorToolbar extends ToolBar {
     }
 
     private void addButton(ITool tool) {
-	// TODO: Highlight the currently selected tool somehow
 	var btn = new ToggleButton(null, tool.getGraphic());
 	btn.getStyleClass().addAll(Styles.BUTTON_ICON);
 	getItems().add(btn);
