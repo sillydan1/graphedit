@@ -83,8 +83,15 @@
 
 </details>
 
-A graph editor for the 21st century
-The hackable graph editor
+A graph editor for the 21st century / The hackable graph editor (not quite decided on the slogan yet)
+
+## Build and Install
+The project is compiled using `gradle`, but for the lazy ones, we provide a simple `Makefile`:
+
+```shell
+# Compile and start the editor
+make run
+```
  
 ## Core
 Includes all the core functionality for GraphEdit...
