@@ -41,6 +41,8 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
+    private GridPane gridPane;
+    private Pane drawPane;
     private Affine drawGroupTransform;
     private ObjectProperty<ITool> selectedTool;
     private List<Runnable> onFocusEventHandlers;
@@ -88,14 +90,14 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawGroup.getTransforms().add(drawGroupTransform);
 	// TODO: move this into a seperate controller/fxml thingy
 
-	var drawPane = new Pane(drawGroup.getGroup());
+	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	var gridPane = new GridPane(settings.gridSizeX().get(), settings.gridSizeY().get(), drawGroupTransform); // TODO: gridsize should be adjustable
+	gridPane = new GridPane(settings.gridSizeX().get(), settings.gridSizeY().get(), drawGroupTransform); // TODO: gridsize should be adjustable
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
@@ -149,7 +151,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     }
 
     private void initializeToolEventHandlers() {
-	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, resource.syntax(), settings)));
+	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, resource.syntax(), settings)));
 	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> selectedTool.get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
     }
 

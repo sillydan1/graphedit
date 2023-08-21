@@ -56,10 +56,11 @@ public class SelectTool extends AbstractBaseTool {
 
     @Override
     public void onViewportMouseEvent(ViewportMouseEvent e) {
-        // TODO: Something like this would be nice, but viewport events are also fired when you click on a vertex/edge, so this doesnt work
-        // if(e.event().getEventType().equals(MouseEvent.MOUSE_CLICKED))
-        //     if(!e.event().isControlDown())
-        //         clear();
+        if(!e.isTargetDrawPane())
+            return;
+        if(e.event().getEventType().equals(MouseEvent.MOUSE_CLICKED))
+            if(!e.event().isControlDown())
+                clear();
     }
 
     @Override

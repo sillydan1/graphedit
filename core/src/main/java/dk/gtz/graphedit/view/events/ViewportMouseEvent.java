@@ -8,6 +8,7 @@ import javafx.scene.transform.Affine;
 public record ViewportMouseEvent(
 		MouseEvent event,
 		Affine viewportAffine,
+		boolean isTargetDrawPane,
 		ViewModelGraph graph,
 		ViewModelEditorSettings editorSettings) {}
 
