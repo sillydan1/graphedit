@@ -54,8 +54,10 @@ public class FileBufferContainer implements IBufferContainer {
         try {
             var f = new File(filename);
             var fp = f.getAbsolutePath();
-            if(openBuffers.containsKey(fp))
-                return; // TODO: trigger a file focus event (focus feature not implemented yet)
+            if(openBuffers.containsKey(fp)) {
+                openBuffers.get(fp).focus();
+                return;
+            }
             var b = new StringBuilder();
             var s = new Scanner(f);
             while(s.hasNextLine())
