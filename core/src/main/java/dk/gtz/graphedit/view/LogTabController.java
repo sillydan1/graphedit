@@ -76,6 +76,10 @@ public class LogTabController extends StackPane {
     }
 
     public void onLogAdded(String logMessage) {
+        if(logMessage == null) {
+            logger.warn("null message occurred");
+            return;
+        }
         var matcher = linkMatcher.matcher(logMessage);
         var index = 0;
         while(matcher.find()) {

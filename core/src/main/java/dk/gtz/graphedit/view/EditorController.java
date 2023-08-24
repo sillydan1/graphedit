@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
@@ -48,12 +49,16 @@ public class EditorController {
     private StackPane root;
     @FXML
     private Menu runTargetsMenu;
+    @FXML
+    private MenuItem runTargetMenuItem;
+    private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
 
     @FXML
     private void initialize() {
 	modalPane = DI.get(ModalPane.class);
 	selectedRunTarget = Optional.empty();
+	runTargetThread = new Thread(this::runTarget);
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
     }
@@ -155,30 +160,44 @@ public class EditorController {
 	}
     }
 
-    @FXML
-    private void runSelectedRunTarget() {
-        try {
-	    // TODO: Consider doing all of this in a separate thread
-	    if(selectedRunTarget.isEmpty()) {
-		logger.warn("No RunTarget selected");
-		return;
-	    }
-            var pb = new ProcessBuilder(selectedRunTarget.get().command().get());
+    private void runTarget() {
+	if(selectedRunTarget.isEmpty()) {
+	    logger.warn("No RunTarget selected");
+	    return;
+	}
+	try {
+	    var pb = new ProcessBuilder(selectedRunTarget.get().command().get());
 	    for(var argument : selectedRunTarget.get().arguments())
 		pb.command().add(argument.get());
-            var env = pb.environment();
-            env.put("VAR1", "myValue"); // TODO: Add default environment variables, e.g. ${PROJECT_DIR}
+	    var env = pb.environment();
+	    env.put("VAR1", "myValue"); // TODO: Add default environment variables, e.g. ${PROJECT_DIR}
 	    for(var e : selectedRunTarget.get().environment().entrySet())
 		env.put(e.getKey().get(), e.getValue().get());
-            // pb.directory(new File("myDir")); // TODO: Consider adding a "cwd" field to RunTarget class
-            pb.redirectErrorStream(true);
-            var p = pb.start();
-            var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
-            new Thread(outputGobbler).start();
-            p.waitFor();
-        } catch(Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+	    // pb.directory(new File("myDir")); // TODO: Consider adding a "cwd" field to RunTarget class
+	    pb.redirectErrorStream(true);
+	    var p = pb.start();
+	    var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
+	    new Thread(outputGobbler).start();
+	    p.waitFor();
+	} catch(InterruptedException e) {
+	    logger.warn("runtarget was interrupted", e);
+	} catch(Exception e) {
+	    logger.error(e.getMessage(), e);
+	} finally {
+	    logger.trace("runtarget finished");
+	    Platform.runLater(() -> runTargetMenuItem.setText("Start Selected RunTarget"));
+	}
+    }
+
+    @FXML
+    private void runSelectedRunTarget() {
+	if(runTargetThread.isAlive()) {
+	    runTargetThread.interrupt();
+	} else {
+	    runTargetThread = new Thread(this::runTarget);
+	    runTargetThread.start();
+	    runTargetMenuItem.setText("Stop Selected RunTarget");
+	}
     }
 
     @FXML

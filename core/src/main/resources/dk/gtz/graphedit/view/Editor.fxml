@@ -25,7 +25,7 @@
                     <Menu fx:id="projectMenu" text="project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
                         <SeparatorMenuItem/>
-                        <MenuItem onAction="#runSelectedRunTarget" text="Run Selected RunTarget" accelerator="Shortcut+R"/>
+                        <MenuItem fx:id="runTargetMenuItem" onAction="#runSelectedRunTarget" text="Start Selected RunTarget" accelerator="Shortcut+R"/>
                         <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+R"/>
                         <Menu fx:id="runTargetsMenu" text="RunTargets"/>
                         <SeparatorMenuItem/>
