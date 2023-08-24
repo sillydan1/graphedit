@@ -7,11 +7,10 @@ import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-
 public class ViewModelTextVertex extends ViewModelVertex {
 	private final StringProperty text;
 
-    public ViewModelTextVertex(ViewModelPoint position, ViewModelVertexShape shape) {
+	public ViewModelTextVertex(ViewModelPoint position, ViewModelVertexShape shape) {
 		super(position, shape);
 		this.text = new SimpleStringProperty();
 	}
@@ -20,15 +19,15 @@ public class ViewModelTextVertex extends ViewModelVertex {
 		this.text = new SimpleStringProperty();
 	}
 
-    /**
-     * {@inheritDoc IInspectable#getInspectableObjects()}
-     * @return A list of inspectable objects
-     * */
-    @Override
-    public List<InspectableProperty> getInspectableObjects() {
+	/**
+	 * {@inheritDoc IInspectable#getInspectableObjects()}
+	 * @return A list of inspectable objects
+	 * */
+	@Override
+	public List<InspectableProperty> getInspectableObjects() {
 		var superObjects = new ArrayList<>(super.getInspectableObjects());
 		superObjects.add(new InspectableProperty("Text", text));
 		return superObjects;
-    }
+	}
 }
 
