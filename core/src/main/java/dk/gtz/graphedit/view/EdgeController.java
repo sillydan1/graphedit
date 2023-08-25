@@ -15,12 +15,13 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -33,7 +34,8 @@ public class EdgeController extends Group {
     private final ViewModelEdge edgeValue;
     private final ViewModelProjectResource resource;
     private final Affine viewportAffine;
-    private final Line line;
+    private final Line line, lineArrowLeft, lineArrowRight;
+    private final Line selectionHelperLine;
 
     public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
 	this.edgeKey = edgeKey;
@@ -42,11 +44,23 @@ public class EdgeController extends Group {
 	this.tracker = DI.get(MouseTracker.class);
 	this.resource = resource;
 	this.line = initialize(selectedTool, editorSettings);
+	this.lineArrowLeft = initializeLeftArrow(line);
+	this.lineArrowRight = initializeRightArrow(line);
+	this.selectionHelperLine = initializeSelectionHelperLine();
+	getChildren().addAll(selectionHelperLine, line, lineArrowRight, lineArrowLeft);
+	initializeStyle();
+    }
+
+    private Line initializeSelectionHelperLine() {
+	var line = initializeLinePresentation();
+	line.setStrokeWidth(15);
+	line.setStroke(Color.TRANSPARENT);
+	return line;
     }
 
     private Line initialize(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
 	var line = initializeLinePresentation();
-	getChildren().addAll(line, initializeLeftArrow(line), initializeRightArrow(line));
+	line.getStyleClass().add("stroke-primary");
 	initializeEdgeEventHandlers(selectedTool, editorSettings);
 	initializeBindPointChangeHandlers();
 	return line;
@@ -64,7 +78,6 @@ public class EdgeController extends Group {
 
     private Line initializeLinePresentation() {
 	var edgePresentation = new Line();
-	edgePresentation.getStyleClass().add("stroke-primary");
 	var source = getPointShape(edgeValue.source().get());
 	var target = getPointShape(edgeValue.target().get());
 	edgePresentation.startXProperty().bind(BindingsUtil.createShapedXBinding(target.point(), source.point(), source.shape()));
@@ -74,7 +87,7 @@ public class EdgeController extends Group {
 	return edgePresentation;
     }
 
-    private Node initializeLeftArrow(Line line) {
+    private Line initializeLeftArrow(Line line) {
 	var arrowLength = 20;
         var leftArrow = new Line();
 	leftArrow.getStyleClass().add("stroke-primary");
@@ -86,7 +99,7 @@ public class EdgeController extends Group {
         return leftArrow;
     }
 
-    private Node initializeRightArrow(Line line) {
+    private Line initializeRightArrow(Line line) {
 	var arrlowLength = 20;
         var rightArrow = new Line();
 	rightArrow.getStyleClass().add("stroke-primary");
@@ -107,16 +120,20 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
-	// TODO: Make it easier to click on edges
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax(), editorSettings)));
-	// TODO: This only highlights the main line. Not the arrow-part. Make it do that.
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
-	    if(n)
-		line.getStyleClass().add("stroke-primary-selected");
-	    else
-		line.getStyleClass().remove("stroke-primary-selected");
+	    if(n) {
+		line.getStyleClass().add("stroke-selected");
+		lineArrowLeft.getStyleClass().add("stroke-selected");
+		lineArrowRight.getStyleClass().add("stroke-selected");
+	    } else {
+		line.getStyleClass().remove("stroke-selected");
+		lineArrowLeft.getStyleClass().remove("stroke-selected");
+		lineArrowRight.getStyleClass().remove("stroke-selected");
+	    }
 	});
     }
+
 
     private void initializeBindPointChangeHandlers() {
 	edgeValue.source().addListener((e,o,n) -> onChangeSourceBindPoint(n));
@@ -138,6 +155,21 @@ public class EdgeController extends Group {
 	line.startYProperty().bind(BindingsUtil.createShapedYBinding(target.point(), source.point(), source.shape()));
 	line.endXProperty().bind(BindingsUtil.createShapedXBinding(source.point(), target.point(), target.shape()));
 	line.endYProperty().bind(BindingsUtil.createShapedYBinding(source.point(), target.point(), target.shape()));
+    }
+
+    private void initializeStyle() {
+	addCursorHoverEffect();
+    }
+
+    private void addCursorHoverEffect() {
+	setCursor(Cursor.HAND);
+	addEventHandler(MouseEvent.MOUSE_ENTERED, event -> line.getStyleClass().add("stroke-hover"));
+	addEventHandler(MouseEvent.MOUSE_ENTERED, event -> lineArrowLeft.getStyleClass().add("stroke-hover"));
+	addEventHandler(MouseEvent.MOUSE_ENTERED, event -> lineArrowRight.getStyleClass().add("stroke-hover"));
+
+	addEventHandler(MouseEvent.MOUSE_EXITED, event -> line.getStyleClass().remove("stroke-hover"));
+	addEventHandler(MouseEvent.MOUSE_EXITED, event -> lineArrowLeft.getStyleClass().remove("stroke-hover"));
+	addEventHandler(MouseEvent.MOUSE_EXITED, event -> lineArrowRight.getStyleClass().remove("stroke-hover"));
     }
 }
 

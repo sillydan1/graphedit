@@ -112,9 +112,9 @@ public class VertexController extends StackPane {
 	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, graph, editorSettings)));
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
-		graphic.getStyleClass().add("vertex-node-selected");
+		graphic.getStyleClass().add("stroke-selected");
 	    else
-		graphic.getStyleClass().remove("vertex-node-selected");
+		graphic.getStyleClass().remove("stroke-selected");
 	});
     }
 
