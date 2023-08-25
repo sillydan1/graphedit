@@ -5,7 +5,9 @@ import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.shape.Line;
+import javafx.scene.transform.Affine;
 
 public class BindingsUtil {
     // TODO: This is a MathUtil or ShapeUtil func. Not a BindingsUtil
@@ -111,6 +113,14 @@ public class BindingsUtil {
 	return Bindings.createDoubleBinding(() -> 
 		    (Math.atan2(line.getEndY() - line.getStartY(), line.getEndX() - line.getStartX()) * 180 / Math.PI),
 		    line.endYProperty(), line.endXProperty(), line.startXProperty(), line.startYProperty());
+    }
+
+    public static DoubleBinding createAffineOffsetXBinding(DoubleProperty dependency, Affine offset) {
+	return Bindings.createDoubleBinding(() -> dependency.subtract(offset.getTx()).divide(offset.getMxx()).get(), dependency);
+    }
+
+    public static DoubleBinding createAffineOffsetYBinding(DoubleProperty dependency, Affine offset) {
+	return Bindings.createDoubleBinding(() -> dependency.subtract(offset.getTy()).divide(offset.getMyy()).get(), dependency);
     }
 }
 

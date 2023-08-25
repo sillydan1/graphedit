@@ -55,9 +55,8 @@ public class EdgeController extends Group {
     private PointShape getPointShape(UUID lookupId) {
 	if(lookupId.equals(tracker.getTrackerUUID()))
 	    return new PointShape(new ViewModelPoint(
-			// TODO: This subtract and divide stuff should be extracted into BindingsUtil
-			Bindings.createDoubleBinding(() -> tracker.getXProperty().subtract(viewportAffine.getTx()).divide(viewportAffine.getMxx()).get(), tracker.getXProperty()),
-			Bindings.createDoubleBinding(() -> tracker.getYProperty().subtract(viewportAffine.getTy()).divide(viewportAffine.getMyy()).get(), tracker.getYProperty())),
+			BindingsUtil.createAffineOffsetXBinding(tracker.getXProperty(), viewportAffine),
+			BindingsUtil.createAffineOffsetYBinding(tracker.getYProperty(), viewportAffine)),
 		    new ViewModelVertexShape(1,1,10,10,ViewModelShapeType.OVAL));
 	var sourceVertex = resource.syntax().vertices().getValue().get(lookupId);
 	return new PointShape(sourceVertex.position(), sourceVertex.shape());

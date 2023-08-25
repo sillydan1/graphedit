@@ -27,7 +27,7 @@ import javafx.scene.layout.VBox;
 public class SearchPaneController implements IFocusable {
     private static Logger logger = LoggerFactory.getLogger(SearchResultController.class);
     @FXML
-    private Button searchButton; // TODO: Consider removing the search button
+    private Button searchButton;
     @FXML
     private TextField searchField;
     @FXML
