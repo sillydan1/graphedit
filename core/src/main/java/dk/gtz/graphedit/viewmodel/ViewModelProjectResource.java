@@ -7,11 +7,13 @@ import java.util.List;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
+import javafx.scene.control.Tab;
 
 public class ViewModelProjectResource implements IFocusable {
     private SimpleMapProperty<String,String> metadata;
     private ViewModelGraph syntax;
     private List<Runnable> onFocusHandlers;
+    private List<Tab> views;
 
     public ViewModelProjectResource(ModelProjectResource projectResource) {
 	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax()));
@@ -22,6 +24,7 @@ public class ViewModelProjectResource implements IFocusable {
 	this.metadata = metadata;
 	this.syntax = syntax;
 	this.onFocusHandlers = new ArrayList<>();
+	this.views = new ArrayList<>();
     }
 
     public ModelProjectResource toModel() {
@@ -44,6 +47,18 @@ public class ViewModelProjectResource implements IFocusable {
 
     public ViewModelGraph syntax() {
 	return syntax;
+    }
+
+    public void addView(Tab viewer) {
+	views.add(viewer);
+    }
+
+    public void removeView(Tab viewer) {
+	views.remove(viewer);
+    }
+
+    public List<Tab> getViews() {
+	return views;
     }
 }
 
