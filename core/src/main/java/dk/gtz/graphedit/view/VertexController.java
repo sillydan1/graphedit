@@ -92,8 +92,14 @@ public class VertexController extends StackPane {
 	setCursor(Cursor.HAND);
 	var hoverEnterAnimation = createScaleTimeline(1, 1.1, Duration.millis(100));
 	var hoverExitAnimation = createScaleTimeline(1.1, 1, Duration.millis(100));
-	addEventHandler(MouseEvent.MOUSE_ENTERED, event -> hoverEnterAnimation.play());
-	addEventHandler(MouseEvent.MOUSE_EXITED,  event -> hoverExitAnimation.play());
+	addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+	    hoverEnterAnimation.play();
+	    graphic.getStyleClass().add("stroke-hover");
+	});
+	addEventHandler(MouseEvent.MOUSE_EXITED,  event -> {
+	    hoverExitAnimation.play();
+	    graphic.getStyleClass().remove("stroke-hover");
+	});
     }
 
     private Timeline createScaleTimeline(double scaleBegin, double scaleEnd, Duration timelineTime) {
