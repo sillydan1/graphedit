@@ -9,10 +9,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -74,7 +76,7 @@ public class RunTargetsEditorController {
 
     private void initAddButton() {
 	addButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> project.runTargets().add(new ViewModelRunTarget("default", "ls", new ArrayList<String>(), new HashMap<String,String>())));
+	addButton.setOnAction(e -> project.runTargets().add(new ViewModelRunTarget("default", "ls", ".", true, new ArrayList<String>(), new HashMap<String,String>())));
     }
 
     private void initRemoveButton() {
@@ -122,8 +124,17 @@ public class RunTargetsEditorController {
     private void renderRunTargetInspector(ViewModelRunTarget runTarget) {
 	inspectorPane.getChildren().add(createTextEditorNode("name", runTarget.name()));
 	inspectorPane.getChildren().add(createTextEditorNode("command", runTarget.command()));
+	inspectorPane.getChildren().add(createTextEditorNode("cwd", runTarget.currentWorkingDirectory()));
+	inspectorPane.getChildren().add(createBooleanEditorNode("runAsShell", runTarget.runAsShell()));
 	inspectorPane.getChildren().add(new HBox(new Label("arguments"), createListTextEditorNode(runTarget.arguments())));
 	inspectorPane.getChildren().add(new HBox(new Label("environment"), createMapTextEditorNode(runTarget.environment())));
+    }
+
+    private Node createBooleanEditorNode(String labelText, BooleanProperty property) {
+	var returnValue = new ToggleSwitch(labelText);
+	returnValue.setSelected(property.get());
+	property.bind(returnValue.selectedProperty());
+	return returnValue;
     }
 
     private Node createTextEditorNode(String labelText, StringProperty property) {

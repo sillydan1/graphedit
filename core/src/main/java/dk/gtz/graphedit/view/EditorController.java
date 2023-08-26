@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.view;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -166,14 +167,25 @@ public class EditorController {
 	    return;
 	}
 	try {
-	    var pb = new ProcessBuilder(selectedRunTarget.get().command().get());
-	    for(var argument : selectedRunTarget.get().arguments())
-		pb.command().add(argument.get());
+	    var pb = new ProcessBuilder();
+	    if(selectedRunTarget.get().runAsShell().get()) {
+		var sb = new StringBuilder(selectedRunTarget.get().command().get());
+		for(var argument : selectedRunTarget.get().arguments())
+		    sb.append(" ").append(argument.getValueSafe());
+		pb.command("/bin/sh", "-c", sb.toString());
+	    } else {
+		pb.command(selectedRunTarget.get().command().get());
+		for(var argument : selectedRunTarget.get().arguments())
+		    pb.command().add(argument.get());
+	    }
 	    var env = pb.environment();
-	    env.put("VAR1", "myValue"); // TODO: Add default environment variables, e.g. ${PROJECT_DIR}
+	    var project = DI.get(ViewModelProject.class);
+	    env.put("PROJECT_NAME", project.name().getValueSafe());
+	    env.put("PROJECT_DIR", project.rootDirectory().getValueSafe());
 	    for(var e : selectedRunTarget.get().environment().entrySet())
 		env.put(e.getKey().get(), e.getValue().get());
-	    // pb.directory(new File("myDir")); // TODO: Consider adding a "cwd" field to RunTarget class
+	    if(!selectedRunTarget.get().currentWorkingDirectory().get().isEmpty())
+		pb.directory(new File(selectedRunTarget.get().currentWorkingDirectory().get()));
 	    pb.redirectErrorStream(true);
 	    var p = pb.start();
 	    var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);

@@ -7,5 +7,7 @@ public record ModelRunTarget(
     String name,
     String command,
     List<String> arguments,
+    String cwd,
+    Boolean runAsShell,
     Map<String, String> environment) {}
 

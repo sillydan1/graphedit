@@ -1,6 +1,8 @@
 package dk.gtz.graphedit.view;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import org.slf4j.LoggerFactory;
 
@@ -106,10 +108,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     // TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
     private void loadProject() throws Exception {
-	var projectFile = PreferenceUtil.lastOpenedProject();
-	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFile)));
-	var project = DI.get(IModelSerializer.class).deserializeProject(new File(projectFile));
-	DI.add(ViewModelProject.class, new ViewModelProject(project));
+	var projectFilePath = Path.of(PreferenceUtil.lastOpenedProject());
+	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
+	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
+	DI.add(ViewModelProject.class, new ViewModelProject(project, projectFilePath.toFile().getParent()));
     }
 
     private void setupToolbox() {
