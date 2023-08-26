@@ -245,12 +245,9 @@ public class ProjectFilesViewController {
 
     public void createNewModelFile() {
 	var selected = fileTree.getSelectionModel().getSelectedItem();
-	if(selected == null) {
-	    // TODO: Just default to the root-dir. This is good enough for now
-	    logger.warn("cannot create new model file, since no destination folder is selected");
-	    return;
-	}
-	var basePath = selected.getValue().path();
+	var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
+	if(selected != null)
+	    basePath = selected.getValue().path();
 	if(!Files.isDirectory(basePath))
 	    basePath = basePath.getParent();
 	var dialog = new TextInputDialog();
