@@ -17,6 +17,7 @@ import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.view.util.PlatformUtils;
 import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -86,7 +87,7 @@ public class EditorController {
     }
 
     private void hideTopbarOnSupportedPlatforms() {
-        if (isSystemMenuBarSupported()) {
+        if (PlatformUtils.isSystemMenuBarSupported()) {
             menubarTopBox.setVisible(false);
             menubarTopBox.setManaged(false);
         }
@@ -267,20 +268,6 @@ public class EditorController {
 	} catch (SerializationException | IOException e) {
 	    logger.error("Failed opening project: " + e.getMessage());
 	}
-    }
-
-    // TODO: Move into general utilities library
-    private boolean isSystemMenuBarSupported() {
-	var os = System.getProperty("os.name").toLowerCase();
-	var platform = System.getProperty("javafx.platform");
-	if(os.contains("win"))
-	    return true;
-	if(os.contains("mac"))
-	    return true;
-	if(os.contains("nix") || os.contains("nux"))
-	    if(platform != null && platform.equals("gtk"))
-		return true;
-	return false;
     }
 }
 
