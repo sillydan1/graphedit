@@ -22,7 +22,7 @@ public class TextVertexController extends VertexController {
     public TextVertexController(UUID vertexKey, ViewModelTextVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
 	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool);
 	this.textVertex = vertex;
-	textVertex.getTextProperty().bind(textArea.textProperty());
+	textArea.textProperty().bindBidirectional(textVertex.getTextProperty());
     }
 
     @Override

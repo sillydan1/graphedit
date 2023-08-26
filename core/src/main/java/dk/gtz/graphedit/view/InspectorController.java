@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
 public class InspectorController {
@@ -106,7 +107,9 @@ public class InspectorController {
     }
 
     private Node getPropertyInspector(StringProperty property) {
-	return new Label(property.get()); // TODO: This should be a TextField
+	var result = new TextArea(property.get());
+	result.textProperty().bindBidirectional(property);
+	return result;
     }
 
     private Node getPropertyInspector(BooleanProperty property) {
