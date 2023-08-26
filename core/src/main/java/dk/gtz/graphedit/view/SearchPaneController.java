@@ -106,7 +106,8 @@ public class SearchPaneController implements IFocusable {
 		    resultsView.getSelectionModel().selectNext();
 	    }
 	    event.consume();
-	    searchField.requestFocus(); // TODO: This is not right, but it will work for now
+	    searchField.requestFocus();
+	    searchField.positionCaret(searchField.getText().length());
 	}
 	if(event.getCode().equals(KeyCode.ENTER)) {
 	    resultsView.getSelectionModel().getSelectedItem().focus();
