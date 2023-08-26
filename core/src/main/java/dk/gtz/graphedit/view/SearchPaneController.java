@@ -13,6 +13,7 @@ import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.IFocusable;
+import dk.gtz.graphedit.viewmodel.ISearchable;
 import dk.yalibs.yadi.DI;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -114,11 +115,20 @@ public class SearchPaneController implements IFocusable {
     }
 
     private void updateSearchResults(String searchTerm) {
-	// TODO: Also search the contents of the buffers
 	results.clear();
 	for(var buffer : bufferContainer.getBuffers().entrySet()) {
 	    if(buffer.getKey().contains(searchTerm))
-		results.add(new SearchResultController(BootstrapIcons.FILE, buffer.getKey(), buffer.getValue()));
+		results.add(new SearchResultController(BootstrapIcons.FILE_FILL, buffer.getKey(), buffer.getValue()));
+
+	    for(var edge : buffer.getValue().syntax().edges().entrySet())
+		if(edge.getValue() instanceof ISearchable searchable)
+		    if(searchable.getSearchValues().stream().anyMatch(s -> s.contains(searchTerm)))
+			results.add(new SearchResultController(BootstrapIcons.ARROW_RIGHT_CIRCLE_FILL, edge.getKey().toString(), edge.getValue()));
+
+	    for(var vertex : buffer.getValue().syntax().vertices().entrySet())
+		if(vertex.getValue() instanceof ISearchable searchable)
+		    if(searchable.getSearchValues().stream().anyMatch(s -> s.contains(searchTerm)))
+			results.add(new SearchResultController(BootstrapIcons.CIRCLE_FILL, vertex.getKey().toString(), vertex.getValue()));
 	}
     }
 

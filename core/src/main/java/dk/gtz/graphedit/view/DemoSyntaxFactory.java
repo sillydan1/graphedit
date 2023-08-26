@@ -16,7 +16,7 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     @Override
     public Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 	if(vertexValue instanceof ViewModelTextVertex textVertex)
-	    return new TextVertexController(vertexKey, vertexValue, 
+	    return new TextVertexController(vertexKey, textVertex,
 		    creatorController.getViewportTransform(),
 		    creatorController.getProjectResource().syntax(),
 		    creatorController.getEditorSettings(),
