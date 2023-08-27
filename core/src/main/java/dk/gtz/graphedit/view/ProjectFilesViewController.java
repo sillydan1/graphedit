@@ -254,7 +254,7 @@ public class ProjectFilesViewController {
 	dialog.setTitle("new model file");
 	dialog.setHeaderText(basePath.toString());
 	dialog.setContentText("new filename:");
-	dialog.initOwner(root.getScene().getWindow()); // TODO: experiment with null window
+	dialog.initOwner(root.getScene().getWindow());
 	var fileName = dialog.showAndWait();
 	if(fileName.isPresent()) {
 	    try {
