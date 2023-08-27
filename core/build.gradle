@@ -27,6 +27,7 @@ dependencies {
     implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
     implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
     implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
+    implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
 }
 
 jar {
