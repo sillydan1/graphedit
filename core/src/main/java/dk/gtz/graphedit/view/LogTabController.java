@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.view.log.Hyperlink;
 import dk.gtz.graphedit.view.log.HyperlinkTextArea;
-import dk.gtz.graphedit.view.log.TextStyle;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.yalibs.yadi.DI;
@@ -41,14 +40,13 @@ public class LogTabController extends StackPane {
     }
 
     private void initializeTextArea() {
-	textArea = new HyperlinkTextArea(this::onLinkClick);
+	textArea = new HyperlinkTextArea(this::onLinkClick, "log-text");
         scrollPane = new VirtualizedScrollPane<>(textArea);
         textArea.textProperty().addListener((e, o, n) -> {
             if (!autoscroll)
                 return;
             scrollToLastLine();
         });
-        textArea.setTextInsertionStyle(new TextStyle().updateTextColorWeb("#FFF")); // TODO: styling is odd/off - Look into how to use atlantafx's colorscheme
         textArea.getStyleClass().add("log-text");
         textArea.setEditable(false);
 	getChildren().add(textArea);

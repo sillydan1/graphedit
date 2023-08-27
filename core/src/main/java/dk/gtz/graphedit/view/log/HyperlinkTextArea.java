@@ -16,7 +16,7 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
     private static final HyperlinkOps<TextStyle> HYPERLINK_OPS = new HyperlinkOps<>();
     private static final TextOps<Either<String, Hyperlink>, TextStyle> EITHER_OPS = STYLED_TEXT_OPS._or(HYPERLINK_OPS, (s1, s2) -> Optional.empty());
 
-    public HyperlinkTextArea(Consumer<Hyperlink> showLink) {
+    public HyperlinkTextArea(Consumer<Hyperlink> showLink, String... styleClasses) {
         super(null,
                 (t, p) -> {},
                 TextStyle.EMPTY,
@@ -24,11 +24,13 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
                 e -> e.getSegment().unify(
                     text -> createStyledTextNode(t -> {
                         t.setText(text);
+                        t.getStyleClass().addAll(styleClasses);
                         t.setStyle(e.getStyle().toCss());
                     }),
                     hyperlink -> createStyledTextNode(t -> {
                         if (hyperlink.isReal()) {
                             t.setText(hyperlink.getDisplayedText());
+                            t.getStyleClass().addAll(styleClasses);
                             t.getStyleClass().add("hyperlink");
                             t.setStyle(e.getStyle().toCss());
                             t.setOnMouseClicked(ae -> showLink.accept(hyperlink));

@@ -33,9 +33,10 @@
 }
 
 .log-text {
-	-fx-font-family: "Roboto Mono Medium";
-	-fx-font-size: 13.0;
-	-fx-background-color: #323738;
-	-fx-padding: 8;
+    -fx-font-family: "monospace";
+    -fx-font-size: 13.0;
+    -fx-background-color: -color-neutral-subtle;
+    -fx-padding: 8;
+    -fx-fill: -color-fg-default;
 }
 
