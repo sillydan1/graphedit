@@ -1,9 +1,8 @@
 package dk.gtz.graphedit.view;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +12,14 @@ import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.BuildConfig;
-import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
-import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
@@ -31,7 +30,6 @@ import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.view.preloader.FinishNotification;
 import dk.gtz.graphedit.view.preloader.GraphEditPreloader;
 import dk.gtz.graphedit.view.preloader.LoadStateNotification;
-import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
@@ -46,11 +44,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -77,21 +70,26 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-	this.primaryStage = primaryStage;
-	notifyPreloader(new LoadStateNotification("starting"));
-	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
-	notifyPreloader(new LoadStateNotification("setup application"));
-	setupApplication();
-	loadProject();
-	notifyPreloader(new LoadStateNotification("setup toolbox"));
-	setupToolbox();
-	notifyPreloader(new LoadStateNotification("setup preferences"));
-	setupPreferences();
-	notifyPreloader(new LoadStateNotification("setup logging"));
-	setupLogging();
-	notifyPreloader(new LoadStateNotification("setting the stage"));
-	setupStage(primaryStage);
-	notifyPreloader(new FinishNotification());
+	try {
+	    this.primaryStage = primaryStage;
+	    notifyPreloader(new LoadStateNotification("starting"));
+	    DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
+	    notifyPreloader(new LoadStateNotification("setup application"));
+	    setupApplication();
+	    loadEditorSettings();
+	    loadProject();
+	    notifyPreloader(new LoadStateNotification("setup toolbox"));
+	    setupToolbox();
+	    notifyPreloader(new LoadStateNotification("setup preferences"));
+	    setupPreferences();
+	    notifyPreloader(new LoadStateNotification("setup logging"));
+	    setupLogging();
+	    notifyPreloader(new LoadStateNotification("setting the stage"));
+	    setupStage(primaryStage);
+	    notifyPreloader(new FinishNotification());
+	} catch(ProjectLoadException e) {
+	    logger.error("could not open project");
+	}
     }
 
     @Override
@@ -107,8 +105,19 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	}
     }
 
+    private void loadEditorSettings() throws Exception {
+	var serializer = DI.get(IModelSerializer.class);
+	var fileToLoad = ModelEditorSettings.getEditorSettingsFile();
+	if(!fileToLoad.toFile().exists()) {
+	    var data = serializer.serializeEditorSettings(new ModelEditorSettings());
+	    Files.createDirectories(fileToLoad.getParent());
+	    Files.write(fileToLoad, data.getBytes());
+	}
+	var settings = new ViewModelEditorSettings(serializer.deserializeEditorSettings(fileToLoad.toFile()));
+	DI.add(ViewModelEditorSettings.class, settings);
+    }
+
     private void setupApplication() throws Exception {
-	DI.add(ViewModelEditorSettings.class, new ViewModelEditorSettings(20.0d, 20.0d, true));
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
@@ -118,7 +127,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     // TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
     private void loadProject() throws Exception {
-	var projectFilePath = Path.of(PreferenceUtil.lastOpenedProject());
+	var settings = DI.get(ViewModelEditorSettings.class);
+	var projectFilePath = Path.of(settings.lastOpenedProject().get());
+	if(!projectFilePath.toFile().exists())
+	    throw new ProjectLoadException();
 	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
 	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	DI.add(ViewModelProject.class, new ViewModelProject(project, projectFilePath.toFile().getParent()));
@@ -140,7 +152,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupPreferences() {
 	DI.add(ISyntaxFactory.class, new DemoSyntaxFactory());
-	var useLightTheme = PreferenceUtil.lightTheme();
+	var settings = DI.get(ViewModelEditorSettings.class);
+	onUseLightThemeChange(settings.useLightTheme().get());
+        settings.useLightTheme().addListener((e,o,n) -> onUseLightThemeChange(n));
+    }
+
+    private void onUseLightThemeChange(boolean useLightTheme) {
 	if(useLightTheme)
 	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 	else

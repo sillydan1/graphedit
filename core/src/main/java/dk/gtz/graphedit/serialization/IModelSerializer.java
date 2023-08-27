@@ -5,17 +5,21 @@ import java.io.IOException;
 import java.util.List;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
 
 public interface IModelSerializer {
-    public String serialize(ModelProjectResource model) throws SerializationException;
+    String serialize(ModelProjectResource model) throws SerializationException;
+    String serializeEditorSettings(ModelEditorSettings settings) throws SerializationException;
 
-    public ModelProjectResource deserialize(String serializedContent) throws SerializationException;
-    public ModelProjectResource deserialize(File file) throws SerializationException, IOException;
-    public ModelProject deserializeProject(String serializedContent) throws SerializationException;
-    public ModelProject deserializeProject(File file) throws SerializationException, IOException;
+    ModelProjectResource deserialize(String serializedContent) throws SerializationException;
+    ModelProjectResource deserialize(File file) throws SerializationException, IOException;
+    ModelProject deserializeProject(String serializedContent) throws SerializationException;
+    ModelProject deserializeProject(File file) throws SerializationException, IOException;
+    ModelEditorSettings deserializeEditorSettings(String serializedContent) throws SerializationException;
+    ModelEditorSettings deserializeEditorSettings(File file) throws SerializationException, IOException;
 
-    public List<String> getSupportedContentTypes();
+    List<String> getSupportedContentTypes();
 }
 

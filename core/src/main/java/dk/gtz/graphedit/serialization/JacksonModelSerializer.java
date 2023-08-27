@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
 
@@ -85,6 +86,33 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public List<String> getSupportedContentTypes() {
 	return List.of("application/json");
+    }
+
+    @Override
+    public String serializeEditorSettings(ModelEditorSettings settings) throws SerializationException {
+	try {
+	    return objectMapper.writeValueAsString(settings);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public ModelEditorSettings deserializeEditorSettings(String serializedContent) throws SerializationException {
+	try {
+	    return objectMapper.readValue(serializedContent, ModelEditorSettings.class);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public ModelEditorSettings deserializeEditorSettings(File file) throws SerializationException, IOException {
+	try {
+	    return objectMapper.readValue(file, ModelEditorSettings.class);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
     }
 }
 

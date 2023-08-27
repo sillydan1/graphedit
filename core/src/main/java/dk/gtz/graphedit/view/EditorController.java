@@ -10,7 +10,7 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.PlatformUtils;
-import dk.gtz.graphedit.view.util.PreferenceUtil;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
@@ -165,7 +165,8 @@ public class EditorController {
 	    logger.trace("loading new project {}", chosenFile.getAbsolutePath().toString());
 	    var serializer = DI.get(IModelSerializer.class);
 	    serializer.deserializeProject(chosenFile);
-	    PreferenceUtil.lastOpenedProject(chosenFile.getAbsolutePath().toString());
+	    var settings = DI.get(ViewModelEditorSettings.class);
+	    settings.lastOpenedProject().set(chosenFile.getAbsolutePath().toString());
 	    DI.get(IRestartableApplication.class).restart();
 	} catch (SerializationException | IOException e) {
 	    logger.error("Failed opening project: " + e.getMessage());

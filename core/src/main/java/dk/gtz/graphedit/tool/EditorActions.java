@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import dk.yalibs.yafunc.IFunction2;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +17,12 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
-import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
+import dk.yalibs.yafunc.IFunction2;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
 import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
@@ -34,7 +33,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -88,14 +86,8 @@ public class EditorActions {
     }
 
     public static void toggleTheme() {
-        // TODO: These should be fields in the editor settings struct instead
-        var useLightTheme = PreferenceUtil.lightTheme();
-        useLightTheme = !useLightTheme;
-        if(useLightTheme)
-            Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
-        else
-            Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-        PreferenceUtil.lightTheme(useLightTheme);
+        var useLightTheme = DI.get(ViewModelEditorSettings.class).useLightTheme();
+        useLightTheme.set(!useLightTheme.get());
     }
 
     public static void openSettingsEditor() {
