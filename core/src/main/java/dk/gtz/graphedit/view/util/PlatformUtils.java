@@ -2,15 +2,30 @@ package dk.gtz.graphedit.view.util;
 
 public class PlatformUtils {
     public static boolean isSystemMenuBarSupported() {
-	var platform = System.getProperty("javafx.platform");
-	if(atlantafx.base.util.PlatformUtils.isWindows())
+	if(isWindows())
 	    return true;
-	if(atlantafx.base.util.PlatformUtils.isMac())
+	if(isMac())
 	    return true;
-	if(atlantafx.base.util.PlatformUtils.isUnix())
-	    if(platform != null && platform.equals("gtk"))
-		return true;
+	if(isUnix())
+	    return isGtk();
 	return false;
+    }
+
+    public static boolean isWindows() {
+	return atlantafx.base.util.PlatformUtils.isWindows();
+    }
+
+    public static boolean isMac() {
+	return atlantafx.base.util.PlatformUtils.isMac();
+    }
+
+    public static boolean isUnix() {
+	return atlantafx.base.util.PlatformUtils.isUnix();
+    }
+
+    public static boolean isGtk() {
+	var platform = System.getProperty("javafx.platform");
+	return platform != null && platform.equals("gtk");
     }
 }
 
