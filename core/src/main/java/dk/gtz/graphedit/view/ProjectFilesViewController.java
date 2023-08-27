@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
+import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
@@ -177,6 +178,7 @@ public class ProjectFilesViewController {
             watchService = FileSystems.getDefault().newWatchService();
             fileTree.getRoot().getValue().path().register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
 	    var watcherThread = new Thread(this::watchDirectory);
+	    watcherThread.setName("directoryWatcher");
 	    watcherThread.setDaemon(true);
 	    watcherThread.start();
 
@@ -212,8 +214,12 @@ public class ProjectFilesViewController {
 	fileTree.setRoot(newItem);
     }
 
+    /**
+     * Does a full reload of the file tree. Note that this will "close" any open folders
+     * @param eventKind
+     * @param fullPath
+     */
     private void updateTreeView(WatchEvent.Kind<?> eventKind, Path fullPath) {
-	// TODO: This currently does a full re-load. It shouldn't.
         var newItem = new TreeItem<>(new FileTreeEntry(fileTree.getRoot().getValue().path()));
 	addFileTreeItems(fileTree.getRoot().getValue().path(), newItem);
 	newItem.setExpanded(true);
@@ -244,38 +250,41 @@ public class ProjectFilesViewController {
     }
 
     public void createNewModelFile() {
-	var selected = fileTree.getSelectionModel().getSelectedItem();
-	var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
-	if(selected != null)
-	    basePath = selected.getValue().path();
-	if(!Files.isDirectory(basePath))
-	    basePath = basePath.getParent();
-	var dialog = new TextInputDialog();
-	dialog.setTitle("new model file");
-	dialog.setHeaderText(basePath.toString());
-	dialog.setContentText("new filename:");
-	dialog.initOwner(root.getScene().getWindow());
-	var fileName = dialog.showAndWait();
-	if(fileName.isPresent()) {
-	    try {
-		logger.trace("trying to create file {}/{}", basePath, fileName.get());
-		var newfile = new File("%s/%s".formatted(basePath, fileName.get()));
-		if(!newfile.createNewFile()) {
-		    logger.error("file already exists");
-		    return;
-		}
-		// TODO: This should be created with a factory
-		// TODO: Saving a specific model file should be extracted into a util function, since it is very useful and is already being reused (DRY)
-		var exampleVertices = new HashMap<UUID,ModelVertex>();
-		var exampleEdges = new HashMap<UUID,ModelEdge>();
-		var newModel = new ModelProjectResource(new HashMap<>(), new ModelGraph("", exampleVertices, exampleEdges));
-		var serializedModel = DI.get(IModelSerializer.class).serialize(newModel);
-		Files.write(Paths.get(newfile.getCanonicalPath()), serializedModel.getBytes());
-		logger.info("file created");
-	    } catch (Exception e) {
-		logger.error(e.getMessage());
+	try {
+	    var selected = fileTree.getSelectionModel().getSelectedItem();
+	    var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
+	    if(selected != null)
+		basePath = selected.getValue().path();
+	    if(!Files.isDirectory(basePath))
+		basePath = basePath.getParent();
+	    var dialog = new TextInputDialog();
+	    dialog.setTitle("new model file");
+	    dialog.setHeaderText(basePath.toString());
+	    dialog.setContentText("new filename:");
+	    dialog.initOwner(root.getScene().getWindow());
+	    var fileName = dialog.showAndWait();
+	    if(fileName.isEmpty())
+		return;
+	    logger.trace("creating file {}/{}", basePath, fileName.get());
+	    var newfile = new File("%s/%s".formatted(basePath, fileName.get()));
+	    if(!newfile.createNewFile()) {
+		logger.error("file already exists");
+		return;
 	    }
+	    var serializedModel = DI.get(IModelSerializer.class).serialize(createNewModel());
+	    Files.write(Paths.get(newfile.getCanonicalPath()), serializedModel.getBytes());
+	    Toast.success("created file %s".formatted(fileName.get()));
+	} catch (Exception e) {
+	    logger.error(e.getMessage());
 	}
+    }
+
+    public ModelProjectResource createNewModel() {
+	var exampleVertices = new HashMap<UUID,ModelVertex>();
+	var exampleEdges = new HashMap<UUID,ModelEdge>();
+	var exampleMetaData = new HashMap<String,String>();
+	var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
+	return new ModelProjectResource(exampleMetaData, exampleGraph);
     }
 
     private void onPathClicked(FileTreeEntry f) {

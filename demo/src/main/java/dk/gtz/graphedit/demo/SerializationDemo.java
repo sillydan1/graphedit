@@ -1,13 +1,16 @@
 package dk.gtz.graphedit.demo;
 
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.UUID;
 
-import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.model.*;
+import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.model.ModelEdge;
+import dk.gtz.graphedit.model.ModelGraph;
+import dk.gtz.graphedit.model.ModelPoint;
+import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 

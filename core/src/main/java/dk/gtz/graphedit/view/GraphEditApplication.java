@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.view;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import org.slf4j.LoggerFactory;
