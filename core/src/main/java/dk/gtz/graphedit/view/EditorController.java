@@ -104,6 +104,18 @@ public class EditorController {
     }
 
     @FXML
+    private void openSettingsEditor() {
+	try {
+	    var loader = new FXMLLoader(EditorController.class.getResource("SettingsEditor.fxml"));
+	    var content = (Pane)loader.load();
+	    modalPane.show(content);
+	    content.requestFocus();
+	} catch(IOException e) {
+	    logger.error(e.getMessage(), e);
+	}
+    }
+
+    @FXML
     private void undo() {
 	DI.get(IUndoSystem.class).undo();
     }

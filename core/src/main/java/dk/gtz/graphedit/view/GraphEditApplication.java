@@ -30,6 +30,7 @@ import dk.gtz.graphedit.view.util.PreferenceUtil;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
@@ -97,6 +98,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupApplication() throws Exception {
+	DI.add(ViewModelEditorSettings.class, new ViewModelEditorSettings(20.0d, 20.0d, true));
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));

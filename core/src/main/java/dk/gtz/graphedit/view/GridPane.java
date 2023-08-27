@@ -1,24 +1,25 @@
 package dk.gtz.graphedit.view;
 
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.TransformChangedEvent;
 
 public class GridPane extends Pane {
-    private double gridsizeX;
-    private double gridsizeY;
+    private DoubleProperty gridsizeX;
+    private DoubleProperty gridsizeY;
     private double offsetX;
     private double offsetY;
     private double gridscaleX;
     private double gridscaleY;
 
-    public GridPane(double gridsize, Affine transform) {
+    public GridPane(DoubleProperty gridsize, Affine transform) {
 	this(gridsize, gridsize, transform);
     }
 
-    public GridPane(double gridsizeX, double gridsizeY, Affine transform) {
+    public GridPane(DoubleProperty gridsizeX, DoubleProperty gridsizeY, Affine transform) {
 	super();
 	this.gridsizeX = gridsizeX;
 	this.gridsizeY = gridsizeY;
@@ -35,8 +36,8 @@ public class GridPane extends Pane {
 	getChildren().clear();
 	var width = getWidth();
 	var height = getHeight();
-	var adjustedGridsizeX = gridsizeX * gridscaleX;
-	var adjustedGridsizeY = gridsizeY * gridscaleY;
+	var adjustedGridsizeX = gridsizeX.get() * gridscaleX;
+	var adjustedGridsizeY = gridsizeY.get() * gridscaleY;
 
 	// column lines
 	for (var x = -adjustedGridsizeX; x < width + adjustedGridsizeX; x += adjustedGridsizeX) {
@@ -56,8 +57,8 @@ public class GridPane extends Pane {
     }
 
     public void setGridSize(double gridsizeX, double gridsizeY) {
-	this.gridsizeX = gridsizeX;
-	this.gridsizeY = gridsizeY;
+	this.gridsizeX.set(gridsizeX);
+	this.gridsizeY.set(gridsizeY);
 	Platform.runLater(this::layoutChildren);
     }
 
@@ -65,10 +66,12 @@ public class GridPane extends Pane {
 	newTransform.addEventHandler(TransformChangedEvent.TRANSFORM_CHANGED, (e) -> {
 	    gridscaleX = newTransform.getMxx();
 	    gridscaleY = newTransform.getMyy();
-	    offsetX = newTransform.getTx() % (gridsizeX * gridscaleX);
-	    offsetY = newTransform.getTy() % (gridsizeY * gridscaleY);
+	    offsetX = newTransform.getTx() % (gridsizeX.get() * gridscaleX);
+	    offsetY = newTransform.getTy() % (gridsizeY.get() * gridscaleY);
 	    layoutChildren();
 	});
+	gridsizeX.addListener((e) -> layoutChildren());
+	gridsizeY.addListener((e) -> layoutChildren());
     }
 }
 

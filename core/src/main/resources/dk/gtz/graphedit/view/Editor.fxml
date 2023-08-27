@@ -32,6 +32,7 @@
                     </Menu>
                     <Menu text="view">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
                     </Menu>
                     <Menu text="help">
                         <MenuItem onAction="#openAboutPane" text="About"/>

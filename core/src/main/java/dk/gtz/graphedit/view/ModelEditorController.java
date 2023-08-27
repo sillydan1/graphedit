@@ -48,7 +48,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private List<Runnable> onFocusEventHandlers;
 
     public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
-	this(resource, new ViewModelEditorSettings(20.0d, 20.0d, true), syntaxFactory);
+	this(resource, DI.get(ViewModelEditorSettings.class), syntaxFactory);
     }
 
     public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
@@ -96,7 +96,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	gridPane = new GridPane(settings.gridSizeX().get(), settings.gridSizeY().get(), drawGroupTransform); // TODO: gridsize should be adjustable
+	gridPane = new GridPane(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
