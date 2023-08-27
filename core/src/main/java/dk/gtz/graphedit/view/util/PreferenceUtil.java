@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 public class PreferenceUtil {
     private static Logger logger = LoggerFactory.getLogger(PreferenceUtil.class);
     private static Preferences applicationPreferences = Preferences.userNodeForPackage(PreferenceUtil.class);
-    // TODO: I dont like that these are hardcoded and global... Maybe there should be a GraphEditPreferences.java POJO that is then saved at /home/user/.config/graphedit/preferences.yml or something
     private static String USE_LIGHT_THEME = "graphedit.use_light_theme";
     private static String LAST_OPENED_PROJECT = "graphedit.last_opened_project";
 
