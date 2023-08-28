@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.view;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.slf4j.LoggerFactory;
@@ -15,11 +13,11 @@ import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
-import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
+import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
@@ -64,19 +62,22 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     @Override
     public void init() {
-	// This is run before the preloader is loaded
 	DI.add(IRestartableApplication.class, this);
+	setupApplication();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+	this.primaryStage = primaryStage;
+	var settings = DI.get(ViewModelEditorSettings.class);
+	notifyPreloader(new LoadStateNotification("starting"));
+	if(settings.autoOpenLastProject().get())
+	    kickoff(primaryStage);
+    }
+
+    private void kickoff(Stage primaryStage) throws Exception {
 	try {
-	    this.primaryStage = primaryStage;
-	    notifyPreloader(new LoadStateNotification("starting"));
-	    DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	    notifyPreloader(new LoadStateNotification("setup application"));
-	    setupApplication();
-	    loadEditorSettings();
 	    loadProject();
 	    notifyPreloader(new LoadStateNotification("setup toolbox"));
 	    setupToolbox();
@@ -89,6 +90,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    notifyPreloader(new FinishNotification());
 	} catch(ProjectLoadException e) {
 	    logger.error("could not open project");
+	    notifyPreloader(new LoadStateNotification(e.getMessage()));
 	}
     }
 
@@ -97,7 +99,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	primaryStage.close();
 	try {
 	    var newStage = new Stage();
-	    start(newStage);
+	    kickoff(newStage);
 	    primaryStage = newStage;
 	} catch(Exception e) {
 	    primaryStage.show();
@@ -105,32 +107,21 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	}
     }
 
-    private void loadEditorSettings() throws Exception {
-	var serializer = DI.get(IModelSerializer.class);
-	var fileToLoad = ModelEditorSettings.getEditorSettingsFile();
-	if(!fileToLoad.toFile().exists()) {
-	    var data = serializer.serializeEditorSettings(new ModelEditorSettings());
-	    Files.createDirectories(fileToLoad.getParent());
-	    Files.write(fileToLoad, data.getBytes());
-	}
-	var settings = new ViewModelEditorSettings(serializer.deserializeEditorSettings(fileToLoad.toFile()));
-	DI.add(ViewModelEditorSettings.class, settings);
-    }
-
-    private void setupApplication() throws Exception {
+    private void setupApplication() {
+	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
+	DI.add(ViewModelEditorSettings.class, EditorActions.loadEditorSettings());
     }
 
-    // TODO: add a project-picker to the preloader with a list of recent projects and a "just open my most recent thing"-toggle
     private void loadProject() throws Exception {
 	var settings = DI.get(ViewModelEditorSettings.class);
 	var projectFilePath = Path.of(settings.lastOpenedProject().get());
 	if(!projectFilePath.toFile().exists())
-	    throw new ProjectLoadException();
+	    throw new ProjectLoadException("project file not found '%s'".formatted(projectFilePath.toString()));
 	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
 	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	DI.add(ViewModelProject.class, new ViewModelProject(project, projectFilePath.toFile().getParent()));

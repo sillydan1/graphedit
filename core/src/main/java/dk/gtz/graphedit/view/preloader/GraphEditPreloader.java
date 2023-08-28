@@ -26,7 +26,7 @@ public class GraphEditPreloader extends Preloader {
 	var page = (BorderPane) loader.load();
 	controller = loader.getController();
 	var screenBounds = Screen.getPrimary().getVisualBounds();
-	var scene = new Scene(page);
+        var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
 	scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 	return scene;
     }
@@ -38,6 +38,8 @@ public class GraphEditPreloader extends Preloader {
 	if(info instanceof FinishNotification fn)
 	    primaryStage.hide();
         super.handleApplicationNotification(info);
+	if(!controller.isStarted())
+	    controller.start();
     }
 }
 

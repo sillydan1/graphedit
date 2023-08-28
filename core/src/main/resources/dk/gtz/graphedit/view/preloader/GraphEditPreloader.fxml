@@ -10,17 +10,25 @@
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.preloader.GraphEditPreloaderController">
 <top>
-    
 </top>
+<left>
+    <BorderPane>
+        <top>
+            <Button fx:id="openNewProjectButton"/>
+        </top>
+        <center>
+            <VBox fx:id="projectContainer"/>
+        </center>
+    </BorderPane>
+</left>
 <center>
     <ImageView fx:id="logo"/>
 </center>
 <bottom>
-    <VBox>
+    <HBox fx:id="bottomContainer">
         <ProgressBar fx:id="progressBar" progress="-1"/>
         <Label fx:id="statusLabel" text="waiting"/>
-        <Label fx:id="projectNameLabel" text="project-name"/>
-    </VBox>
+    </HBox>
 </bottom>
 </BorderPane>
 

@@ -9,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.controls.ModalPane;
-import atlantafx.base.theme.CupertinoDark;
-import atlantafx.base.theme.CupertinoLight;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
+import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -25,40 +25,19 @@ import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IFunction2;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
 import dk.yalibs.yaundo.IUndoSystem;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 // TODO: write javadocs on all of these
 public class EditorActions {
     private static final Logger logger = LoggerFactory.getLogger(EditorActions.class);
 
     public static void quit() {
-        var alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Save and Exit?");
-        alert.setHeaderText("Save your changes before you exit?");
-        var yesBtn = new ButtonType("Save and exit", ButtonData.YES);
-        var noBtn = new ButtonType("Exit without saving", ButtonData.NO);
-        var modalPane = DI.get(ModalPane.class); // TODO: This is a hack, we should decide on a unified modal design language
-        alert.getButtonTypes().setAll(yesBtn, noBtn);
-        alert.initOwner(modalPane.getScene().getWindow());
-        var result = alert.showAndWait();
-        if(result.isEmpty()) {
-            logger.warn("cancelling quit action");
-            return;
-        }
-        if(result.get().getButtonData().equals(ButtonData.NO)) {
-            Platform.exit();
-            return;
-        }
-        EditorActions.save();
         Platform.exit();
     }
 
@@ -83,6 +62,61 @@ public class EditorActions {
         });
         Toast.success("save complete");
         logger.trace("save complete");
+    }
+
+    public static ViewModelEditorSettings loadEditorSettings() {
+        try {
+            var serializer = DI.get(IModelSerializer.class);
+            var fileToLoad = ModelEditorSettings.getEditorSettingsFile();
+            if(!fileToLoad.toFile().exists()) {
+                var data = serializer.serializeEditorSettings(new ModelEditorSettings());
+                Files.createDirectories(fileToLoad.getParent());
+                Files.write(fileToLoad, data.getBytes());
+            }
+            return new ViewModelEditorSettings(serializer.deserializeEditorSettings(fileToLoad.toFile()));
+        } catch(Exception e) {
+            logger.warn("could not load or create editor settings file, will return to default settings", e);
+            return new ViewModelEditorSettings(new ModelEditorSettings());
+        }
+    }
+
+    public static void saveEditorSettings(ViewModelEditorSettings settings) {
+        try {
+            var serializer = DI.get(IModelSerializer.class);
+            var data = serializer.serializeEditorSettings(new ModelEditorSettings(settings));
+            var fileToSave = ModelEditorSettings.getEditorSettingsFile();
+            if(!fileToSave.toFile().exists())
+                Files.createDirectories(fileToSave.getParent());
+            Files.write(fileToSave, data.getBytes());
+            logger.info("saved settings successfully");
+        } catch(Exception e) {
+            logger.error("could not save editor settings file", e);
+        }
+    }
+
+    public static void openProject(File projectPath) {
+        try {
+            logger.trace("loading new project {}", projectPath.getAbsolutePath().toString());
+            var serializer = DI.get(IModelSerializer.class);
+            serializer.deserializeProject(projectPath);
+            var settings = DI.get(ViewModelEditorSettings.class);
+            settings.lastOpenedProject().set(projectPath.getAbsolutePath().toString());
+            if(!settings.recentProjects().contains(projectPath.getAbsolutePath().toString()))
+                settings.recentProjects().add(projectPath.getAbsolutePath().toString());
+            saveEditorSettings(settings);
+            DI.get(IRestartableApplication.class).restart();
+        } catch (Exception e) {
+            logger.error("failed opening project: " + e.getMessage());
+        }
+    }
+
+    public static void openProjectPicker(Window window) {
+        var fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Project");
+        var chosenFile = fileChooser.showOpenDialog(window);
+        if(chosenFile == null)
+            return;
+        openProject(chosenFile);
     }
 
     public static void toggleTheme() {
@@ -143,8 +177,8 @@ public class EditorActions {
     }
 
     public static void executeRunTarget(ViewModelRunTarget selectedRunTarget) {
-        // NOTE: Does not change the MenuItem labels or anything.
-        // NOTE: This is a blocking call.
+        // NOTE: Does not change the MenuItem labels
+        // NOTE: This is a blocking call
         try {
             var pb = new ProcessBuilder();
             if(selectedRunTarget.runAsShell().get()) {

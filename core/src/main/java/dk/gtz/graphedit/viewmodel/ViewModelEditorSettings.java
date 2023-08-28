@@ -1,19 +1,26 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.List;
+
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
                 DoubleProperty gridSizeY,
                 BooleanProperty gridSnap,
                 BooleanProperty useLightTheme,
-                StringProperty lastOpenedProject) {
+                BooleanProperty autoOpenLastProject,
+                StringProperty lastOpenedProject,
+                ListProperty<String> recentProjects) {
 
         public ViewModelEditorSettings(ModelEditorSettings settings) {
                 this(
@@ -21,8 +28,11 @@ public record ViewModelEditorSettings(
                         settings.gridSizeY(),
                         settings.gridSnap(),
                         settings.useLightTheme(),
-                        settings.lastOpenedProject()
+                        settings.autoOpenLastProject(),
+                        settings.lastOpenedProject(),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
+                this.recentProjects.addAll(settings.recentProjects());
         }
 
         public ViewModelEditorSettings(
@@ -30,14 +40,19 @@ public record ViewModelEditorSettings(
                         double gridSizeY,
                         boolean gridSnap,
                         boolean useLightTheme,
-                        String lastOpenedProject) {
+                        boolean autoOpenLastProject,
+                        String lastOpenedProject,
+                        List<String> recentProjects) {
                 this(
                         new SimpleDoubleProperty(gridSizeX),
                         new SimpleDoubleProperty(gridSizeY),
                         new SimpleBooleanProperty(gridSnap),
                         new SimpleBooleanProperty(useLightTheme),
-                        new SimpleStringProperty(lastOpenedProject)
+                        new SimpleBooleanProperty(autoOpenLastProject),
+                        new SimpleStringProperty(lastOpenedProject),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
+                this.recentProjects.addAll(recentProjects);
         }
 }
 

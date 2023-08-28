@@ -1,28 +1,27 @@
 package dk.gtz.graphedit.view;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.exceptions.SerializationException;
-import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.PlatformUtils;
-import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
@@ -107,6 +106,23 @@ public class EditorController {
 
     @FXML
     private void quit() {
+        var alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Save and Exit?");
+        alert.setHeaderText("Save your changes before you exit?");
+        var yesBtn = new ButtonType("Save and exit", ButtonData.YES);
+        var noBtn = new ButtonType("Exit without saving", ButtonData.NO);
+        alert.getButtonTypes().setAll(yesBtn, noBtn);
+        alert.initOwner(root.getScene().getWindow());
+        var result = alert.showAndWait();
+        if(result.isEmpty()) {
+            logger.warn("cancelling quit action");
+            return;
+        }
+        if(result.get().getButtonData().equals(ButtonData.NO)) {
+	    EditorActions.quit();
+            return;
+        }
+        EditorActions.save();
 	EditorActions.quit();
     }
 
@@ -156,21 +172,7 @@ public class EditorController {
 
     @FXML
     private void openProject() {
-	var fileChooser = new FileChooser();
-	fileChooser.setTitle("Open Project");
-	var chosenFile = fileChooser.showOpenDialog(menubarTopBox.getScene().getWindow());
-	if(chosenFile == null)
-	    return;
-	try {
-	    logger.trace("loading new project {}", chosenFile.getAbsolutePath().toString());
-	    var serializer = DI.get(IModelSerializer.class);
-	    serializer.deserializeProject(chosenFile);
-	    var settings = DI.get(ViewModelEditorSettings.class);
-	    settings.lastOpenedProject().set(chosenFile.getAbsolutePath().toString());
-	    DI.get(IRestartableApplication.class).restart();
-	} catch (SerializationException | IOException e) {
-	    logger.error("Failed opening project: " + e.getMessage());
-	}
+	EditorActions.openProjectPicker(menubarTopBox.getScene().getWindow());
     }
 }
 

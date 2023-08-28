@@ -2,16 +2,29 @@ package dk.gtz.graphedit.model;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import dk.gtz.graphedit.view.util.PlatformUtils;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 
-public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, String lastOpenedProject) {
+public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, boolean autoOpenLastProject, String lastOpenedProject, List<String> recentProjects) {
 
     /**
      * Creates a ModelEditorSettings instance with default values.
      */
     public ModelEditorSettings() {
-        this(20.0d, 20.0d, true, false, "");
+        this(20.0d, 20.0d, true, false, true, "", new ArrayList<>());
+    }
+
+    public ModelEditorSettings(ViewModelEditorSettings viewmodel) {
+        this(viewmodel.gridSizeX().get(),
+            viewmodel.gridSizeY().get(),
+            viewmodel.gridSnap().get(),
+            viewmodel.useLightTheme().get(),
+            viewmodel.autoOpenLastProject().get(),
+            viewmodel.lastOpenedProject().get(),
+            new ArrayList<String>(viewmodel.recentProjects().get()));
     }
 
     public static Path getEditorSettingsFile() {
