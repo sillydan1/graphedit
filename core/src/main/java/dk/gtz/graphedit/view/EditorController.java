@@ -172,7 +172,9 @@ public class EditorController {
 
     @FXML
     private void openProject() {
-	EditorActions.openProjectPicker(menubarTopBox.getScene().getWindow());
+	var file = EditorActions.openProjectPicker(menubarTopBox.getScene().getWindow());
+	if(file.isPresent())
+	    EditorActions.openProject(file.get());
     }
 }
 

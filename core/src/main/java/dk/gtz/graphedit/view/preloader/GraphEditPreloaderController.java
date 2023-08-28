@@ -64,7 +64,11 @@ public class GraphEditPreloaderController {
     private void initializeOpenNewProjectButton() {
         openNewProjectButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_SQUARE_DOTTED));
         openNewProjectButton.setText("open new project");
-        openNewProjectButton.setOnAction((e) -> EditorActions.openProjectPicker(root.getScene().getWindow()));
+        openNewProjectButton.setOnAction((e) -> {
+            var file = EditorActions.openProjectPicker(root.getScene().getWindow());
+            if(file.isPresent())
+                EditorActions.openProject(file.get());
+        });
     }
 
     private void initializeProjectContainer() {
