@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.layout.Pane;
@@ -14,6 +17,7 @@ public class GridPane extends Pane {
     private double offsetY;
     private double gridscaleX;
     private double gridscaleY;
+    private List<Line> linePool;
 
     public GridPane(DoubleProperty gridsize, Affine transform) {
 	this(gridsize, gridsize, transform);
@@ -27,12 +31,62 @@ public class GridPane extends Pane {
 	this.offsetY = 0.0;
 	this.gridscaleX = 1.0;
 	this.gridscaleY = 1.0;
+	this.linePool = new ArrayList<>();
 	initializeTransformEventHandler(transform);
     }
 
     @Override
     public void layoutChildren() {
-	// TODO: this is quite expensive, please reuse the children
+	refreshLinesPooled();
+    }
+
+    private void refreshLinesPooled() {
+	var width = getWidth();
+	var height = getHeight();
+	var adjustedGridsizeX = gridsizeX.get() * gridscaleX;
+	var adjustedGridsizeY = gridsizeY.get() * gridscaleY;
+	var i = 0;
+
+	// column lines
+	for (var x = -adjustedGridsizeX; x < width + adjustedGridsizeX; x += adjustedGridsizeX) {
+	    var xx = x + offsetX;
+	    var line = getFromPool(i++);
+	    line.setStartX(xx);
+	    line.setStartY(0);
+	    line.setEndX(xx);
+	    line.setEndY(height);
+	    line.setVisible(true);
+	}
+
+	// row lines
+	for (var y = -adjustedGridsizeY; y < height + adjustedGridsizeY; y += adjustedGridsizeY) {
+	    var yy = y + offsetY;
+	    var line = getFromPool(i++);
+	    line.setStartX(0);
+	    line.setStartY(yy);
+	    line.setEndX(width);
+	    line.setEndY(yy);
+	    line.setVisible(true);
+	}
+
+	for( ; i < linePool.size(); i++)
+	    getFromPool(i).setVisible(false);
+    }
+
+    private Line getFromPool(int index) {
+	if(index > linePool.size()-1) {
+	    var newLine = new Line();
+	    newLine.styleProperty().set("-fx-stroke: -color-bg-subtle");
+	    linePool.add(newLine);
+	    getChildren().add(newLine);
+	    return newLine;
+	}
+	if(index < 0)
+	    throw new IndexOutOfBoundsException();
+	return linePool.get(index);
+    }
+
+    private void refreshLines() {
 	getChildren().clear();
 	var width = getWidth();
 	var height = getHeight();
