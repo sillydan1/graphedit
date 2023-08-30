@@ -104,7 +104,15 @@ public class EdgeCreateTool extends AbstractBaseTool {
         clear();
     }
 
+    private boolean isReleaseTargetAndSourceTargetInSameGraph(UUID source, UUID target, ViewModelGraph graph) {
+        return graph.vertices().containsKey(source) && graph.vertices().containsKey(target);
+    }
+
     public void release(UUID releaseTarget, ViewModelGraph graph) {
+        if(!isReleaseTargetAndSourceTargetInSameGraph(currentEdge.get().source().get(), releaseTarget, graph)) {
+            logger.warn("edge release target is not in the same graph as the source target");
+            return;
+        }
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
