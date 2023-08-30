@@ -28,6 +28,7 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.util.GlobFileMatcher;
 import dk.gtz.graphedit.view.util.IconUtils;
+import dk.gtz.graphedit.view.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
@@ -59,17 +60,18 @@ public class ProjectFilesViewController {
     private IBufferContainer openBuffers;
     private TreeView<FileTreeEntry> fileTree;
     private WatchService watchService;
-    private GlobFileMatcher gitignoreMatcher;
     private SimpleBooleanProperty useGitignoreMatcher;
     private GlobFileMatcher grapheditIgnoreMatcher;
     private SimpleBooleanProperty useGrapheditIgnoreMatcher;
     private SimpleBooleanProperty showHiddenFiles;
+    private boolean isGitInstalled;
 
     @FXML
     public VBox root;
 
     @FXML
     private void initialize() {
+	isGitInstalled = PlatformUtils.isProgramInstalled("git");
 	openProject = DI.get(ViewModelProject.class);
 	serializer = DI.get(IModelSerializer.class);
 	openBuffers = DI.get(IBufferContainer.class);
@@ -85,12 +87,6 @@ public class ProjectFilesViewController {
 
     private void initializeGlobMatchers() {
 	try {
-	    gitignoreMatcher = new GlobFileMatcher(Path.of(openProject.rootDirectory().get() + "/.gitignore"));
-	} catch (IOException ignored) {
-	    logger.debug(ignored.getMessage());
-	    gitignoreMatcher = new GlobFileMatcher();
-	}
-	try {
 	    grapheditIgnoreMatcher = new GlobFileMatcher(Path.of(openProject.rootDirectory().get() + "/.graphedit.ignore"));
 	} catch (IOException ignored) {
 	    logger.debug(ignored.getMessage());
@@ -98,17 +94,30 @@ public class ProjectFilesViewController {
 	}
     }
 
+    private boolean isGitignored(Path path) {
+	try {
+	    if(!isGitInstalled)
+		return false;
+	    var p = new ProcessBuilder("git", "check-ignore", "-q", path.toString());
+	    p.directory(Path.of(openProject.rootDirectory().get()).toFile());
+	    var pp = p.start();
+	    return pp.waitFor() == 0;
+	} catch(InterruptedException | IOException e) {
+	    logger.error("git check-ignore command failed", e);
+	}
+	return false;
+    }
+
     private Node createToolbar() {
-	// TODO: Write a yalib for actual gitignore support (see: https://github.com/neva-dev/gitignore-file-filter) (no, gitignore is not regex or purely glob-based, see https://git-scm.com/docs/gitignore#_pattern_format)
-	// var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
-	// gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
-	// gitignoreHideButton.selectedProperty().set(useGitignoreMatcher.get());
-	// useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty());
-	// var gitignoreTip = new Tooltip("Show gitignored files");
-	// gitignoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
-	// gitignoreTip.setPrefWidth(200);
-	// gitignoreTip.setWrapText(true);
-	// gitignoreHideButton.setTooltip(gitignoreTip);
+	var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	gitignoreHideButton.selectedProperty().set(useGitignoreMatcher.get());
+	useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty());
+	var gitignoreTip = new Tooltip("Show gitignored files");
+	gitignoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	gitignoreTip.setPrefWidth(200);
+	gitignoreTip.setWrapText(true);
+	gitignoreHideButton.setTooltip(gitignoreTip);
 
 	var grapheditIgnoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
 	grapheditIgnoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
@@ -130,14 +139,14 @@ public class ProjectFilesViewController {
 	showHiddenFilesTip.setWrapText(true);
 	showHiddenFilesButton.setTooltip(showHiddenFilesTip);
 
-	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton);
+	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton);
 	result.setOrientation(Orientation.HORIZONTAL);
 	return result;
     }
     
     private Node getPathFontIcon(Path path) {
 	try {
-	    if(gitignoreMatcher.matches(path))
+	    if(isGitignored(path))
 		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
 	    if(grapheditIgnoreMatcher.matches(path))
 		return createStackedFontIcon(new FontIcon(BootstrapIcons.EYE), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
@@ -229,7 +238,7 @@ public class ProjectFilesViewController {
     private void addFileTreeItems(Path dirPath, TreeItem<FileTreeEntry> parent) {
 	try {
 	    for(var path : Files.newDirectoryStream(dirPath)) {
-		if(useGitignoreMatcher.get() && gitignoreMatcher.matches(path))
+		if(useGitignoreMatcher.get() && isGitignored(path))
 		    continue;
 		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path))
 		    continue;
