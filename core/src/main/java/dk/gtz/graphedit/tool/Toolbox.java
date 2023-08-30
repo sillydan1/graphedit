@@ -8,17 +8,23 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 public class Toolbox implements IToolbox {
     private static Logger logger = LoggerFactory.getLogger(Toolbox.class);
     private final String defaultCategory;
     private final Map<String, List<ITool>> tools;
     private ITool defaultTool;
+    private SimpleObjectProperty<ITool> selectedTool;
 
     public Toolbox(String defaultCategory, ITool defaultTool) {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultTool;
+        this.selectedTool = new SimpleObjectProperty<>();
         tools = new HashMap<>();
         add(getDefaultTool());
+        this.selectedTool.set(getDefaultTool());
     }
 
     @Override
@@ -52,6 +58,16 @@ public class Toolbox implements IToolbox {
     @Override
     public ITool getDefaultTool() {
         return defaultTool;
+    }
+
+    @Override
+    public ObjectProperty<ITool> getSelectedTool() {
+        return selectedTool;
+    }
+
+    @Override
+    public void selectTool(ITool tool) {
+        selectedTool.set(tool);
     }
 }
 

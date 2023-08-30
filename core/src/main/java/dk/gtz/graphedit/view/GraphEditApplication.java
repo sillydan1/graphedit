@@ -128,17 +128,15 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupToolbox() {
-	DI.add(IToolbox.class, () -> {
-	    var toolbox = new Toolbox("inspect", new ViewTool());
-	    toolbox.addDefaultTool(new SelectTool());
-	    toolbox.add("edit",
-		    new VertexDragMoveTool(),
-		    new EdgeCreateTool(),
-		    new EdgeDeleteTool(),
-		    new VertexCreateTool(),
-		    new VertexDeleteTool());
-	    return toolbox;
-	}); 
+	var toolbox = new Toolbox("inspect", new ViewTool());
+	toolbox.addDefaultTool(new SelectTool());
+	toolbox.add("edit",
+		new VertexDragMoveTool(),
+		new EdgeCreateTool(),
+		new EdgeDeleteTool(),
+		new VertexCreateTool(),
+		new VertexDeleteTool());
+	DI.add(IToolbox.class, toolbox);
     }
 
     private void setupPreferences() {

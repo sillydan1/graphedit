@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
@@ -20,8 +19,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -44,7 +41,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private GridPane gridPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
-    private ObjectProperty<ITool> selectedTool;
     private List<Runnable> onFocusEventHandlers;
 
     public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
@@ -55,7 +51,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	this.resource = resource;
 	this.settings = settings;
 	this.syntaxFactory = syntaxFactory;
-	this.selectedTool = new SimpleObjectProperty<>();
 	this.onFocusEventHandlers = new ArrayList<>();
 	initialize();
     }
@@ -76,9 +71,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeToolbar() {
 	var toolbox = DI.get(IToolbox.class);
-	toolbar = new ModelEditorToolbar(toolbox, selectedTool);
-	// TODO: experiment if having a tool-selection per viewport gets annoying. If it is, move the selectedTool variable into the toolbox itself then
-	selectedTool.set(toolbox.getDefaultTool());
+	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool());
 	setRight(toolbar);
     }
 
@@ -150,8 +143,9 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     }
 
     private void initializeToolEventHandlers() {
-	viewport.addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, resource.syntax(), settings)));
-	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> selectedTool.get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
+	var toolbox = DI.get(IToolbox.class);
+	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, resource.syntax(), settings)));
+	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
     }
 
     private void initializeVertexCollectionChangeHandlers() {
@@ -202,10 +196,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     public ViewModelEditorSettings getEditorSettings() {
 	return settings;
-    }
-
-    public ObjectProperty<ITool> getSelectedTool() {
-	return selectedTool;
     }
 
     @Override
