@@ -41,7 +41,7 @@
      - [x] `yafunc`
      - [x] `yastreamgobbler`
      - [x] `yaundo`
-   - [ ] Fix todos
+   - [x] Fix todos
    - [ ] Combined modelling tool
    - [ ] graph editor polish
    - [ ] Tool keybinds
