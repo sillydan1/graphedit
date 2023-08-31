@@ -155,6 +155,10 @@ public class EdgeController extends Group {
 	line.startYProperty().bind(BindingsUtil.createShapedYBinding(target.point(), source.point(), source.shape()));
 	line.endXProperty().bind(BindingsUtil.createShapedXBinding(source.point(), target.point(), target.shape()));
 	line.endYProperty().bind(BindingsUtil.createShapedYBinding(source.point(), target.point(), target.shape()));
+	selectionHelperLine.startXProperty().bind(BindingsUtil.createShapedXBinding(target.point(), source.point(), source.shape()));
+	selectionHelperLine.startYProperty().bind(BindingsUtil.createShapedYBinding(target.point(), source.point(), source.shape()));
+	selectionHelperLine.endXProperty().bind(BindingsUtil.createShapedXBinding(source.point(), target.point(), target.shape()));
+	selectionHelperLine.endYProperty().bind(BindingsUtil.createShapedYBinding(source.point(), target.point(), target.shape()));
     }
 
     private void initializeStyle() {

@@ -42,7 +42,7 @@
      - [x] `yastreamgobbler`
      - [x] `yaundo`
    - [x] Fix todos
-   - [ ] Combined modelling tool
+   - [x] Combined modelling tool
    - [ ] graph editor polish
    - [ ] Tool keybinds
    - [ ] Custom keybinds

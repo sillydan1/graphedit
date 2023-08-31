@@ -1,6 +1,7 @@
 package dk.gtz.graphedit.tool;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -18,10 +19,11 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 public class SelectTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(SelectTool.class);
-    private final ObservableList<ISelectable> selectedElements;
+    private final ObservableList<Pair<UUID,ISelectable>> selectedElements;
 
     public SelectTool() {
         selectedElements = DI.get("selectedElements");
@@ -68,7 +70,7 @@ public class SelectTool extends AbstractBaseTool {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
             if(!e.event().isControlDown())
                 clear();
-            add(e.vertex());
+            toggleSelected(e.vertexId(), e.vertex());
         }
     }
 
@@ -77,24 +79,28 @@ public class SelectTool extends AbstractBaseTool {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
             if(!e.event().isControlDown())
                 clear();
-            add(e.edge());
+            toggleSelected(e.edgeId(), e.edge());
         }
     }
 
     public void clear() {
         for(var e : selectedElements) 
-            e.getIsSelected().set(false);
+            e.getValue().getIsSelected().set(false);
         selectedElements.clear();
     }
 
-    public void add(ISelectable selectable) {
-        if(selectedElements.contains(selectable)) {
-            selectedElements.remove(selectable);
+    public void toggleSelected(UUID id, ISelectable selectable) {
+        if (selectedElements.stream().anyMatch(e -> e.getKey().equals(id) && e.getValue() == selectable)) {
+            selectedElements.removeIf(e -> e.getKey().equals(id) && e.getValue() == selectable);
             selectable.getIsSelected().set(false);
         } else {
-            selectedElements.add(selectable);
+            selectedElements.add(new Pair<>(id, selectable));
             selectable.getIsSelected().set(true);
         }
+    }
+
+    public ObservableList<Pair<UUID,ISelectable>> getSelection() {
+        return selectedElements;
     }
 }
 

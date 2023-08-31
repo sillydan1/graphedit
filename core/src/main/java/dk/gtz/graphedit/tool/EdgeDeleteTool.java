@@ -55,7 +55,9 @@ public class EdgeDeleteTool extends AbstractBaseTool {
     }
 
     public void delete(UUID edgeId, ViewModelEdge edge, ViewModelGraph graph) {
-        graph.edges().remove(edgeId);
+        var deletedEdge = graph.edges().remove(edgeId);
+        if(deletedEdge == null)
+            return;
         undoSystem.push(new Undoable("edge delete action",
                     () -> graph.edges().put(edgeId, edge),
                     () -> graph.edges().remove(edgeId)));

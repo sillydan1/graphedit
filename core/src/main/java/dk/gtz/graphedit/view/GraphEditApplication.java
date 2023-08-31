@@ -21,6 +21,7 @@ import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
+import dk.gtz.graphedit.tool.UnifiedModellingTool;
 import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
@@ -129,13 +130,14 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupToolbox() {
 	var toolbox = new Toolbox("inspect", new ViewTool());
-	toolbox.addDefaultTool(new SelectTool());
+	toolbox.addDefaultTool(new UnifiedModellingTool());
 	toolbox.add("edit",
 		new VertexDragMoveTool(),
 		new EdgeCreateTool(),
 		new EdgeDeleteTool(),
 		new VertexCreateTool(),
-		new VertexDeleteTool());
+		new VertexDeleteTool(),
+		new SelectTool());
 	DI.add(IToolbox.class, toolbox);
     }
 

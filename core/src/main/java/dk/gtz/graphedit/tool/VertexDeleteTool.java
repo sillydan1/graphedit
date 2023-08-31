@@ -61,8 +61,9 @@ public class VertexDeleteTool extends AbstractBaseTool {
             .stream()
             .filter(e -> e.getValue().source().get().equals(vertexId) || e.getValue().target().get().equals(vertexId))
             .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())); 
-
-        graph.vertices().remove(vertexId);
+        var deletedVertex = graph.vertices().remove(vertexId);
+        if(deletedVertex == null)
+            return;
         for(var edge : linkedEdges.entrySet()) 
             graph.edges().remove(edge.getKey());
         undoSystem.push(new Undoable("edge delete action",

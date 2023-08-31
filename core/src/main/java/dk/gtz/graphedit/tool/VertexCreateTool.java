@@ -56,10 +56,7 @@ public class VertexCreateTool extends AbstractBaseTool {
             var point = new ViewModelPoint(posX, posY);
             if(e.editorSettings().gridSnap().get())
                 point.snapToGrid(e.editorSettings());
-            if(e.event().isShiftDown())
-                createTextVertex(point, e.graph());
-            else
-                createCircleVertex(point, e.graph());
+            createCircleVertex(point, e.graph());
         }
     }
 
