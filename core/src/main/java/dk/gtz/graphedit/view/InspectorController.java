@@ -1,12 +1,11 @@
 package dk.gtz.graphedit.view;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import dk.gtz.graphedit.view.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.IInspectable;
-import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,12 +14,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 
 public class InspectorController {
     @FXML
     private VBox propertiesContainer;
-    private final ObservableList<Pair<UUID,ISelectable>> selectedElements;
+    private final ObservableList<ViewModelSelection> selectedElements;
 
     public InspectorController() {
 	selectedElements = DI.get("selectedElements");
@@ -34,13 +32,13 @@ public class InspectorController {
 
     private void addAllSelected() {
 	for(var element : selectedElements) {
-	    if(element.getValue() instanceof IInspectable inspectable)
+	    if(element.selectable() instanceof IInspectable inspectable)
 		addInspectable(inspectable);
 	}
     }
 
     private void initializeSelectionEventHandlers() {
-	selectedElements.addListener((ListChangeListener<Pair<UUID,ISelectable>>)(n) -> {
+	selectedElements.addListener((ListChangeListener<ViewModelSelection>)(n) -> {
 	    propertiesContainer.getChildren().clear();
 	    addAllSelected();
 	});

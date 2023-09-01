@@ -86,10 +86,10 @@ public class UnifiedModellingTool extends AbstractBaseTool {
             edgeCreateTool.onKeyEvent(e);
         if(e.event().getCode().equals(KeyCode.DELETE) || e.event().getCode().equals(KeyCode.BACK_SPACE)) {
             for(var element : selectTool.getSelection()) {
-                if(element.getValue() instanceof ViewModelEdge edge)
-                    edgeDeleteTool.delete(element.getKey(), edge, e.graph());
-                if(element.getValue() instanceof ViewModelVertex vertex)
-                    vertexDeleteTool.delete(element.getKey(), vertex, e.graph());
+                if(element.selectable() instanceof ViewModelEdge edge)
+                    edgeDeleteTool.delete(element.id(), edge, e.graph());
+                if(element.selectable() instanceof ViewModelVertex vertex)
+                    vertexDeleteTool.delete(element.id(), vertex, e.graph());
             }
         }
     }

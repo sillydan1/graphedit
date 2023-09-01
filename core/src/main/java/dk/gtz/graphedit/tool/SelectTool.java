@@ -13,6 +13,7 @@ import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import javafx.util.Pair;
 
 public class SelectTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(SelectTool.class);
-    private final ObservableList<Pair<UUID,ISelectable>> selectedElements;
+    private final ObservableList<ViewModelSelection> selectedElements;
 
     public SelectTool() {
         selectedElements = DI.get("selectedElements");
@@ -85,21 +86,21 @@ public class SelectTool extends AbstractBaseTool {
 
     public void clear() {
         for(var e : selectedElements) 
-            e.getValue().getIsSelected().set(false);
+            e.selectable().getIsSelected().set(false);
         selectedElements.clear();
     }
 
     public void toggleSelected(UUID id, ISelectable selectable) {
-        if (selectedElements.stream().anyMatch(e -> e.getKey().equals(id) && e.getValue() == selectable)) {
-            selectedElements.removeIf(e -> e.getKey().equals(id) && e.getValue() == selectable);
+        if (selectedElements.stream().anyMatch(e -> e.id().equals(id) && e.selectable() == selectable)) {
+            selectedElements.removeIf(e -> e.id().equals(id) && e.selectable() == selectable);
             selectable.getIsSelected().set(false);
         } else {
-            selectedElements.add(new Pair<>(id, selectable));
+            selectedElements.add(new ViewModelSelection(id, selectable));
             selectable.getIsSelected().set(true);
         }
     }
 
-    public ObservableList<Pair<UUID,ISelectable>> getSelection() {
+    public ObservableList<ViewModelSelection> getSelection() {
         return selectedElements;
     }
 }
