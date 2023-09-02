@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.tool;
 
+import java.util.Optional;
+
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -11,7 +13,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 
 public class UnifiedModellingTool extends AbstractBaseTool {
     private final VertexCreateTool vertexCreateTool;
@@ -31,11 +32,21 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     }
 
     @Override
+    public Optional<String> getTooltip() {
+        return Optional.of("unified edit tool");
+    }
+
+    @Override
     public String getHelpDescription() {
         return """
             Tool that unifies the following tools:
 
-            TODO: add more help message
+             - vertex creation (Shift+click)
+             - vertex moving (Leftmouse Drag)
+             - vertex deletion (Delete or Backspace key)
+             - edge creation (Shift+click vertex)
+             - edge deletion (Delete or Backspace key)
+             - selection management (Leftmouse Click)
             """;
     }
 
@@ -67,10 +78,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
             edgeCreateTool.onVertexMouseEvent(e);
             return;
         }
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
-            selectTool.onVertexMouseEvent(e);
-            return;
-        }
+        selectTool.onVertexMouseEvent(e);
         vertexDragMoveTool.onVertexMouseEvent(e);
     }
 
