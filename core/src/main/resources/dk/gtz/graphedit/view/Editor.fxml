@@ -7,7 +7,7 @@
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.EditorController">
 <StackPane fx:id="root">
-    <BorderPane HBox.hgrow="ALWAYS">
+    <BorderPane HBox.hgrow="ALWAYS" fx:id="primaryBorderPane">
         <top>
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
@@ -58,4 +58,3 @@
     </BorderPane>
 </StackPane>
 </StackPane>
-

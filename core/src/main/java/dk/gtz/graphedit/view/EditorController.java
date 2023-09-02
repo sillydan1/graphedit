@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.view.util.HeightDragResizer;
 import dk.gtz.graphedit.view.util.PlatformUtils;
+import dk.gtz.graphedit.view.util.WidthDragResizer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
@@ -20,6 +22,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -32,6 +36,8 @@ public class EditorController {
     @FXML
     private StackPane root;
     @FXML
+    private BorderPane primaryBorderPane;
+    @FXML
     private Menu runTargetsMenu;
     @FXML
     private MenuItem runTargetMenuItem;
@@ -42,6 +48,8 @@ public class EditorController {
     private void initialize() {
 	selectedRunTarget = Optional.empty();
 	runTargetThread = new Thread(this::runTarget);
+	WidthDragResizer.makeResizableRight((Region)primaryBorderPane.getLeft());
+	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
     }
