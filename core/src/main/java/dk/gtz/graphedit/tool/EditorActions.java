@@ -31,6 +31,10 @@ import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -293,6 +297,22 @@ public class EditorActions {
         } finally {
             logger.trace("runtarget finished");
         }
+    }
+
+    public static Optional<Boolean> showConfirmDialog(String questionTitle, String question, Window window) {
+        var alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle(questionTitle);
+        alert.setHeaderText(question);
+        var yesBtn = new ButtonType("Confirm", ButtonData.YES);
+        var noBtn = new ButtonType("Cancel", ButtonData.NO);
+        alert.getButtonTypes().setAll(yesBtn, noBtn);
+        alert.initOwner(window);
+        var result = alert.showAndWait();
+        if(result.isEmpty())
+            return Optional.empty();
+        if(result.get().getButtonData().equals(ButtonData.NO))
+            return Optional.of(false);
+        return Optional.of(true);
     }
 }
 

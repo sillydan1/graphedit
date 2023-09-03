@@ -114,23 +114,11 @@ public class EditorController {
 
     @FXML
     private void quit() {
-        var alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Save and Exit?");
-        alert.setHeaderText("Save your changes before you exit?");
-        var yesBtn = new ButtonType("Save and exit", ButtonData.YES);
-        var noBtn = new ButtonType("Exit without saving", ButtonData.NO);
-        alert.getButtonTypes().setAll(yesBtn, noBtn);
-        alert.initOwner(root.getScene().getWindow());
-        var result = alert.showAndWait();
-        if(result.isEmpty()) {
-            logger.warn("cancelling quit action");
-            return;
-        }
-        if(result.get().getButtonData().equals(ButtonData.NO)) {
-	    EditorActions.quit();
-            return;
-        }
-        EditorActions.save();
+	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", root.getScene().getWindow());
+	if(result.isEmpty())
+	    return;
+        if(result.get())
+	    EditorActions.save();
 	EditorActions.quit();
     }
 
