@@ -88,7 +88,9 @@ public class ProjectFilesViewController {
 
     private void initializeGlobMatchers() {
 	try {
-	    grapheditIgnoreMatcher = new GlobFileMatcher(Path.of(openProject.rootDirectory().get() + "/.graphedit.ignore"));
+	    var root = Path.of(openProject.rootDirectory().get());
+	    var ignoreFile = Path.of(root.toString() + "/.graphedit.ignore");
+	    grapheditIgnoreMatcher = new GlobFileMatcher(root, ignoreFile);
 	} catch (IOException ignored) {
 	    logger.debug(ignored.getMessage());
 	    grapheditIgnoreMatcher = new GlobFileMatcher();
@@ -110,20 +112,22 @@ public class ProjectFilesViewController {
     }
 
     private Node createToolbar() {
-	var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	// TODO: new file button
+	// TODO: new folder button
+	var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.GITHUB));
 	gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
-	gitignoreHideButton.selectedProperty().set(useGitignoreMatcher.get());
-	useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty());
+	gitignoreHideButton.selectedProperty().set(!useGitignoreMatcher.get());
+	useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty().not());
 	var gitignoreTip = new Tooltip("Show gitignored files");
 	gitignoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
 	gitignoreTip.setPrefWidth(200);
 	gitignoreTip.setWrapText(true);
 	gitignoreHideButton.setTooltip(gitignoreTip);
 
-	var grapheditIgnoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
+	var grapheditIgnoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.SHARE));
 	grapheditIgnoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
-	grapheditIgnoreHideButton.selectedProperty().set(useGrapheditIgnoreMatcher.get());
-	useGrapheditIgnoreMatcher.bind(grapheditIgnoreHideButton.selectedProperty());
+	grapheditIgnoreHideButton.selectedProperty().set(!useGrapheditIgnoreMatcher.get());
+	useGrapheditIgnoreMatcher.bind(grapheditIgnoreHideButton.selectedProperty().not());
 	var grapheditIgnoreTip = new Tooltip("Show graphedit ignored files");
 	grapheditIgnoreTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
 	grapheditIgnoreTip.setPrefWidth(200);
@@ -150,7 +154,7 @@ public class ProjectFilesViewController {
 	    if(isGitignored(path))
 		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
 	    if(grapheditIgnoreMatcher.matches(path))
-		return createStackedFontIcon(new FontIcon(BootstrapIcons.EYE), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
 	    if(Files.isDirectory(path))
 		return new FontIcon(BootstrapIcons.FOLDER);
 	    return IconUtils.getFileTypeIcon(Files.probeContentType(path));
@@ -209,7 +213,10 @@ public class ProjectFilesViewController {
                     var kind = event.kind();
                     var eventPath = (Path) event.context();
                     var fullPath = ((Path) key.watchable()).resolve(eventPath);
-                    Platform.runLater(() -> updateTreeView(kind, fullPath));
+                    Platform.runLater(() -> {
+			initializeGlobMatchers();
+			updateTreeView(kind, fullPath);
+		    });
                 }
                 key.reset();
             }
@@ -240,11 +247,12 @@ public class ProjectFilesViewController {
     private void addFileTreeItems(Path dirPath, TreeItem<FileTreeEntry> parent) {
 	try {
 	    for(var path : Files.newDirectoryStream(dirPath)) {
-		if(useGitignoreMatcher.get() && isGitignored(path))
-		    continue;
-		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path))
-		    continue;
 		if(!showHiddenFiles.get() && Files.isHidden(path))
+		    continue;
+		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path)) {
+		    continue;
+		}
+		if(useGitignoreMatcher.get() && isGitignored(path))
 		    continue;
 		var subDir = new TreeItem<FileTreeEntry>(new FileTreeEntry(path), getPathFontIcon(path));
 		if(Files.isDirectory(path))

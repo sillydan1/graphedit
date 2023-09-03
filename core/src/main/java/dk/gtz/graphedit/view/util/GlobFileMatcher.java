@@ -11,7 +11,7 @@ import java.util.List;
 public class GlobFileMatcher {
     private final List<PathMatcher> matchers;
 
-    public GlobFileMatcher(Path globIgnoreRulesFilePath) throws IOException {
+    public GlobFileMatcher(Path rootDirPath, Path globIgnoreRulesFilePath) throws IOException {
 	var lines = Files.readAllLines(globIgnoreRulesFilePath);
 	matchers = new ArrayList<>(lines.size());
 	for(var line : lines) {
@@ -19,7 +19,7 @@ public class GlobFileMatcher {
 		continue;
 	    if(line.trim().startsWith("#"))
 		continue;
-	    matchers.add(FileSystems.getDefault().getPathMatcher("glob:" + line.trim()));
+	    matchers.add(FileSystems.getDefault().getPathMatcher("glob:" + rootDirPath.toString() + "/" + line.trim()));
 	}
     }
 
