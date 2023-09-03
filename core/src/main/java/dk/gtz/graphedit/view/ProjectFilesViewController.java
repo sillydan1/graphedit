@@ -27,6 +27,7 @@ import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.GlobFileMatcher;
 import dk.gtz.graphedit.view.util.IconUtils;
 import dk.gtz.graphedit.view.util.PlatformUtils;
@@ -35,6 +36,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -44,6 +46,8 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
@@ -179,6 +183,23 @@ public class ProjectFilesViewController {
 	var view = new TreeView<FileTreeEntry>();
 	view.setRoot(root);
 	view.setShowRoot(false);
+	view.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+	    if(view.getSelectionModel().isEmpty())
+		return;
+	    if(e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
+		try {
+		    var pathToDelete = view.getSelectionModel().getSelectedItem().getValue().path();
+		    var result = EditorActions.showConfirmDialog("Are you sure?", "Delete file? %s".formatted(pathToDelete.toString()), view.getScene().getWindow());
+		    if(result.isPresent() && result.get()) {
+			Files.deleteIfExists(pathToDelete);
+			updateTreeView();
+			Toast.success("deleted %s".formatted(pathToDelete.toString()));
+		    }
+		} catch (IOException e1) {
+		    logger.error(e1.getMessage(), e1);
+		}
+	    }
+	});
 	view.setOnMouseClicked((e) -> {
 	    if(e.getClickCount() == 2)
 		onPathClicked(view.getSelectionModel().getSelectedItem().getValue());
@@ -250,19 +271,22 @@ public class ProjectFilesViewController {
 	    for(var path : Files.newDirectoryStream(dirPath)) {
 		if(!showHiddenFiles.get() && Files.isHidden(path))
 		    continue;
-		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path)) {
+		if(useGrapheditIgnoreMatcher.get() && grapheditIgnoreMatcher.matches(path))
 		    continue;
-		}
 		if(useGitignoreMatcher.get() && isGitignored(path))
 		    continue;
-		var subDir = new TreeItem<FileTreeEntry>(new FileTreeEntry(path), getPathFontIcon(path));
+		var treeEntry = createTreeEntry(path);
 		if(Files.isDirectory(path))
-		    addFileTreeItems(path, subDir);
-		parent.getChildren().add(subDir);
+		    addFileTreeItems(path, treeEntry);
+		parent.getChildren().add(treeEntry);
 	    }
 	} catch (IOException e) {
 	    logger.error(e.getMessage(), e);
 	}
+    }
+
+    private TreeItem<FileTreeEntry> createTreeEntry(Path path) {
+	return new TreeItem<FileTreeEntry>(new FileTreeEntry(path), getPathFontIcon(path));
     }
 
     public void toggle() {
