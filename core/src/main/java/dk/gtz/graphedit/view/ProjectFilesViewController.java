@@ -40,6 +40,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
@@ -149,7 +150,16 @@ public class ProjectFilesViewController {
 	showHiddenFilesTip.setWrapText(true);
 	showHiddenFilesButton.setTooltip(showHiddenFilesTip);
 
-	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton);
+	var manualRefreshButton = new Button(null, new FontIcon(BootstrapIcons.ARROW_CLOCKWISE));
+	manualRefreshButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	var refreshTip = new Tooltip("Refresh");
+	refreshTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	refreshTip.setPrefWidth(200);
+	refreshTip.setWrapText(true);
+	manualRefreshButton.setTooltip(refreshTip);
+	manualRefreshButton.setOnAction(e -> updateTreeView());
+
+	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton, /* seperator */ manualRefreshButton);
 	result.setOrientation(Orientation.HORIZONTAL);
 	return result;
     }
@@ -189,14 +199,14 @@ public class ProjectFilesViewController {
 	    if(e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
 		try {
 		    var pathToDelete = view.getSelectionModel().getSelectedItem().getValue().path();
-		    var result = EditorActions.showConfirmDialog("Are you sure?", "Delete file? %s".formatted(pathToDelete.toString()), view.getScene().getWindow());
+		    var result = EditorActions.showConfirmDialog("Are you sure?", "Delete path? %s".formatted(pathToDelete.toString()), view.getScene().getWindow());
 		    if(result.isPresent() && result.get()) {
-			Files.deleteIfExists(pathToDelete);
+			Files.delete(pathToDelete);
 			updateTreeView();
 			Toast.success("deleted %s".formatted(pathToDelete.toString()));
 		    }
 		} catch (IOException e1) {
-		    logger.error(e1.getMessage(), e1);
+		    logger.error("{}: {}", e1.getClass().getSimpleName(), e1.getMessage(), e1);
 		}
 	    }
 	});
@@ -326,7 +336,8 @@ public class ProjectFilesViewController {
 		logger.error("file already exists");
 		return;
 	    }
-	    var serializedModel = DI.get(IModelSerializer.class).serialize(createNewModel());
+	    var model =createNewModel(PlatformUtils.removeFileExtension(newFilePath.getFileName().toString()));
+	    var serializedModel = DI.get(IModelSerializer.class).serialize(model);
 	    Files.write(newFilePath, serializedModel.getBytes());
 	    Toast.success("created file %s".formatted(newFilePath.toString()));
 	} catch (Exception e) {
@@ -334,10 +345,11 @@ public class ProjectFilesViewController {
 	}
     }
 
-    public ModelProjectResource createNewModel() {
+    public ModelProjectResource createNewModel(String modelName) {
 	var exampleVertices = new HashMap<UUID,ModelVertex>();
 	var exampleEdges = new HashMap<UUID,ModelEdge>();
 	var exampleMetaData = new HashMap<String,String>();
+	exampleMetaData.put("name", modelName);
 	var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
 	return new ModelProjectResource(exampleMetaData, exampleGraph);
     }

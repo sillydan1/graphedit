@@ -40,5 +40,12 @@ public class PlatformUtils {
 	}
 	return false;
     }
+
+    public static String removeFileExtension(String fname) {
+	var pos = fname.lastIndexOf('.');
+	if(pos > -1)
+	    return fname.substring(0, pos);
+	return fname;
+    }
 }
 

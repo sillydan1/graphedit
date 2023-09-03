@@ -41,7 +41,10 @@ public class EditorTabPaneController {
 	    var changedKey = c.getKey();
 	    if(c.wasAdded()) {
 		var changedVal = c.getValueAdded();
-		var tab = new DraggableTab(changedKey);
+		var tabTitle = changedKey;
+		if(changedVal.metadata().containsKey("name"))
+		    tabTitle = changedVal.metadata().get("name");
+		var tab = new DraggableTab(tabTitle);
 		changedVal.addView(tab);
 		tab.setOnClosed(e ->  {
 		    changedVal.removeView(tab);

@@ -118,19 +118,24 @@ public class SearchPaneController implements IFocusable, ICloseable {
 
     private void updateSearchResults(String searchTerm) {
 	results.clear();
+	var lowerCaseSearchTerm = searchTerm.toLowerCase();
 	for(var buffer : bufferContainer.getBuffers().entrySet()) {
-	    if(buffer.getKey().contains(searchTerm))
-		results.add(new SearchResultController(BootstrapIcons.FILE_FILL, buffer.getKey(), buffer.getValue()));
+	    for(var metadata : buffer.getValue().metadata().entrySet())
+		if(metadata.getValue().toLowerCase().contains(lowerCaseSearchTerm))
+		    results.add(new SearchResultController(BootstrapIcons.AT, metadata.getKey() + ": " + metadata.getValue(), buffer.getValue()));
 
 	    for(var edge : buffer.getValue().syntax().edges().entrySet())
 		if(edge.getValue() instanceof ISearchable searchable)
-		    if(searchable.getSearchValues().stream().anyMatch(s -> s.contains(searchTerm)))
+		    if(searchable.getSearchValues().stream().anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
 			results.add(new SearchResultController(BootstrapIcons.ARROW_RIGHT_CIRCLE_FILL, edge.getKey().toString(), edge.getValue()));
 
 	    for(var vertex : buffer.getValue().syntax().vertices().entrySet())
 		if(vertex.getValue() instanceof ISearchable searchable)
-		    if(searchable.getSearchValues().stream().anyMatch(s -> s.contains(searchTerm)))
+		    if(searchable.getSearchValues().stream().anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
 			results.add(new SearchResultController(BootstrapIcons.CIRCLE_FILL, vertex.getKey().toString(), vertex.getValue()));
+
+	    if(buffer.getKey().toLowerCase().contains(lowerCaseSearchTerm))
+		results.add(new SearchResultController(BootstrapIcons.FILE_FILL, buffer.getKey(), buffer.getValue()));
 	}
     }
 
