@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -279,22 +280,33 @@ public class ProjectFilesViewController {
 	    var dialog = new TextInputDialog();
 	    dialog.setTitle("new model file");
 	    dialog.setHeaderText(basePath.toString());
+	    var ed = dialog.getEditor();
+	    ed.setText(basePath.toString() + "/");
+	    // NOTE: This is a hack. We should have a more flexible dialogue system instead of using javafx Dialog's
+	    Platform.runLater(() -> ed.end());
 	    dialog.setContentText("new filename:");
 	    dialog.initOwner(root.getScene().getWindow());
 	    var fileName = dialog.showAndWait();
 	    if(fileName.isEmpty())
 		return;
-	    logger.trace("creating file {}/{}", basePath, fileName.get());
-	    var newfile = new File("%s/%s".formatted(basePath, fileName.get()));
+	    logger.trace("creating file {}", fileName.get());
+	    var newfile = new File("%s".formatted(fileName.get()));
+	    var newFilePath = Path.of(newfile.getCanonicalPath());
+	    if(fileName.get().trim().endsWith(File.separator)) {
+		Files.createDirectories(newFilePath);
+		Toast.success("created directory %s".formatted(newFilePath.toString()));
+		return;
+	    }
+	    Files.createDirectories(newFilePath.getParent());
 	    if(!newfile.createNewFile()) {
 		logger.error("file already exists");
 		return;
 	    }
 	    var serializedModel = DI.get(IModelSerializer.class).serialize(createNewModel());
-	    Files.write(Paths.get(newfile.getCanonicalPath()), serializedModel.getBytes());
-	    Toast.success("created file %s".formatted(fileName.get()));
+	    Files.write(newFilePath, serializedModel.getBytes());
+	    Toast.success("created file %s".formatted(newFilePath.toString()));
 	} catch (Exception e) {
-	    logger.error(e.getMessage());
+	    logger.error(e.getMessage(), e);
 	}
     }
 
