@@ -14,11 +14,13 @@ public class WidthDragResizer {
     private double scalar, startX, startWidth;
     private boolean initMinWidth;
     private boolean dragging;
+    private boolean dragFromLeft;
 
     private WidthDragResizer(Region region, boolean inverted) {
         this.region = region;
         this.initMinWidth = false;
         this.scalar = inverted ? -1 : 1;
+        this.dragFromLeft = inverted;
     }
 
     private static void makeResizable(Region region, boolean inverted) {
@@ -52,6 +54,8 @@ public class WidthDragResizer {
     }
 
     private boolean isInDraggableZone(MouseEvent event) {
+        if(dragFromLeft)
+            return event.getX() < RESIZE_MARGIN;
         return event.getX() > (region.getWidth() - RESIZE_MARGIN);
     }
 
@@ -59,8 +63,8 @@ public class WidthDragResizer {
         if(!dragging)
             return;
         var mousex = event.getX();
-        var dx = mousex - startX;
-        var newWidth = (startWidth + dx) * scalar;
+        var dx = (mousex - startX) * scalar;
+        var newWidth = startWidth + dx;
         region.setPrefWidth(newWidth);
     }
 

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ICloseable;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ISearchable;
 import dk.yalibs.yadi.DI;
@@ -25,7 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
-public class SearchPaneController implements IFocusable {
+public class SearchPaneController implements IFocusable, ICloseable {
     private static Logger logger = LoggerFactory.getLogger(SearchResultController.class);
     @FXML
     private Button searchButton;
@@ -133,10 +134,12 @@ public class SearchPaneController implements IFocusable {
 	}
     }
 
+    @Override
     public void onClose(Runnable onClose) {
 	onCloseRunner = Optional.of(onClose);
     }
 
+    @Override
     public void close() {
 	onCloseRunner.ifPresent(Runnable::run);
     }

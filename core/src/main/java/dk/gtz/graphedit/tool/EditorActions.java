@@ -19,6 +19,8 @@ import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ICloseable;
+import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
@@ -222,6 +224,13 @@ public class EditorActions {
             var loader = new FXMLLoader(EditorController.class.getResource(fxmlFile));
             var content = (Node)loader.load();
             openModal(content);
+            var controller = loader.getController();
+            if(controller != null && controller instanceof IFocusable focusableController)
+                focusableController.focus();
+            if(controller != null && controller instanceof ICloseable closableController) {
+                var modalPane = DI.get(ModalPane.class);
+                closableController.onClose(modalPane::hide);
+            }
         } catch(IOException e) {
             logger.error(e.getMessage(), e);
         }

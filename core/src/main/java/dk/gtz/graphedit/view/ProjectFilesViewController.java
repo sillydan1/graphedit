@@ -43,6 +43,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
 
@@ -179,6 +180,7 @@ public class ProjectFilesViewController {
 	});
 	Styles.toggleStyleClass(view, Styles.DENSE);
 	Styles.toggleStyleClass(view, Tweaks.EDGE_TO_EDGE);
+	VBox.setVgrow(view, Priority.ALWAYS);
 	return view;
     }
 

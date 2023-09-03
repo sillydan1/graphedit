@@ -14,11 +14,13 @@ public class HeightDragResizer {
     private double scalar, startY, startHeight;
     private boolean initMinHeight;
     private boolean dragging;
+    private boolean dragFromTop;
 
     private HeightDragResizer(Region region, boolean inverted) {
         this.region = region;
         this.initMinHeight = false;
         this.scalar = inverted ? -1 : 1;
+        this.dragFromTop = inverted;
     }
 
     private static void makeResizable(Region region, boolean inverted) {
@@ -29,11 +31,11 @@ public class HeightDragResizer {
         region.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> resizer.mouseReleased(e));
     }
 
-    public static void makeResizableUp(Region region) {
+    public static void makeResizableDown(Region region) {
         makeResizable(region, false);
     }
 
-    public static void makeResizableDown(Region region) {
+    public static void makeResizableUp(Region region) {
         makeResizable(region, true);
     }
 
@@ -52,22 +54,24 @@ public class HeightDragResizer {
     }
 
     private boolean isInDraggableZone(MouseEvent event) {
-        return event.getY() > (region.getHeight() - RESIZE_MARGIN);
+        if(dragFromTop)
+            return event.getY() < RESIZE_MARGIN;
+        return event.getY() < (region.getHeight() - RESIZE_MARGIN);
     }
 
     private void mouseDragged(MouseEvent event) {
         if(!dragging)
             return;
-        var mousex = event.getY();
-        var dx = mousex - startY;
-        var newHeight = (startHeight + dx) * scalar;
+        var mousey = event.getScreenY();
+        var dy = (mousey - startY) * scalar;
+        var newHeight = startHeight + dy;
         region.setPrefHeight(newHeight);
     }
 
     private void mousePressed(MouseEvent event) {
         if(!isInDraggableZone(event))
             return;
-        startY = event.getY();
+        startY = event.getScreenY();
         startHeight = region.getHeight();
         dragging = true;
         // make sure that the minimum Height is set to the current Height once,
