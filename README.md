@@ -43,11 +43,9 @@
      - [x] `yaundo`
    - [x] Fix todos
    - [x] Combined modelling tool
-   - [ ] graph editor polish
-   - [ ] Tool keybinds
-   - [ ] Custom keybinds
+   - [x] graph editor polish
    - [ ] Project file pane
-     - [ ] Proper fill-out
+     - [x] Proper fill-out
      - [ ] right-click menu
      - [ ] right-click new > model > type will create a new empty model file of the chosen type (don't open)
  - [ ] Beurocracy Cleanup
@@ -60,6 +58,7 @@
    - [ ] Changelog
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
+ - [ ] Custom keybinds
  - [ ] Additional Syntaxes
    - [ ] NTTA
    - [ ] HAWK
