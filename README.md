@@ -44,10 +44,8 @@
    - [x] Fix todos
    - [x] Combined modelling tool
    - [x] graph editor polish
-   - [ ] Project file pane
+   - [x] Project file pane
      - [x] Proper fill-out
-     - [ ] right-click menu
-     - [ ] right-click new > model > type will create a new empty model file of the chosen type (don't open)
  - [ ] Beurocracy Cleanup
    - [ ] A documentation wiki 
    - [ ] Readme polish
