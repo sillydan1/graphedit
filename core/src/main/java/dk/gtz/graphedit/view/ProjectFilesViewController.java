@@ -41,6 +41,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
@@ -118,8 +119,6 @@ public class ProjectFilesViewController {
     }
 
     private Node createToolbar() {
-	// TODO: new file button
-	// TODO: new folder button
 	var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.GITHUB));
 	gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	gitignoreHideButton.selectedProperty().set(!useGitignoreMatcher.get());
@@ -159,7 +158,11 @@ public class ProjectFilesViewController {
 	manualRefreshButton.setTooltip(refreshTip);
 	manualRefreshButton.setOnAction(e -> updateTreeView());
 
-	var result = new ToolBar(grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton, /* seperator */ manualRefreshButton);
+	var result = new ToolBar(
+		// TODO: newfile, newfolder etc.
+		grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton,
+		new Separator(Orientation.VERTICAL),
+		manualRefreshButton);
 	result.setOrientation(Orientation.HORIZONTAL);
 	return result;
     }
