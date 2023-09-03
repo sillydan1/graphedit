@@ -34,7 +34,7 @@
    - [x] Project search (telescope-like)
    - [x] clickable links
    - [x] Run configurations (will replace engine "integrations")
- - [ ] Code polish and project structure cleanup
+ - [x] Code polish and project structure cleanup
    - [x] Separate codebase into projects (yalibs for libraries) [guide](https://central.sonatype.org/publish/publish-gradle/)
      - [x] `yadi`
      - [x] `yaerrors`
@@ -47,13 +47,13 @@
    - [x] Project file pane
      - [x] Proper fill-out
  - [ ] Beurocracy Cleanup
-   - [ ] A documentation wiki 
-   - [ ] Readme polish
+   - [x] A documentation wiki
    - [ ] Commission a logo
    - [ ] javadoc
    - [ ] Roadmap
    - [ ] Manpages
    - [ ] Changelog
+   - [ ] Readme polish
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
