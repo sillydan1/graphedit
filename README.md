@@ -48,7 +48,7 @@
      - [x] Proper fill-out
  - [ ] Beurocracy Cleanup
    - [x] A documentation wiki
-   - [ ] Commission a logo
+   - [x] Commission a logo
    - [ ] javadoc
    - [ ] Roadmap
    - [ ] Manpages

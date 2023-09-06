@@ -22,6 +22,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * javafx controller for the graphedt preloader view
+ */
 public class GraphEditPreloaderController {
     private static Logger logger = LoggerFactory.getLogger(GraphEditPreloaderController.class);
 

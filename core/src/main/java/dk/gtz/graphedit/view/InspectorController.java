@@ -15,6 +15,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+/**
+ * The javafx controller for the syntax property inspector panel
+ */
 public class InspectorController {
     @FXML
     private VBox propertiesContainer;

@@ -9,7 +9,20 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 
+/**
+ * General static utilities for various types bindings ({@link javafx.beans.binding})
+ */
 public class BindingsUtil {
+    /**
+     * Create a new {@link DoubleBinding} for the x-value on the edge of the provided shape and target position
+     * @see createRectangularXBinding
+     * @see createOvalXBinding
+     * @param sourcePosition The source position
+     * @param targetPosition The target position. This will be the binding position
+     * @param shape The type of shape to bind as
+     * @return The new binding
+     * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
+     */
     public static DoubleBinding createShapedXBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
 	if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE))
 	    return createRectangularXBinding(sourcePosition, targetPosition, shape);
@@ -44,6 +57,16 @@ public class BindingsUtil {
 	shape.widthProperty(), shape.scaleXProperty());
     }
 
+    /**
+     * Create a new {@link DoubleBinding} for the y-value on the edge of the provided shape and target position
+     * @see createRectangularYBinding
+     * @see createOvalYBinding
+     * @param sourcePosition The source position
+     * @param targetPosition The target position. This will be the binding position
+     * @param shape The type of shape to bind as
+     * @return The new binding
+     * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
+     */
     public static DoubleBinding createShapedYBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
 	if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE))
 	    return createRectangularYBinding(sourcePosition, targetPosition, shape);

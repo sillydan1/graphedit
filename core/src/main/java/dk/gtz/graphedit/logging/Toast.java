@@ -16,26 +16,49 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+/**
+ * Graphedit toast utility. Use this to create notification "toasts" / popups for the user.
+ */
 public final class Toast {
     private static final Logger logger = LoggerFactory.getLogger(Toast.class);
     private static StackPane toaster;
 
+    /**
+     * Set the {@link StackPane} of which to place toast notification popups
+     * @param toasterPane the parent pane to show all future popups
+     */
     public static void initialize(StackPane toasterPane) {
 	Toast.toaster = toasterPane;
     }
 
+    /**
+     * Show an "info" styled toast.
+     * @param msg The message to display
+     */
     public static void info(String msg) {
 	notify(msg, new FontIcon(BootstrapIcons.INFO_CIRCLE), Duration.seconds(5), Styles.ACCENT);
     }
 
+    /**
+     * Show an "success" styled toast.
+     * @param msg The message to display
+     */
     public static void success(String msg) {
 	notify(msg, new FontIcon(BootstrapIcons.CHECK_CIRCLE), Duration.seconds(3), Styles.SUCCESS);
     }
 
+    /**
+     * Show an "warning" styled toast.
+     * @param msg The message to display
+     */
     public static void warn(String msg) {
 	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_TRIANGLE), Duration.seconds(10), Styles.WARNING);
     }
 
+    /**
+     * Show an "error" styled toast.
+     * @param msg The message to display
+     */
     public static void error(String msg) {
 	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE), Duration.INDEFINITE, Styles.DANGER);
     }

@@ -4,6 +4,9 @@ import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 
+/**
+ * General utilities for handling geometric shapes
+ */
 public class ShapeUtil {
     /**
      * Will calculate the intersection point on a reactangle shape given a ray (dx,dy)
@@ -34,6 +37,5 @@ public class ShapeUtil {
 	    return new ViewModelPoint(ty * dx, ty * dy);
 	return new ViewModelPoint(tx * dx, ty * dy);
     }
-
 }
 

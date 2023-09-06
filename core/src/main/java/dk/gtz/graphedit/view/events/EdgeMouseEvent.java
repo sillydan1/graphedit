@@ -8,6 +8,9 @@ import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
+/**
+ * When a {@link MouseEvent} occurs on an {@link ViewModelEdge}.
+ */
 public record EdgeMouseEvent(
 		MouseEvent event,
 		UUID edgeId,

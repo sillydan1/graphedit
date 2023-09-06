@@ -8,6 +8,9 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
+/**
+ * When a {@link MouseEvent} occurs on an {@link ViewModelVertex}.
+ */
 public record VertexMouseEvent(
 	MouseEvent event,
 	UUID vertexId,
