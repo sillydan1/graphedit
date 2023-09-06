@@ -13,6 +13,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
@@ -23,6 +24,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * General utilities for manipulating and creating {@link Property} inspectors / editors.
+ */
 public class InspectorUtils {
     public static Node getObservableInspector(Observable o) {
 	if(o instanceof BooleanProperty p) return getPropertyInspector(p);

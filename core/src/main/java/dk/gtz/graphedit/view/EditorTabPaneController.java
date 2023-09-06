@@ -44,7 +44,7 @@ public class EditorTabPaneController {
 		var tabTitle = changedKey;
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
-		var tab = new DraggableTab(tabTitle);
+		var tab = new DraggableTab(tabTitle); // TODO: title should be the ViewModelProject.name stringproperty instead
 		changedVal.addView(tab);
 		tab.setOnClosed(e ->  {
 		    changedVal.removeView(tab);

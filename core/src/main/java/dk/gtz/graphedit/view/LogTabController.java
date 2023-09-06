@@ -16,6 +16,9 @@ import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 
+/**
+ * The javafx controller for a tab containing rich-text logs with support for markdown-style linking to syntax elements
+ */
 public class LogTabController extends StackPane {
     private static Logger logger = LoggerFactory.getLogger(LogTabController.class);
     private boolean autoscroll, wordwrap;
@@ -28,6 +31,33 @@ public class LogTabController extends StackPane {
 	linkMatcher = getPattern();
         bufferContainer = DI.get(IBufferContainer.class);
 	initializeTextArea();
+    }
+
+    /**
+     * Add a log message to the log view.
+     * A log message can include markdown-style links to syntax elements' uuid.
+     * 
+     * Example:
+     * <pre>
+     * {@code
+     * var logMessageWithALink = "error at [this vertex](f53ec9f0-dd57-4099-b3dd-3b72bda282df).";
+     * }
+     * </pre>
+     * @param logMessage
+     */
+    public void addLog(String logMessage) {
+        if(logMessage == null) {
+            logger.warn("null message occurred");
+            return;
+        }
+        var matcher = linkMatcher.matcher(logMessage);
+        var index = 0;
+        while(matcher.find()) {
+            textArea.appendText(logMessage.substring(index, matcher.start()));
+            index = matcher.end();
+            textArea.appendWithLink(matcher.group("display"), matcher.group("identifier"));
+        }
+        textArea.appendText(logMessage.substring(index) + "\n");
     }
 
     private Pattern getPattern() {
@@ -71,21 +101,6 @@ public class LogTabController extends StackPane {
                 return Optional.of(syntax.edges().get(lookupId));
         }
         return Optional.empty();
-    }
-
-    public void onLogAdded(String logMessage) {
-        if(logMessage == null) {
-            logger.warn("null message occurred");
-            return;
-        }
-        var matcher = linkMatcher.matcher(logMessage);
-        var index = 0;
-        while(matcher.find()) {
-            textArea.appendText(logMessage.substring(index, matcher.start()));
-            index = matcher.end();
-            textArea.appendWithLink(matcher.group("display"), matcher.group("identifier"));
-        }
-        textArea.appendText(logMessage.substring(index) + "\n");
     }
 
     private void scrollToLastLine() {

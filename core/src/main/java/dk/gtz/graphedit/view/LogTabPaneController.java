@@ -36,7 +36,7 @@ public class LogTabPaneController {
 	tab.getGraphic().getStyleClass().add(style);
 	var log = new LogTabController();
 	tab.setContent(log);
-	EditorLogAppender.subscribe(level, log::onLogAdded);
+	EditorLogAppender.subscribe(level, log::addLog);
 	tab.setClosable(false);
 	return tab;
     }

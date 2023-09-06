@@ -10,6 +10,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import javafx.application.Platform;
 
+/**
+ * A pub-sub pattern class that takes logback logging events and informs all subscribed consumers
+ */
 public class EditorLogAppender extends AppenderBase<ILoggingEvent> {
     private static record LogConsumer(Level level, Consumer<String> consumer) {}
     private static Map<UUID, LogConsumer> subscribers = new HashMap<>();

@@ -10,6 +10,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.TransformChangedEvent;
 
+/**
+ * A javafx {@link Pane} with a movable line-grid background.
+ * Not to be confused with {@link javafx.scene.layout.GridPane}
+ */
 public class GridPane extends Pane {
     private DoubleProperty gridsizeX;
     private DoubleProperty gridsizeY;
@@ -19,10 +23,21 @@ public class GridPane extends Pane {
     private double gridscaleY;
     private List<Line> linePool;
 
+    /**
+     * Constructs a new GridPane with a square grid of a specified size and transformation matrix.
+     * @param gridsize the width and height size of the grid
+     * @param transform the transform matrix. Use this to zoom in/out and translate the grid
+     */
     public GridPane(DoubleProperty gridsize, Affine transform) {
 	this(gridsize, gridsize, transform);
     }
 
+    /**
+     * Constructs a new GridPane with a rectangle grid of a specified size and transformation matrix.
+     * @param gridsizeX the width size of the grid
+     * @param gridsizeY the height size of the grid
+     * @param transform the transform matrix. Use this to zoom in/out and translate the grid
+     */
     public GridPane(DoubleProperty gridsizeX, DoubleProperty gridsizeY, Affine transform) {
 	super();
 	this.gridsizeX = gridsizeX;
@@ -86,6 +101,7 @@ public class GridPane extends Pane {
 	return linePool.get(index);
     }
 
+    @Deprecated
     private void refreshLines() {
 	getChildren().clear();
 	var width = getWidth();
@@ -110,6 +126,11 @@ public class GridPane extends Pane {
 	}
     }
 
+    /**
+     * Change the grid size to some new value
+     * @param gridsizeX the new width of the grid
+     * @param gridsizeY the new height of the grid
+     */
     public void setGridSize(double gridsizeX, double gridsizeY) {
 	this.gridsizeX.set(gridsizeX);
 	this.gridsizeY.set(gridsizeY);

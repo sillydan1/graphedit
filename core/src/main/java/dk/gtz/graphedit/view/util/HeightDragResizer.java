@@ -4,6 +4,9 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
+/**
+ * javafx utility for adding vertical drag-to-resize functionality to a {@code Region}
+ */
 public class HeightDragResizer {
     /**
      * The margin around the control that a user can click in to start resizing
@@ -31,10 +34,18 @@ public class HeightDragResizer {
         region.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> resizer.mouseReleased(e));
     }
 
+    /**
+     * Make the provided region height-resizable with a handle on the bottom of the region
+     * @param region the region to add the handle to
+     */
     public static void makeResizableDown(Region region) {
         makeResizable(region, false);
     }
 
+    /**
+     * Make the provided region height-resizable with a handle on the top of the region
+     * @param region the region to add the handle to
+     */
     public static void makeResizableUp(Region region) {
         makeResizable(region, true);
     }

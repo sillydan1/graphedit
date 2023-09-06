@@ -8,6 +8,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * The default preloader for graphedit, containing some basic project management features
+ */
 public class GraphEditPreloader extends Preloader {
     private GraphEditPreloaderController controller;
     private Stage primaryStage;

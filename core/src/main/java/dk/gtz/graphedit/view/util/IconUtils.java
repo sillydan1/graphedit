@@ -3,7 +3,9 @@ package dk.gtz.graphedit.view.util;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-
+/**
+ * General utilities relating to {@code FontIcon} creation and manipulation
+ */
 public class IconUtils {
     public static FontIcon getFileTypeIcon(String fileType) {
 	if(fileType == null)

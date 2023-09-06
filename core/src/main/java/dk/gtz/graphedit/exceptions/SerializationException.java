@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.exceptions;
 
+/**
+ * An error occurred during serialization of something
+ */
 public class SerializationException extends RuntimeException {
     public SerializationException(String message) {
         super(message);

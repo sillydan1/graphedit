@@ -47,15 +47,26 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+/**
+ * The primary entrypoint class for Graphedit.
+ */
 public class GraphEditApplication extends Application implements IRestartableApplication {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
     private Stage primaryStage;
 
+    /**
+     * Launch the graphedit application, but skipping the preloader.
+     * @param args The commandline arguments provided from the main entrypoint
+     */
     public static void launchWithoutPreloader(final String[] args) {
 	System.clearProperty("javafx.preloader");
 	launch(args);
     }
 
+    /**
+     * Launch the graphedit application, starting with the preloader.
+     * @param args The commandline arguments provided from the main entrypoint
+     */
     public static void launchUsingPreloader(final String[] args) {
 	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
 	launch(args);
