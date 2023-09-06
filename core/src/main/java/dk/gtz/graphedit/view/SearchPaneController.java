@@ -111,6 +111,8 @@ public class SearchPaneController implements IFocusable, ICloseable {
 	    searchField.positionCaret(searchField.getText().length());
 	}
 	if(event.getCode().equals(KeyCode.ENTER)) {
+	    if(isNoneSelected())
+		resultsView.getSelectionModel().selectFirst();
 	    resultsView.getSelectionModel().getSelectedItem().focus();
 	    close();
 	}
