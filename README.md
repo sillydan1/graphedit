@@ -1,4 +1,12 @@
-# graphedit
+<p align="center">
+   <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-light.svg">
+      <img alt="graphedit logo" width="700" height="256" src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/graphedit-logo-light.svg" style="max-width: 100%;">
+   </picture>
+</p>
+
+![img](.github/resources/logo/graphedit-logo-dark.svg)
 
 <details>
   <summary>Progess & Roadmap</summary>
