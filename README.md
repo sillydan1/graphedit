@@ -58,8 +58,7 @@
    - [x] A documentation wiki
    - [x] Commission a logo
    - [ ] javadoc
-   - [ ] Roadmap
-   - [ ] Manpages
+   - [x] Roadmap
    - [ ] Changelog
    - [ ] Readme polish
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
