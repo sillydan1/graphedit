@@ -8,6 +8,9 @@
 
 ![img](.github/resources/logo/graphedit-logo-dark.svg)
 
+## Model View Viewmodel
+This project is strongly influenced by the [MVVM (Model View ViewModel)](https://en.wikipedia.org/wiki/Model–view–viewmodel) design pattern and the classes and packages are named appropriately so.
+
 <details>
   <summary>Progess & Roadmap</summary>
 
@@ -57,7 +60,7 @@
  - [ ] Beurocracy Cleanup
    - [x] A documentation wiki
    - [x] Commission a logo
-   - [ ] javadoc
+   - [x] javadoc
    - [x] Roadmap
    - [ ] Changelog
    - [ ] Readme polish
