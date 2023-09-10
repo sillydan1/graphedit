@@ -25,6 +25,12 @@ make run
 # TODO: figure out how we are going to distribute this
 ```
 
+## Showcase
+<p align="center">
+  ![img](.github/resources/screenshots/Screenshot-light.png)
+</p>
+![img](.github/resources/screenshots/Screenshot-dark.png)
+
 ## Architecture
 Graphedit is designed from the ground up to be easy to extend with an opinionated, but easy to understand and efficient architecture.
 Note that at the time of writing a plugin-system is planned, but not implemented yet. So extensions must be done via PRs at the moment.
