@@ -54,8 +54,8 @@
       - [x] ViewModelVertex.java:100: error: unexpected content
       - [x] ViewModelTextVertex.java:29: error: unexpected content
    - [x] Roadmap
-   - [ ] Readme polish
-   - [ ] Changelog
+   - [x] Readme polish
+   - [x] Changelog
  - [ ] CI
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.

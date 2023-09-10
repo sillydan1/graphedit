@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.demo;
+package dk.gtz.graphedit;
 
 import com.beust.jcommander.Parameter;
 

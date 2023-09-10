@@ -13,6 +13,7 @@ import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
@@ -167,7 +168,9 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupStage(Stage primaryStage) throws Exception {
-	primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	var project = DI.get(ViewModelProject.class);
+	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
+	// TODO: primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
 	setupModalPane();
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();

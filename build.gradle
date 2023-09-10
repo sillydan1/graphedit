@@ -23,7 +23,7 @@ def gitCommitShaLong = { ->
 
 allprojects {
     group = 'dk.gtz.graphedit';
-    version = 'v1.0.0+' + gitCommitSha();
+    version = '1.0.0'
 }
 
 subprojects {
