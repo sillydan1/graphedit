@@ -40,6 +40,6 @@ This project is strongly influenced by the [MVVM (Model View ViewModel)](https:/
 ### Core
 Includes all the core functionality for Graphedit. This includes all the views, viewmodels, models and all the associtated business logic such as serializers and various tooling.
 
-### Demo
-The primary entrypoint for the default application. This is subject to change and may be deleted soon.
+### Graphedit
+The primary entrypoint for the default application. Doesn't do much other than start.
 
