@@ -1,17 +1,16 @@
-<!--
-TODO: Add this when repo is public
 <p align="center">
    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-light.svg">
-      <img alt="graphedit logo" width="700" height="256" src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/graphedit-logo-light.svg" style="max-width: 100%;">
+      <source media="(prefers-color-scheme: dark)" srcset=".github/resources/logo/graphedit-logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset=".github/resources/logo/graphedit-logo-light.svg">
+      <img alt="graphedit logo" width="700" height="256" src=".github/resources/graphedit-logo-light.svg" style="max-width: 100%;">
    </picture>
 </p>
--->
-![img](.github/resources/logo/graphedit-logo-dark.svg)
 
-<!-- mission statement -->
-Graphedit is a visual application tool for creating, visualising, manipulating and debugging graph-based syntaxes.
+<p align="center">
+   Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes
+</p>
+
+------
 
 ## Build
 The project is compiled using `gradle` but for the lazy ones we provide a simple `Makefile`:
@@ -26,10 +25,10 @@ make run
 ```
 
 ## Showcase
-<p align="center">
-  ![img](.github/resources/screenshots/Screenshot-light.png)
-</p>
-![img](.github/resources/screenshots/Screenshot-dark.png)
+<div style="display: flex;" align="center">
+  <img src=".github/resources/screenshots/Screenshot-light.png" alt="Image 1" width="48%" />
+  <img src=".github/resources/screenshots/Screenshot-dark.png" alt="Image 2" width="48%" />
+</div>
 
 ## Architecture
 Graphedit is designed from the ground up to be easy to extend with an opinionated, but easy to understand and efficient architecture.
