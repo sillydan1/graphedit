@@ -86,17 +86,17 @@ public class SelectTool extends AbstractBaseTool {
 
     public void clear() {
         for(var e : selectedElements) 
-            e.selectable().getIsSelected().set(false);
+            e.selectable().deselect();
         selectedElements.clear();
     }
 
     public void toggleSelected(UUID id, ISelectable selectable) {
         if (selectedElements.stream().anyMatch(e -> e.id().equals(id) && e.selectable() == selectable)) {
             selectedElements.removeIf(e -> e.id().equals(id) && e.selectable() == selectable);
-            selectable.getIsSelected().set(false);
+            selectable.deselect();
         } else {
             selectedElements.add(new ViewModelSelection(id, selectable));
-            selectable.getIsSelected().set(true);
+            selectable.select();
         }
     }
 

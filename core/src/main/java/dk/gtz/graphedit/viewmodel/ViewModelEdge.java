@@ -48,6 +48,16 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable {
     }
 
     @Override
+    public void select() {
+        getIsSelected().set(true);
+    }
+
+    @Override
+    public void deselect() {
+        getIsSelected().set(false);
+    }
+
+    @Override
     public void addFocusListener(Runnable focusEventHandler) {
         focusEventHandlers.add(focusEventHandler);
     }
