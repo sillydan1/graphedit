@@ -36,6 +36,8 @@ subprojects {
     java {
         sourceCompatibility = gradle.ext.javaVersion;
         targetCompatibility = gradle.ext.javaVersion;
+        withJavadocJar()
+        withSourcesJar()
     }
 
     buildConfig {
@@ -56,6 +58,12 @@ subprojects {
 
     repositories {
         mavenCentral();
+    }
+
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
     }
 }
 

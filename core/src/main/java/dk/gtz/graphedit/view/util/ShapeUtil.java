@@ -15,8 +15,7 @@ public class ShapeUtil {
      * @param dx ray x direction
      * @param dy ray y direction
      * @throws RuntimeException if the provided shape is not marked as a rectangle
-     * @return The intersection point on the rectangle
-     * @implNote Will return (0,0) if the both dx and dy are zero
+     * @return The intersection point on the rectangle. Note: (0,0) if the both dx and dy are zero
      */
     public static ViewModelPoint rectangleIntersect(ViewModelVertexShape rect, double dx, double dy) {
 	if(!rect.shapeType().get().equals(ViewModelShapeType.RECTANGLE))

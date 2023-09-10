@@ -97,7 +97,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
     }
 
     /**
-     * {@inheritDoc IInspectable#getInspectableObjects()}
+     * {@inheritDoc}
      * @return An unmodifiable list of inspectable objects
      * */
     @Override

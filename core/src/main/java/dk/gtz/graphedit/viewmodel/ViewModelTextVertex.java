@@ -26,7 +26,7 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 	}
 
 	/**
-	 * {@inheritDoc IInspectable#getInspectableObjects()}
+	 * {@inheritDoc}
 	 * @return A list of inspectable objects
 	 * */
 	@Override

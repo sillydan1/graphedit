@@ -70,7 +70,7 @@ public class InspectorUtils {
      * If you just want the map inspector, see {@link #createMapTextEditorNode(MapProperty)} instead.
      * @param property the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link MapProperty}
-     * @see {@link #createMapTextEditorNode(MapProperty)}
+     * @see #createMapTextEditorNode(MapProperty)
      */
     public static Node getPropertyInspector(MapProperty<? extends Observable, ? extends Observable> property) {
 	return new HBox(new Label(property.getName(), createMapTextEditorNode(property)));
@@ -81,22 +81,22 @@ public class InspectorUtils {
      * @param property the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link MapProperty}
      */
-    public static Node createMapTextEditorNode(MapProperty<? extends Observable, ? extends Observable> map) {
+    public static Node createMapTextEditorNode(MapProperty<? extends Observable, ? extends Observable> property) {
 	var listView = new VBox();
 	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> map.put(null, null)); // hmmm...
-	map.addListener((e,o,n) -> updateMapListView(listView, map));
-	updateMapListView(listView, map);
+	addButton.setOnAction(e -> property.put(null, null)); // hmmm...
+	property.addListener((e,o,n) -> updateMapListView(listView, property));
+	updateMapListView(listView, property);
 	return new VBox(addButton, listView);
     }
 
-    private static void updateMapListView(VBox view, MapProperty<? extends Observable, ? extends Observable> map) {
+    private static void updateMapListView(VBox view, MapProperty<? extends Observable, ? extends Observable> property) {
 	view.getChildren().clear();
-	for(var element : map.entrySet()) {
+	for(var element : property.entrySet()) {
 	    var keyed = getObservableInspector(element.getKey());
 	    var valed = getObservableInspector(element.getValue());
 	    var removeButton = new Button(null, new FontIcon(BootstrapIcons.X_CIRCLE));
-	    removeButton.setOnAction(e -> map.remove(element.getKey(), element.getValue()));
+	    removeButton.setOnAction(e -> property.remove(element.getKey(), element.getValue()));
 	    view.getChildren().add(new HBox(removeButton, keyed, valed));
 	}
     }
@@ -108,7 +108,7 @@ public class InspectorUtils {
      * If you just want the list inspector, see {@link #createListEditorNode(ListProperty)} instead.
      * @param property the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link ListProperty}
-     * @see {@link #createListEditorNode(ListProperty)}
+     * @see #createListEditorNode(ListProperty)
      */
     public static Node getPropertyInspector(ListProperty<? extends Observable> property) {
 	return new HBox(new Label(property.getName()), createListEditorNode(property));
@@ -145,7 +145,7 @@ public class InspectorUtils {
      * If you just want the set inspector, see {@link #createSetEditorNode(SetProperty)} instead.
      * @param property the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link SetProperty}
-     * @see {@link #createSetEditorNode(SetProperty)}
+     * @see #createSetEditorNode(SetProperty)
      */
     public static Node getPropertyInspector(SetProperty<? extends Observable> property) {
 	return new HBox(new Label(property.getName()), createSetEditorNode(property));

@@ -61,9 +61,18 @@ This project is strongly influenced by the [MVVM (Model View ViewModel)](https:/
    - [x] A documentation wiki
    - [x] Commission a logo
    - [x] javadoc
+      - [x] InspectorUtils.java:73: error: unexpected content
+      - [x] InspectorUtils.java:81: error: @param name not found
+      - [x] InspectorUtils.java:111: error: unexpected content
+      - [x] InspectorUtils.java:148: error: unexpected content
+      - [x] ShapeUtil.java:19: error: unknown tag: implNote
+      - [x] ViewModelEdge.java:102: error: unexpected content
+      - [x] ViewModelVertex.java:100: error: unexpected content
+      - [x] ViewModelTextVertex.java:29: error: unexpected content
    - [x] Roadmap
-   - [ ] Changelog
    - [ ] Readme polish
+   - [ ] Changelog
+ - [ ] CI
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
