@@ -3,6 +3,7 @@ package dk.gtz.graphedit.tool;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelEditorSettings;
+import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
@@ -39,6 +41,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * The central point of all scriptable editor actions. These actions can help you modify the editor to your hearts content
@@ -146,7 +149,25 @@ public class EditorActions {
             saveEditorSettings(settings);
             DI.get(IRestartableApplication.class).restart();
         } catch (Exception e) {
-            logger.error("failed opening project: " + e.getMessage());
+            logger.error("failed opening project: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Save a model project to a specific file
+     * @param project
+     * @param projectFilePath
+     */
+    public static void saveProject(ModelProject project, Path projectFilePath) {
+        try {
+            var serializer = DI.get(IModelSerializer.class);
+            var data = serializer.serialize(project);
+            if(projectFilePath.toFile().isDirectory())
+                projectFilePath.resolve(project.name() + ".json");
+            Files.write(projectFilePath, data.getBytes());
+            logger.info("saved project {} successfully", project.name());
+        } catch(Exception e) {
+            logger.error("failed saving project: {}", e.getMessage(), e);
         }
     }
 
@@ -157,8 +178,26 @@ public class EditorActions {
      */
     public static Optional<File> openProjectPicker(Window window) {
         var fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Project");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Json files", "*.json"),
+                new ExtensionFilter("Any files", "*.*")
+                );
+        fileChooser.setTitle("Open Graphedit Project");
         return Optional.ofNullable(fileChooser.showOpenDialog(window));
+    }
+
+    /**
+     * Will open the "save as" project picker dialogue
+     * @param window the associated window
+     * @return Optionally a file if one was chosen otherwise empty
+     */
+    public static Optional<File> saveProjectPicker(Window window) {
+        var fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("json files", "*.json")
+                );
+        fileChooser.setTitle("Save Graphedit Project");
+        return Optional.ofNullable(fileChooser.showSaveDialog(window));
     }
 
     /**

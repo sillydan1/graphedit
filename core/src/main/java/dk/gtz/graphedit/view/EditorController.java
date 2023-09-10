@@ -1,10 +1,13 @@
 package dk.gtz.graphedit.view;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.HeightDragResizer;
 import dk.gtz.graphedit.view.util.PlatformUtils;
@@ -160,6 +163,17 @@ public class EditorController {
     @FXML
     private void newFile() {
 	filePaneController.createNewModelFile();
+    }
+
+    @FXML
+    private void newProject() {
+	var file = EditorActions.saveProjectPicker(menubarTopBox.getScene().getWindow());
+	if(!file.isPresent())
+	    return;
+	// TODO: project data inspector / editor so people can change the project name later
+	var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
+	EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
+	EditorActions.openProject(file.get());
     }
 
     @FXML

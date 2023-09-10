@@ -39,6 +39,15 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
+    public String serialize(ModelProject model) throws SerializationException {
+	try {
+	    return objectMapper.writeValueAsString(model);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
     public String serialize(ModelProjectResource model) throws SerializationException {
 	try {
 	    return objectMapper.writeValueAsString(model);

@@ -12,8 +12,9 @@
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
                     <Menu text="file">
-                        <MenuItem onAction="#openProject" text="Open Project" accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
+                        <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
+                        <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
                         <SeparatorMenuItem/>
                         <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
