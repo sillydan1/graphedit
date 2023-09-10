@@ -7,6 +7,11 @@ import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * A view model vertex that contains text
+ * @deprecated scheduled for removal. Do not use
+ */
+@Deprecated
 public class ViewModelTextVertex extends ViewModelVertex implements ISearchable {
 	private final StringProperty text;
 

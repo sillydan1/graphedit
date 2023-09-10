@@ -9,7 +9,14 @@ import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 
+/**
+ * View model representation of a graphedit graph
+ */
 public record ViewModelGraph(SimpleStringProperty declarations, SimpleMapProperty<UUID,ViewModelVertex> vertices, SimpleMapProperty<UUID,ViewModelEdge> edges) {
+    /**
+     * Constructs a new view model graph instance based on a model graph instance
+     * @param graph the model graph to convert
+     */
     public ViewModelGraph(ModelGraph graph) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
         for(var v : graph.vertices().entrySet())
@@ -18,6 +25,10 @@ public record ViewModelGraph(SimpleStringProperty declarations, SimpleMapPropert
             edges.put(e.getKey(), new ViewModelEdge(e.getValue()));
     }
 
+    /**
+     * Constructs a new model graph instance based on the current view model values
+     * @return a new model graph instance
+     */
     public ModelGraph toModel() {
         return new ModelGraph(declarations.get(), 
                 vertices.get().entrySet().stream().collect(Collectors.toMap(

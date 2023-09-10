@@ -3,10 +3,15 @@ package dk.gtz.graphedit.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
+/**
+ * View model representation of a {@link ModelVertex}.
+ * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
+ */
 public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
@@ -25,22 +30,43 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
         this.focusEventHandlers = new ArrayList<>();
     }
 
+    /**
+     * Constructs a new view model vertex based on a model vertex and a shape
+     * @param vertex the model vertex to base on
+     * @param shape the shape at which edges should follow
+     */
     public ViewModelVertex(ModelVertex vertex, ViewModelVertexShape shape) {
         this(new ViewModelPoint(vertex.position()), shape);
     }
 
+    /**
+     * Constructs a new view model vertex based on a model vertex
+     * @param vertex the model vertex to base on
+     */
     public ViewModelVertex(ModelVertex vertex) {
         this(vertex, new ViewModelVertexShape());
     }
 
+    /**
+     * Constructs a new model vertex instance based on the current view model values
+     * @return a new model vertex instance
+     */
     public ModelVertex toModel() {
         return new ModelVertex(position.toModel());
     }
 
+    /**
+     * Get the position of the vertex
+     * @return a view model point
+     */
     public ViewModelPoint position() {
         return position;
     }
 
+    /**
+     * Get the shape of the vertex
+     * @return a view model shape
+     */
     public ViewModelVertexShape shape() {
         return shape;
     }

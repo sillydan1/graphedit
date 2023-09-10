@@ -13,6 +13,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
+/**
+ * View model representation of the global editor settings
+ */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
                 DoubleProperty gridSizeY,

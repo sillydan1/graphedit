@@ -1,9 +1,15 @@
 package dk.gtz.graphedit.viewmodel;
 
 public enum ViewModelShapeType {
-    // Squares are just perfect rectangles
+    /**
+     * Shape type of rectangles.
+     * Note that squares are just perfect rectangles
+     */
     RECTANGLE,
-    // Circles are just perfect ovals
+    /**
+     * Shape type of ovals.
+     * Note that circles are just perfect ovals
+     */
     OVAL,
 }
 

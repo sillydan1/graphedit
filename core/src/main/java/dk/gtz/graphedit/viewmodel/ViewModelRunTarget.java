@@ -11,6 +11,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
+/**
+ * View model representation of a {@link ModelRunTarget}.
+ */
 public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleListProperty<StringProperty> arguments, SimpleMapProperty<StringProperty, StringProperty> environment) {
 
     public ViewModelRunTarget(String name, String command, String currentWorkingDirectory, boolean runAsShell, List<String> arguments, Map<String,String> environment) {

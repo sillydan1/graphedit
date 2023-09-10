@@ -5,6 +5,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+/**
+ * A shape construct used to define the dimensions and scale of a specific type of shape
+ */
 public record ViewModelVertexShape(DoubleProperty scaleXProperty, DoubleProperty scaleYProperty, DoubleProperty widthProperty, DoubleProperty heightProperty, ObjectProperty<ViewModelShapeType> shapeType) {
     public ViewModelVertexShape(ViewModelShapeType shape) {
         this(new SimpleDoubleProperty(), new SimpleDoubleProperty(), new SimpleDoubleProperty(), new SimpleDoubleProperty(), new SimpleObjectProperty<>(shape));

@@ -6,39 +6,70 @@ import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+/**
+ * The ViewModel representation of a graph edge.
+ * Edges connects vertices with other vertices.
+ */
 public class ViewModelEdge implements IInspectable, ISelectable, IFocusable {
-    private final SimpleObjectProperty<UUID> source;
-    private final SimpleObjectProperty<UUID> target;
+    private final ObjectProperty<UUID> source;
+    private final ObjectProperty<UUID> target;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
 
-    public ViewModelEdge(SimpleObjectProperty<UUID> source, SimpleObjectProperty<UUID> target) {
+    /**
+     * Constructs a new view model edge instance
+     * @param source the syntactic element where the edge originates from
+     * @param target the syntactic element where the edge targets
+     */
+    public ViewModelEdge(ObjectProperty<UUID> source, ObjectProperty<UUID> target) {
         this.source = source;
         this.target = target;
         this.isSelected = new SimpleBooleanProperty(false);
         this.focusEventHandlers = new ArrayList<>();
     }
 
+    /**
+     * Constructs a new view model edge instance based on a model edge instance
+     * @param edge the model edge to convert
+     */
     public ViewModelEdge(ModelEdge edge) {
         this(edge.source(), edge.target());
     }
 
+    /**
+     * Constructs a new view model edge instance
+     * @param source the syntactic element where the edge originates from
+     * @param target the syntactic element where the edge targets
+     */
     public ViewModelEdge(UUID source, UUID target) {
         this(new SimpleObjectProperty<>(source), new SimpleObjectProperty<>(target));
     }
 
+    /**
+     * Constructs a new model edge instance based on the current view model values
+     * @return a new model edge instance
+     */
     public ModelEdge toModel() {
         return new ModelEdge(source.get(), target.get());
     }
 
-    public SimpleObjectProperty<UUID> source() {
+    /**
+     * Get the source property
+     * @return the source {@link UUID} property
+     */
+    public ObjectProperty<UUID> source() {
         return source;
     }
 
-    public SimpleObjectProperty<UUID> target() {
+    /**
+     * Get the target property
+     * @return the target {@link UUID} property
+     */
+    public ObjectProperty<UUID> target() {
         return target;
     }
 
