@@ -13,6 +13,11 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
 
+    /**
+     * Constructs a new view model vertex based on a position and a shape
+     * @param position the point at which the vertex is located
+     * @param shape the shape at which edges should follow
+     */
     public ViewModelVertex(ViewModelPoint position, ViewModelVertexShape shape) {
         this.position = position;
         this.shape = shape;
@@ -20,8 +25,12 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
         this.focusEventHandlers = new ArrayList<>();
     }
 
+    public ViewModelVertex(ModelVertex vertex, ViewModelVertexShape shape) {
+        this(new ViewModelPoint(vertex.position()), shape);
+    }
+
     public ViewModelVertex(ModelVertex vertex) {
-        this(new ViewModelPoint(vertex.position()), new ViewModelVertexShape());
+        this(vertex, new ViewModelVertexShape());
     }
 
     public ModelVertex toModel() {

@@ -13,7 +13,7 @@ public record ViewModelGraph(SimpleStringProperty declarations, SimpleMapPropert
     public ViewModelGraph(ModelGraph graph) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
         for(var v : graph.vertices().entrySet())
-            vertices.put(v.getKey(), new ViewModelVertex(v.getValue()));
+            vertices.put(v.getKey(), new ViewModelVertex(v.getValue(), new ViewModelVertexShape(ViewModelShapeType.OVAL)));
         for(var e : graph.edges().entrySet())
             edges.put(e.getKey(), new ViewModelEdge(e.getValue()));
     }
