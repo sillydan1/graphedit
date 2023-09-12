@@ -8,6 +8,9 @@ build: ${WRP}
 installDist: ${WRP}
 	${WRP} installDist 
 
+jpackage: ${WRP} icons
+	${WRP} jpackage
+
 icons: macIcon winIcon linuxIcon
 
 macIcon:

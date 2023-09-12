@@ -35,3 +35,6 @@ example.json
 # MacOS
 **/.DS_Store
 
+Graphedit/src/main/resources/icon/graphedit.icns
+Graphedit/src/main/resources/icon/graphedit.ico
+Graphedit/src/main/resources/icon/graphedit.png
