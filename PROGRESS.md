@@ -57,6 +57,16 @@
    - [x] Readme polish
    - [x] Changelog
  - [ ] CI
+ ```sh
+# (alpine)
+apk add dpkg rpm gradle fakeroot git binutils gcc g++
+git config --global --add safe.directory /graphedit
+gradle jpackage --info
+# (gradle:jammy)
+apt install rpm dpkg dpkg-dev binutils git fakeroot
+git config --global --add safe.directory /graphedit
+gradle jpackage --info
+ ```
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
