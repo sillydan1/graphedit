@@ -42,12 +42,12 @@ public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gr
     public static Path getEditorSettingsFile() {
         if(PlatformUtils.isWindows())
             return Path.of(System.getenv("AppData") + File.separator + "graphedit-settings.json");
-        var workingDirectory = System.getProperty("user.home");
+        var userHome = System.getProperty("user.home");
         if(PlatformUtils.isMac())
-            workingDirectory += "/Library/Application Support/Graphedit/";
+            userHome += "/Library/Application Support/Graphedit/";
         else
-            workingDirectory += "/local/.graphedit/";
-        return Path.of(workingDirectory + "graphedit-settings.json");
+            userHome += "/.local/graphedit/";
+        return Path.of(userHome + "graphedit-settings.json");
     }
 }
 
