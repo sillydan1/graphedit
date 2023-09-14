@@ -14,7 +14,10 @@
 <left>
     <BorderPane>
         <top>
-            <Button fx:id="openNewProjectButton"/>
+            <VBox>
+                <Button fx:id="newProjectButton"/>
+                <Button fx:id="openNewProjectButton"/>
+            </VBox>
         </top>
         <center>
             <VBox fx:id="projectContainer"/>

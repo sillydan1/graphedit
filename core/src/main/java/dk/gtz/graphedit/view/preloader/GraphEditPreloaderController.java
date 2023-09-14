@@ -8,9 +8,12 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 
 import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.view.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 import javafx.fxml.FXML;
@@ -34,6 +37,8 @@ public class GraphEditPreloaderController {
     private BorderPane root;
     @FXML
     private Button openNewProjectButton;
+    @FXML
+    private Button newProjectButton;
     @FXML
     private VBox projectContainer;
     @FXML
@@ -65,12 +70,24 @@ public class GraphEditPreloaderController {
     }
 
     private void initializeOpenNewProjectButton() {
-        openNewProjectButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_SQUARE_DOTTED));
-        openNewProjectButton.setText("open new project");
+        openNewProjectButton.setGraphic(new FontIcon(BootstrapIcons.SQUARE));
+        openNewProjectButton.setText("open project...");
         openNewProjectButton.setOnAction((e) -> {
             var file = EditorActions.openProjectPicker(root.getScene().getWindow());
             if(file.isPresent())
                 EditorActions.openProject(file.get());
+        });
+
+        newProjectButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_SQUARE_DOTTED));
+        newProjectButton.setText("create new project");
+        newProjectButton.setOnAction(e -> {
+            var file = EditorActions.saveProjectPicker(root.getScene().getWindow());
+            if(!file.isPresent())
+                return;
+            // TODO: project data inspector / editor so people can change the project name later
+            var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
+            EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
+            EditorActions.openProject(file.get());
         });
     }
 

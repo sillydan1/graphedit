@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelProject;
-import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.HeightDragResizer;
 import dk.gtz.graphedit.view.util.PlatformUtils;
