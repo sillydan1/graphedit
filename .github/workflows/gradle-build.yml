@@ -33,8 +33,9 @@ jobs:
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: macos (.dmg)
+        name: dmg
         path: ${{ github.workspace }}/Graphedit/build/jpackage/*.dmg
+        retention-days: 1
 
 
   build-windows:
@@ -66,8 +67,10 @@ jobs:
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: windows (.msi)
+        name: msi
         path: ${{ github.workspace }}/Graphedit/build/jpackage/*.msi
+        retention-days: 1
+
 
   build-linux:
     runs-on: ubuntu-latest
@@ -101,15 +104,29 @@ jobs:
     - name: jpackage
       run: gradle jpackage
 
-    - name: upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: debian or ubuntu (.deb)
-        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.deb
+    - name: repackage to gzip
+      run: |
+        cd Graphedit/build/jpackage
+        DEB_NAME=$(ls graphedit_*.deb)
+        echo "$DEB_NAME"
+        ar x "$DEB_NAME"
+        rm "$DEB_NAME"
+        zstd -d < control.tar.zst | xz > control.tar.xz
+        zstd -d < data.tar.zst | xz > data.tar.xz
+        ar -m -c -a sdsd "$DEB_NAME" debian-binary control.tar.xz data.tar.xz
+        rm debian-binary control.tar.xz data.tar.xz control.tar.zst data.tar.zst
 
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: redhat (.rpm)
+        name: deb
+        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.deb
+        retention-days: 1
+
+    - name: upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: rpm
         path: ${{ github.workspace }}/Graphedit/build/jpackage/*.rpm
+        retention-days: 1
 

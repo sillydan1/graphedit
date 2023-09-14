@@ -58,8 +58,8 @@
    - [x] Changelog
  - [x] CI
  - [ ] Make repository public
-   - [ ] use gzip
-   - [ ] dont install in /opt
+   - [x] use gzip [see this](https://github.com/mzmine/mzmine3/issues/1063)
+   - [x] dont install in /opt
    - [ ] license
    - [ ] dont package /doc
    - [ ] /bin/graphedit > /bin/Graphedit
