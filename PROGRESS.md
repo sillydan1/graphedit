@@ -56,18 +56,30 @@
    - [x] Roadmap
    - [x] Readme polish
    - [x] Changelog
- - [ ] CI
- ```sh
-# (alpine)
-apk add dpkg rpm gradle fakeroot git binutils gcc g++
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
-# (gradle:jammy)
-apt install rpm dpkg dpkg-dev binutils git fakeroot
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
- ```
+ - [x] CI
+ - [ ] Make repository public
+   - [ ] use gzip
+   - [ ] dont install in /opt
+   - [ ] license
+   - [ ] dont package /doc
+   - [ ] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
+   - [ ] Delete key doesnt work on unified tool
+   - [ ] Ctrl+N dialogue not autoappending .json
+   - [ ] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
+   - [ ] Change saved settings file notification to "saved /path/to/place/settings.json" instead
+   - [ ] MenuItems are lowercase, they should be Upper Case
+   - [ ] window title is just "java"
+   - [ ] trying to open project.json through filepane shouldn't be that scary
+   - [ ] inspector pane is odd to use
+   - [ ] buffer changed *-thing
+   - [ ] Unread logs *-thing
+   - [ ] modals should have titles
+   - [ ] modals are ugly - missing padding
+   - [ ] autoselect unified tool
+   - [ ] CD
+     - [ ] homebrew
+     - [ ] flatpak
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
  - [ ] Additional Syntaxes
@@ -75,7 +87,7 @@ gradle jpackage --info
    - [ ] HAWK
    - [ ] P/N
    - [ ] TIOA 
- - [ ] Release `v1.1.0`
+ - [ ] Release `v1.1.0
  - [ ] Trace-traverser & specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
@@ -91,3 +103,13 @@ gradle jpackage --info
    - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
  - [ ] Release `v2.0.0`
 
+ ```sh
+# (alpine)
+apk add dpkg rpm gradle fakeroot git binutils gcc g++
+git config --global --add safe.directory /graphedit
+gradle jpackage --info
+# (gradle:jammy)
+apt install rpm dpkg dpkg-dev binutils git fakeroot
+git config --global --add safe.directory /graphedit
+gradle jpackage --info
+ ```
