@@ -1,7 +1,11 @@
-name: Gradle Build
+name: Build Release Artifacts
 
 on:
-  push
+  push:
+    branches:
+      - main
+    tags:
+      - v*
 
 jobs:
   build-macos:
@@ -11,32 +15,26 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@v3
-
     - name: set up jdk 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         settings-path: ${{ github.workspace }}
-
     - name: use gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         gradle-version: current
-
     - name: build
       run: gradle build
-
     - name: jpackage
       run: gradle jpackage
-
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: dmg
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.dmg
         retention-days: 1
-
 
   build-windows:
     runs-on: windows-latest
@@ -45,32 +43,26 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@v3
-
     - name: set up jdk 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         settings-path: ${{ github.workspace }}
-
     - name: use gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         gradle-version: current
-
     - name: build
       run: gradle build
-
     - name: jpackage
       run: gradle jpackage
-
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: msi
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.msi
         retention-days: 1
-
 
   build-linux:
     runs-on: ubuntu-latest
@@ -79,31 +71,24 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@v3
-
     - name: set up jdk 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         settings-path: ${{ github.workspace }}
-
     - name: use gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         gradle-version: current
-
     - name: install build dependencies
       run: sudo apt-get update && sudo apt-get install -y binutils dpkg dpkg-dev git fakeroot rpm make imagemagick inkscape
-
     - name: create icon
       run: make linuxIcon
-
     - name: build
       run: gradle build
-
     - name: jpackage
       run: gradle jpackage
-
     - name: repackage to gzip
       run: |
         cd graphedit/build/jpackage
@@ -115,14 +100,12 @@ jobs:
         zstd -d < data.tar.zst | xz > data.tar.xz
         ar -m -c -a sdsd "$DEB_NAME" debian-binary control.tar.xz data.tar.xz
         rm debian-binary control.tar.xz data.tar.xz control.tar.zst data.tar.zst
-
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: deb
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.deb
         retention-days: 1
-
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
