@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.SettingsEditorController"
+    maxWidth="650"
+    maxHeight="450">
+<BorderPane fx:id="root">
+    <center>
+        <VBox fx:id="inspectorPane">
+        </VBox>
+    </center>
+</BorderPane>
+</StackPane>
+

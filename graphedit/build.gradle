@@ -1,0 +1,59 @@
+plugins {
+   id 'application';
+   id 'org.openjfx.javafxplugin' version '0.0.13';
+   id 'org.beryx.runtime' version '1.12.7'
+}
+
+javafx {
+   version = '20';
+   modules = ['javafx.controls',
+           'javafx.fxml',
+           'javafx.graphics',
+           'javafx.base'];
+}
+
+dependencies {
+   implementation project(':core');
+
+   implementation group: 'org.openjfx', name: 'javafx', version: '20.0.1';
+   implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
+   implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
+   implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
+
+   implementation group: 'com.beust', name: 'jcommander', version: '1.82';
+   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
+   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+}
+
+application {
+   mainClass = "dk.gtz.graphedit.Main";
+   applicationDefaultJvmArgs = [];
+}
+
+runtime {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        noConsole = true
+    }
+    jpackage {
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
+        imageOptions += ['--icon', "src/main/resources/icon/graphedit.$imgType"]
+        installerOptions += ['--resource-dir', "src/main/resources"]
+        installerOptions += ['--name', 'Graphedit']
+        installerOptions += ['--app-version', version]
+        installerOptions += ['--vendor', 'Graphedit']
+        installerOptions += ['--description', 'The hackable graph editor']
+        installerOptions += ['--copyright', 'Asger Gitz-Johansen']
+        installerOptions += ['--license-file', 'LICENSE']
+
+        if (currentOs.windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+        } else if (currentOs.linux) {
+            installerOptions += ['--linux-package-name', 'graphedit', '--linux-shortcut', '--install-dir', '/usr/local']
+        } else if (currentOs.macOsX) {
+            installerOptions += ['--mac-package-name', 'Graphedit']
+        }
+    }
+}
+

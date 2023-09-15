@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.LogTabPaneController">
+<TabPane fx:id="tabpane">
+</TabPane>
+</StackPane>
+

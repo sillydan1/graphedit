@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.EditorController">
+<StackPane fx:id="root">
+    <BorderPane HBox.hgrow="ALWAYS" fx:id="primaryBorderPane">
+        <top>
+            <VBox fx:id="menubarTopBox">
+                <MenuBar useSystemMenuBar="true">
+                    <Menu text="File">
+                        <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
+                        <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
+                        <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
+                        <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
+                    </Menu>
+                    <Menu text="Edit">
+                        <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
+                        <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
+                    </Menu>
+                    <Menu text="View">
+                        <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
+                    </Menu>
+                    <Menu fx:id="projectMenu" text="Project">
+                        <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="runTargetMenuItem" onAction="#runSelectedRunTarget" text="Start Selected RunTarget" accelerator="Shortcut+R"/>
+                        <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+R"/>
+                        <Menu fx:id="runTargetsMenu" text="RunTargets"/>
+                        <SeparatorMenuItem/>
+                    </Menu>
+                    <Menu text="Help">
+                        <MenuItem onAction="#openAboutPane" text="About"/>
+                    </Menu>
+                    <!-- <Menu text="dev"> -->
+                    <!--     <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="Shortcut+O"/> -->
+                    <!-- </Menu> -->
+                </MenuBar>
+            </VBox>
+        </top>
+        <left>
+            <fx:include fx:id="filePane" source="FileView.fxml"/>
+        </left>
+        <center>
+            <fx:include source="EditorTabPane.fxml"/>
+        </center>
+        <right>
+            <fx:include source="Inspector.fxml"/> 
+        </right>
+        <bottom>
+            <fx:include source="LogTabPane.fxml"/> 
+        </bottom>
+    </BorderPane>
+</StackPane>
+</StackPane>

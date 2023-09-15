@@ -1,0 +1,73 @@
+plugins {
+    id 'java';
+    id 'com.github.gmazzo.buildconfig' version '4.0.4';
+}
+
+def gitCommitSha = { ->
+    def stdout = new ByteArrayOutputStream();
+    exec {
+        commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8';
+        standardOutput = stdout;
+    }
+    return stdout.toString().trim();
+}
+
+def gitCommitShaLong = { ->
+    def stdout = new ByteArrayOutputStream();
+    exec {
+        commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40';
+        standardOutput = stdout;
+    }
+    return stdout.toString().trim();
+}
+
+allprojects {
+    group = 'dk.gtz.graphedit';
+    version = '1.0.0'
+}
+
+subprojects {
+    apply plugin: 'java';
+    apply plugin: 'com.github.gmazzo.buildconfig'
+
+    ext.gitCommitSha = gitCommitSha;
+    ext.gitCommitShaLong = gitCommitShaLong;
+
+    java {
+        sourceCompatibility = gradle.ext.javaVersion;
+        targetCompatibility = gradle.ext.javaVersion;
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    buildConfig {
+        buildConfigField("String", "APP_NAME", "\"${project.name}\"");
+        buildConfigField("String", "APP_VERSION", provider { "\"${project.version}\"" } );
+        buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L");
+        buildConfigField("String", "COMMIT_SHA", "\"${gitCommitSha()}\"");
+        buildConfigField("String", "COMMIT_SHA_LONG", "\"${gitCommitShaLong()}\"");
+        className("BuildConfig");
+        packageName("dk.gtz.graphedit");
+        useJavaOutput();
+    }
+
+    dependencies {
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.7';
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
+    }
+
+    repositories {
+        mavenCentral();
+    }
+
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+}
+
+test {
+    useJUnitPlatform();
+}
+

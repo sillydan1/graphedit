@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<StackPane
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.RunTargetsEditorController"
+    maxWidth="650"
+    maxHeight="450">
+<BorderPane fx:id="root">
+    <left>
+        <VBox>
+            <ToolBar>
+                <Button fx:id="addButton" />
+                <Button fx:id="removeButton" />
+            </ToolBar>
+            <ListView fx:id="runTargetsOverviewList" />
+        </VBox>
+    </left>
+    <right>
+        <VBox fx:id="inspectorPane">
+            <Label text="nothing selected"/>
+        </VBox>
+    </right>
+</BorderPane>
+</StackPane>
+

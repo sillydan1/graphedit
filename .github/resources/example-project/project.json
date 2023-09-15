@@ -1,0 +1,18 @@
+{
+    "metadata": [
+        "java.util.HashMap",
+        {
+            "version": "v1.0.0"
+        }
+    ],
+    "name": "example project",
+    "excludeFiles": [
+        "java.util.ArrayList",
+        []
+    ],
+    "runTargets": [
+        "java.util.ArrayList",
+        []
+    ]
+}
+
