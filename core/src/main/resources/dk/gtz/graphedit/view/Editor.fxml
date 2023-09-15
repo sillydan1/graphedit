@@ -11,7 +11,7 @@
         <top>
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
-                    <Menu text="file">
+                    <Menu text="File">
                         <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
@@ -19,11 +19,15 @@
                         <SeparatorMenuItem/>
                         <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
                     </Menu>
-                    <Menu text="edit">
+                    <Menu text="Edit">
                         <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
                         <MenuItem onAction="#redo" text="Redo" accelerator="Shortcut+Shift+Z"/>
                     </Menu>
-                    <Menu fx:id="projectMenu" text="project">
+                    <Menu text="View">
+                        <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
+                    </Menu>
+                    <Menu fx:id="projectMenu" text="Project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
                         <SeparatorMenuItem/>
                         <MenuItem fx:id="runTargetMenuItem" onAction="#runSelectedRunTarget" text="Start Selected RunTarget" accelerator="Shortcut+R"/>
@@ -31,16 +35,12 @@
                         <Menu fx:id="runTargetsMenu" text="RunTargets"/>
                         <SeparatorMenuItem/>
                     </Menu>
-                    <Menu text="view">
-                        <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
-                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
-                    </Menu>
-                    <Menu text="help">
+                    <Menu text="Help">
                         <MenuItem onAction="#openAboutPane" text="About"/>
                     </Menu>
-                    <Menu text="dev">
-                        <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="Shortcut+O"/>
-                    </Menu>
+                    <!-- <Menu text="dev"> -->
+                    <!--     <MenuItem onAction="#featureHolder" text="Current Feature WIP" accelerator="Shortcut+O"/> -->
+                    <!-- </Menu> -->
                 </MenuBar>
             </VBox>
         </top>
