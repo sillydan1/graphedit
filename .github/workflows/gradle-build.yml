@@ -34,7 +34,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: dmg
-        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.dmg
+        path: ${{ github.workspace }}/graphedit/build/jpackage/*.dmg
         retention-days: 1
 
 
@@ -68,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: msi
-        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.msi
+        path: ${{ github.workspace }}/graphedit/build/jpackage/*.msi
         retention-days: 1
 
 
@@ -106,7 +106,7 @@ jobs:
 
     - name: repackage to gzip
       run: |
-        cd Graphedit/build/jpackage
+        cd graphedit/build/jpackage
         DEB_NAME=$(ls graphedit_*.deb)
         echo "$DEB_NAME"
         ar x "$DEB_NAME"
@@ -120,13 +120,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: deb
-        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.deb
+        path: ${{ github.workspace }}/graphedit/build/jpackage/*.deb
         retention-days: 1
 
     - name: upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: rpm
-        path: ${{ github.workspace }}/Graphedit/build/jpackage/*.rpm
+        path: ${{ github.workspace }}/graphedit/build/jpackage/*.rpm
         retention-days: 1
 
