@@ -60,15 +60,15 @@
  - [ ] Make repository public
    - [x] use gzip [see this](https://github.com/mzmine/mzmine3/issues/1063)
    - [x] dont install in /opt
-   - [ ] license
-   - [ ] dont package /doc
-   - [ ] /bin/graphedit > /bin/Graphedit
+   - [x] license
+   - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
+   - [ ] dont package /doc
    - [ ] Delete key doesnt work on unified tool
    - [ ] Ctrl+N dialogue not autoappending .json
    - [ ] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
    - [ ] Change saved settings file notification to "saved /path/to/place/settings.json" instead
-   - [ ] MenuItems are lowercase, they should be Upper Case
+   - [x] MenuItems are lowercase, they should be Upper Case
    - [ ] window title is just "java"
    - [ ] trying to open project.json through filepane shouldn't be that scary
    - [ ] inspector pane is odd to use
