@@ -1,8 +1,8 @@
 <p align="center">
    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/resources/logo/graphedit-logo-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset=".github/resources/logo/graphedit-logo-light.svg">
-      <img alt="graphedit logo" width="700" height="256" src=".github/resources/graphedit-logo-light.svg" style="max-width: 100%;">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-light.svg">
+      <img alt="graphedit logo" width="700" height="256" src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/logo/graphedit-logo-light.svg" style="max-width: 100%;">
    </picture>
 </p>
 
@@ -26,8 +26,8 @@ make run
 
 ## Showcase
 <div style="display: flex;" align="center">
-  <img src=".github/resources/screenshots/Screenshot-light.png" alt="Image 1" width="48%" />
-  <img src=".github/resources/screenshots/Screenshot-dark.png" alt="Image 2" width="48%" />
+  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-light.png" alt="Image 1" width="48%" />
+  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-dark.png" alt="Image 2" width="48%" />
 </div>
 
 ## Architecture
