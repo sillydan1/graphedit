@@ -64,14 +64,15 @@
    - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [ ] dont package /doc
+   - [ ] Desktop icon not functioning on linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
    - [ ] Ctrl+N dialogue not autoappending .json (same with new project)
    - [ ] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
-   - [ ] Change saved settings file notification to "saved /path/to/place/settings.json" instead
+   - [x] Change saved settings file notification to "saved /path/to/place/settings.json" instead
    - [x] MenuItems are lowercase, they should be Upper Case
    - [x] window title is just "java" (only when using "make run")
    - [ ] trying to open project.json through filepane shouldn't be that scary
-   - [ ] inspector pane is odd to use
+   - [ ] inspector pane is odd to use (hide it)
    - [ ] buffer changed *-thing
    - [ ] Unread logs *-thing
    - [ ] modals should have titles

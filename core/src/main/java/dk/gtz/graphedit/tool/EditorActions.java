@@ -124,7 +124,7 @@ public class EditorActions {
             if(!fileToSave.toFile().exists())
                 Files.createDirectories(fileToSave.getParent());
             Files.write(fileToSave, data.getBytes());
-            logger.info("saved settings successfully");
+            logger.info("saved settings file {}", fileToSave.toString());
         } catch(Exception e) {
             logger.error("could not save editor settings file", e);
         }
