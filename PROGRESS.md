@@ -41,7 +41,7 @@
    - [x] graph editor polish
    - [x] Project file pane
      - [x] Proper fill-out
- - [ ] Beurocracy Cleanup
+ - [x] Beurocracy Cleanup
    - [x] A documentation wiki
    - [x] Commission a logo
    - [x] javadoc
@@ -57,26 +57,26 @@
    - [x] Readme polish
    - [x] Changelog
  - [x] CI
- - [ ] Make repository public
+ - [x] Make repository public
    - [x] use gzip [see this](https://github.com/mzmine/mzmine3/issues/1063)
    - [x] dont install in /opt
    - [x] license
    - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [ ] dont package /doc
-   - [ ] Delete key doesnt work on unified tool
-   - [ ] Ctrl+N dialogue not autoappending .json
+   - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
+   - [ ] Ctrl+N dialogue not autoappending .json (same with new project)
    - [ ] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
    - [ ] Change saved settings file notification to "saved /path/to/place/settings.json" instead
    - [x] MenuItems are lowercase, they should be Upper Case
-   - [ ] window title is just "java"
+   - [x] window title is just "java" (only when using "make run")
    - [ ] trying to open project.json through filepane shouldn't be that scary
    - [ ] inspector pane is odd to use
    - [ ] buffer changed *-thing
    - [ ] Unread logs *-thing
    - [ ] modals should have titles
    - [ ] modals are ugly - missing padding
-   - [ ] autoselect unified tool
+   - [x] autoselect unified tool
    - [ ] CD
      - [ ] homebrew
      - [ ] flatpak

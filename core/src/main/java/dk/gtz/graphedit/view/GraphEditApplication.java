@@ -149,6 +149,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		new VertexDeleteTool(),
 		new SelectTool());
 	DI.add(IToolbox.class, toolbox);
+	toolbox.selectTool(toolbox.getDefaultTool());
     }
 
     private void setupPreferences() {

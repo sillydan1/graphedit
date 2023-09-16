@@ -39,6 +39,7 @@ public class ModelEditorToolbar extends ToolBar {
 	btn.getStyleClass().addAll(Styles.BUTTON_ICON);
 	getItems().add(btn);
 	btn.setOnMouseClicked(e -> selectedTool.set(tool));
+	btn.selectedProperty().set(selectedTool.get() == tool);
 	selectedTool.addListener((e,o,n) -> btn.selectedProperty().set(n == tool));
 	if(tool.getTooltip().isEmpty())
 	    return;
