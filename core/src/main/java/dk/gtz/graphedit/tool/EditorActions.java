@@ -65,6 +65,16 @@ public class EditorActions {
     }
 
     /**
+     * Saves the currently opened project to disk. Will prompt the user for a path to save to.
+     */
+    public static void saveAs() {
+        var result = saveProjectPicker(DI.get(Window.class));
+        if(result.isEmpty())
+            return;
+        logger.warn("Not implemented yet");
+    }
+
+    /**
      * Saves the currently opened project to disk.
      * Will not throw any exceptions, but errors may be logged if something went awry.
      */
@@ -357,6 +367,13 @@ public class EditorActions {
         }
     }
 
+    /**
+     * Will prompt the user for a Confirm / Cancel action
+     * @param questionTitle prompt title
+     * @param question the question to ask the user
+     * @param window the parent window
+     * @return {@code true} if the user selected the affirmative action, {@code false} if user selected the negative action or {@code Optional.empty} if the prompt was closed with no action selected
+     */
     public static Optional<Boolean> showConfirmDialog(String questionTitle, String question, Window window) {
         var alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle(questionTitle);
