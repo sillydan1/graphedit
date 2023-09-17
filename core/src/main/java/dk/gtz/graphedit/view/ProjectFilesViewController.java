@@ -11,6 +11,7 @@ import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.tika.Tika;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
@@ -24,6 +25,7 @@ import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.GlobFileMatcher;
@@ -166,13 +168,14 @@ public class ProjectFilesViewController {
     
     private Node getPathFontIcon(Path path) {
 	try {
+	    var mimeTypeChecker = DI.get(IMimeTypeChecker.class);
 	    if(isGitignored(path))
-		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path)));
 	    if(grapheditIgnoreMatcher.matches(path))
-		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path)));
 	    if(Files.isDirectory(path))
 		return new FontIcon(BootstrapIcons.FOLDER);
-	    return IconUtils.getFileTypeIcon(Files.probeContentType(path));
+	    return IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path));
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	    return new FontIcon(BootstrapIcons.FILE);
@@ -362,7 +365,7 @@ public class ProjectFilesViewController {
 		return;
 	    }
 	    logger.debug("opening file {}", p.toString());
-	    var fileType = Files.probeContentType(p);
+	    var fileType = DI.get(IMimeTypeChecker.class).getMimeType(p);
 	    if(fileType == null) {
 		logger.error("unknown filetype, cannot open");
 		return;

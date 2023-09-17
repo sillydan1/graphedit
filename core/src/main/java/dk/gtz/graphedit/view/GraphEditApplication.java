@@ -12,8 +12,10 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
+import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.EditorActions;
@@ -120,6 +122,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
+	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
