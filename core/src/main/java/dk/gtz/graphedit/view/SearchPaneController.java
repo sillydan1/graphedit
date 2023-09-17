@@ -46,14 +46,9 @@ public class SearchPaneController implements IFocusable, ICloseable {
     private void initialize() {
 	focusEventHandlers = new ArrayList<>();
 	bufferContainer = DI.get(IBufferContainer.class);
-	initRoot();
 	initButtons();
 	initResults();
 	initSearchEvents();
-    }
-
-    private void initRoot() {
-	Styles.addStyleClass(root, Styles.BG_DEFAULT);
     }
 
     private void initButtons() {

@@ -40,3 +40,7 @@
     -fx-fill: -color-fg-default;
 }
 
+.modal-rounded {
+    -fx-background-radius: 10 10 10 10;
+}
+

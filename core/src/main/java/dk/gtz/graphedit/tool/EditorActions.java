@@ -32,11 +32,17 @@ import dk.yalibs.yastreamgobbler.StreamGobbler;
 import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -212,21 +218,21 @@ public class EditorActions {
      * Open the {@see ViewModelEditorSettings} editor modal pane
      */
     public static void openSettingsEditor() {
-        openModal("SettingsEditor.fxml");
+        openModal("SettingsEditor.fxml", "Editor Settings");
     }
 
     /**
      * Open the {@see ViewModelRunTarget} editor modal pane
      */
     public static void openRunTargetsEditor() {
-        openModal("RunTargetsEditor.fxml");
+        openModal("RunTargetsEditor.fxml", "Runtarget Settings");
     }
 
     /**
      * Open the {@see SearchPaneController} modal pane
      */
     public static void openSearchPane() {
-        openModal("SearchPane.fxml");
+        openModal("SearchPane.fxml", "Search");
     }
 
     /**
@@ -242,19 +248,29 @@ public class EditorActions {
             createText.run(BuildConfig.APP_NAME, Styles.TITLE_1),
             createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
             new Text("TODO: better description"));
-        aboutNode.setMinSize(450, 450);
-        aboutNode.setMaxSize(450, 450);
-        aboutNode.getStyleClass().add(Styles.BG_DEFAULT);
-        openModal(aboutNode);
+        openModal(aboutNode, "About");
     }
 
     /**
      * Opens an injected modal
      * @param node the modal to show
      */
-    public static void openModal(Node node) {
+    public static void openModal(Node node, String title) {
         var modalPane = DI.get(ModalPane.class);
-        modalPane.show(node);
+        var centerPane = new StackPane(node);
+        var showPane = new BorderPane(centerPane);
+        centerPane.setPadding(new Insets(20));
+        centerPane.setMaxSize(450, 450);
+        showPane.setMaxSize(450, 450);
+        Styles.addStyleClass(showPane, Styles.BG_DEFAULT);
+        showPane.getStyleClass().add("modal-rounded");
+        var titleLabel = new Label(title);
+        Styles.addStyleClass(titleLabel, Styles.TITLE_2);
+        var titleBox = new HBox(titleLabel);
+        titleBox.setPadding(new Insets(5));
+        titleBox.setAlignment(Pos.CENTER);
+        showPane.setTop(titleBox);
+        modalPane.show(showPane);
         node.requestFocus();
     }
 
@@ -262,11 +278,11 @@ public class EditorActions {
      * Opens an FXML based modal
      * @param fxmlFile the .fxml file to open, must be from the perspective of {@see EditorController}
      */
-    public static void openModal(String fxmlFile) {
+    public static void openModal(String fxmlFile, String title) {
         try {
             var loader = new FXMLLoader(EditorController.class.getResource(fxmlFile));
             var content = (Node)loader.load();
-            openModal(content);
+            openModal(content, title);
             var controller = loader.getController();
             if(controller != null && controller instanceof IFocusable focusableController)
                 focusableController.focus();

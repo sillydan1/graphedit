@@ -75,8 +75,8 @@
    - [ ] inspector pane is odd to use (hide it)
    - [ ] buffer changed *-thing
    - [ ] Unread logs *-thing
-   - [ ] modals should have titles
-   - [ ] modals are ugly - missing padding
+   - [x] modals should have titles
+   - [x] modals are ugly - missing padding
    - [x] autoselect unified tool
    - [ ] CD
      - [ ] homebrew

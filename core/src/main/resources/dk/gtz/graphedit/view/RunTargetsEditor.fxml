@@ -2,13 +2,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import dk.gtz.graphedit.view.*?>
-<StackPane
+<BorderPane fx:id="root"
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
-    fx:controller="dk.gtz.graphedit.view.RunTargetsEditorController"
-    maxWidth="650"
-    maxHeight="450">
-<BorderPane fx:id="root">
+    fx:controller="dk.gtz.graphedit.view.RunTargetsEditorController">
     <left>
         <VBox>
             <ToolBar>
@@ -24,5 +21,4 @@
         </VBox>
     </right>
 </BorderPane>
-</StackPane>
 
