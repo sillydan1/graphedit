@@ -69,6 +69,7 @@ public class EditorActions {
      * Will not throw any exceptions, but errors may be logged if something went awry.
      */
     public static void save() {
+        // TODO: DI.get("savelocation"), if empty / null, ask for location - if no location provided, log error, save otherwise - also DI.set("savelocation")
         var serializer = DI.get(IModelSerializer.class);
         var buffers = DI.get(IBufferContainer.class).getBuffers().entrySet();
         logger.trace("save starting");
@@ -217,8 +218,8 @@ public class EditorActions {
     /**
      * Open the {@see ViewModelEditorSettings} editor modal pane
      */
-    public static void openSettingsEditor() {
-        openModal("SettingsEditor.fxml", "Editor Settings");
+    public static void openEditorSettings() {
+        openModal("EditorSettings.fxml", "Editor Settings");
     }
 
     /**

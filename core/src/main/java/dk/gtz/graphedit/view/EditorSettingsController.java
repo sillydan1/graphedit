@@ -16,8 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SettingsEditorController {
-    private static final Logger logger = LoggerFactory.getLogger(SettingsEditorController.class);
+public class EditorSettingsController {
+    private static final Logger logger = LoggerFactory.getLogger(EditorSettingsController.class);
     @FXML
     private BorderPane root;
     @FXML

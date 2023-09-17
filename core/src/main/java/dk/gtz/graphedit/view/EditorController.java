@@ -87,7 +87,7 @@ public class EditorController {
 
     @FXML
     private void openSettingsEditor() {
-	EditorActions.openSettingsEditor();
+	EditorActions.openEditorSettings();
     }
 
     @FXML
