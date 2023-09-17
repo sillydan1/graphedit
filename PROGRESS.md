@@ -63,6 +63,7 @@
    - [x] license
    - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
+   - [ ] Runtargets are not serializing
    - [ ] dont package /doc
    - [ ] Desktop icon not functioning on linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)

@@ -11,7 +11,6 @@ import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.apache.tika.Tika;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
@@ -51,8 +50,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
+import javafx.stage.Window;
 
 public class ProjectFilesViewController {
     private static record FileTreeEntry(Path path) {
@@ -73,6 +72,7 @@ public class ProjectFilesViewController {
     private SimpleBooleanProperty useGrapheditIgnoreMatcher;
     private SimpleBooleanProperty showHiddenFiles;
     private boolean isGitInstalled;
+    private Thread watcherThread;
 
     @FXML
     public VBox root;
@@ -89,8 +89,12 @@ public class ProjectFilesViewController {
 	initializeGlobMatchers();
 	fileTree = createTreeView(openProject.name().get(), Path.of(openProject.rootDirectory().get()));
 	var toolbar = createToolbar();
+	root.getChildren().clear();
 	root.getChildren().addAll(toolbar, fileTree);
 	watchForFileTreeChanges();
+	openProject.rootDirectory().addListener((e,o,n) -> {
+	    initialize();
+	});
     }
 
     private void initializeGlobMatchers() {
@@ -228,7 +232,9 @@ public class ProjectFilesViewController {
         try {
             watchService = FileSystems.getDefault().newWatchService();
             fileTree.getRoot().getValue().path().register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-	    var watcherThread = new Thread(this::watchDirectory);
+	    if(watcherThread != null)
+		watcherThread.interrupt();
+	    watcherThread = new Thread(this::watchDirectory);
 	    watcherThread.setName("directoryWatcher");
 	    watcherThread.setDaemon(true);
 	    watcherThread.start();
@@ -369,14 +375,13 @@ public class ProjectFilesViewController {
 	    logger.debug("opening file {}", p.toString());
 	    var fileType = DI.get(IMimeTypeChecker.class).getMimeType(p);
 	    if(fileType == null) {
-		logger.error("unknown filetype, cannot open");
-		return;
 	    }
 	    if(!serializer.getSupportedContentTypes().contains(fileType)) {
 		logger.error("cannot open unsupported filetype '{}'", fileType);
 		return;
 	    }
-	    openBuffers.open(p.toString());
+	    var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
+	    openBuffers.open(p.toString().replace(basePath, ""));
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
 	}

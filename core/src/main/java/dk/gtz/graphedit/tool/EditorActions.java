@@ -69,9 +69,18 @@ public class EditorActions {
      */
     public static void saveAs() {
         var result = saveProjectPicker(DI.get(Window.class));
-        if(result.isEmpty())
+        if(result.isEmpty()) {
+            logger.warn("save action cancelled, will not save");
             return;
-        logger.warn("Not implemented yet");
+        }
+        var project = DI.get(ViewModelProject.class);
+        project.rootDirectory().set(result.get().getParent());
+        project.isSavedInTemp().set(false);
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        editorSettings.lastOpenedProject().set(result.get().toString());
+        EditorActions.saveEditorSettings(editorSettings);
+        EditorActions.saveProject(project.toModel(), result.get().toPath());
+        EditorActions.save();
     }
 
     /**
@@ -79,13 +88,18 @@ public class EditorActions {
      * Will not throw any exceptions, but errors may be logged if something went awry.
      */
     public static void save() {
-        // TODO: DI.get("savelocation"), if empty / null, ask for location - if no location provided, log error, save otherwise - also DI.set("savelocation")
+        var project = DI.get(ViewModelProject.class);
+        if(project.isSavedInTemp().get()) {
+            saveAs();
+            return;
+        }
         var serializer = DI.get(IModelSerializer.class);
         var buffers = DI.get(IBufferContainer.class).getBuffers().entrySet();
         logger.trace("save starting");
         buffers.parallelStream().forEach((buffer) -> {
             try {
-                var filePath = buffer.getKey();
+                var project2 = DI.get(ViewModelProject.class);
+                var filePath = project2.rootDirectory().getValueSafe() + File.separator + buffer.getKey();
                 logger.trace("saving file {}", filePath);
                 var model = buffer.getValue().toModel();
                 var serializedModel = serializer.serialize(model);

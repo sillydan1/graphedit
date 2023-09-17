@@ -30,6 +30,7 @@ public class Main {
             GraphEditApplication.launchWithoutPreloader(argv);
         else
             GraphEditApplication.launchUsingPreloader(argv);
+        logger.info("goodbye from {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
     }
 }
 

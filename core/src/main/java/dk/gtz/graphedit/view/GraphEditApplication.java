@@ -1,6 +1,7 @@
 package dk.gtz.graphedit.view;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +13,11 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.serialization.FilesMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
-import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.EditorActions;
@@ -68,7 +70,9 @@ public class GraphEditApplication extends Application implements IRestartableApp
     /**
      * Launch the graphedit application, starting with the preloader.
      * @param args The commandline arguments provided from the main entrypoint
+     * @deprecated The preloader is about to be deleted. Dont launch with the preloader at all
      */
+    @Deprecated
     public static void launchUsingPreloader(final String[] args) {
 	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
 	launch(args);
@@ -101,6 +105,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    setupLogging();
 	    notifyPreloader(new LoadStateNotification("setting the stage"));
 	    setupStage(primaryStage);
+	    DI.add(Window.class, primaryStage.getScene().getWindow());
 	    notifyPreloader(new FinishNotification());
 	} catch(ProjectLoadException e) {
 	    logger.error("could not open project");
@@ -122,9 +127,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupApplication() {
-	DI.add(Window.class, primaryStage.getScene().getWindow());
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
-	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
+	DI.add(IMimeTypeChecker.class, new FilesMimeTypeChecker());
 	DI.add(IUndoSystem.class, new StackUndoSystem());
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
@@ -136,11 +140,14 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void loadProject() throws Exception {
 	var settings = DI.get(ViewModelEditorSettings.class);
 	var projectFilePath = Path.of(settings.lastOpenedProject().get());
-	if(!projectFilePath.toFile().exists())
-	    throw new ProjectLoadException("project file not found '%s'".formatted(projectFilePath.toString()));
+	if(!projectFilePath.toFile().exists()) {
+	    logger.info("not a valid project file path, will load temp project {}", projectFilePath.toString());
+	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
+	    return;
+	}
 	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
 	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
-	DI.add(ViewModelProject.class, new ViewModelProject(project, projectFilePath.toFile().getParent()));
+	DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
     }
 
     private void setupToolbox() {

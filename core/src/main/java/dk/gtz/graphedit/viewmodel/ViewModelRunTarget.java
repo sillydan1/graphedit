@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,23 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
             this.arguments.add(new SimpleStringProperty(argument));
         for(var env : runTarget.environment().entrySet())
             this.environment.add(new ViewModelEnvironmentVariable(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue())));
+    }
+
+    public ModelRunTarget toModel() {
+        var args = new ArrayList<String>(arguments().size());
+        for(var arg : arguments())
+            args.add(arg.get());
+        var envs = new HashMap<String, String>();
+        for(var env : environment())
+            envs.put(env.key().get(), env.value().get());
+        return new ModelRunTarget(
+                name().get(),
+                command().get(),
+                args,
+                currentWorkingDirectory().get(),
+                runAsShell().get(),
+                saveBeforeRun().get(),
+                envs);
     }
 }
 
