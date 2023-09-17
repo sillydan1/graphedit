@@ -6,7 +6,8 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.SearchPaneController"
-    fx:id="root">
+    fx:id="root"
+    spacing="10">
     <HBox spacing="10" alignment="BASELINE_LEFT">
         <Button fx:id="searchButton" styleClass="button-icon"/>
         <TextField fx:id="searchField" promptText="search" HBox.hgrow="ALWAYS"/>

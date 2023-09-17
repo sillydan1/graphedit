@@ -119,7 +119,7 @@ public class SearchPaneController implements IFocusable, ICloseable {
 	for(var buffer : bufferContainer.getBuffers().entrySet()) {
 	    for(var metadata : buffer.getValue().metadata().entrySet())
 		if(metadata.getValue().toLowerCase().contains(lowerCaseSearchTerm))
-		    results.add(new SearchResultController(BootstrapIcons.AT, metadata.getKey() + ": " + metadata.getValue(), buffer.getValue()));
+		    results.add(new SearchResultController(BootstrapIcons.HASH, metadata.getKey() + ": " + metadata.getValue(), buffer.getValue()));
 
 	    for(var edge : buffer.getValue().syntax().edges().entrySet())
 		if(edge.getValue() instanceof ISearchable searchable)
@@ -132,7 +132,7 @@ public class SearchPaneController implements IFocusable, ICloseable {
 			results.add(new SearchResultController(BootstrapIcons.CIRCLE_FILL, vertex.getKey().toString(), vertex.getValue()));
 
 	    if(buffer.getKey().toLowerCase().contains(lowerCaseSearchTerm))
-		results.add(new SearchResultController(BootstrapIcons.FILE_FILL, buffer.getKey(), buffer.getValue()));
+		results.add(new SearchResultController(BootstrapIcons.FILE_EARMARK, buffer.getKey(), buffer.getValue()));
 	}
     }
 

@@ -19,7 +19,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
