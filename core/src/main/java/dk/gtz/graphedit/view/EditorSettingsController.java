@@ -30,6 +30,7 @@ public class EditorSettingsController {
 	addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
 	addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
 	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
+	inspectorPane.getChildren().add(new Separator());
 	addButton("Clear LOP", "Clear the last opened project data", () -> editorSettings.lastOpenedProject().set(""));
 	addSaveButton();
     }
