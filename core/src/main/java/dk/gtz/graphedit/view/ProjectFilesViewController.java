@@ -51,6 +51,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
 
 public class ProjectFilesViewController {
@@ -308,6 +309,7 @@ public class ProjectFilesViewController {
 
     public void createNewModelFile() {
 	try {
+	    var w = DI.get(Window.class);
 	    var selected = fileTree.getSelectionModel().getSelectedItem();
 	    var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
 	    if(selected != null)
@@ -322,7 +324,7 @@ public class ProjectFilesViewController {
 	    // NOTE: This is a hack. We should have a more flexible dialogue system instead of using javafx Dialog's
 	    Platform.runLater(() -> ed.end());
 	    dialog.setContentText("new filename:");
-	    dialog.initOwner(root.getScene().getWindow());
+	    dialog.initOwner(w);
 	    var fileName = dialog.showAndWait();
 	    if(fileName.isEmpty())
 		return;

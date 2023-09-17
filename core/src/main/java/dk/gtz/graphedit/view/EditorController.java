@@ -24,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
@@ -113,7 +114,8 @@ public class EditorController {
 
     @FXML
     private void quit() {
-	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", root.getScene().getWindow());
+	var w = DI.get(Window.class);
+	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
 	if(result.isEmpty())
 	    return;
         if(result.get())
@@ -167,7 +169,8 @@ public class EditorController {
 
     @FXML
     private void newProject() {
-	var file = EditorActions.saveProjectPicker(menubarTopBox.getScene().getWindow());
+	var w = DI.get(Window.class);
+	var file = EditorActions.saveProjectPicker(w);
 	if(!file.isPresent())
 	    return;
 	// TODO: project data inspector / editor so people can change the project name later
@@ -178,7 +181,8 @@ public class EditorController {
 
     @FXML
     private void openProject() {
-	var file = EditorActions.openProjectPicker(menubarTopBox.getScene().getWindow());
+	var w = DI.get(Window.class);
+	var file = EditorActions.openProjectPicker(w);
 	if(file.isPresent())
 	    EditorActions.openProject(file.get());
     }

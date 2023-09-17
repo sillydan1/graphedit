@@ -47,6 +47,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * The primary entrypoint class for Graphedit.
@@ -121,6 +122,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupApplication() {
+	DI.add(Window.class, primaryStage.getScene().getWindow());
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
 	DI.add(IUndoSystem.class, new StackUndoSystem());

@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 /**
  * javafx controller for the graphedt preloader view
@@ -70,10 +71,11 @@ public class GraphEditPreloaderController {
     }
 
     private void initializeOpenNewProjectButton() {
+        var w = DI.get(Window.class);
         openNewProjectButton.setGraphic(new FontIcon(BootstrapIcons.SQUARE));
         openNewProjectButton.setText("open project...");
         openNewProjectButton.setOnAction((e) -> {
-            var file = EditorActions.openProjectPicker(root.getScene().getWindow());
+            var file = EditorActions.openProjectPicker(w);
             if(file.isPresent())
                 EditorActions.openProject(file.get());
         });
@@ -81,7 +83,7 @@ public class GraphEditPreloaderController {
         newProjectButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_SQUARE_DOTTED));
         newProjectButton.setText("create new project");
         newProjectButton.setOnAction(e -> {
-            var file = EditorActions.saveProjectPicker(root.getScene().getWindow());
+            var file = EditorActions.saveProjectPicker(w);
             if(!file.isPresent())
                 return;
             // TODO: project data inspector / editor so people can change the project name later
