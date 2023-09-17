@@ -39,6 +39,8 @@ public class EditorSettingsController {
 	tile.setAction(inspector);
 	if(inspector instanceof ToggleSwitch ts)
 	    tile.setActionHandler(ts::fire);
+	else
+	    tile.setActionHandler(inspector::requestFocus);
 	inspectorPane.getChildren().add(tile);
     }
 

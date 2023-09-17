@@ -2,23 +2,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import dk.gtz.graphedit.view.*?>
-<BorderPane fx:id="root"
+<BorderPane
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.RunTargetsEditorController">
     <left>
-        <VBox>
+        <VBox style="-fx-padding: 0 15 0 0;">
             <ToolBar>
                 <Button fx:id="addButton" />
                 <Button fx:id="removeButton" />
             </ToolBar>
-            <ListView fx:id="runTargetsOverviewList" />
+            <ListView fx:id="runTargetsOverviewList" VBox.vgrow="ALWAYS" />
         </VBox>
     </left>
     <right>
-        <VBox fx:id="inspectorPane">
-            <Label text="nothing selected"/>
-        </VBox>
+        <VBox fx:id="inspectorPane" />
     </right>
 </BorderPane>
 

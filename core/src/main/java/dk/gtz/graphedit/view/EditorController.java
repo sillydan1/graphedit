@@ -65,6 +65,7 @@ public class EditorController {
 	var toggleGroup = new ToggleGroup();
 	for(var runTarget : project.runTargets()) {
 	    var toggleItem = new RadioMenuItem(runTarget.name().get());
+	    toggleItem.textProperty().bind(runTarget.name());
 	    toggleItem.setOnAction(e -> selectedRunTarget = Optional.of(runTarget));
 	    toggleItem.setToggleGroup(toggleGroup);
 	    if(selectedRunTarget.isPresent() && selectedRunTarget.get() == runTarget)

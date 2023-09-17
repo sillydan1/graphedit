@@ -337,8 +337,8 @@ public class EditorActions {
             var project = DI.get(ViewModelProject.class);
             env.put("PROJECT_NAME", project.name().getValueSafe());
             env.put("PROJECT_DIR", project.rootDirectory().getValueSafe());
-            for(var e : selectedRunTarget.environment().entrySet())
-                env.put(e.getKey().get(), e.getValue().get());
+            for(var e : selectedRunTarget.environment())
+                env.put(e.key().get(), e.value().get());
             if(!selectedRunTarget.currentWorkingDirectory().get().isEmpty())
                 pb.directory(new File(selectedRunTarget.currentWorkingDirectory().get()));
             pb.redirectErrorStream(true);

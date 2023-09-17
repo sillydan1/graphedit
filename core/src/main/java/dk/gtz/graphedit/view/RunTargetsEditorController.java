@@ -9,24 +9,29 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
+import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.viewmodel.ViewModelEnvironmentVariable;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.MapProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -47,8 +52,6 @@ public class RunTargetsEditorController {
     }
 
     @FXML
-    private BorderPane root;
-    @FXML
     private Button addButton;
     @FXML
     private Button removeButton;
@@ -61,17 +64,12 @@ public class RunTargetsEditorController {
     @FXML
     private void initialize() {
 	project = DI.get(ViewModelProject.class);
-	initRoot();
 	initRunTargetsList();
 	initAddButton();
 	initRemoveButton();
 	var selectedRunTarget = getSelectedViewModelRunTarget();
 	if(selectedRunTarget.isPresent())
 	    renderRunTargetInspector(selectedRunTarget.get());
-    }
-
-    private void initRoot() {
-	root.getStyleClass().add(Styles.BG_DEFAULT);
     }
 
     private void initAddButton() {
@@ -122,34 +120,67 @@ public class RunTargetsEditorController {
     }
 
     private void renderRunTargetInspector(ViewModelRunTarget runTarget) {
-	inspectorPane.getChildren().add(createTextEditorNode("name", runTarget.name()));
-	inspectorPane.getChildren().add(createTextEditorNode("command", runTarget.command()));
-	inspectorPane.getChildren().add(createTextEditorNode("cwd", runTarget.currentWorkingDirectory()));
-	inspectorPane.getChildren().add(createBooleanEditorNode("runAsShell", runTarget.runAsShell()));
-	inspectorPane.getChildren().add(new HBox(new Label("arguments"), createListTextEditorNode(runTarget.arguments())));
-	inspectorPane.getChildren().add(new HBox(new Label("environment"), createMapTextEditorNode(runTarget.environment())));
-    }
+	var tile = new Tile("Name", "The name of the runtarget");
+	var nameInspector = InspectorUtils.getPropertyInspectorField(runTarget.name());
+	tile.setAction(nameInspector);
+	tile.setActionHandler(nameInspector::requestFocus);
+	inspectorPane.getChildren().add(tile);
 
-    private Node createBooleanEditorNode(String labelText, BooleanProperty property) {
-	var returnValue = new ToggleSwitch(labelText);
-	returnValue.setSelected(property.get());
-	property.bind(returnValue.selectedProperty());
-	return returnValue;
-    }
+	var commandTile = new Tile("Command", "The executable to run");
+	var commandInspector = InspectorUtils.getPropertyInspectorField(runTarget.command());
+	commandTile.setAction(commandInspector);
+	commandTile.setActionHandler(commandInspector::requestFocus);
+	inspectorPane.getChildren().add(commandTile);
 
-    private Node createTextEditorNode(String labelText, StringProperty property) {
-	var returnValue = new TextField(property.get());
-	property.bind(returnValue.textProperty());
-	return new HBox(new Label(labelText), returnValue);
+	var cwdTile = new Tile("Working Directory", "The directory context to execute the runtarget in");
+	var cwdInspector = InspectorUtils.getPropertyInspectorField(runTarget.currentWorkingDirectory());
+	cwdTile.setAction(cwdInspector);
+	cwdTile.setActionHandler(cwdInspector::requestFocus);
+	inspectorPane.getChildren().add(cwdTile);
+
+	var shellTile = new Tile("Run as shell", "Whether to run the runtarget as a shell command");
+	var shellInspector = InspectorUtils.getObservableInspector(runTarget.runAsShell());
+	shellTile.setAction(shellInspector);
+	if(shellInspector instanceof ToggleSwitch ts)
+	    shellTile.setActionHandler(ts::fire);
+	inspectorPane.getChildren().add(shellTile);
+
+	var argAddButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
+	argAddButton.getStyleClass().add(Styles.SUCCESS);
+	argAddButton.setOnAction(e -> runTarget.arguments().add(new SimpleStringProperty()));
+	var argBox = new HBox(argAddButton);
+	argBox.setPadding(new Insets(5));
+	argBox.setAlignment(Pos.CENTER);
+	var argTableVBox = new VBox(argBox, createListTextEditorNode(runTarget.arguments()));
+	var argTile = new Tile("Arguments", "Set arguments provided to the command");
+	argTile.setAction(argTableVBox);
+	inspectorPane.getChildren().add(argTile);
+
+	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
+	addButton.getStyleClass().add(Styles.SUCCESS);
+	addButton.setOnAction(e -> runTarget.environment().add(new ViewModelEnvironmentVariable(new SimpleStringProperty("KEY"), new SimpleStringProperty("VALUE"))));
+	var box = new HBox(addButton);
+	box.setPadding(new Insets(5));
+	box.setAlignment(Pos.CENTER);
+	var tableVBox = new VBox(box, createMapTextEditorNode(runTarget.environment()));
+	var environtmentTile = new Tile("ENV", "Set extra environment variables for the command");
+	environtmentTile.setAction(tableVBox);
+	inspectorPane.getChildren().add(environtmentTile);
+
+	var runButton = new Button("Run", new FontIcon(BootstrapIcons.PLAY));
+	runButton.getStyleClass().add(Styles.ACCENT);
+	runButton.setOnAction(e -> EditorActions.executeRunTarget(runTarget));
+	var saveBox = new HBox(runButton);
+	saveBox.setAlignment(Pos.CENTER);
+	inspectorPane.getChildren().addAll(new Separator(), saveBox);
     }
 
     private Node createListTextEditorNode(ListProperty<StringProperty> list) {
 	var listView = new VBox();
-	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> list.add(new SimpleStringProperty()));
+	listView.setSpacing(5);
 	list.addListener((e,o,n) -> updateListView(listView, list));
 	updateListView(listView, list);
-	return new VBox(addButton, listView);
+	return listView;
     }
 
     private void updateListView(VBox view, ListProperty<StringProperty> list) {
@@ -158,30 +189,35 @@ public class RunTargetsEditorController {
 	    var ed = new TextField(element.get());
 	    element.bind(ed.textProperty());
 	    var removeButton = new Button(null, new FontIcon(BootstrapIcons.X_CIRCLE));
+	    removeButton.getStyleClass().add(Styles.DANGER);
 	    removeButton.setOnAction(e -> list.remove(element));
-	    view.getChildren().add(new HBox(removeButton, ed));
+	    var box = new HBox(removeButton, ed);
+	    box.setSpacing(5);
+	    view.getChildren().add(box);
 	}
     }
 
-    private Node createMapTextEditorNode(MapProperty<StringProperty,StringProperty> map) {
+    private Node createMapTextEditorNode(ListProperty<ViewModelEnvironmentVariable> list) {
 	var listView = new VBox();
-	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> map.put(new SimpleStringProperty(""), new SimpleStringProperty("")));
-	map.addListener((e,o,n) -> updateMapListView(listView, map));
-	updateMapListView(listView, map);
-	return new VBox(addButton, listView);
+	listView.setSpacing(5);
+	list.addListener((e,o,n) -> updateMapListView(listView, list));
+	updateMapListView(listView, list);
+	return listView;
     }
 
-    private void updateMapListView(VBox view, MapProperty<StringProperty,StringProperty> map) {
+    private void updateMapListView(VBox view, ListProperty<ViewModelEnvironmentVariable> list) {
 	view.getChildren().clear();
-	for(var element : map.entrySet()) {
-	    var keyed = new TextField(element.getKey().get());
-	    element.getKey().bind(keyed.textProperty());
-	    var valed = new TextField(element.getValue().get());
-	    element.getValue().bind(valed.textProperty());
+	for(var element : list) {
+	    var keyed = new TextField(element.key().get());
+	    keyed.textProperty().bindBidirectional(element.key());
+	    var valed = new TextField(element.value().get());
+	    valed.textProperty().bindBidirectional(element.value());
 	    var removeButton = new Button(null, new FontIcon(BootstrapIcons.X_CIRCLE));
-	    removeButton.setOnAction(e -> map.remove(element.getKey(), element.getValue()));
-	    view.getChildren().add(new HBox(removeButton, keyed, valed));
+	    removeButton.getStyleClass().add(Styles.DANGER);
+	    removeButton.setOnAction(e -> list.remove(element));
+	    var box = new HBox(removeButton, keyed, valed);
+	    box.setSpacing(5);
+	    view.getChildren().add(box);
 	}
     }
 }

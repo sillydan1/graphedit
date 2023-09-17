@@ -14,7 +14,7 @@ import javafx.collections.FXCollections;
 /**
  * View model representation of a {@link ModelRunTarget}.
  */
-public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleListProperty<StringProperty> arguments, SimpleMapProperty<StringProperty, StringProperty> environment) {
+public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleListProperty<StringProperty> arguments, SimpleListProperty<ViewModelEnvironmentVariable> environment) {
 
     public ViewModelRunTarget(String name, String command, String currentWorkingDirectory, boolean runAsShell, List<String> arguments, Map<String,String> environment) {
         this(new SimpleStringProperty(name),
@@ -22,11 +22,11 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
             new SimpleStringProperty(currentWorkingDirectory),
             new SimpleBooleanProperty(runAsShell),
             new SimpleListProperty<>(FXCollections.observableArrayList()),
-            new SimpleMapProperty<>(FXCollections.observableHashMap()));
+            new SimpleListProperty<>(FXCollections.observableArrayList()));
         for(var argument : arguments)
             this.arguments.add(new SimpleStringProperty(argument));
         for(var env : environment.entrySet())
-            this.environment.put(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue()));
+            this.environment.add(new ViewModelEnvironmentVariable(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue())));
     }
 
     public ViewModelRunTarget(ModelRunTarget runTarget) {
@@ -39,7 +39,7 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
         for(var argument : runTarget.arguments())
             this.arguments.add(new SimpleStringProperty(argument));
         for(var env : runTarget.environment().entrySet())
-            this.environment.put(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue()));
+            this.environment.add(new ViewModelEnvironmentVariable(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue())));
     }
 }
 

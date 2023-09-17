@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -84,7 +85,7 @@ public class InspectorUtils {
     public static Node createMapTextEditorNode(MapProperty<? extends Observable, ? extends Observable> property) {
 	var listView = new VBox();
 	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> property.put(null, null)); // hmmm...
+	addButton.setOnAction(e -> property.put(null, null)); // TODO: nulls here... hmmm...
 	property.addListener((e,o,n) -> updateMapListView(listView, property));
 	updateMapListView(listView, property);
 	return new VBox(addButton, listView);
@@ -182,6 +183,17 @@ public class InspectorUtils {
      */
     public static Node getPropertyInspector(StringProperty property) {
 	var result = new TextArea(property.get());
+	result.textProperty().bindBidirectional(property);
+	return result;
+    }
+
+    /**
+     * Get an inspector for a string property, but instead of a TextArea, it gives a TextField
+     * @param property the thing that the inspector modifies
+     * @return a javafx component that can modify the value of the provided {@link StringProperty}
+     */
+    public static TextField getPropertyInspectorField(StringProperty property) {
+	var result = new TextField(property.get());
 	result.textProperty().bindBidirectional(property);
 	return result;
     }
