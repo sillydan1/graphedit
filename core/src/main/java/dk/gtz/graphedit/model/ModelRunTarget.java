@@ -9,5 +9,6 @@ public record ModelRunTarget(
     List<String> arguments,
     String cwd,
     Boolean runAsShell,
+    Boolean saveBeforeRun,
     Map<String, String> environment) {}
 

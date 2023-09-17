@@ -14,13 +14,14 @@ import javafx.collections.FXCollections;
 /**
  * View model representation of a {@link ModelRunTarget}.
  */
-public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleListProperty<StringProperty> arguments, SimpleListProperty<ViewModelEnvironmentVariable> environment) {
+public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleBooleanProperty saveBeforeRun, SimpleListProperty<StringProperty> arguments, SimpleListProperty<ViewModelEnvironmentVariable> environment) {
 
-    public ViewModelRunTarget(String name, String command, String currentWorkingDirectory, boolean runAsShell, List<String> arguments, Map<String,String> environment) {
+    public ViewModelRunTarget(String name, String command, String currentWorkingDirectory, boolean runAsShell, boolean saveBeforeRun, List<String> arguments, Map<String,String> environment) {
         this(new SimpleStringProperty(name),
             new SimpleStringProperty(command),
             new SimpleStringProperty(currentWorkingDirectory),
             new SimpleBooleanProperty(runAsShell),
+            new SimpleBooleanProperty(saveBeforeRun),
             new SimpleListProperty<>(FXCollections.observableArrayList()),
             new SimpleListProperty<>(FXCollections.observableArrayList()));
         for(var argument : arguments)
@@ -34,6 +35,7 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
                 runTarget.command(),
                 runTarget.cwd(),
                 runTarget.runAsShell(),
+                runTarget.saveBeforeRun(),
                 new SimpleListProperty<>(FXCollections.observableArrayList()), 
                 new SimpleMapProperty<>(FXCollections.observableHashMap()));
         for(var argument : runTarget.arguments())

@@ -322,6 +322,8 @@ public class EditorActions {
         // NOTE: Does not change the MenuItem labels
         // NOTE: This is a blocking call
         try {
+            if(selectedRunTarget.saveBeforeRun().get())
+                save();
             var pb = new ProcessBuilder();
             if(selectedRunTarget.runAsShell().get()) {
                 var sb = new StringBuilder(selectedRunTarget.command().get());
