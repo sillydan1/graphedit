@@ -68,7 +68,7 @@
    - [ ] Desktop icon not functioning on linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
    - [ ] Ctrl+N dialogue not autoappending .json (same with new project)
-   - [ ] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
+   - [x] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
    - [x] Change saved settings file notification to "saved /path/to/place/settings.json" instead
    - [x] MenuItems are lowercase, they should be Upper Case
    - [x] window title is just "java" (only when using "make run")

@@ -30,9 +30,6 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
-import dk.gtz.graphedit.view.preloader.FinishNotification;
-import dk.gtz.graphedit.view.preloader.GraphEditPreloader;
-import dk.gtz.graphedit.view.preloader.LoadStateNotification;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
@@ -59,23 +56,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
     private Stage primaryStage;
 
-    /**
-     * Launch the graphedit application, but skipping the preloader.
-     * @param args The commandline arguments provided from the main entrypoint
-     */
-    public static void launchWithoutPreloader(final String[] args) {
-	System.clearProperty("javafx.preloader");
-	launch(args);
-    }
-
-    /**
-     * Launch the graphedit application, starting with the preloader.
-     * @param args The commandline arguments provided from the main entrypoint
-     * @deprecated The preloader is about to be deleted. Dont launch with the preloader at all
-     */
-    @Deprecated
-    public static void launchUsingPreloader(final String[] args) {
-	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
+    public static void launchApp(final String[] args) {
 	launch(args);
     }
 
@@ -89,28 +70,20 @@ public class GraphEditApplication extends Application implements IRestartableApp
     public void start(Stage primaryStage) throws Exception {
 	this.primaryStage = primaryStage;
 	var settings = DI.get(ViewModelEditorSettings.class);
-	notifyPreloader(new LoadStateNotification("starting"));
 	if(settings.autoOpenLastProject().get())
 	    kickoff(primaryStage);
     }
 
     private void kickoff(Stage primaryStage) throws Exception {
 	try {
-	    notifyPreloader(new LoadStateNotification("setup application"));
 	    loadProject();
-	    notifyPreloader(new LoadStateNotification("setup toolbox"));
 	    setupToolbox();
-	    notifyPreloader(new LoadStateNotification("setup preferences"));
 	    setupPreferences();
-	    notifyPreloader(new LoadStateNotification("setup logging"));
 	    setupLogging();
-	    notifyPreloader(new LoadStateNotification("setting the stage"));
 	    setupStage(primaryStage);
 	    DI.add(Window.class, primaryStage.getScene().getWindow());
-	    notifyPreloader(new FinishNotification());
 	} catch(ProjectLoadException e) {
 	    logger.error("could not open project");
-	    notifyPreloader(new LoadStateNotification(e.getMessage()));
 	}
     }
 
@@ -146,7 +119,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
 	    return;
 	}
-	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
 	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
     }
