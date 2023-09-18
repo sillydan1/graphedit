@@ -150,7 +150,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupStage(Stage primaryStage) throws Exception {
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
-	// TODO: primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
 	setupModalPane();
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
