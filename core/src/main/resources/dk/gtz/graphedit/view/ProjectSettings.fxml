@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import dk.gtz.graphedit.view.*?>
+<BorderPane fx:id="root"
+    xmlns:fx="http://javafx.com/fxml"
+    xmlns="http://javafx.com/javafx"
+    fx:controller="dk.gtz.graphedit.view.ProjectSettingsController">
+    <center>
+        <VBox fx:id="inspectorPane">
+        </VBox>
+    </center>
+</BorderPane>
+

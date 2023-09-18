@@ -93,6 +93,11 @@ public class EditorController {
     }
 
     @FXML
+    private void openProjectEditor() {
+	EditorActions.openProjectSettings();
+    }
+
+    @FXML
     private void undo() {
 	EditorActions.undo();
     }

@@ -26,6 +26,7 @@
                     </Menu>
                     <Menu text="View">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
+                        <MenuItem onAction="#openProjectEditor" text="Change Project Settings" accelerator="Shortcut+Shift+P"/>
                         <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+O"/>
                     </Menu>
                     <Menu fx:id="projectMenu" text="Project">

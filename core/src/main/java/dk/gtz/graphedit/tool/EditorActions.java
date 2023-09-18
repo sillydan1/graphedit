@@ -246,6 +246,10 @@ public class EditorActions {
         openModal("EditorSettings.fxml", "Editor Settings");
     }
 
+    public static void openProjectSettings() {
+        openModal("ProjectSettings.fxml", "Editor Settings");
+    }
+
     /**
      * Open the {@see ViewModelRunTarget} editor modal pane
      */
