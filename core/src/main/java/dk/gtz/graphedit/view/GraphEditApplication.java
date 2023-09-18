@@ -82,8 +82,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    setupLogging();
 	    setupStage(primaryStage);
 	    DI.add(Window.class, primaryStage.getScene().getWindow());
-	} catch(ProjectLoadException e) {
-	    logger.error("could not open project");
+	} catch(Exception e) {
+	    logger.error(e.getMessage(), e);
 	}
     }
 

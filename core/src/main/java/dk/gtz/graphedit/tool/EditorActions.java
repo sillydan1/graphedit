@@ -79,7 +79,6 @@ public class EditorActions {
         var editorSettings = DI.get(ViewModelEditorSettings.class);
         editorSettings.lastOpenedProject().set(result.get().toString());
         EditorActions.saveEditorSettings(editorSettings);
-        EditorActions.saveProject(project.toModel(), result.get().toPath());
         EditorActions.save();
     }
 
@@ -95,6 +94,9 @@ public class EditorActions {
         }
         var serializer = DI.get(IModelSerializer.class);
         var buffers = DI.get(IBufferContainer.class).getBuffers().entrySet();
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        var lastOpenedProject = editorSettings.lastOpenedProject();
+        EditorActions.saveProject(project.toModel(), Path.of(lastOpenedProject.get()));
         logger.trace("save starting");
         buffers.parallelStream().forEach((buffer) -> {
             try {
@@ -202,6 +204,17 @@ public class EditorActions {
         }
     }
 
+    public static void saveProject() {
+        var project = DI.get(ViewModelProject.class);
+        if(project.isSavedInTemp().get()) {
+            save();
+            return;
+        }
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        var lastOpenedProject = editorSettings.lastOpenedProject();
+        saveProject(project.toModel(), Path.of(lastOpenedProject.get()));
+    }
+
     /**
      * Will open the project picker dialogue
      * @param window the associated window
@@ -244,6 +257,10 @@ public class EditorActions {
      */
     public static void openEditorSettings() {
         openModal("EditorSettings.fxml", "Editor Settings");
+    }
+
+    public static void openProjectSettings() {
+        openModal("ProjectSettings.fxml", "Project Settings");
     }
 
     /**

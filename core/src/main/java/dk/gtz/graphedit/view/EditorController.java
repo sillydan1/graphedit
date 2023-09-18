@@ -93,6 +93,11 @@ public class EditorController {
     }
 
     @FXML
+    private void openProjectEditor() {
+	EditorActions.openProjectSettings();
+    }
+
+    @FXML
     private void undo() {
 	EditorActions.undo();
     }
@@ -142,8 +147,10 @@ public class EditorController {
             logger.warn("No RunTarget selected");
             return;
         }
-	EditorActions.executeRunTarget(selectedRunTarget.get());
-	Platform.runLater(() -> runTargetMenuItem.setText("Start Selected RunTarget"));
+	Platform.runLater(() -> {
+	    EditorActions.executeRunTarget(selectedRunTarget.get());
+	    runTargetMenuItem.setText("Start Selected RunTarget");
+	});
     }
 
     @FXML

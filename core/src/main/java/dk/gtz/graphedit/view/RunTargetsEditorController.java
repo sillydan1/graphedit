@@ -176,7 +176,10 @@ public class RunTargetsEditorController {
 	var runButton = new Button("Run", new FontIcon(BootstrapIcons.PLAY));
 	runButton.getStyleClass().add(Styles.ACCENT);
 	runButton.setOnAction(e -> EditorActions.executeRunTarget(runTarget));
-	var saveBox = new HBox(runButton);
+	var saveButton = new Button("Save");
+	saveButton.setOnAction(e -> EditorActions.saveProject());
+	var saveBox = new HBox(saveButton, runButton);
+	saveBox.setSpacing(5);
 	saveBox.setAlignment(Pos.CENTER);
 	inspectorPane.getChildren().addAll(new Separator(), saveBox);
     }

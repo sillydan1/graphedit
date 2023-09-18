@@ -5,9 +5,9 @@
 <BorderPane fx:id="root"
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
-    fx:controller="dk.gtz.graphedit.view.EditorSettingsController">
-    <center>
+    fx:controller="dk.gtz.graphedit.view.ProjectSettingsController">
+    <right>
         <VBox fx:id="inspectorPane"/>
-    </center>
+    </right>
 </BorderPane>
 
