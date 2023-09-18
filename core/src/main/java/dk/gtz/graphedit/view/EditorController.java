@@ -108,6 +108,11 @@ public class EditorController {
     }
 
     @FXML
+    private void saveAs() {
+	EditorActions.saveAs();
+    }
+
+    @FXML
     private void loadProject() {
 	logger.warn("still work in progress");
     }

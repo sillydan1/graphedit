@@ -16,6 +16,7 @@
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
+                        <MenuItem onAction="#saveAs" text="Save As..." accelerator="Shortcut+Shift+S"/>
                         <SeparatorMenuItem/>
                         <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
                     </Menu>
@@ -25,7 +26,7 @@
                     </Menu>
                     <Menu text="View">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
-                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+P"/>
                     </Menu>
                     <Menu fx:id="projectMenu" text="Project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
