@@ -84,6 +84,7 @@
      - [ ] flatpak
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
+ - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [ ] NTTA
    - [ ] HAWK
