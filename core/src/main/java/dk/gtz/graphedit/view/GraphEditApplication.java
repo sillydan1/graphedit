@@ -75,16 +75,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void kickoff(Stage primaryStage) throws Exception {
-	try {
-	    loadProject();
-	    setupToolbox();
-	    setupPreferences();
-	    setupLogging();
-	    setupStage(primaryStage);
-	    DI.add(Window.class, primaryStage.getScene().getWindow());
-	} catch(Exception e) {
-	    logger.error(e.getMessage(), e);
-	}
+	loadProject();
+	setupToolbox();
+	setupPreferences();
+	setupLogging();
+	setupStage(primaryStage);
+	DI.add(Window.class, primaryStage.getScene().getWindow());
     }
 
     @Override
