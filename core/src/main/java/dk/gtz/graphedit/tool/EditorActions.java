@@ -68,7 +68,7 @@ public class EditorActions {
      * Saves the currently opened project to disk. Will prompt the user for a path to save to.
      */
     public static void saveAs() {
-        var result = saveProjectPicker(DI.get(Window.class));
+        var result = newFile();
         if(result.isEmpty()) {
             logger.warn("save action cancelled, will not save");
             return;
@@ -231,17 +231,16 @@ public class EditorActions {
     }
 
     /**
-     * Will open the "save as" project picker dialogue
+     * Will open a "save as" file picker OS-native dialogue
      * @param window the associated window
      * @return Optionally a file if one was chosen otherwise empty
      */
-    public static Optional<File> saveProjectPicker(Window window) {
+    public static Optional<File> newFile() {
         var fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("json files", "*.json")
-                );
-        fileChooser.setTitle("Save Graphedit Project");
-        return Optional.ofNullable(fileChooser.showSaveDialog(window));
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("json files", "*.json"));
+        fileChooser.setTitle("New file");
+        return Optional.ofNullable(fileChooser.showSaveDialog(DI.get(Window.class)));
     }
 
     /**

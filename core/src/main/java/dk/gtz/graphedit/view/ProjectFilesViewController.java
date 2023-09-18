@@ -315,33 +315,12 @@ public class ProjectFilesViewController {
 
     public void createNewModelFile() {
 	try {
-	    var w = DI.get(Window.class);
-	    var selected = fileTree.getSelectionModel().getSelectedItem();
-	    var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
-	    if(selected != null)
-		basePath = selected.getValue().path();
-	    if(!Files.isDirectory(basePath))
-		basePath = basePath.getParent();
-	    var dialog = new TextInputDialog();
-	    dialog.setTitle("new model file");
-	    dialog.setHeaderText(basePath.toString());
-	    var ed = dialog.getEditor();
-	    ed.setText(basePath.toString() + "/");
-	    // NOTE: This is a hack. We should have a more flexible dialogue system instead of using javafx Dialog's
-	    Platform.runLater(() -> ed.end());
-	    dialog.setContentText("new filename:");
-	    dialog.initOwner(w);
-	    var fileName = dialog.showAndWait();
+	    var fileName = EditorActions.newFile();
 	    if(fileName.isEmpty())
 		return;
 	    logger.trace("creating file {}", fileName.get());
 	    var newfile = new File("%s".formatted(fileName.get()));
 	    var newFilePath = Path.of(newfile.getCanonicalPath());
-	    if(fileName.get().trim().endsWith(File.separator)) {
-		Files.createDirectories(newFilePath);
-		Toast.success("created directory %s".formatted(newFilePath.toString()));
-		return;
-	    }
 	    Files.createDirectories(newFilePath.getParent());
 	    if(!newfile.createNewFile()) {
 		logger.error("file already exists");

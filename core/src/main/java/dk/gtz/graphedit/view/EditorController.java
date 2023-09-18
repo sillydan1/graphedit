@@ -181,8 +181,7 @@ public class EditorController {
 
     @FXML
     private void newProject() {
-	var w = DI.get(Window.class);
-	var file = EditorActions.saveProjectPicker(w);
+	var file = EditorActions.newFile();
 	if(!file.isPresent())
 	    return;
 	// TODO: project data inspector / editor so people can change the project name later
