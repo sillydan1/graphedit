@@ -22,6 +22,7 @@ public record ViewModelEditorSettings(
                 BooleanProperty gridSnap,
                 BooleanProperty useLightTheme,
                 BooleanProperty autoOpenLastProject,
+                BooleanProperty showInspectorPane,
                 StringProperty lastOpenedProject,
                 ListProperty<String> recentProjects) {
 
@@ -32,6 +33,7 @@ public record ViewModelEditorSettings(
                         settings.gridSnap(),
                         settings.useLightTheme(),
                         settings.autoOpenLastProject(),
+                        settings.showInspectorPane(),
                         settings.lastOpenedProject(),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
@@ -44,6 +46,7 @@ public record ViewModelEditorSettings(
                         boolean gridSnap,
                         boolean useLightTheme,
                         boolean autoOpenLastProject,
+                        boolean showInspectorPane,
                         String lastOpenedProject,
                         List<String> recentProjects) {
                 this(
@@ -52,6 +55,7 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(gridSnap),
                         new SimpleBooleanProperty(useLightTheme),
                         new SimpleBooleanProperty(autoOpenLastProject),
+                        new SimpleBooleanProperty(showInspectorPane),
                         new SimpleStringProperty(lastOpenedProject),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );

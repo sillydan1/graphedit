@@ -63,25 +63,27 @@
    - [x] license
    - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
-   - [ ] Runtargets are not serializing
+   - [x] Runtargets are not serializing
    - [ ] dont package /doc
    - [ ] Desktop icon not functioning on linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
-   - [ ] Ctrl+N dialogue not autoappending .json (same with new project)
+   - [x] Ctrl+N dialogue not autoappending .json (same with new project)
    - [x] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
    - [x] Change saved settings file notification to "saved /path/to/place/settings.json" instead
    - [x] MenuItems are lowercase, they should be Upper Case
    - [x] window title is just "java" (only when using "make run")
    - [ ] trying to open project.json through filepane shouldn't be that scary
-   - [ ] inspector pane is odd to use (hide it)
+   - [x] inspector pane is odd to use (hide it)
    - [ ] buffer changed *-thing
    - [ ] Unread logs *-thing
    - [x] modals should have titles
    - [x] modals are ugly - missing padding
    - [x] autoselect unified tool
-   - [ ] CD
+   - [ ] readme install steps
+   - [ ] CD (needs a pre-release for prototyping purposes)
      - [ ] homebrew
      - [ ] flatpak
+     - [ ] javadoc
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support

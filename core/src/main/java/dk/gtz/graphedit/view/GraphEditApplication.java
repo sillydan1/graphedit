@@ -75,16 +75,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void kickoff(Stage primaryStage) throws Exception {
-	try {
-	    loadProject();
-	    setupToolbox();
-	    setupPreferences();
-	    setupLogging();
-	    setupStage(primaryStage);
-	    DI.add(Window.class, primaryStage.getScene().getWindow());
-	} catch(ProjectLoadException e) {
-	    logger.error("could not open project");
-	}
+	loadProject();
+	setupToolbox();
+	setupPreferences();
+	setupLogging();
+	setupStage(primaryStage);
+	DI.add(Window.class, primaryStage.getScene().getWindow());
     }
 
     @Override
@@ -154,7 +150,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupStage(Stage primaryStage) throws Exception {
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
-	// TODO: primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
 	setupModalPane();
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();

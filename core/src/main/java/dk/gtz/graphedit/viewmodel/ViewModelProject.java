@@ -10,15 +10,19 @@ import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelRunTarget;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.util.Pair;
 
-public record ViewModelProject(SimpleMapProperty<String,String> metadata, SimpleStringProperty name, SimpleStringProperty rootDirectory, SimpleBooleanProperty isSavedInTemp, SimpleListProperty<String> excludeFiles, SimpleListProperty<ViewModelRunTarget> runTargets) {
+public record ViewModelProject(SimpleListProperty<Pair<StringProperty,StringProperty>> metadata, SimpleStringProperty name, SimpleStringProperty rootDirectory, SimpleBooleanProperty isSavedInTemp, SimpleListProperty<StringProperty> excludeFiles, SimpleListProperty<ViewModelRunTarget> runTargets) {
+
     public ViewModelProject(ModelProject modelProject, Optional<String> rootDirectory) throws IOException {
-        this(new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())), new SimpleStringProperty(modelProject.name()), new SimpleStringProperty(), new SimpleBooleanProperty(rootDirectory.isEmpty()), new SimpleListProperty<>(), new SimpleListProperty<>(FXCollections.observableArrayList()));
-        metadata.putAll(modelProject.metadata());
-        excludeFiles.addAll(modelProject.excludeFiles());
+        this(new SimpleListProperty<>(FXCollections.observableArrayList()), new SimpleStringProperty(modelProject.name()), new SimpleStringProperty(), new SimpleBooleanProperty(rootDirectory.isEmpty()), new SimpleListProperty<>(FXCollections.observableArrayList()), new SimpleListProperty<>(FXCollections.observableArrayList()));
+        for(var data : modelProject.metadata().entrySet())
+            metadata.add(new Pair<>(new SimpleStringProperty(data.getKey()), new SimpleStringProperty(data.getValue())));
+        for(var file : modelProject.excludeFiles())
+            excludeFiles.add(new SimpleStringProperty(file));
         if(rootDirectory.isPresent())
             this.rootDirectory.set(rootDirectory.get());
         else
@@ -29,11 +33,11 @@ public record ViewModelProject(SimpleMapProperty<String,String> metadata, Simple
 
     public ModelProject toModel() {
         var metadataMap = new HashMap<String,String>();
-        for(var data : metadata().entrySet())
-            metadataMap.put(data.getKey(), data.getValue());
+        for(var data : metadata())
+            metadataMap.put(data.getKey().get(), data.getValue().get());
         var excludeFiles = new ArrayList<String>();
         for(var ex : excludeFiles())
-            excludeFiles.add(ex);
+            excludeFiles.add(ex.get());
         var runTargets = new ArrayList<ModelRunTarget>();
         for(var runTarget : runTargets())
             runTargets.add(runTarget.toModel());

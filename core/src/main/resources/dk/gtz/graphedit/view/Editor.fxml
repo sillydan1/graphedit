@@ -53,7 +53,9 @@
             <fx:include source="EditorTabPane.fxml"/>
         </center>
         <right>
-            <fx:include source="Inspector.fxml"/> 
+            <Pane fx:id="inspectorGroup">
+                <fx:include source="Inspector.fxml"/> 
+            </Pane>
         </right>
         <bottom>
             <fx:include source="LogTabPane.fxml"/> 

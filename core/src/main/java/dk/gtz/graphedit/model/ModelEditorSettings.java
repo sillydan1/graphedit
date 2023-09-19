@@ -12,12 +12,12 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
  * General editor settings model object containing a users' prefered theme, recent projects and other edior-wide preferences and settings.
  * This is meant to be serialized and deserialized to/from disk
  */
-public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, boolean autoOpenLastProject, String lastOpenedProject, List<String> recentProjects) {
+public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, boolean autoOpenLastProject, boolean showInspectorPane, String lastOpenedProject, List<String> recentProjects) {
     /**
      * Creates a ModelEditorSettings instance with default values.
      */
     public ModelEditorSettings() {
-        this(20.0d, 20.0d, true, false, true, "", new ArrayList<>());
+        this(20.0d, 20.0d, true, false, true, false, "", new ArrayList<>());
     }
 
     /**
@@ -30,6 +30,7 @@ public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gr
             viewmodel.gridSnap().get(),
             viewmodel.useLightTheme().get(),
             viewmodel.autoOpenLastProject().get(),
+            viewmodel.showInspectorPane().get(),
             viewmodel.lastOpenedProject().get(),
             new ArrayList<String>(viewmodel.recentProjects().get()));
     }
