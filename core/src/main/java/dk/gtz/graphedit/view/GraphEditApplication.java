@@ -30,6 +30,8 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
+import dk.gtz.graphedit.view.util.IObservableUndoSystem;
+import dk.gtz.graphedit.view.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
@@ -99,7 +101,9 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	DI.add(IUndoSystem.class, new StackUndoSystem());
+	var undoSystem = new ObservableStackUndoSystem();
+	DI.add(IUndoSystem.class, undoSystem);
+	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
