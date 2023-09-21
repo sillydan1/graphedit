@@ -3,6 +3,10 @@ package dk.gtz.graphedit.view;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import atlantafx.base.theme.Styles;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -32,6 +36,7 @@ import javafx.stage.StageStyle;
  * @author Asger Gitz-Johansen
  */
 public class DraggableTab extends Tab {
+    private static final Logger logger = LoggerFactory.getLogger(DraggableTab.class);
     private record InsertData(int index, TabPane insertPane) {}
     private static final Set<TabPane> tabPanes = new HashSet<>();
     private Label nameLabel;
@@ -166,6 +171,14 @@ public class DraggableTab extends Tab {
     public void setLabelText(String text) {
         nameLabel.setText(text);
         dragText.setText(text);
+    }
+
+    public void setHighlight() {
+	nameLabel.getStyleClass().add(Styles.WARNING);
+    }
+
+    public void unsetHighlight() {
+	nameLabel.getStyleClass().removeAll(Styles.WARNING);
     }
 
     private InsertData getInsertData(Point2D screenPoint) {

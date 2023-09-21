@@ -211,7 +211,7 @@ public class EditorActions {
             if(projectFilePath.toFile().isDirectory())
                 projectFilePath.resolve(project.name() + ".json");
             Files.write(projectFilePath, data.getBytes());
-            logger.info("saved project {} successfully", project.name());
+            logger.trace("saved project {} successfully", project.name());
         } catch(Exception e) {
             logger.error("failed saving project: {}", e.getMessage(), e);
         }
