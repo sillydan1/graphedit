@@ -5,14 +5,18 @@ import java.util.List;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * View model representation of a {@link ModelVertex}.
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
-public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
+public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, Property<ViewModelVertex> {
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;
@@ -24,10 +28,10 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @param shape the shape at which edges should follow
      */
     public ViewModelVertex(ViewModelPoint position, ViewModelVertexShape shape) {
-        this.position = position;
-        this.shape = shape;
-        this.isSelected = new SimpleBooleanProperty(false);
-        this.focusEventHandlers = new ArrayList<>();
+	this.position = position;
+	this.shape = shape;
+	this.isSelected = new SimpleBooleanProperty(false);
+	this.focusEventHandlers = new ArrayList<>();
     }
 
     /**
@@ -36,7 +40,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @param shape the shape at which edges should follow
      */
     public ViewModelVertex(ModelVertex vertex, ViewModelVertexShape shape) {
-        this(new ViewModelPoint(vertex.position()), shape);
+	this(new ViewModelPoint(vertex.position()), shape);
     }
 
     /**
@@ -44,7 +48,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @param vertex the model vertex to base on
      */
     public ViewModelVertex(ModelVertex vertex) {
-        this(vertex, new ViewModelVertexShape());
+	this(vertex, new ViewModelVertexShape());
     }
 
     /**
@@ -52,7 +56,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @return a new model vertex instance
      */
     public ModelVertex toModel() {
-        return new ModelVertex(position.toModel());
+	return new ModelVertex(position.toModel());
     }
 
     /**
@@ -60,7 +64,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @return a view model point
      */
     public ViewModelPoint position() {
-        return position;
+	return position;
     }
 
     /**
@@ -68,32 +72,32 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * @return a view model shape
      */
     public ViewModelVertexShape shape() {
-        return shape;
+	return shape;
     }
 
     @Override
     public BooleanProperty getIsSelected() {
-        return isSelected;
+	return isSelected;
     }
 
     @Override
     public void select() {
-        getIsSelected().set(true);
+	getIsSelected().set(true);
     }
 
     @Override
     public void deselect() {
-        getIsSelected().set(false);
+	getIsSelected().set(false);
     }
 
     @Override
     public void addFocusListener(Runnable focusEventHandler) {
-        focusEventHandlers.add(focusEventHandler);
+	focusEventHandlers.add(focusEventHandler);
     }
 
     @Override
     public void focus() {
-        focusEventHandlers.forEach(Runnable::run);
+	focusEventHandlers.forEach(Runnable::run);
     }
 
     /**
@@ -102,13 +106,79 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable {
      * */
     @Override
     public List<InspectableProperty> getInspectableObjects() {
-        return List.of(
-                new InspectableProperty("Position X", position.getXProperty()),
-                new InspectableProperty("Position Y", position.getYProperty()),
-                new InspectableProperty("Shape Width", shape.widthProperty()),
-                new InspectableProperty("Shape Height", shape.heightProperty()),
-                new InspectableProperty("Shape Scale X", shape.scaleXProperty()),
-                new InspectableProperty("Shape Scale Y", shape.scaleYProperty()));
+	return List.of(
+		new InspectableProperty("Position X", position.getXProperty()),
+		new InspectableProperty("Position Y", position.getYProperty()),
+		new InspectableProperty("Shape Width", shape.widthProperty()),
+		new InspectableProperty("Shape Height", shape.heightProperty()),
+		new InspectableProperty("Shape Scale X", shape.scaleXProperty()),
+		new InspectableProperty("Shape Scale Y", shape.scaleYProperty()));
+    }
+
+    @Override
+    public Object getBean() {
+	return null;
+    }
+
+    @Override
+    public String getName() {
+	return "";
+    }
+
+    @Override
+    public void addListener(ChangeListener<? super ViewModelVertex> listener) {
+	// TODO: reconsider if the shape should be observable too
+	position.addListener((e,o,n) -> listener.changed(this,this,this));
+    }
+
+    @Override
+    public void removeListener(ChangeListener<? super ViewModelVertex> listener) {
+	position.removeListener((e,o,n) -> listener.changed(this,this,this));
+    }
+
+    @Override
+    public ViewModelVertex getValue() {
+	return this;
+    }
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+	position.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+	position.removeListener(listener);
+    }
+
+    @Override
+    public void setValue(ViewModelVertex value) {
+	position.setValue(value.position);
+    }
+
+    @Override
+    public void bind(ObservableValue<? extends ViewModelVertex> observable) {
+	position.bind(observable.getValue().position());
+    }
+
+    @Override
+    public void unbind() {
+	position.unbind();
+    }
+
+    @Override
+    public boolean isBound() {
+	return position.isBound();
+    }
+
+    @Override
+    public void bindBidirectional(Property<ViewModelVertex> other) {
+	position.bindBidirectional(other.getValue().position());
+    }
+
+    @Override
+    public void unbindBidirectional(Property<ViewModelVertex> other) {
+	position.unbindBidirectional(other.getValue().position());
     }
 }
 
