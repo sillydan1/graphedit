@@ -36,7 +36,7 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void info(String msg) {
-	notify(msg, new FontIcon(BootstrapIcons.INFO_CIRCLE), Duration.seconds(5), Styles.ACCENT);
+	notify(msg, new FontIcon(BootstrapIcons.INFO_CIRCLE), Duration.seconds(3), Styles.ACCENT);
     }
 
     /**
@@ -44,7 +44,7 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void success(String msg) {
-	notify(msg, new FontIcon(BootstrapIcons.CHECK_CIRCLE), Duration.seconds(3), Styles.SUCCESS);
+	notify(msg, new FontIcon(BootstrapIcons.CHECK_CIRCLE), Duration.seconds(1), Styles.SUCCESS);
     }
 
     /**
@@ -52,7 +52,7 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void warn(String msg) {
-	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_TRIANGLE), Duration.seconds(10), Styles.WARNING);
+	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_TRIANGLE), Duration.seconds(7), Styles.WARNING);
     }
 
     /**
