@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Tab;
 
@@ -14,7 +18,7 @@ import javafx.scene.control.Tab;
  * View model representation of {@link ModelProjectResource}.
  * Full file-on-disk model. Will include everything a graphedit project file needs
  */
-public class ViewModelProjectResource implements IFocusable {
+public class ViewModelProjectResource implements IFocusable, Property<ViewModelProjectResource> {
     private MapProperty<String,String> metadata;
     private ViewModelGraph syntax;
     private List<Runnable> onFocusHandlers;
@@ -98,6 +102,81 @@ public class ViewModelProjectResource implements IFocusable {
      */
     public List<Tab> getViews() {
 	return views;
+    }
+
+    @Override
+    public Object getBean() {
+	return null;
+    }
+
+    @Override
+    public String getName() {
+	if(metadata.containsKey("name"))
+	    return metadata.getValue().get("name");
+	return "";
+    }
+
+    @Override
+    public void addListener(ChangeListener<? super ViewModelProjectResource> listener) {
+	metadata.addListener((e,o,n) -> listener.changed(this,this,this));
+	syntax.addListener((e,o,n) -> listener.changed(this,this,this));
+    }
+
+    @Override
+    public void removeListener(ChangeListener<? super ViewModelProjectResource> listener) {
+	throw new UnsupportedOperationException("Unimplemented method 'removeListener'");
+    }
+
+    @Override
+    public ViewModelProjectResource getValue() {
+	return this;
+    }
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+	metadata.addListener(listener);
+	syntax.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+	metadata.removeListener(listener);
+	syntax.removeListener(listener);
+    }
+
+    @Override
+    public void setValue(ViewModelProjectResource value) {
+	metadata.setValue(value.metadata().getValue());
+	syntax.setValue(value.syntax().getValue());
+    }
+
+    @Override
+    public void bind(ObservableValue<? extends ViewModelProjectResource> observable) {
+	metadata.bind(observable.getValue().metadata());
+	syntax.bind(observable.getValue().syntax());
+    }
+
+    @Override
+    public void unbind() {
+	metadata.unbind();
+	syntax.unbind();
+    }
+
+    @Override
+    public boolean isBound() {
+	return metadata.isBound() || syntax.isBound();
+    }
+
+    @Override
+    public void bindBidirectional(Property<ViewModelProjectResource> other) {
+	metadata.bindBidirectional(other.getValue().metadata());
+	syntax.bindBidirectional(other.getValue().syntax());
+    }
+
+    @Override
+    public void unbindBidirectional(Property<ViewModelProjectResource> other) {
+	metadata.unbindBidirectional(other.getValue().metadata());
+	syntax.unbindBidirectional(other.getValue().syntax());
     }
 }
 

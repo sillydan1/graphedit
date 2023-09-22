@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -56,12 +58,22 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class EditorActions {
     private static final Logger logger = LoggerFactory.getLogger(EditorActions.class);
+    private static List<Runnable> saveListeners = new ArrayList<>();
 
     /**
      * Will immediately quit the application with no hesitation.
      */
     public static void quit() {
         Platform.exit();
+    }
+
+
+    public static void addSaveListener(Runnable runner) {
+        saveListeners.add(runner);
+    }
+
+    public static boolean removeSaveListener(Runnable runner) {
+        return saveListeners.remove(runner);
     }
 
     /**
@@ -114,6 +126,7 @@ public class EditorActions {
                 logger.error("failed to save file '{}' reason: {}", buffer.getKey(), e.getMessage());
             }
         });
+        Platform.runLater(() -> saveListeners.forEach(Runnable::run));
         Toast.success("save complete");
         logger.trace("save complete");
     }
@@ -198,7 +211,7 @@ public class EditorActions {
             if(projectFilePath.toFile().isDirectory())
                 projectFilePath.resolve(project.name() + ".json");
             Files.write(projectFilePath, data.getBytes());
-            logger.info("saved project {} successfully", project.name());
+            logger.trace("saved project {} successfully", project.name());
         } catch(Exception e) {
             logger.error("failed saving project: {}", e.getMessage(), e);
         }
