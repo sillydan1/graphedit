@@ -75,7 +75,7 @@
    - [x] trying to open project.json through filepane shouldn't be that scary
    - [x] inspector pane is odd to use (hide it)
    - [x] buffer changed *-thing
-   - [ ] Unread logs *-thing
+   - [x] Unread logs *-thing
    - [x] modals should have titles
    - [x] modals are ugly - missing padding
    - [x] autoselect unified tool
