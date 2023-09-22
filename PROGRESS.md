@@ -65,7 +65,7 @@
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [x] Runtargets are not serializing
    - [ ] dont package /doc
-   - [ ] Desktop icon not functioning on linux
+   - [x] Desktop icon not functioning on .dekstop file for linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
    - [x] Ctrl+N dialogue not autoappending .json (same with new project)
    - [x] Preloader is ass - just launch into /tmp/graphedit/uuid and ask for savedir on first Ctrl+S (or something better)
@@ -76,6 +76,7 @@
    - [x] inspector pane is odd to use (hide it)
    - [x] buffer changed *-thing
    - [x] Unread logs *-thing
+   - [x] ignore toasts settings toggle
    - [x] modals should have titles
    - [x] modals are ugly - missing padding
    - [x] autoselect unified tool
