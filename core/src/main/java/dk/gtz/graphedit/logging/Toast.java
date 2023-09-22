@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.controls.Notification;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.yalibs.yadi.DI;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -36,7 +38,8 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void info(String msg) {
-	notify(msg, new FontIcon(BootstrapIcons.INFO_CIRCLE), Duration.seconds(3), Styles.ACCENT);
+	if(DI.get(ViewModelEditorSettings.class).showInfoToasts().get())
+	    notify(msg, new FontIcon(BootstrapIcons.INFO_CIRCLE), Duration.seconds(3), Styles.ACCENT);
     }
 
     /**
@@ -52,6 +55,7 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void warn(String msg) {
+	if(DI.get(ViewModelEditorSettings.class).showWarnToasts().get())
 	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_TRIANGLE), Duration.seconds(7), Styles.WARNING);
     }
 
@@ -60,7 +64,13 @@ public final class Toast {
      * @param msg The message to display
      */
     public static void error(String msg) {
-	notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE), Duration.INDEFINITE, Styles.DANGER);
+	if(DI.get(ViewModelEditorSettings.class).showErrorToasts().get())
+	    notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE), Duration.INDEFINITE, Styles.DANGER);
+    }
+
+    public static void trace(String msg) {
+	if(DI.get(ViewModelEditorSettings.class).showTraceToasts().get())
+	    notify(msg, new FontIcon(BootstrapIcons.ARCHIVE), Duration.seconds(1), "");
     }
 
     private static void notify(String msg, FontIcon icon, Duration showDuration, String... styles) {

@@ -10,11 +10,9 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
-import dk.gtz.graphedit.serialization.FilesMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
@@ -39,7 +37,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
-import dk.yalibs.yaundo.StackUndoSystem;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -162,9 +159,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupLogging() {
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
-	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
-	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
 	EditorLogAppender.subscribe(Level.INFO, Toast::info);
+	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
+	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
+	EditorLogAppender.subscribe(Level.TRACE, Toast::trace);
 	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
     }
 

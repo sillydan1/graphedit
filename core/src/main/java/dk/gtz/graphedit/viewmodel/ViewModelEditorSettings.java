@@ -23,6 +23,10 @@ public record ViewModelEditorSettings(
                 BooleanProperty useLightTheme,
                 BooleanProperty autoOpenLastProject,
                 BooleanProperty showInspectorPane,
+                BooleanProperty showInfoToasts,
+                BooleanProperty showWarnToasts,
+                BooleanProperty showErrorToasts,
+                BooleanProperty showTraceToasts,
                 StringProperty lastOpenedProject,
                 ListProperty<String> recentProjects) {
 
@@ -34,6 +38,10 @@ public record ViewModelEditorSettings(
                         settings.useLightTheme(),
                         settings.autoOpenLastProject(),
                         settings.showInspectorPane(),
+                        settings.showInfoToasts(),
+                        settings.showWarnToasts(),
+                        settings.showErrorToasts(),
+                        settings.showTraceToasts(),
                         settings.lastOpenedProject(),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
@@ -47,6 +55,10 @@ public record ViewModelEditorSettings(
                         boolean useLightTheme,
                         boolean autoOpenLastProject,
                         boolean showInspectorPane,
+                        boolean ignoreInfoToasts,
+                        boolean ignoreWarnToasts,
+                        boolean ignoreErrorToasts,
+                        boolean ignoreTraceToasts,
                         String lastOpenedProject,
                         List<String> recentProjects) {
                 this(
@@ -56,6 +68,10 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(useLightTheme),
                         new SimpleBooleanProperty(autoOpenLastProject),
                         new SimpleBooleanProperty(showInspectorPane),
+                        new SimpleBooleanProperty(ignoreInfoToasts),
+                        new SimpleBooleanProperty(ignoreWarnToasts),
+                        new SimpleBooleanProperty(ignoreErrorToasts),
+                        new SimpleBooleanProperty(ignoreTraceToasts),
                         new SimpleStringProperty(lastOpenedProject),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );

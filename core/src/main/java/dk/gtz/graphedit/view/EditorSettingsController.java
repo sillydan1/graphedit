@@ -32,6 +32,11 @@ public class EditorSettingsController {
 	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
 	addInspector("Show Inspector", "Enable the selection property inspector pane", editorSettings.showInspectorPane());
 	inspectorPane.getChildren().add(new Separator());
+	addInspector("Info Popups", "Show toast popups when info level logs are added", editorSettings.showInfoToasts());
+	addInspector("Warn Popups", "Show toast popups when warning level logs are added", editorSettings.showWarnToasts());
+	addInspector("Error Popups", "Show toast popups when error level logs are added", editorSettings.showErrorToasts());
+	addInspector("Trace Popups", "Show toast popups when trace level logs are added", editorSettings.showTraceToasts());
+	inspectorPane.getChildren().add(new Separator());
 	addButton("Clear LOP", "Clear the last opened project data", () -> editorSettings.lastOpenedProject().set(""));
 	addSaveButton();
     }
