@@ -72,7 +72,7 @@
    - [x] Change saved settings file notification to "saved /path/to/place/settings.json" instead
    - [x] MenuItems are lowercase, they should be Upper Case
    - [x] window title is just "java" (only when using "make run")
-   - [ ] trying to open project.json through filepane shouldn't be that scary
+   - [x] trying to open project.json through filepane shouldn't be that scary
    - [x] inspector pane is odd to use (hide it)
    - [x] buffer changed *-thing
    - [ ] Unread logs *-thing

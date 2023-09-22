@@ -67,7 +67,8 @@ public class FileBufferContainer implements IBufferContainer {
             var newModel = serializer.deserialize(b.toString());
             open(filename, new ViewModelProjectResource(newModel));
         } catch (SerializationException | FileNotFoundException e) {
-            logger.error(e.getMessage());
+            logger.error("not a proper model file {}", filename, e);
+            logger.trace(e.getMessage());
         }
     }
 

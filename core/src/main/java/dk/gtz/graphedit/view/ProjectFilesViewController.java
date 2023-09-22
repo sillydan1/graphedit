@@ -40,7 +40,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -51,7 +50,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
-import javafx.stage.Window;
 
 public class ProjectFilesViewController {
     private static record FileTreeEntry(Path path) {
@@ -353,8 +351,6 @@ public class ProjectFilesViewController {
 	    }
 	    logger.debug("opening file {}", p.toString());
 	    var fileType = DI.get(IMimeTypeChecker.class).getMimeType(p);
-	    if(fileType == null) {
-	    }
 	    if(!serializer.getSupportedContentTypes().contains(fileType)) {
 		logger.error("cannot open unsupported filetype '{}'", fileType);
 		return;
