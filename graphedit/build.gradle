@@ -1,7 +1,8 @@
 plugins {
    id 'application';
    id 'org.openjfx.javafxplugin' version '0.0.13';
-   id 'org.beryx.runtime' version '1.12.7'
+   id 'org.beryx.runtime' version '1.12.7';
+   id 'org.jreleaser' version '1.8.0';
 }
 
 javafx {
@@ -30,6 +31,75 @@ application {
    applicationDefaultJvmArgs = [];
 }
 
+jreleaser {
+    gitRootSearch = true;
+    project {
+        name = 'Graphedit';
+        description = 'The hackable graph editor';
+        longDescription = 'Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes';
+        authors = ['Asger Gitz-Johansen'];
+        license = 'MIT';
+        stereotype = 'DESKTOP';
+        links {
+            homepage = 'https://graphedit.gtz.dk';
+        }
+        inceptionYear = '2023';
+        icon {
+            url = 'https://raw.githubusercontent.com/sillydan1/graphedit/main/graphedit/src/main/resources/icon/graphedit.png';
+            width = 512;
+            height = 512;
+        }
+        screenshot {
+            url = 'https://raw.githubusercontent.com/sillydan1/graphedit/main/graphedit/src/main/resources/screenshots/Screenshot-dark.png';
+        }
+        screenshot {
+            url = 'https://raw.githubusercontent.com/sillydan1/graphedit/main/graphedit/src/main/resources/screenshots/Screenshot-light.png';
+        }
+    }
+    release {
+        github {
+            repoOwner = 'sillydan1';
+            overwrite = true;
+            enabled = true;
+            prerelease {
+                enabled = true;
+            }
+            changelog {
+                enabled = false;
+                skipMergeCommits = true;
+            }
+        }
+    }
+    distributions {
+        graphedit {
+           artifact {
+               path = 'build/distributions/{{distributionName}}-{{projectVersion}}.zip';
+           }
+        }
+    }
+    packagers {
+        winget {
+            active = 'ALWAYS';
+            wingetPackage {
+                identifier = 'dk.gtz.graphedit.graphedit';
+            }
+            publisher {
+                name = 'dk.gtz.graphedit';
+            }
+        }
+        flatpak {
+            active = 'ALWAYS';
+            componentId = 'dk.gtz.graphedit.graphedit';
+            category('Development');
+            runtime = 'FREEDESKTOP';
+            runtimeVersion = '21.08';
+        }
+        brew {
+            active = 'ALWAYS';
+        }
+    }
+}
+
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
@@ -50,7 +120,7 @@ runtime {
         if (currentOs.windows) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
         } else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', 'graphedit', '--linux-shortcut', '--install-dir', '/usr/local']
+            installerOptions += ['--linux-package-name', 'graphedit', '--linux-shortcut', '--install-dir', '/usr']
         } else if (currentOs.macOsX) {
             installerOptions += ['--mac-package-name', 'Graphedit']
         }

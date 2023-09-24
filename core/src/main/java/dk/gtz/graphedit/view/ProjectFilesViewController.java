@@ -24,6 +24,7 @@ import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.GlobFileMatcher;
@@ -39,7 +40,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -70,6 +70,7 @@ public class ProjectFilesViewController {
     private SimpleBooleanProperty useGrapheditIgnoreMatcher;
     private SimpleBooleanProperty showHiddenFiles;
     private boolean isGitInstalled;
+    private Thread watcherThread;
 
     @FXML
     public VBox root;
@@ -86,8 +87,12 @@ public class ProjectFilesViewController {
 	initializeGlobMatchers();
 	fileTree = createTreeView(openProject.name().get(), Path.of(openProject.rootDirectory().get()));
 	var toolbar = createToolbar();
+	root.getChildren().clear();
 	root.getChildren().addAll(toolbar, fileTree);
 	watchForFileTreeChanges();
+	openProject.rootDirectory().addListener((e,o,n) -> {
+	    initialize();
+	});
     }
 
     private void initializeGlobMatchers() {
@@ -166,13 +171,14 @@ public class ProjectFilesViewController {
     
     private Node getPathFontIcon(Path path) {
 	try {
+	    var mimeTypeChecker = DI.get(IMimeTypeChecker.class);
 	    if(isGitignored(path))
-		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path)));
 	    if(grapheditIgnoreMatcher.matches(path))
-		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(Files.probeContentType(path)));
+		return createStackedFontIcon(new FontIcon(BootstrapIcons.SLASH), IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path)));
 	    if(Files.isDirectory(path))
 		return new FontIcon(BootstrapIcons.FOLDER);
-	    return IconUtils.getFileTypeIcon(Files.probeContentType(path));
+	    return IconUtils.getFileTypeIcon(mimeTypeChecker.getMimeType(path));
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	    return new FontIcon(BootstrapIcons.FILE);
@@ -224,7 +230,9 @@ public class ProjectFilesViewController {
         try {
             watchService = FileSystems.getDefault().newWatchService();
             fileTree.getRoot().getValue().path().register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-	    var watcherThread = new Thread(this::watchDirectory);
+	    if(watcherThread != null)
+		watcherThread.interrupt();
+	    watcherThread = new Thread(this::watchDirectory);
 	    watcherThread.setName("directoryWatcher");
 	    watcherThread.setDaemon(true);
 	    watcherThread.start();
@@ -305,32 +313,12 @@ public class ProjectFilesViewController {
 
     public void createNewModelFile() {
 	try {
-	    var selected = fileTree.getSelectionModel().getSelectedItem();
-	    var basePath = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValueSafe());
-	    if(selected != null)
-		basePath = selected.getValue().path();
-	    if(!Files.isDirectory(basePath))
-		basePath = basePath.getParent();
-	    var dialog = new TextInputDialog();
-	    dialog.setTitle("new model file");
-	    dialog.setHeaderText(basePath.toString());
-	    var ed = dialog.getEditor();
-	    ed.setText(basePath.toString() + "/");
-	    // NOTE: This is a hack. We should have a more flexible dialogue system instead of using javafx Dialog's
-	    Platform.runLater(() -> ed.end());
-	    dialog.setContentText("new filename:");
-	    dialog.initOwner(root.getScene().getWindow());
-	    var fileName = dialog.showAndWait();
+	    var fileName = EditorActions.newFile();
 	    if(fileName.isEmpty())
 		return;
 	    logger.trace("creating file {}", fileName.get());
 	    var newfile = new File("%s".formatted(fileName.get()));
 	    var newFilePath = Path.of(newfile.getCanonicalPath());
-	    if(fileName.get().trim().endsWith(File.separator)) {
-		Files.createDirectories(newFilePath);
-		Toast.success("created directory %s".formatted(newFilePath.toString()));
-		return;
-	    }
 	    Files.createDirectories(newFilePath.getParent());
 	    if(!newfile.createNewFile()) {
 		logger.error("file already exists");
@@ -362,16 +350,13 @@ public class ProjectFilesViewController {
 		return;
 	    }
 	    logger.debug("opening file {}", p.toString());
-	    var fileType = Files.probeContentType(p);
-	    if(fileType == null) {
-		logger.error("unknown filetype, cannot open");
-		return;
-	    }
+	    var fileType = DI.get(IMimeTypeChecker.class).getMimeType(p);
 	    if(!serializer.getSupportedContentTypes().contains(fileType)) {
 		logger.error("cannot open unsupported filetype '{}'", fileType);
 		return;
 	    }
-	    openBuffers.open(p.toString());
+	    var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
+	    openBuffers.open(p.toString().replace(basePath, ""));
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
 	}

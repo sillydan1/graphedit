@@ -94,7 +94,7 @@ public class JacksonModelSerializer implements IModelSerializer {
 
     @Override
     public List<String> getSupportedContentTypes() {
-	return List.of("application/json");
+	return List.of("text/plain", "application/json");
     }
 
     @Override

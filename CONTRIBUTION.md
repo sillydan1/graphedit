@@ -6,6 +6,15 @@ Commits should strive to follow the [conventional commits](https://www.conventio
 ### PRs
 Pull requests should be up-to-date with the target branch at review-time. Rebases are encouraged, but if target-branch merge commits are permitted as well when appropriate.
 
+New PRs based on `main` should target `main`. If they are based on `dev`, they should target `dev`.
+
+### Branching Architecture
+`main` is the primary release branch. All commits on `main` should be compileable, executable, bug-free (as much as possible) and "release ready".
+`dev` is the staging branch. All commits on `dev` should be compileable and executable. Bugs are allowed and things are allowed to break here.
+Use `feat/some-feature` for new features and `fix/some-fix` for new bugfixes. If you cant think of a good name for your branch, just give it some name to begin with, we can always rename the branch :-).
+
+When creating new branches/forks, please base on either `main` or `dev`, note however that `dev` is rapidly changing so we recommend to fork from `main` by default.
+
 ## Code Quality
 Generally, try to follow the style that is already present and try to reuse existing components when appropriate.
 

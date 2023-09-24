@@ -1,6 +1,7 @@
 package dk.gtz.graphedit.view;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
@@ -9,11 +10,13 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.exceptions.ProjectLoadException;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
+import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.EditorActions;
@@ -25,9 +28,8 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
-import dk.gtz.graphedit.view.preloader.FinishNotification;
-import dk.gtz.graphedit.view.preloader.GraphEditPreloader;
-import dk.gtz.graphedit.view.preloader.LoadStateNotification;
+import dk.gtz.graphedit.view.util.IObservableUndoSystem;
+import dk.gtz.graphedit.view.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
@@ -35,7 +37,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
-import dk.yalibs.yaundo.StackUndoSystem;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,6 +46,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * The primary entrypoint class for Graphedit.
@@ -53,21 +55,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
     private Stage primaryStage;
 
-    /**
-     * Launch the graphedit application, but skipping the preloader.
-     * @param args The commandline arguments provided from the main entrypoint
-     */
-    public static void launchWithoutPreloader(final String[] args) {
-	System.clearProperty("javafx.preloader");
-	launch(args);
-    }
-
-    /**
-     * Launch the graphedit application, starting with the preloader.
-     * @param args The commandline arguments provided from the main entrypoint
-     */
-    public static void launchUsingPreloader(final String[] args) {
-	System.setProperty("javafx.preloader", GraphEditPreloader.class.getCanonicalName());
+    public static void launchApp(final String[] args) {
 	launch(args);
     }
 
@@ -81,28 +69,17 @@ public class GraphEditApplication extends Application implements IRestartableApp
     public void start(Stage primaryStage) throws Exception {
 	this.primaryStage = primaryStage;
 	var settings = DI.get(ViewModelEditorSettings.class);
-	notifyPreloader(new LoadStateNotification("starting"));
 	if(settings.autoOpenLastProject().get())
 	    kickoff(primaryStage);
     }
 
     private void kickoff(Stage primaryStage) throws Exception {
-	try {
-	    notifyPreloader(new LoadStateNotification("setup application"));
-	    loadProject();
-	    notifyPreloader(new LoadStateNotification("setup toolbox"));
-	    setupToolbox();
-	    notifyPreloader(new LoadStateNotification("setup preferences"));
-	    setupPreferences();
-	    notifyPreloader(new LoadStateNotification("setup logging"));
-	    setupLogging();
-	    notifyPreloader(new LoadStateNotification("setting the stage"));
-	    setupStage(primaryStage);
-	    notifyPreloader(new FinishNotification());
-	} catch(ProjectLoadException e) {
-	    logger.error("could not open project");
-	    notifyPreloader(new LoadStateNotification(e.getMessage()));
-	}
+	loadProject();
+	setupToolbox();
+	setupPreferences();
+	setupLogging();
+	setupStage(primaryStage);
+	DI.add(Window.class, primaryStage.getScene().getWindow());
     }
 
     @Override
@@ -120,7 +97,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
-	DI.add(IUndoSystem.class, new StackUndoSystem());
+	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
+	var undoSystem = new ObservableStackUndoSystem();
+	DI.add(IUndoSystem.class, undoSystem);
+	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
@@ -131,11 +111,13 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void loadProject() throws Exception {
 	var settings = DI.get(ViewModelEditorSettings.class);
 	var projectFilePath = Path.of(settings.lastOpenedProject().get());
-	if(!projectFilePath.toFile().exists())
-	    throw new ProjectLoadException("project file not found '%s'".formatted(projectFilePath.toString()));
-	notifyPreloader(new LoadStateNotification("loading project file: '%s'".formatted(projectFilePath.toString())));
+	if(!projectFilePath.toFile().exists()) {
+	    logger.info("not a valid project file path, will load temp project {}", projectFilePath.toString());
+	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
+	    return;
+	}
 	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
-	DI.add(ViewModelProject.class, new ViewModelProject(project, projectFilePath.toFile().getParent()));
+	DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
     }
 
     private void setupToolbox() {
@@ -149,6 +131,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		new VertexDeleteTool(),
 		new SelectTool());
 	DI.add(IToolbox.class, toolbox);
+	toolbox.selectTool(toolbox.getDefaultTool());
     }
 
     private void setupPreferences() {
@@ -168,7 +151,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupStage(Stage primaryStage) throws Exception {
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
-	// TODO: primaryStage.setTitle("%s %s".formatted(BuildConfig.APP_NAME, BuildConfig.APP_VERSION));
+	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
 	setupModalPane();
 	primaryStage.setScene(loadMainScene());
 	primaryStage.show();
@@ -176,9 +159,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupLogging() {
 	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
-	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
-	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
 	EditorLogAppender.subscribe(Level.INFO, Toast::info);
+	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
+	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
+	EditorLogAppender.subscribe(Level.TRACE, Toast::trace);
 	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
     }
 

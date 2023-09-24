@@ -3,6 +3,7 @@ package dk.gtz.graphedit.view;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
@@ -46,6 +47,8 @@ public class EditorTabPaneController {
 		    tabTitle = changedVal.metadata().get("name");
 		var tab = new DraggableTab(tabTitle); // TODO: title should be the ViewModelProject.name stringproperty instead
 		changedVal.addView(tab);
+		changedVal.addListener((e,o,n) -> tab.setHighlight());
+		EditorActions.addSaveListener(tab::unsetHighlight);
 		tab.setOnClosed(e ->  {
 		    changedVal.removeView(tab);
 		    if(changedVal.getViews().isEmpty())

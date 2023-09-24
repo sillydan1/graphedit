@@ -4,6 +4,7 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import atlantafx.base.controls.ToggleSwitch;
+import atlantafx.base.theme.Styles;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -21,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -48,6 +50,14 @@ public class InspectorUtils {
 	if(o instanceof MapProperty p) return getPropertyInspector(p);
 	if(o instanceof SetProperty p) return getPropertyInspector(p);
 	throw new RuntimeException("No such property inspector implemented for type '%s'".formatted(o.getClass().getSimpleName()));
+    }
+
+    public static Node getPropertyInspectorList(ListProperty<StringProperty> list) {
+	var listView = new VBox();
+	listView.setSpacing(5);
+	list.addListener((e,o,n) -> updateTextListView(listView, list));
+	updateTextListView(listView, list);
+	return listView;
     }
 
     /**
@@ -84,7 +94,7 @@ public class InspectorUtils {
     public static Node createMapTextEditorNode(MapProperty<? extends Observable, ? extends Observable> property) {
 	var listView = new VBox();
 	var addButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> property.put(null, null)); // hmmm...
+	addButton.setOnAction(e -> property.put(null, null)); // TODO: nulls here... hmmm...
 	property.addListener((e,o,n) -> updateMapListView(listView, property));
 	updateMapListView(listView, property);
 	return new VBox(addButton, listView);
@@ -126,6 +136,20 @@ public class InspectorUtils {
 	property.addListener((e,o,n) -> updateListView(listView, property));
 	updateListView(listView, property);
 	return new VBox(addButton, listView);
+    }
+
+    private static void updateTextListView(VBox view, ListProperty<StringProperty> list) {
+	view.getChildren().clear();
+	for(var element : list) {
+	    var ed = new TextField(element.get());
+	    element.bind(ed.textProperty());
+	    var removeButton = new Button(null, new FontIcon(BootstrapIcons.X_CIRCLE));
+	    removeButton.getStyleClass().add(Styles.DANGER);
+	    removeButton.setOnAction(e -> list.remove(element));
+	    var box = new HBox(removeButton, ed);
+	    box.setSpacing(5);
+	    view.getChildren().add(box);
+	}
     }
 
     private static void updateListView(VBox view, ListProperty<? extends Observable> property) {
@@ -182,6 +206,17 @@ public class InspectorUtils {
      */
     public static Node getPropertyInspector(StringProperty property) {
 	var result = new TextArea(property.get());
+	result.textProperty().bindBidirectional(property);
+	return result;
+    }
+
+    /**
+     * Get an inspector for a string property, but instead of a TextArea, it gives a TextField
+     * @param property the thing that the inspector modifies
+     * @return a javafx component that can modify the value of the provided {@link StringProperty}
+     */
+    public static TextField getPropertyInspectorField(StringProperty property) {
+	var result = new TextField(property.get());
 	result.textProperty().bindBidirectional(property);
 	return result;
     }

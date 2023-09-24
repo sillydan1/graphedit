@@ -28,10 +28,14 @@ Debug/
 gradlew.bat
 gradlew
 gradle/
+graphedit/src/jreleaser/distributions/
 
 # Testing files
 example.json
 
 # MacOS
 **/.DS_Store
+
+# never commit this file
+donotcommit.txt
 

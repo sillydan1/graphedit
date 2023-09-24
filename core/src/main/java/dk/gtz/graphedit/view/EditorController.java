@@ -11,6 +11,7 @@ import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.HeightDragResizer;
 import dk.gtz.graphedit.view.util.PlatformUtils;
 import dk.gtz.graphedit.view.util.WidthDragResizer;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
@@ -21,9 +22,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
@@ -39,6 +42,8 @@ public class EditorController {
     private Menu runTargetsMenu;
     @FXML
     private MenuItem runTargetMenuItem;
+    @FXML
+    private Pane inspectorGroup;
     private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
 
@@ -50,6 +55,7 @@ public class EditorController {
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
+	initInspectorPane();
     }
 
     private void initProjectMenu() {
@@ -65,6 +71,7 @@ public class EditorController {
 	var toggleGroup = new ToggleGroup();
 	for(var runTarget : project.runTargets()) {
 	    var toggleItem = new RadioMenuItem(runTarget.name().get());
+	    toggleItem.textProperty().bind(runTarget.name());
 	    toggleItem.setOnAction(e -> selectedRunTarget = Optional.of(runTarget));
 	    toggleItem.setToggleGroup(toggleGroup);
 	    if(selectedRunTarget.isPresent() && selectedRunTarget.get() == runTarget)
@@ -80,6 +87,11 @@ public class EditorController {
         }
     }
 
+    private void initInspectorPane() {
+	inspectorGroup.visibleProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
+	inspectorGroup.managedProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
+    }
+
     @FXML
     private void toggleTheme() {
 	EditorActions.toggleTheme();
@@ -87,7 +99,12 @@ public class EditorController {
 
     @FXML
     private void openSettingsEditor() {
-	EditorActions.openSettingsEditor();
+	EditorActions.openEditorSettings();
+    }
+
+    @FXML
+    private void openProjectEditor() {
+	EditorActions.openProjectSettings();
     }
 
     @FXML
@@ -106,13 +123,19 @@ public class EditorController {
     }
 
     @FXML
+    private void saveAs() {
+	EditorActions.saveAs();
+    }
+
+    @FXML
     private void loadProject() {
 	logger.warn("still work in progress");
     }
 
     @FXML
     private void quit() {
-	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", root.getScene().getWindow());
+	var w = DI.get(Window.class);
+	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
 	if(result.isEmpty())
 	    return;
         if(result.get())
@@ -134,8 +157,10 @@ public class EditorController {
             logger.warn("No RunTarget selected");
             return;
         }
-	EditorActions.executeRunTarget(selectedRunTarget.get());
-	Platform.runLater(() -> runTargetMenuItem.setText("Start Selected RunTarget"));
+	Platform.runLater(() -> {
+	    EditorActions.executeRunTarget(selectedRunTarget.get());
+	    runTargetMenuItem.setText("Start Selected RunTarget");
+	});
     }
 
     @FXML
@@ -166,7 +191,7 @@ public class EditorController {
 
     @FXML
     private void newProject() {
-	var file = EditorActions.saveProjectPicker(menubarTopBox.getScene().getWindow());
+	var file = EditorActions.newFile();
 	if(!file.isPresent())
 	    return;
 	// TODO: project data inspector / editor so people can change the project name later
@@ -177,7 +202,8 @@ public class EditorController {
 
     @FXML
     private void openProject() {
-	var file = EditorActions.openProjectPicker(menubarTopBox.getScene().getWindow());
+	var w = DI.get(Window.class);
+	var file = EditorActions.openProjectPicker(w);
 	if(file.isPresent())
 	    EditorActions.openProject(file.get());
     }

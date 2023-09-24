@@ -2,6 +2,7 @@ package dk.gtz.graphedit.view;
 
 import java.util.ArrayList;
 
+import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.view.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.IInspectable;
@@ -10,9 +11,13 @@ import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -29,6 +34,8 @@ public class InspectorController {
 
     @FXML
     private void initialize() {
+	propertiesContainer.setSpacing(5);
+	propertiesContainer.setPadding(new Insets(10));
 	addAllSelected();
 	initializeSelectionEventHandlers();
     }
@@ -50,18 +57,23 @@ public class InspectorController {
     private void addInspectable(IInspectable inspectable) {
 	var inspectableProperties = inspectable.getInspectableObjects();
 	var inspectors = new ArrayList<Node>();
-	inspectors.add(new Label(inspectable.getClass().getSimpleName()));
+	var typeLabel = new Label(inspectable.getClass().getSimpleName());
+	typeLabel.getStyleClass().add(Styles.TITLE_3);
 	if(inspectable instanceof IFocusable selectable) {
-	    var btn = new Button("FOCUS");
-	    btn.setOnAction(e -> selectable.focus());
-	    inspectors.add(btn);
+	    typeLabel.setOnMouseClicked(e -> selectable.focus());
+	    typeLabel.setCursor(Cursor.HAND);
 	}
+	inspectors.add(typeLabel);
 	for(var p : inspectableProperties) {
-	    var group = new VBox();
-	    group.getChildren().add(new Label(p.name()));
-	    group.getChildren().add(InspectorUtils.getObservableInspector(p.property()));
+	    var group = new HBox();
+	    group.setSpacing(10);
+	    var label = new Label(p.name());
+	    var inspector = InspectorUtils.getObservableInspector(p.property());
+	    label.setAlignment(Pos.CENTER_RIGHT);
+	    group.getChildren().addAll(inspector, label);
 	    inspectors.add(group);
 	}
+	inspectors.add(new Separator());
 	propertiesContainer.getChildren().addAll(inspectors);
     }
 }

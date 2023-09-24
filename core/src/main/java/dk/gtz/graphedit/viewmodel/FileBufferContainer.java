@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -52,10 +53,10 @@ public class FileBufferContainer implements IBufferContainer {
     @Override
     public void open(String filename) {
         try {
-            var f = new File(filename);
-            var fp = f.getAbsolutePath();
-            if(openBuffers.containsKey(fp)) {
-                openBuffers.get(fp).focus();
+            var baseDir = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
+            var f = new File(baseDir + File.separator + filename);
+            if(openBuffers.containsKey(filename)) {
+                openBuffers.get(filename).focus();
                 return;
             }
             var b = new StringBuilder();
@@ -64,9 +65,10 @@ public class FileBufferContainer implements IBufferContainer {
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserialize(b.toString());
-            open(fp, new ViewModelProjectResource(newModel));
+            open(filename, new ViewModelProjectResource(newModel));
         } catch (SerializationException | FileNotFoundException e) {
-            logger.error(e.getMessage());
+            logger.error("not a proper model file {}", filename, e);
+            logger.trace(e.getMessage());
         }
     }
 

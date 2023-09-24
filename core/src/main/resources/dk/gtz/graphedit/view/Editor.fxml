@@ -12,12 +12,13 @@
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
                     <Menu text="File">
-                        <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
+                        <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
+                        <MenuItem onAction="#saveAs" text="Save As..." accelerator="Shortcut+Shift+S"/>
                         <SeparatorMenuItem/>
-                        <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
+                        <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
                     </Menu>
                     <Menu text="Edit">
                         <MenuItem onAction="#undo" text="Undo" accelerator="Shortcut+Z"/>
@@ -25,7 +26,8 @@
                     </Menu>
                     <Menu text="View">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
-                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+S"/>
+                        <MenuItem onAction="#openProjectEditor" text="Change Project Settings" accelerator="Shortcut+Shift+P"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+O"/>
                     </Menu>
                     <Menu fx:id="projectMenu" text="Project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
@@ -51,7 +53,9 @@
             <fx:include source="EditorTabPane.fxml"/>
         </center>
         <right>
-            <fx:include source="Inspector.fxml"/> 
+            <Pane fx:id="inspectorGroup">
+                <fx:include source="Inspector.fxml"/> 
+            </Pane>
         </right>
         <bottom>
             <fx:include source="LogTabPane.fxml"/> 

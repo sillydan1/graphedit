@@ -2,17 +2,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import dk.gtz.graphedit.view.*?>
-<StackPane
+<BorderPane fx:id="root"
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
-    fx:controller="dk.gtz.graphedit.view.SettingsEditorController"
-    maxWidth="650"
-    maxHeight="450">
-<BorderPane fx:id="root">
+    fx:controller="dk.gtz.graphedit.view.EditorSettingsController">
     <center>
-        <VBox fx:id="inspectorPane">
-        </VBox>
+        <VBox fx:id="inspectorPane"/>
     </center>
 </BorderPane>
-</StackPane>
 

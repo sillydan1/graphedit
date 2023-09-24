@@ -1,14 +1,18 @@
 package dk.gtz.graphedit.viewmodel;
 
 import dk.gtz.graphedit.model.ModelPoint;
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * View model representation of a 2D point
  */
-public class ViewModelPoint {
+public class ViewModelPoint implements Property<ViewModelPoint> {
     private final DoubleProperty x;
     private final DoubleProperty y;
 
@@ -17,7 +21,7 @@ public class ViewModelPoint {
      * @param point the model point to base on
      */
     public ViewModelPoint(ModelPoint point) {
-        this(point.x(), point.y());
+	this(point.x(), point.y());
     }
 
     /**
@@ -26,8 +30,8 @@ public class ViewModelPoint {
      * @param y the y-coordinate value
      */
     public ViewModelPoint(double x, double y) {
-        this.x = new SimpleDoubleProperty(x);
-        this.y = new SimpleDoubleProperty(y);
+	this.x = new SimpleDoubleProperty(x);
+	this.y = new SimpleDoubleProperty(y);
     }
 
     /**
@@ -36,8 +40,8 @@ public class ViewModelPoint {
      * @param y the y-coordinate property
      */
     public ViewModelPoint(DoubleProperty x, DoubleProperty y) {
-        this.x = x;
-        this.y = y;
+	this.x = x;
+	this.y = y;
     }
 
     /**
@@ -46,9 +50,9 @@ public class ViewModelPoint {
      * @param y the y-coordinate property binding
      */
     public ViewModelPoint(DoubleBinding x, DoubleBinding y) {
-        this(x.get(), y.get());
-        this.x.bind(x);
-        this.y.bind(y);
+	this(x.get(), y.get());
+	this.x.bind(x);
+	this.y.bind(y);
     }
 
     /**
@@ -56,7 +60,7 @@ public class ViewModelPoint {
      * @return the underlying x-coordinate value
      */
     public double getX() {
-        return x.get();
+	return x.get();
     }
 
     /**
@@ -64,7 +68,7 @@ public class ViewModelPoint {
      * @return the underlying y-coordinate value
      */
     public double getY() {
-        return y.get();
+	return y.get();
     }
 
     /**
@@ -73,7 +77,7 @@ public class ViewModelPoint {
      * @return the x-coordinate property
      */
     public DoubleProperty getXProperty() {
-        return x;
+	return x;
     }
 
     /**
@@ -82,7 +86,7 @@ public class ViewModelPoint {
      * @return the y-coordinate property
      */
     public DoubleProperty getYProperty() {
-        return y;
+	return y;
     }
 
     /**
@@ -90,7 +94,7 @@ public class ViewModelPoint {
      * @return a new model point instance
      */
     public ModelPoint toModel() {
-        return new ModelPoint(getX(), getY());
+	return new ModelPoint(getX(), getY());
     }
 
     /**
@@ -98,8 +102,8 @@ public class ViewModelPoint {
      * @param settings the view settings containing grid settings to snap to
      */
     public void snapToGrid(ViewModelEditorSettings settings) {
-        getXProperty().set(getX() - (getX() % settings.gridSizeX().get()));
-        getYProperty().set(getY() - (getY() % settings.gridSizeY().get()));
+	getXProperty().set(getX() - (getX() % settings.gridSizeX().get()));
+	getYProperty().set(getY() - (getY() % settings.gridSizeY().get()));
     }
 
     /**
@@ -109,7 +113,7 @@ public class ViewModelPoint {
      * @return a new instance with the new subtracted coordinate values
      */
     public ViewModelPoint subtract(ViewModelPoint other) {
-        return new ViewModelPoint(getX() - other.getX(), getY() - other.getY());
+	return new ViewModelPoint(getX() - other.getX(), getY() - other.getY());
     }
 
     /**
@@ -119,7 +123,7 @@ public class ViewModelPoint {
      * @return a new instance with the new added coordinate values
      */
     public ViewModelPoint add(ViewModelPoint other) {
-        return new ViewModelPoint(getX() + other.getX(), getY() + other.getY());
+	return new ViewModelPoint(getX() + other.getX(), getY() + other.getY());
     }
 
     /**
@@ -129,7 +133,81 @@ public class ViewModelPoint {
      * @return a new instance with the new coordinate values
      */
     public ViewModelPoint scale(float scalar) {
-        return new ViewModelPoint(getX() * scalar, getY() * scalar);
+	return new ViewModelPoint(getX() * scalar, getY() * scalar);
+    }
+
+    @Override
+    public Object getBean() {
+	return null;
+    }
+
+    @Override
+    public String getName() {
+	return "";
+    }
+
+    @Override
+    public void addListener(ChangeListener<? super ViewModelPoint> listener) {
+	x.addListener((e,o,n) -> listener.changed(this, this, this));
+	y.addListener((e,o,n) -> listener.changed(this, this, this));
+    }
+
+    @Override
+    public void removeListener(ChangeListener<? super ViewModelPoint> listener) {
+	// TODO: This may not work, but lets just try it out
+	x.removeListener((e,o,n) -> listener.changed(this, this, this));
+	y.removeListener((e,o,n) -> listener.changed(this, this, this));
+    }
+
+    @Override
+    public ViewModelPoint getValue() {
+	return this;
+    }
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+	x.addListener(listener);
+	y.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+	x.removeListener(listener);
+	y.removeListener(listener);
+    }
+
+    @Override
+    public void setValue(ViewModelPoint value) {
+	x.set(value.getX());
+	y.set(value.getY());
+    }
+
+    @Override
+    public void bind(ObservableValue<? extends ViewModelPoint> observable) {
+	x.bind(observable.getValue().getYProperty());
+	y.bind(observable.getValue().getYProperty());
+    }
+
+    @Override
+    public void unbind() {
+	throw new UnsupportedOperationException("Unimplemented method 'unbind'");
+    }
+
+    @Override
+    public boolean isBound() {
+	return x.isBound() || y.isBound();
+    }
+
+    @Override
+    public void bindBidirectional(Property<ViewModelPoint> other) {
+	x.bindBidirectional(other.getValue().x);
+	y.bindBidirectional(other.getValue().y);
+    }
+
+    @Override
+    public void unbindBidirectional(Property<ViewModelPoint> other) {
+	x.unbindBidirectional(other.getValue().x);
+	y.unbindBidirectional(other.getValue().y);
     }
 }
 

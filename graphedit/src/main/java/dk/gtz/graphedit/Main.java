@@ -6,7 +6,6 @@ import com.beust.jcommander.JCommander;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.view.GraphEditApplication;
 
 public class Main {
@@ -26,10 +25,8 @@ public class Main {
             return;
         }
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
-        if(args.skipPreloader)
-            GraphEditApplication.launchWithoutPreloader(argv);
-        else
-            GraphEditApplication.launchUsingPreloader(argv);
+        GraphEditApplication.launchApp(argv);
+        logger.info("goodbye from {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
     }
 }
 

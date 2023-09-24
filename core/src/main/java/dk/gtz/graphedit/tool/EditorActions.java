@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -32,11 +34,17 @@ import dk.yalibs.yastreamgobbler.StreamGobbler;
 import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -50,6 +58,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public class EditorActions {
     private static final Logger logger = LoggerFactory.getLogger(EditorActions.class);
+    private static List<Runnable> saveListeners = new ArrayList<>();
 
     /**
      * Will immediately quit the application with no hesitation.
@@ -58,17 +67,53 @@ public class EditorActions {
         Platform.exit();
     }
 
+
+    public static void addSaveListener(Runnable runner) {
+        saveListeners.add(runner);
+    }
+
+    public static boolean removeSaveListener(Runnable runner) {
+        return saveListeners.remove(runner);
+    }
+
+    /**
+     * Saves the currently opened project to disk. Will prompt the user for a path to save to.
+     */
+    public static void saveAs() {
+        var result = newFile();
+        if(result.isEmpty()) {
+            logger.warn("save action cancelled, will not save");
+            return;
+        }
+        var project = DI.get(ViewModelProject.class);
+        project.rootDirectory().set(result.get().getParent());
+        project.isSavedInTemp().set(false);
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        editorSettings.lastOpenedProject().set(result.get().toString());
+        EditorActions.saveEditorSettings(editorSettings);
+        EditorActions.save();
+    }
+
     /**
      * Saves the currently opened project to disk.
      * Will not throw any exceptions, but errors may be logged if something went awry.
      */
     public static void save() {
+        var project = DI.get(ViewModelProject.class);
+        if(project.isSavedInTemp().get()) {
+            saveAs();
+            return;
+        }
         var serializer = DI.get(IModelSerializer.class);
         var buffers = DI.get(IBufferContainer.class).getBuffers().entrySet();
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        var lastOpenedProject = editorSettings.lastOpenedProject();
+        EditorActions.saveProject(project.toModel(), Path.of(lastOpenedProject.get()));
         logger.trace("save starting");
         buffers.parallelStream().forEach((buffer) -> {
             try {
-                var filePath = buffer.getKey();
+                var project2 = DI.get(ViewModelProject.class);
+                var filePath = project2.rootDirectory().getValueSafe() + File.separator + buffer.getKey();
                 logger.trace("saving file {}", filePath);
                 var model = buffer.getValue().toModel();
                 var serializedModel = serializer.serialize(model);
@@ -81,6 +126,7 @@ public class EditorActions {
                 logger.error("failed to save file '{}' reason: {}", buffer.getKey(), e.getMessage());
             }
         });
+        Platform.runLater(() -> saveListeners.forEach(Runnable::run));
         Toast.success("save complete");
         logger.trace("save complete");
     }
@@ -124,7 +170,7 @@ public class EditorActions {
             if(!fileToSave.toFile().exists())
                 Files.createDirectories(fileToSave.getParent());
             Files.write(fileToSave, data.getBytes());
-            logger.info("saved settings successfully");
+            logger.info("saved settings file {}", fileToSave.toString());
         } catch(Exception e) {
             logger.error("could not save editor settings file", e);
         }
@@ -165,10 +211,21 @@ public class EditorActions {
             if(projectFilePath.toFile().isDirectory())
                 projectFilePath.resolve(project.name() + ".json");
             Files.write(projectFilePath, data.getBytes());
-            logger.info("saved project {} successfully", project.name());
+            logger.trace("saved project {} successfully", project.name());
         } catch(Exception e) {
             logger.error("failed saving project: {}", e.getMessage(), e);
         }
+    }
+
+    public static void saveProject() {
+        var project = DI.get(ViewModelProject.class);
+        if(project.isSavedInTemp().get()) {
+            save();
+            return;
+        }
+        var editorSettings = DI.get(ViewModelEditorSettings.class);
+        var lastOpenedProject = editorSettings.lastOpenedProject();
+        saveProject(project.toModel(), Path.of(lastOpenedProject.get()));
     }
 
     /**
@@ -187,17 +244,15 @@ public class EditorActions {
     }
 
     /**
-     * Will open the "save as" project picker dialogue
-     * @param window the associated window
+     * Will open a "save as" file picker OS-native dialogue
      * @return Optionally a file if one was chosen otherwise empty
      */
-    public static Optional<File> saveProjectPicker(Window window) {
+    public static Optional<File> newFile() {
         var fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("json files", "*.json")
-                );
-        fileChooser.setTitle("Save Graphedit Project");
-        return Optional.ofNullable(fileChooser.showSaveDialog(window));
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("json files", "*.json"));
+        fileChooser.setTitle("New file");
+        return Optional.ofNullable(fileChooser.showSaveDialog(DI.get(Window.class)));
     }
 
     /**
@@ -211,22 +266,26 @@ public class EditorActions {
     /**
      * Open the {@see ViewModelEditorSettings} editor modal pane
      */
-    public static void openSettingsEditor() {
-        openModal("SettingsEditor.fxml");
+    public static void openEditorSettings() {
+        openModal("EditorSettings.fxml", "Editor Settings");
+    }
+
+    public static void openProjectSettings() {
+        openModal("ProjectSettings.fxml", "Project Settings");
     }
 
     /**
      * Open the {@see ViewModelRunTarget} editor modal pane
      */
     public static void openRunTargetsEditor() {
-        openModal("RunTargetsEditor.fxml");
+        openModal("RunTargetsEditor.fxml", "Runtarget Settings");
     }
 
     /**
      * Open the {@see SearchPaneController} modal pane
      */
     public static void openSearchPane() {
-        openModal("SearchPane.fxml");
+        openModal("SearchPane.fxml", "Search");
     }
 
     /**
@@ -242,19 +301,29 @@ public class EditorActions {
             createText.run(BuildConfig.APP_NAME, Styles.TITLE_1),
             createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
             new Text("TODO: better description"));
-        aboutNode.setMinSize(450, 450);
-        aboutNode.setMaxSize(450, 450);
-        aboutNode.getStyleClass().add(Styles.BG_DEFAULT);
-        openModal(aboutNode);
+        openModal(aboutNode, "About");
     }
 
     /**
      * Opens an injected modal
      * @param node the modal to show
      */
-    public static void openModal(Node node) {
+    public static void openModal(Node node, String title) {
         var modalPane = DI.get(ModalPane.class);
-        modalPane.show(node);
+        var centerPane = new StackPane(node);
+        var showPane = new BorderPane(centerPane);
+        centerPane.setPadding(new Insets(20));
+        centerPane.setMaxSize(450, 450);
+        showPane.setMaxSize(450, 450);
+        Styles.addStyleClass(showPane, Styles.BG_DEFAULT);
+        showPane.getStyleClass().add("modal-rounded");
+        var titleLabel = new Label(title);
+        Styles.addStyleClass(titleLabel, Styles.TITLE_2);
+        var titleBox = new HBox(titleLabel);
+        titleBox.setPadding(new Insets(5));
+        titleBox.setAlignment(Pos.CENTER);
+        showPane.setTop(titleBox);
+        modalPane.show(showPane);
         node.requestFocus();
     }
 
@@ -262,11 +331,11 @@ public class EditorActions {
      * Opens an FXML based modal
      * @param fxmlFile the .fxml file to open, must be from the perspective of {@see EditorController}
      */
-    public static void openModal(String fxmlFile) {
+    public static void openModal(String fxmlFile, String title) {
         try {
             var loader = new FXMLLoader(EditorController.class.getResource(fxmlFile));
             var content = (Node)loader.load();
-            openModal(content);
+            openModal(content, title);
             var controller = loader.getController();
             if(controller != null && controller instanceof IFocusable focusableController)
                 focusableController.focus();
@@ -305,6 +374,8 @@ public class EditorActions {
         // NOTE: Does not change the MenuItem labels
         // NOTE: This is a blocking call
         try {
+            if(selectedRunTarget.saveBeforeRun().get())
+                save();
             var pb = new ProcessBuilder();
             if(selectedRunTarget.runAsShell().get()) {
                 var sb = new StringBuilder(selectedRunTarget.command().get());
@@ -320,8 +391,8 @@ public class EditorActions {
             var project = DI.get(ViewModelProject.class);
             env.put("PROJECT_NAME", project.name().getValueSafe());
             env.put("PROJECT_DIR", project.rootDirectory().getValueSafe());
-            for(var e : selectedRunTarget.environment().entrySet())
-                env.put(e.getKey().get(), e.getValue().get());
+            for(var e : selectedRunTarget.environment())
+                env.put(e.key().get(), e.value().get());
             if(!selectedRunTarget.currentWorkingDirectory().get().isEmpty())
                 pb.directory(new File(selectedRunTarget.currentWorkingDirectory().get()));
             pb.redirectErrorStream(true);
@@ -338,6 +409,13 @@ public class EditorActions {
         }
     }
 
+    /**
+     * Will prompt the user for a Confirm / Cancel action
+     * @param questionTitle prompt title
+     * @param question the question to ask the user
+     * @param window the parent window
+     * @return {@code true} if the user selected the affirmative action, {@code false} if user selected the negative action or {@code Optional.empty} if the prompt was closed with no action selected
+     */
     public static Optional<Boolean> showConfirmDialog(String questionTitle, String question, Window window) {
         var alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle(questionTitle);
