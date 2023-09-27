@@ -84,6 +84,7 @@
    - [ ] CD (needs a pre-release for prototyping purposes)
      - [ ] homebrew
      - [ ] flatpak
+     - [ ] GNOME store?
      - [ ] javadoc
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds

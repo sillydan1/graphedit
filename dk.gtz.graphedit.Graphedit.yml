@@ -1,0 +1,29 @@
+app-id: dk.gtz.graphedit.Graphedit
+runtime: org.freedesktop.Platform
+runtime-version: '22.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk17
+command: graphedit
+modules:
+  - name: openjdk17
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk17/install.sh
+  - name: graphedit
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/bin /app/lib
+      - install -D bin/* /app/bin/
+      - install -D lib/* /app/lib/
+      - install -D icon/master.svg /app/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
+      - install -D .desktop /app/share/applications/dk.gtz.graphedit.Graphedit.desktop
+    sources:
+      - type: dir
+        path: graphedit/build/install/graphedit
+      - type: dir
+        path: graphedit/src/main/resources
+finish-args:
+  - --env=PATH=/app/jre/bin:/app/bin:/usr/bin
+  - --socket=fallback-x11
+
