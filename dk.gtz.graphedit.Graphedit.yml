@@ -10,19 +10,37 @@ modules:
     buildsystem: simple
     build-commands:
       - /usr/lib/sdk/openjdk17/install.sh
-  - name: graphedit
+  - name: gradle
     buildsystem: simple
     build-commands:
-      - mkdir -p /app/bin /app/lib
-      - install -D bin/* /app/bin/
-      - install -D lib/* /app/lib/
-      - install -D icon/master.svg /app/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
-      - install -D .desktop /app/share/applications/dk.gtz.graphedit.Graphedit.desktop
+      - mkdir -p /app/bin /app/share/gradle
+      - cp -a * /app/share/gradle/
+      - ls -lah /app/share/gradle
+      - ln -s /app/share/gradle/bin/gradle /app/bin/gradle
+    sources:
+      - type: archive
+        url: https://services.gradle.org/distributions/gradle-8.3-bin.zip
+        sha256: 591855b517fc635b9e04de1d05d5e76ada3f89f5fc76f87978d1b245b4f69225
+  - name: build
+    buildsystem: simple
+    build-commands:
+      - /app/bin/gradle installDist
     sources:
       - type: dir
-        path: graphedit/build/install/graphedit
-      - type: dir
-        path: graphedit/src/main/resources
+        path: .
+  # - name: graphedit
+  #   buildsystem: simple
+  #   build-commands:
+  #     - mkdir -p /app/bin /app/lib
+  #     - install -D bin/* /app/bin/
+  #     - install -D lib/* /app/lib/
+  #     - install -D icon/master.svg /app/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
+  #     - install -D .desktop /app/share/applications/dk.gtz.graphedit.Graphedit.desktop
+  #   sources:
+  #     - type: dir
+  #       path: graphedit/build/install/graphedit
+  #     - type: dir
+  #       path: graphedit/src/main/resources
 finish-args:
   - --env=PATH=/app/jre/bin:/app/bin:/usr/bin
   - --socket=fallback-x11
