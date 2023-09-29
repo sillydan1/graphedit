@@ -112,4 +112,12 @@ jobs:
         name: rpm
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.rpm
         retention-days: 1
+    - name: installDist
+      run: gradle installDist
+    - name: upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: bin
+        path: ${{ github.workspace }}/graphedit/build/install/graphedit/
+        retention-days: 1
 
