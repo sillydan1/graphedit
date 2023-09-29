@@ -85,11 +85,8 @@ public class WidthDragResizer {
         startX = event.getX();
         startWidth = region.getWidth();
         dragging = true;
-        // make sure that the minimum Width is set to the current Width once,
-        // setting a min Width that is smaller than the current Width will
-        // have no effect
         if (!initMinWidth) {
-            region.setMinWidth(region.getWidth());
+            region.setMinWidth(RESIZE_MARGIN);
             initMinWidth = true;
         }
     }

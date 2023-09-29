@@ -85,11 +85,8 @@ public class HeightDragResizer {
         startY = event.getScreenY();
         startHeight = region.getHeight();
         dragging = true;
-        // make sure that the minimum Height is set to the current Height once,
-        // setting a min Height that is smaller than the current Height will
-        // have no effect
         if (!initMinHeight) {
-            region.setMinHeight(region.getHeight());
+            region.setMinHeight(RESIZE_MARGIN);
             initMinHeight = true;
         }
     }
