@@ -116,31 +116,26 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     }
 
     private void onScrollingDrawPane(ScrollEvent event) {
-	// ctrl scroll to zoom
-	if(event.isControlDown()) {
-	    var centerX = (getWidth() * 0.5) - drawGroupTransform.getTx();
-	    var centerY = (getHeight() * 0.5) - drawGroupTransform.getTy();
-	    var adjustedCenterX = centerX / drawGroupTransform.getMxx();
-	    var adjustedCenterY = centerY / drawGroupTransform.getMyy();
-	    var zoomFactor = 1 - (event.getDeltaY() * 0.01f); // TODO: Consider having an adjustable scalar
-	    zoomDrawPane(zoomFactor, zoomFactor, adjustedCenterX, adjustedCenterY);
-	    return;
-	}
-
-	// Regular scroll
-	drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
+	if(event.isControlDown())
+	    zoomDrawPane(1 - (event.getDeltaY() * 0.01f)); // TODO: Consider having an adjustable scalar
+	else
+	    drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
     }
 
-    private void zoomDrawPane(double zoomFactorX, double zoomFactorY, double adjustedCenterX, double adjustedCenterY) {
-	drawGroupTransform.appendScale(zoomFactorX, zoomFactorY, adjustedCenterX, adjustedCenterY);
+    private void zoomDrawPane(double zoomFactor) {
+	zoomDrawPane(zoomFactor, zoomFactor);
     }
 
-    private void onZoomDrawPane(ZoomEvent event) {
+    private void zoomDrawPane(double zoomFactorX, double zoomFactorY) {
 	var centerX = (getWidth() * 0.5) - drawGroupTransform.getTx();
 	var centerY = (getHeight() * 0.5) - drawGroupTransform.getTy();
 	var adjustedCenterX = centerX / drawGroupTransform.getMxx();
 	var adjustedCenterY = centerY / drawGroupTransform.getMyy();
-	zoomDrawPane(event.getZoomFactor(), event.getZoomFactor(), adjustedCenterX, adjustedCenterY);
+	drawGroupTransform.appendScale(zoomFactorX, zoomFactorY, adjustedCenterX, adjustedCenterY);
+    }
+
+    private void onZoomDrawPane(ZoomEvent event) {
+	zoomDrawPane(event.getZoomFactor());
     }
 
     private Map<UUID,Node> initializeLocations() {
