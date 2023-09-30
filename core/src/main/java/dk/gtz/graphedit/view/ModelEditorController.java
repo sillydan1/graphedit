@@ -32,6 +32,7 @@ import javafx.scene.transform.Affine;
 
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
+    private double drawPaneDragStartX, drawPaneDragStartY;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
     private final ISyntaxFactory syntaxFactory;
@@ -85,6 +86,9 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
+	// TODO: make an abstraction called DeltaDragEvent or something
+	drawPane.setOnMousePressed(this::onPressingDrawPane);
+	drawPane.setOnMouseDragged(this::onDraggingDrawPane);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
@@ -94,6 +98,21 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
 	gridPane.toBack();
+    }
+
+    private void onPressingDrawPane(MouseEvent event) {
+	drawPaneDragStartX = event.getX();
+	drawPaneDragStartY = event.getY();
+    }
+
+    private void onDraggingDrawPane(MouseEvent event) {
+	if(!event.isSecondaryButtonDown()) // TODO: The button to press should be configurable
+	    return;
+	var dx = event.getX() - drawPaneDragStartX;
+	var dy = event.getY() - drawPaneDragStartY;
+	drawGroupTransform.appendTranslation(dx, dy);
+	drawPaneDragStartX = event.getX();
+	drawPaneDragStartY = event.getY();
     }
 
     private void onScrollingDrawPane(ScrollEvent event) {
