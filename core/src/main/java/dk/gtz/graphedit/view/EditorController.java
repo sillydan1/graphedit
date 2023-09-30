@@ -17,6 +17,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -44,6 +45,8 @@ public class EditorController {
     private MenuItem runTargetMenuItem;
     @FXML
     private Pane inspectorGroup;
+    @FXML
+    private Label statusBar;
     private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
 
@@ -62,6 +65,7 @@ public class EditorController {
 	var project = DI.get(ViewModelProject.class);
 	updateRunTargets();
 	project.runTargets().addListener((e,o,n) -> updateRunTargets());
+	statusBar.textProperty().bind(project.rootDirectory());
     }
 
     private void updateRunTargets() {
