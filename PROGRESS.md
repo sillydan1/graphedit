@@ -64,7 +64,7 @@
    - [x] /bin/graphedit > /bin/Graphedit
  - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [x] Runtargets are not serializing
-   - [ ] dont package /doc
+   - [x] dont package /doc
    - [x] Desktop icon not functioning on .dekstop file for linux
    - [x] Delete key doesnt work on unified tool (misunderstanding - it was the select tool, which is on purpose)
    - [x] Ctrl+N dialogue not autoappending .json (same with new project)
@@ -80,12 +80,13 @@
    - [x] modals should have titles
    - [x] modals are ugly - missing padding
    - [x] autoselect unified tool
-   - [ ] readme install steps
-   - [ ] CD (needs a pre-release for prototyping purposes)
-     - [ ] homebrew
-     - [ ] flatpak
-     - [ ] GNOME store?
-     - [ ] javadoc
+   - [x] readme install steps
+   - [x] homebrew
+   - [x] flatpak
+   - [x] GNOME store?
+   - [x] javadoc
+ - [ ] flathub (needs an actual binary release)
+ - [ ] CD (needs a pre-release for prototyping purposes)
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support

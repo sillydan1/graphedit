@@ -13,7 +13,7 @@
 ------
 
 ## Build
-The project is compiled using `gradle` but for the lazy ones we provide a simple `Makefile`:
+The project is compiled using `gradle` but for the we also provide a simple `Makefile` for basic usage:
 ```shell
 # Compile and start the editor
 make run
@@ -31,15 +31,15 @@ flatpak install sillydan1/graphedit/graphedit
 #### Ubuntu or Debian
 Download the `.deb` file from the latest github release
 ```shell
-wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.deb ~/Downloads/graphedit.deb
+wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.deb
 dpkg -i graphedit.deb
 ```
 
 #### RPM
 Download the `.rpm` file from the latest github release
 ```shell
-wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.rpm ~/Downloads/graphedit.rpm
-rpg -i ~/Downloads/graphedit.rpm
+wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.rpm
+rpg -i graphedit.rpm
 ```
 
 ### OSX
