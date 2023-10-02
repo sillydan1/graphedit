@@ -87,9 +87,11 @@ jobs:
       run: make linuxIcon
     - name: build
       run: gradle build
+    - name: build javadoc
+      run: gradle javadoc
     - name: jpackage
       run: gradle jpackage
-    - name: repackage to gzip
+    - name: repackage deb
       run: |
         cd graphedit/build/jpackage
         REPACKAGE_DIR=$(mktemp -d)
@@ -128,4 +130,24 @@ jobs:
         name: graphedit-bin-x86_64
         path: ${{ github.workspace }}/graphedit/build/install/graphedit/
         retention-days: 1
+    - name: log in to the container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: extract metadata (tags, labels) for docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: |
+          ghcr.io/${{ github.repository }}
+    - name: build and push docker images
+      uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+      with:
+        file: ./Dockerfile
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
 
