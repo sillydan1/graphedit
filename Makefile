@@ -46,7 +46,7 @@ linuxIcon:
 
 flatpak:
 	mkdir -p build-dir
-	flatpak-builder --force-clean build-dir dk.gtz.Graphedit.yml
+	flatpak-builder --force-clean build-dir dk.gtz.graphedit.Graphedit.yml
 
 # NOTE: if you wish to run with arguments, use gradlew run --args="arg1 arg2" instead of this makefile
 run: ${WRP}
