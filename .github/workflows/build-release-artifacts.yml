@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
     tags:
       - v*
 
@@ -104,10 +105,14 @@ jobs:
         ar -m -c -a sdsd "$DEB_NAME" debian-binary control.tar.xz data.tar.xz
         rm debian-binary control.tar.xz data.tar.xz control.tar.zst data.tar.zst
         dpkg-deb -R "$DEB_NAME" "$REPACKAGE_DIR"
-        rm -rf "$REPACKAGE_DIR/usr/lib/graphedit/"*.desktop "$REPACKAGE_DIR/usr/lib/graphedit/graphedit.png"
-        mkdir -p "$REPACKAGE_DIR/usr/share/application/" "$REPACKAGE_DIR/usr/share/icons/hicolor/scalable/apps/" "$REPACKAGE_DIR/usr/share/application/"
+        rm -rf $REPACKAGE_DIR/usr/lib/graphedit/*.desktop $REPACKAGE_DIR/usr/lib/graphedit/graphedit.png
+        mkdir -p "$REPACKAGE_DIR/usr/share/application/"
+        mkdir -p "$REPACKAGE_DIR/usr/share/icons/hicolor/scalable/apps/"
+        mkdir -p "$REPACKAGE_DIR/usr/share/application/"
         cp ${{ github.workspace }}/graphedit/src/main/resources/icon/master.svg $REPACKAGE_DIR/usr/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
-        cp ${{ github.workspace }}/graphedit/src/main/resources/.desktop $REPACKAGE_DIR/usr/lib/graphedit/graphedit-graphedit.desktop
+        cp ${{ github.workspace }}/graphedit/src/main/resources/.desktop $REPACKAGE_DIR/usr/share/application/dk.gtz.graphedit.Graphedit.desktop
+        cp ${{ github.workspace }}/graphedit/src/main/resources/debian/postinst $REPACKAGE_DIR/DEBIAN/postinst
+        cp ${{ github.workspace }}/graphedit/src/main/resources/debian/prerm $REPACKAGE_DIR/DEBIAN/prerm
         mkdir -p ${{ github.workspace }}/dist
         fakeroot dpkg-deb --build "$REPACKAGE_DIR" "${{ github.workspace }}/dist/$DEB_NAME"
     - name: upload artifacts

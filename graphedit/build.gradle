@@ -46,11 +46,10 @@ runtime {
         installerOptions += ['--description', 'The hackable graph editor']
         installerOptions += ['--copyright', 'Asger Gitz-Johansen']
         installerOptions += ['--license-file', 'LICENSE']
-
         if (currentOs.windows) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
         } else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', 'graphedit', '--linux-shortcut', '--install-dir', '/usr']
+            installerOptions += ['--linux-package-name', 'graphedit', '--linux-shortcut', '--install-dir', '/usr', '--linux-deb-maintainer', 'asger.gitz@hotmail.com']
         } else if (currentOs.macOsX) {
             installerOptions += ['--mac-package-name', 'Graphedit']
         }
