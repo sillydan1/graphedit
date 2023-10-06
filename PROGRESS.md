@@ -62,7 +62,7 @@
    - [x] dont install in /opt
    - [x] license
    - [x] /bin/graphedit > /bin/Graphedit
- - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
+ - [x] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [x] Runtargets are not serializing
    - [x] dont package /doc
    - [x] Desktop icon not functioning on .dekstop file for linux
@@ -85,10 +85,12 @@
    - [x] flatpak
    - [x] GNOME store?
    - [x] javadoc
- - [ ] flathub (needs an actual binary release)
  - [ ] CD (needs a pre-release for prototyping purposes)
+   - [ ] flathub (needs an actual binary release)
  - [ ] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
+ - [ ] Bugs Bugs Bugs
+  - [x] windows menubar not showing
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [ ] NTTA
