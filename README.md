@@ -21,12 +21,12 @@ make run
 
 ## Install
 ### Linux
-We provide `.deb` and `.rpm` packaging formats directly from the github releases, but you can also install via `flatpak`.
+We provide `.deb` and `.rpm` packaging formats directly from the github releases
 
-#### Flatpak
-```shell
-flatpak install sillydan1/graphedit/graphedit
-```
+<!-- #### Flatpak -->
+<!-- ```shell -->
+<!-- flatpak install sillydan1/graphedit/graphedit -->
+<!-- ``` -->
 
 #### Ubuntu or Debian
 Download the `.deb` file from the latest github release
