@@ -12,7 +12,7 @@ public class PlatformUtils {
      */
     public static boolean isSystemMenuBarSupported() {
 	if(isWindows())
-	    return true;
+	    return false;
 	if(isMac())
 	    return true;
 	if(isUnix())
