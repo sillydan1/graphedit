@@ -298,9 +298,9 @@ public class EditorActions {
             return returnValue;
         };
         var aboutNode = new VBox(
-            createText.run(BuildConfig.APP_NAME, Styles.TITLE_1),
+            createText.run("Graphedit", Styles.TITLE_1),
             createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
-            new Text("TODO: better description"));
+            new Text("")); // TODO: write a description about graphedit... or something
         openModal(aboutNode, "About");
     }
 
