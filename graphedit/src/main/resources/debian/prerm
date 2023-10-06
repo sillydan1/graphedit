@@ -21,7 +21,7 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        xdg-desktop-menu uninstall /usr/share/application/graphedit.desktop
+        xdg-desktop-menu uninstall /usr/share/application/dk.gtz.graphedit-Graphedit.desktop
     ;;
 
     failed-upgrade)

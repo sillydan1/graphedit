@@ -35,5 +35,5 @@ modules:
       - install -D graphedit-bin/bin/* /app/bin/
       - install -D graphedit-bin/lib/* /app/lib/
       - install -D icon/master.svg /app/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
-      - install -D dk.gtz.graphedit.Graphedit.desktop /app/share/applications/dk.gtz.graphedit.Graphedit.desktop
+      - install -D dk.gtz.graphedit-Graphedit.desktop /app/share/applications/dk.gtz.graphedit-Graphedit.desktop
 

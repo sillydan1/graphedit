@@ -19,7 +19,7 @@ set -e
 
 case "$1" in
     configure)
-        xdg-desktop-menu install /usr/share/application/graphedit.desktop
+        xdg-desktop-menu install /usr/share/application/dk.gtz.graphedit-Graphedit.desktop
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
