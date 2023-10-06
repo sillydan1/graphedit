@@ -47,7 +47,7 @@ After installing you may need to go into system settings > privacy settings and 
 ```shell
 brew install sillydan1/graphedit/graphedit
 ```
-or [download the .dmg](wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.dmg) directly from the latest github release.
+or [download the .dmg](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.dmg) directly from the latest github release.
 
 ### Windows
 Simply [Download the .msi](wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.msi) installer from the latest github release and run it.
