@@ -50,7 +50,7 @@ brew install sillydan1/graphedit/graphedit
 or [download the .dmg](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.dmg) directly from the latest github release.
 
 ### Windows
-Simply [Download the .msi](wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.msi) installer from the latest github release and run it.
+Simply [Download the .msi](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.msi) installer from the latest github release and run it.
 
 ## Showcase
 <div style="display: flex;" align="center">
