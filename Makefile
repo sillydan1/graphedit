@@ -44,6 +44,10 @@ winIcon:
 linuxIcon:
 	inkscape -o Graphedit/src/main/resources/icon/graphedit.png -w 512 -h 512 Graphedit/src/main/resources/icon/master.svg
 
+flatpak:
+	mkdir -p build-dir
+	flatpak-builder --force-clean build-dir dk.gtz.graphedit.Graphedit.yml
+
 # NOTE: if you wish to run with arguments, use gradlew run --args="arg1 arg2" instead of this makefile
 run: ${WRP}
 	${WRP} run --args="-v TRACE"

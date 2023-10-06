@@ -13,16 +13,44 @@
 ------
 
 ## Build
-The project is compiled using `gradle` but for the lazy ones we provide a simple `Makefile`:
+The project is compiled using `gradle` but for the we also provide a simple `Makefile` for basic usage:
 ```shell
 # Compile and start the editor
 make run
 ```
 
 ## Install
+### Linux
+We provide `.deb` and `.rpm` packaging formats directly from the github releases
+
+<!-- #### Flatpak -->
+<!-- ```shell -->
+<!-- flatpak install sillydan1/graphedit/graphedit -->
+<!-- ``` -->
+
+#### Ubuntu or Debian
+Download the `.deb` file from the latest github release
 ```shell
-# TODO: figure out how we are going to distribute this
+wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.deb
+dpkg -i graphedit.deb
 ```
+
+#### RPM
+Download the `.rpm` file from the latest github release
+```shell
+wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.rpm
+rpg -i graphedit.rpm
+```
+
+### OSX
+After installing you may need to go into system settings > privacy settings and allow the app to be run. Alternatively, you can follow [this](https://support.apple.com/en-lk/guide/mac-help/mchleab3a043/mac) guide.
+```shell
+brew install sillydan1/graphedit/graphedit
+```
+or [download the .dmg](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.dmg) directly from the latest github release.
+
+### Windows
+Simply [Download the .msi](wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.msi) installer from the latest github release and run it.
 
 ## Showcase
 <div style="display: flex;" align="center">

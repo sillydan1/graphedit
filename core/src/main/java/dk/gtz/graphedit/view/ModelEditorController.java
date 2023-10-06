@@ -32,6 +32,7 @@ import javafx.scene.transform.Affine;
 
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
+    private double drawPaneDragStartX, drawPaneDragStartY;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
     private final ISyntaxFactory syntaxFactory;
@@ -85,6 +86,9 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
+	// TODO: make an abstraction called DeltaDragEvent or something
+	drawPane.setOnMousePressed(this::onPressingDrawPane);
+	drawPane.setOnMouseDragged(this::onDraggingDrawPane);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
@@ -96,16 +100,42 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	gridPane.toBack();
     }
 
-    private void onScrollingDrawPane(ScrollEvent event) {
-	drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
+    private void onPressingDrawPane(MouseEvent event) {
+	drawPaneDragStartX = event.getX();
+	drawPaneDragStartY = event.getY();
     }
 
-    private void onZoomDrawPane(ZoomEvent event) {
+    private void onDraggingDrawPane(MouseEvent event) {
+	if(!event.isSecondaryButtonDown()) // TODO: The button to press should be configurable
+	    return;
+	var dx = event.getX() - drawPaneDragStartX;
+	var dy = event.getY() - drawPaneDragStartY;
+	drawGroupTransform.appendTranslation(dx, dy);
+	drawPaneDragStartX = event.getX();
+	drawPaneDragStartY = event.getY();
+    }
+
+    private void onScrollingDrawPane(ScrollEvent event) {
+	if(event.isControlDown())
+	    zoomDrawPane(1 - (event.getDeltaY() * 0.01f)); // TODO: Consider having an adjustable scalar
+	else
+	    drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
+    }
+
+    private void zoomDrawPane(double zoomFactor) {
+	zoomDrawPane(zoomFactor, zoomFactor);
+    }
+
+    private void zoomDrawPane(double zoomFactorX, double zoomFactorY) {
 	var centerX = (getWidth() * 0.5) - drawGroupTransform.getTx();
 	var centerY = (getHeight() * 0.5) - drawGroupTransform.getTy();
 	var adjustedCenterX = centerX / drawGroupTransform.getMxx();
 	var adjustedCenterY = centerY / drawGroupTransform.getMyy();
-	drawGroupTransform.appendScale(event.getZoomFactor(), event.getZoomFactor(), adjustedCenterX, adjustedCenterY);
+	drawGroupTransform.appendScale(zoomFactorX, zoomFactorY, adjustedCenterX, adjustedCenterY);
+    }
+
+    private void onZoomDrawPane(ZoomEvent event) {
+	zoomDrawPane(event.getZoomFactor());
     }
 
     private Map<UUID,Node> initializeLocations() {

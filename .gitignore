@@ -36,6 +36,12 @@ example.json
 # MacOS
 **/.DS_Store
 
+# packaging
+.flatpak-builder
+build-dir
+var
+metadata
+
 # never commit this file
 donotcommit.txt
 

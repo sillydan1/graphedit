@@ -1,0 +1,39 @@
+# flatpak configuration
+app-id: dk.gtz.graphedit.Graphedit
+runtime: org.freedesktop.Platform
+runtime-version: '22.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk17
+command: graphedit
+finish-args:
+  - --env=PATH=/app/jre/bin:/app/bin:/usr/bin  # So we can run the java17 runtime from /app/jre
+  - --socket=fallback-x11  # So we can display the GUI
+  - --filesystem=host  # So we can store and read model files
+  - --persist=path  # For the global graphedit.settings.json file
+only-arches:  # TODO: - aarch64 as well (do it with different sources)
+  - x86_64
+modules:
+  - name: openjdk17
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk17/install.sh
+  - name: graphedit
+    sources:
+      - type: dir
+        path: graphedit/src/main/resources
+      - type: archive
+        dest: graphedit-bin
+        strip-components: 0
+        only-arches:
+          - x86_64
+        url: https://github.com/sillydan1/graphedit/releases/download/latest/graphedit-bin-x86_64.zip
+        sha256: a8d107bc49bb28d8d1e4888f904e2a92fb68313414ac976379ca698b0319b977
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/bin /app/lib
+      - install -D graphedit-bin/bin/* /app/bin/
+      - install -D graphedit-bin/lib/* /app/lib/
+      - install -D icon/master.svg /app/share/icons/hicolor/scalable/apps/dk.gtz.graphedit.Graphedit.svg
+      - install -D dk.gtz.graphedit-Graphedit.desktop /app/share/applications/dk.gtz.graphedit-Graphedit.desktop
+
