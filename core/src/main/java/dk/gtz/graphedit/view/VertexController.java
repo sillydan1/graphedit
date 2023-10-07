@@ -39,10 +39,10 @@ public class VertexController extends StackPane {
 	initialize(selectedTool, graph, editorSettings);
     }
 
-    private void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
+    protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
 	this.graphic = initializeVertexRepresentation();
 	getChildren().add(graphic);
-	getChildren().add(initializeLabel());
+	addLabel();
 	initializeStyle();
 	initializeVertexEventHandlers(selectedTool, graph, editorSettings);
 	var pulseTimeline = createPulseTimeline(1.1, Duration.millis(300));
@@ -50,6 +50,10 @@ public class VertexController extends StackPane {
 	    pulseTimeline.playFromStart();
 	    this.requestFocus();
 	});
+    }
+
+    protected void addLabel() {
+	getChildren().add(initializeLabel());
     }
 
     protected Node initializeVertexRepresentation() {

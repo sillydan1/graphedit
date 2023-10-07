@@ -16,6 +16,11 @@ public interface ISyntaxFactory {
      */
     String getSyntaxName();
     /**
+     * Get the long-form description of the syntax.
+     * @return A possibly multiline string with a description of the syntax
+     */
+    String getSyntaxDescription();
+    /**
      * Create a new javafx vertex representation
      * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The viewmodel value of the new vertex representation
