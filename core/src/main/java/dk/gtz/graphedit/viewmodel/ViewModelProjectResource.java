@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.view.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;
@@ -28,8 +29,8 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
      * Constructs a new view model project resource based on the provided model project resource
      * @param projectResource the model project resource to base on
      */
-    public ViewModelProjectResource(ModelProjectResource projectResource) {
-	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax()));
+    public ViewModelProjectResource(ModelProjectResource projectResource, ISyntaxFactory syntaxFactory) {
+	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax(), syntaxFactory));
 	metadata.putAll(projectResource.metadata());
     }
 

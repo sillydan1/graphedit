@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.view.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
@@ -16,7 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class EditorTabPaneController {
-    private static Logger logger = LoggerFactory.getLogger(EditorTabPaneController.class);
     @FXML
     public TabPane tabpane;
     @FXML
@@ -54,7 +54,7 @@ public class EditorTabPaneController {
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
-		var editorController = new ModelEditorController(changedVal, DI.get(ISyntaxFactory.class));
+		var editorController = new ModelEditorController(changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
 		editorController.addFocusListener(() -> {

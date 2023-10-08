@@ -2,6 +2,7 @@ package dk.gtz.graphedit.view.events;
 
 import java.util.UUID;
 
+import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
@@ -16,6 +17,7 @@ public record EdgeMouseEvent(
 		UUID edgeId,
 		ViewModelEdge edge,
 		Affine viewportAffine,
+		ISyntaxFactory syntax,
 		ViewModelGraph graph,
 		ViewModelEditorSettings editorSettings) {}
 

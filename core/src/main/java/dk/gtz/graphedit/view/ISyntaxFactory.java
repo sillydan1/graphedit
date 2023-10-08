@@ -2,6 +2,8 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
+import dk.gtz.graphedit.model.ModelEdge;
+import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
@@ -28,6 +30,8 @@ public interface ISyntaxFactory {
      * @return The new vertex javafx representation
      */
     Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
+
+    ViewModelVertex createVertex(ModelVertex vertexValue);
     /**
      * Create a new javafx edge representation
      * @param edgeKey The primary key of the new edge representation
@@ -36,5 +40,7 @@ public interface ISyntaxFactory {
      * @return The new edge javafx representation
      */
     Node createEdge(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
+
+    ViewModelEdge createEdge(ModelEdge edgeValue);
 }
 

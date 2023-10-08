@@ -1,10 +1,17 @@
 package dk.gtz.graphedit.view;
 
+import java.util.Map;
+
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
+import dk.yalibs.yadi.DI;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
@@ -14,24 +21,41 @@ import javafx.stage.PopupWindow.AnchorLocation;
 public class ModelEditorToolbar extends ToolBar {
     private final IToolbox toolbox;
     private final ObjectProperty<ITool> selectedTool;
+    private final ViewModelProjectResource resource;
 
-    public ModelEditorToolbar(IToolbox toolbox, ObjectProperty<ITool> selectedTool) {
+    public ModelEditorToolbar(IToolbox toolbox, ObjectProperty<ITool> selectedTool, ViewModelProjectResource resource) {
 	this.toolbox = toolbox;
 	this.selectedTool = selectedTool;
+	this.resource = resource;
 	setupStyle();
 	setupContent();
     }
 
     private void setupStyle() {
-	setOrientation(Orientation.VERTICAL);
+	setOrientation(Orientation.HORIZONTAL);
     }
 
     private void setupContent() {
+	// Zoom / viewport stuff
+	if(resource.metadata().containsKey("graphedit_syntax"))
+	    addSyntaxSelector();
+	addSeparator();
 	for(var toolCategory : toolbox.getToolsByCategory().entrySet()) {
 	    for(var tool : toolCategory.getValue())
 		addButton(tool);
 	    addSeparator();
 	}
+    }
+
+    private void addSyntaxSelector() {
+	var factories = (Map<String,ISyntaxFactory>)DI.get("syntax_factories");
+	ObservableList<String> list = FXCollections.observableArrayList();
+	for(var factory : factories.entrySet())
+	    list.add(factory.getKey());
+	var cmb = new ComboBox<>(list);
+	cmb.getSelectionModel().select(resource.metadata().get("graphedit_syntax"));
+	getItems().add(cmb);
+	cmb.getSelectionModel().selectedItemProperty().addListener((e,o,n) -> resource.metadata().put("graphedit_syntax", n));
     }
 
     private void addButton(ITool tool) {
@@ -51,7 +75,7 @@ public class ModelEditorToolbar extends ToolBar {
     }
 
     private void addSeparator() {
-	getItems().add(new Separator(Orientation.HORIZONTAL));
+	getItems().add(new Separator(Orientation.VERTICAL));
     }
 }
 

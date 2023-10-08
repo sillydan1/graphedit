@@ -2,6 +2,7 @@ package dk.gtz.graphedit.viewmodel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -9,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.view.DemoSyntaxFactory;
+import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.view.util.MetadataUtils;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
@@ -65,7 +69,7 @@ public class FileBufferContainer implements IBufferContainer {
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserialize(b.toString());
-            open(filename, new ViewModelProjectResource(newModel));
+            open(filename, new ViewModelProjectResource(newModel, MetadataUtils.getSyntaxFactory(newModel.metadata())));
         } catch (SerializationException | FileNotFoundException e) {
             logger.error("not a proper model file {}", filename, e);
             logger.trace(e.getMessage());

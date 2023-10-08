@@ -36,13 +36,15 @@ public class EdgeController extends Group {
     private final Affine viewportAffine;
     private final Line line, lineArrowLeft, lineArrowRight;
     private final Line selectionHelperLine;
+    protected ISyntaxFactory syntaxFactory;
 
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
 	this.tracker = DI.get(MouseTracker.class);
 	this.resource = resource;
+	this.syntaxFactory = syntaxFactory;
 	this.line = initialize(selectedTool, editorSettings);
 	this.lineArrowLeft = initializeLeftArrow(line);
 	this.lineArrowRight = initializeRightArrow(line);
@@ -120,7 +122,7 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax(), editorSettings)));
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, resource.syntax(), editorSettings)));
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n) {
 		line.getStyleClass().add("stroke-selected");

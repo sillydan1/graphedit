@@ -2,9 +2,13 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
+import dk.gtz.graphedit.model.ModelEdge;
+import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
 
@@ -28,7 +32,8 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
 		creatorController.getViewportTransform(),
 		creatorController.getProjectResource().syntax(),
 		creatorController.getEditorSettings(),
-		toolbox.getSelectedTool());
+		toolbox.getSelectedTool(),
+		this);
     }
 
     @Override
@@ -38,7 +43,18 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
 		creatorController.getProjectResource(),
 		creatorController.getViewportTransform(),
 		creatorController.getEditorSettings(),
-		toolbox.getSelectedTool());
+		toolbox.getSelectedTool(),
+		this);
+    }
+
+    @Override
+    public ViewModelVertex createVertex(ModelVertex vertexValue) {
+	return new ViewModelVertex(vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+    }
+
+    @Override
+    public ViewModelEdge createEdge(ModelEdge edgeValue) {
+	return new ViewModelEdge(edgeValue);
     }
 }
 

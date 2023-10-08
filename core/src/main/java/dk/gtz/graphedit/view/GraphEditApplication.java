@@ -1,6 +1,8 @@
 package dk.gtz.graphedit.view;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
@@ -100,7 +102,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
 	var undoSystem = new ObservableStackUndoSystem();
 	DI.add(IUndoSystem.class, undoSystem);
-	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this
+	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this - This relates to https://github.com/sillydan1/graphedit/issues/1
 	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
@@ -135,7 +137,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupPreferences() {
-	DI.add(ISyntaxFactory.class, new DemoSyntaxFactory());
+	if(!DI.contains("syntax_factories"))
+	    DI.add("syntax_factories", new HashMap<String,ISyntaxFactory>());
+
+	var demoSyntaxFactory = new DemoSyntaxFactory();
+	// TODO: make a type wrapper instead of this insecure casting
+	((Map<String,ISyntaxFactory>)DI.get("syntax_factories")).putIfAbsent(demoSyntaxFactory.getSyntaxName(), demoSyntaxFactory);
 	var settings = DI.get(ViewModelEditorSettings.class);
 	onUseLightThemeChange(settings.useLightTheme().get());
         settings.useLightTheme().addListener((e,o,n) -> onUseLightThemeChange(n));

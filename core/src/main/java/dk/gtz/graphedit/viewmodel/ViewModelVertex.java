@@ -3,6 +3,9 @@ package dk.gtz.graphedit.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.InvalidationListener;
@@ -17,6 +20,7 @@ import javafx.beans.value.ObservableValue;
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
 public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, Property<ViewModelVertex> {
+    private Logger logger = LoggerFactory.getLogger(ViewModelVertex.class);
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;

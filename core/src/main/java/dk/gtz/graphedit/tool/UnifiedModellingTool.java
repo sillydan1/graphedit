@@ -92,7 +92,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     public void onKeyEvent(ViewportKeyEvent e) {
         if(edgeCreateTool.isCurrentlyCreatingEdge())
             edgeCreateTool.onKeyEvent(e);
-        if(e.event().getCode().equals(KeyCode.DELETE) || e.event().getCode().equals(KeyCode.BACK_SPACE)) {
+        if(e.event().getCode().equals(KeyCode.DELETE) || (e.event().getCode().equals(KeyCode.BACK_SPACE)) && e.event().isShortcutDown() && e.event().isShiftDown()) {
             for(var element : selectTool.getSelection()) {
                 if(element.selectable() instanceof ViewModelEdge edge)
                     edgeDeleteTool.delete(element.id(), edge, e.graph());

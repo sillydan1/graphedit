@@ -12,6 +12,7 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.view.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
@@ -35,7 +36,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private double drawPaneDragStartX, drawPaneDragStartY;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
-    private final ISyntaxFactory syntaxFactory;
+    private ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
@@ -60,6 +61,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	initializeViewport();
 	initializeToolbar();
 	initializeDrawGroup();
+	initializeMetadataEventHandlers();
 	initializeToolEventHandlers();
 	initializeVertexCollectionChangeHandlers();
 	initializeEdgeCollectionChangeHandlers();
@@ -72,15 +74,15 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeToolbar() {
 	var toolbox = DI.get(IToolbox.class);
-	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool());
-	setRight(toolbar);
+	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool(), resource);
+	setTop(toolbar);
     }
 
     private void initializeDrawGroup() {
 	drawGroup = new MapGroup<>();
 	drawGroupTransform = new Affine();
 	drawGroup.addChildren(initializeEdges());
-	drawGroup.addChildren(initializeLocations());
+	drawGroup.addChildren(initializeVertices());
 	drawGroup.getTransforms().add(drawGroupTransform);
 
 	drawPane = new Pane(drawGroup.getGroup());
@@ -138,7 +140,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	zoomDrawPane(event.getZoomFactor());
     }
 
-    private Map<UUID,Node> initializeLocations() {
+    private Map<UUID,Node> initializeVertices() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet()) {
 	    nodes.put(vertex.getKey(), syntaxFactory.createVertex(vertex.getKey(), vertex.getValue(), this));
@@ -172,10 +174,22 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	return nodes;
     }
 
+    private void initializeMetadataEventHandlers() {
+	resource.metadata().addListener((MapChangeListener<String,String>)e -> {
+	    var changedKey = e.getKey();
+	    switch(changedKey) {
+		case "graphedit_syntax":
+		    this.syntaxFactory = MetadataUtils.getSyntaxFactory(resource.metadata(), syntaxFactory);
+		    break;
+		default: break;
+	    }
+	});
+    }
+
     private void initializeToolEventHandlers() {
 	var toolbox = DI.get(IToolbox.class);
-	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, resource.syntax(), settings)));
-	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
+	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings)));
+	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings))));
     }
 
     private void initializeVertexCollectionChangeHandlers() {

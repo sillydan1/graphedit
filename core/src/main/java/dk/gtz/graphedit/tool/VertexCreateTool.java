@@ -8,12 +8,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
-import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
-import dk.gtz.graphedit.viewmodel.ViewModelVertex;
-import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
@@ -55,13 +54,12 @@ public class VertexCreateTool extends AbstractBaseTool {
             var point = new ViewModelPoint(posX, posY);
             if(e.editorSettings().gridSnap().get())
                 point.snapToGrid(e.editorSettings());
-            createCircleVertex(point, e.graph());
+            createCircleVertex(point, e.graph(), e.syntax());
         }
     }
 
-    // TODO: This should be an injected factory, so you can create different kinds of vertex create tools
-    public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph) {
-        var vertex = new ViewModelVertex(point, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+    public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph, ISyntaxFactory syntaxFactory) {
+        var vertex = syntaxFactory.createVertex(new ModelVertex(point.toModel()));
         var id = UUID.randomUUID();
         graph.vertices().put(id, vertex);
         undoSystem.push(new Undoable("vertex create action",
