@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelGraph;
-import dk.gtz.graphedit.syntaxes.text.viewmodel.ViewModelTextVertex;
 import dk.gtz.graphedit.view.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
@@ -25,7 +24,7 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph implements Property<ViewModelGraph> {
-	private Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
+    private Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     private StringProperty declarations;
     private MapProperty<UUID,ViewModelVertex> vertices;
     private MapProperty<UUID,ViewModelEdge> edges;
@@ -72,6 +71,10 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
                 edges.get().entrySet().stream().collect(Collectors.toMap(
                         e -> e.getKey(),
                         e -> e.getValue().toModel())));
+    }
+
+    public boolean isEmpty() {
+        return declarations.isEmpty().get() && vertices.isEmpty() && edges.isEmpty();
     }
 
     @Override

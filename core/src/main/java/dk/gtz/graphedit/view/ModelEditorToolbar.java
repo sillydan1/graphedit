@@ -2,6 +2,9 @@ package dk.gtz.graphedit.view;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
@@ -19,6 +22,7 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.PopupWindow.AnchorLocation;
 
 public class ModelEditorToolbar extends ToolBar {
+    private Logger logger = LoggerFactory.getLogger(ModelEditorToolbar.class);
     private final IToolbox toolbox;
     private final ObjectProperty<ITool> selectedTool;
     private final ViewModelProjectResource resource;
@@ -55,7 +59,22 @@ public class ModelEditorToolbar extends ToolBar {
 	var cmb = new ComboBox<>(list);
 	cmb.getSelectionModel().select(resource.metadata().get("graphedit_syntax"));
 	getItems().add(cmb);
-	cmb.getSelectionModel().selectedItemProperty().addListener((e,o,n) -> resource.metadata().put("graphedit_syntax", n));
+	var listener = new VetoChangeListener<String>(cmb.getSelectionModel()) {
+	    @Override
+	    protected boolean isInvalidChange(String oldValue, String newValue) {
+		if(!resource.syntax().isEmpty()) {
+		    logger.warn("Can't change syntax on a non-empty graph. Create a new one or delete all syntactic elements in this one");
+		    return true;
+		}
+		return false;
+	    }
+
+	    @Override
+	    protected void onChanged(String oldValue, String newValue) {
+		resource.metadata().put("graphedit_syntax", newValue);
+	    }
+	};
+	cmb.getSelectionModel().selectedItemProperty().addListener(listener);
     }
 
     private void addButton(ITool tool) {
