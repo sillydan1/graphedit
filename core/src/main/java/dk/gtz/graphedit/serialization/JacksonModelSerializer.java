@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
@@ -35,6 +36,8 @@ public class JacksonModelSerializer implements IModelSerializer {
 	    .allowIfSubType("dk.gtz.graphedit")
 	    .build();
 	om.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+	om.enable(SerializationFeature.INDENT_OUTPUT);
+	om.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
 	return om;
     }
 
