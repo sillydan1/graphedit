@@ -6,7 +6,7 @@
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
     fx:controller="dk.gtz.graphedit.view.InspectorController">
-<ScrollPane fitToWidth="true">
+<ScrollPane fx:id="scrollPane" fitToWidth="true">
     <VBox fx:id="propertiesContainer"/>
 </ScrollPane>
 </StackPane>

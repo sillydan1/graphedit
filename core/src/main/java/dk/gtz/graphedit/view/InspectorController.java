@@ -16,16 +16,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
  * The javafx controller for the syntax property inspector panel
  */
-public class InspectorController {
+public class InspectorController extends StackPane {
     @FXML
     private VBox propertiesContainer;
+    @FXML
+    private ScrollPane scrollPane;
     private final ObservableList<ViewModelSelection> selectedElements;
 
     public InspectorController() {
@@ -36,6 +40,7 @@ public class InspectorController {
     private void initialize() {
 	propertiesContainer.setSpacing(5);
 	propertiesContainer.setPadding(new Insets(10));
+	scrollPane.setContent(propertiesContainer);
 	addAllSelected();
 	initializeSelectionEventHandlers();
     }
