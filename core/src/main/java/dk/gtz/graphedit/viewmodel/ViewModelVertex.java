@@ -114,9 +114,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
 		new InspectableProperty("Position X", position.getXProperty()),
 		new InspectableProperty("Position Y", position.getYProperty()),
 		new InspectableProperty("Shape Width", shape.widthProperty()),
-		new InspectableProperty("Shape Height", shape.heightProperty()),
-		new InspectableProperty("Shape Scale X", shape.scaleXProperty()),
-		new InspectableProperty("Shape Scale Y", shape.scaleYProperty()));
+		new InspectableProperty("Shape Height", shape.heightProperty()));
     }
 
     @Override
@@ -131,7 +129,6 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
 
     @Override
     public void addListener(ChangeListener<? super ViewModelVertex> listener) {
-	// TODO: reconsider if the shape should be observable too
 	position.addListener((e,o,n) -> listener.changed(this,this,this));
     }
 
