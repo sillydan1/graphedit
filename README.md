@@ -13,11 +13,14 @@
 ------
 
 ## Build
-The project is compiled using `gradle` but for the we also provide a simple `Makefile` for basic usage:
+The project is compiled using `gradle`:
 ```shell
+# Just build the app
+gradle build
 # Compile and start the editor
-make run
+gradle run
 ```
+If you open the project in an editor and the class `BuildConfig` doesn't exist, simply running `gradle build` should autogenerate the class.
 
 ## Install
 ### Linux
