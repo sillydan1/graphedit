@@ -87,12 +87,14 @@
    - [x] javadoc
  - [ ] CD (needs a pre-release for prototyping purposes)
    - [ ] flathub (needs an actual binary release)
- - [ ] gitignored Project cache, such as what files did you have open last etc.
+ - [x] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
  - [ ] Bugs Bugs Bugs
   - [x] windows menubar not showing
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
+   - [x] Simple Text
+   - [ ] LTS
    - [ ] NTTA
    - [ ] HAWK
    - [ ] P/N
@@ -113,13 +115,3 @@
    - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
  - [ ] Release `v2.0.0`
 
- ```sh
-# (alpine)
-apk add dpkg rpm gradle fakeroot git binutils gcc g++
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
-# (gradle:jammy)
-apt install rpm dpkg dpkg-dev binutils git fakeroot
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
- ```
