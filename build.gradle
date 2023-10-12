@@ -3,7 +3,20 @@ plugins {
     id 'com.github.gmazzo.buildconfig' version '4.1.2';
 }
 
+def isGitInstalled = { ->
+    try {
+        def result = project.exec {
+            commandLine 'git', '--version'
+        }
+        return result.exitValue() == 0;
+    } catch (Exception e) {
+        return false;
+    }
+}
+
 def gitCommitSha = { ->
+    if(!isGitInstalled())
+        return "";
     def stdout = new ByteArrayOutputStream();
     exec {
         commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8';
@@ -13,6 +26,8 @@ def gitCommitSha = { ->
 }
 
 def gitCommitShaLong = { ->
+    if(!isGitInstalled())
+        return "";
     def stdout = new ByteArrayOutputStream();
     exec {
         commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40';
