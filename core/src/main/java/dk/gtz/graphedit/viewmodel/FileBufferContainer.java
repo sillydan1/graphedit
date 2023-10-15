@@ -2,7 +2,6 @@ package dk.gtz.graphedit.viewmodel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -10,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
-import dk.gtz.graphedit.view.DemoSyntaxFactory;
-import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.util.MetadataUtils;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;

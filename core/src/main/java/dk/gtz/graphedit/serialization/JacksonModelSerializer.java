@@ -3,8 +3,8 @@ package dk.gtz.graphedit.serialization;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -14,6 +14,7 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.view.util.MetadataUtils;
 
 public class JacksonModelSerializer implements IModelSerializer {
     private final ObjectMapper objectMapper;
@@ -23,7 +24,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     public ObjectMapper getMapper() {
-	var om = new ObjectMapper();
+	var om = new ObjectMapper(); // TODO: https://www.baeldung.com/jackson-yaml is better for git-managed projects
 	om.registerModule(new Jdk8Module());
 	var ptv = BasicPolymorphicTypeValidator.builder()
 	    // allow collection types
@@ -44,7 +45,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public String serialize(ModelProject model) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(model);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -53,7 +54,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public String serialize(ModelProjectResource model) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(model);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -62,7 +63,12 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
 	try {
-	    return objectMapper.readValue(serializedContent, ModelProjectResource.class);
+	    TreeNode node = objectMapper.readTree(serializedContent);
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata"));
+	    var migrater = factory.getMigrater();
+	    if(migrater.isPresent())
+		node = migrater.get().migrate(node, objectMapper);
+	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -71,7 +77,12 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public ModelProjectResource deserialize(File file) throws SerializationException, IOException {
 	try {
-	    return objectMapper.readValue(file, ModelProjectResource.class);
+	    TreeNode node = objectMapper.readTree(file);
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata"));
+	    var migrater = factory.getMigrater();
+	    if(migrater.isPresent())
+		node = migrater.get().migrate(node, objectMapper);
+	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -103,7 +114,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public String serializeEditorSettings(ModelEditorSettings settings) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(settings);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(settings);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}

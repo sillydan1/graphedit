@@ -185,7 +185,7 @@ public class EditorActions {
      */
     public static void openProject(File projectPath) {
         try {
-            logger.trace("loading new project {}", projectPath.getAbsolutePath().toString());
+            logger.trace("loading project {}", projectPath.getAbsolutePath().toString());
             var serializer = DI.get(IModelSerializer.class);
             serializer.deserializeProject(projectPath);
             var settings = DI.get(ViewModelEditorSettings.class);

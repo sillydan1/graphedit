@@ -1,9 +1,12 @@
 package dk.gtz.graphedit.view;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import dk.gtz.graphedit.model.DemoSyntaxMigrater;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
@@ -21,7 +24,9 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     @Override
     public String getSyntaxDescription() {
 	return """
-	    A very basic syntax not meant for actual projects.
+	    A very basic syntax for demonstration purposes
+
+	    not meant for actual projects.
 	    """;
     }
 
@@ -55,6 +60,11 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     @Override
     public ViewModelEdge createEdge(ModelEdge edgeValue) {
 	return new ViewModelEdge(edgeValue);
+    }
+
+    @Override
+    public Optional<ISyntaxMigrater> getMigrater() {
+	return Optional.of(new DemoSyntaxMigrater());
     }
 }
 

@@ -111,15 +111,17 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void loadProject() throws Exception {
-	var settings = DI.get(ViewModelEditorSettings.class);
-	var projectFilePath = Path.of(settings.lastOpenedProject().get());
-	if(!projectFilePath.toFile().exists()) {
-	    logger.info("not a valid project file path, will load temp project {}", projectFilePath.toString());
+	try {
+	    var settings = DI.get(ViewModelEditorSettings.class);
+	    var projectFilePath = Path.of(settings.lastOpenedProject().get());
+	    if(!projectFilePath.toFile().exists())
+		throw new Exception("not a valid project file path, will load temp project " + projectFilePath.toString());
+	    var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
+	    DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
+	} catch(Exception e) {
+	    logger.error(e.getMessage(), e);
 	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
-	    return;
 	}
-	var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
-	DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
     }
 
     private void setupToolbox() {

@@ -1,9 +1,11 @@
 package dk.gtz.graphedit.syntaxes.text;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.syntaxes.text.view.TextVertexController;
 import dk.gtz.graphedit.syntaxes.text.viewmodel.ViewModelTextVertex;
 import dk.gtz.graphedit.tool.IToolbox;
@@ -60,6 +62,11 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	@Override
 	public ViewModelEdge createEdge(ModelEdge edgeValue) {
 		return new ViewModelEdge(edgeValue);
+	}
+
+	@Override
+	public Optional<ISyntaxMigrater> getMigrater() {
+		return Optional.empty();
 	}
 }
 

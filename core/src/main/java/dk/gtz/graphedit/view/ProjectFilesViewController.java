@@ -324,7 +324,7 @@ public class ProjectFilesViewController {
 		logger.error("file already exists");
 		return;
 	    }
-	    var model =createNewModel(PlatformUtils.removeFileExtension(newFilePath.getFileName().toString()));
+	    var model = createNewModel(PlatformUtils.removeFileExtension(newFilePath.getFileName().toString()));
 	    var serializedModel = DI.get(IModelSerializer.class).serialize(model);
 	    Files.write(newFilePath, serializedModel.getBytes());
 	    Toast.success("created file %s".formatted(newFilePath.toString()));
