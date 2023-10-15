@@ -4,6 +4,8 @@ import java.util.UUID;
 
 /**
  * An edge from some source to some target. May connect any syntactic element
+ *
+ * Can be overridden with custom model data if needed.
  */
 public class ModelEdge {
     public UUID source;
