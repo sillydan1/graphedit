@@ -89,8 +89,8 @@
    - [ ] flathub (needs an actual binary release)
  - [x] gitignored Project cache, such as what files did you have open last etc.
  - [ ] Custom keybinds
- - [ ] Bugs Bugs Bugs
-  - [x] windows menubar not showing
+ - [x] windows menubar not showing
+ - [x] Migraters
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [x] Simple Text
@@ -99,6 +99,7 @@
    - [ ] HAWK
    - [ ] P/N
    - [ ] TIOA 
+ - [ ] Fix TODOs
  - [ ] Release `v1.1.0
  - [ ] Trace-traverser & specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
