@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
+import dk.gtz.graphedit.view.util.MetadataUtils;
 
 public class DemoSyntaxMigrater implements ISyntaxMigrater {
     private final Logger logger = LoggerFactory.getLogger(DemoSyntaxMigrater.class);
@@ -17,11 +18,15 @@ public class DemoSyntaxMigrater implements ISyntaxMigrater {
         return "v1.0.0";
     }
 
-	@Override
-	public TreeNode migrate(TreeNode input, ObjectMapper objectMapper) {
+    @Override
+    public TreeNode migrate(TreeNode input, ObjectMapper objectMapper) {
         var metadata = (ObjectNode)input.get("metadata").get(1);
-        var metadataThing = metadata.get("graphedit_latest_migrater_version");
-        if(metadataThing != null && metadataThing.asText().equals(getMigraterVersion()))
+        var factory = MetadataUtils.getSyntaxFactory(metadata);
+        if(!metadata.get("graphedit_syntax").asText().equals(factory.getSyntaxName()))
+            metadata.put("graphedit_syntax", factory.getSyntaxName());
+
+        var migraterVersion = metadata.get("graphedit_latest_migrater_version");
+        if(migraterVersion != null && migraterVersion.asText().equals(getMigraterVersion()))
             return input;
 
         logger.trace("Migrating vertices");
@@ -65,6 +70,6 @@ public class DemoSyntaxMigrater implements ISyntaxMigrater {
         }
         metadata.put("graphedit_latest_migrater_version", getMigraterVersion());
         return input;
-	}
+    }
 }
 

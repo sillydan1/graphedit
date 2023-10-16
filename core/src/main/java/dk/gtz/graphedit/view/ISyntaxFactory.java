@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.view;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,11 +20,20 @@ public interface ISyntaxFactory {
      * @return The name-string of the syntax
      */
     String getSyntaxName();
+
+    /**
+     * Get a list of names that this syntax has been previously known as.
+     * This is useful if you want to rename your syntax because of name clashes.
+     * @return An unmodifiable list of names
+     */
+    List<String> getLegacyNames();
+
     /**
      * Get the long-form description of the syntax.
      * @return A possibly multiline string with a description of the syntax
      */
     String getSyntaxDescription();
+
     /**
      * Create a new javafx vertex representation
      * @param vertexKey The primary key of the new vertex representation

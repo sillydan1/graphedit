@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.syntaxes.text;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,8 +19,14 @@ import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
 
 public class TextSyntaxFactory implements ISyntaxFactory {
-	@Override public String getSyntaxName() {
-		return "text";
+	@Override
+	public String getSyntaxName() {
+		return "Simple";
+	}
+
+	@Override
+	public List<String> getLegacyNames() {
+		return List.of("text");
 	}
 
 	@Override

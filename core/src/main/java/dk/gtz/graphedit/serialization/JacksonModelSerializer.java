@@ -64,7 +64,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
 	try {
 	    TreeNode node = objectMapper.readTree(serializedContent);
-	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata"));
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
 	    var migrater = factory.getMigrater();
 	    if(migrater.isPresent())
 		node = migrater.get().migrate(node, objectMapper);
@@ -78,7 +78,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     public ModelProjectResource deserialize(File file) throws SerializationException, IOException {
 	try {
 	    TreeNode node = objectMapper.readTree(file);
-	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata"));
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
 	    var migrater = factory.getMigrater();
 	    if(migrater.isPresent())
 		node = migrater.get().migrate(node, objectMapper);

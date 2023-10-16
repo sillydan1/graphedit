@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.view;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +19,12 @@ import javafx.scene.Node;
 public class DemoSyntaxFactory implements ISyntaxFactory {
     @Override
     public String getSyntaxName() {
-	return "demo syntax";
+	return "Demo";
+    }
+
+    @Override
+    public List<String> getLegacyNames() {
+	return List.of("demo syntax");
     }
 
     @Override
