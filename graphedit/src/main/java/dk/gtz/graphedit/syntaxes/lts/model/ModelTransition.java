@@ -5,7 +5,7 @@ import java.util.UUID;
 import dk.gtz.graphedit.model.ModelEdge;
 
 public class ModelTransition extends ModelEdge {
-    private String action;
+    public String action;
 
     public String action() {
         return action;

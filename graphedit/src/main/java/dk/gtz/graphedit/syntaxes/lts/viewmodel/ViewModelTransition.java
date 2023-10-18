@@ -3,6 +3,9 @@ package dk.gtz.graphedit.syntaxes.lts.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.syntaxes.lts.model.ModelTransition;
 import dk.gtz.graphedit.viewmodel.ISearchable;
@@ -16,21 +19,30 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 public class ViewModelTransition extends ViewModelEdge implements ISearchable {
-    private StringProperty action;
+	private final Logger logger = LoggerFactory.getLogger(ViewModelTransition.class);
+	private StringProperty action;
 
-    public StringProperty action() {
-        return action;
-    }
-
-    public ViewModelTransition(ModelEdge edge) {
-		super(edge);
-        this.action = new SimpleStringProperty("tau");
+	public StringProperty action() {
+		return action;
 	}
 
-    public ViewModelTransition(ModelTransition edge) {
+	public ViewModelTransition(ModelEdge edge) {
 		super(edge);
-        this.action = new SimpleStringProperty(edge.action());
-    }
+		this.action = new SimpleStringProperty("tau");
+		if(edge instanceof ModelTransition tedge)
+			this.action.set(tedge.action());
+	}
+
+	public ViewModelTransition(ModelTransition edge) {
+		super(edge);
+		logger.info(edge.action());
+		this.action = new SimpleStringProperty(edge.action());
+	}
+
+	public ViewModelTransition(ViewModelEdge edge) {
+		super(edge.source(), edge.target());
+		this.action = new SimpleStringProperty("tau");
+	}
 
 	/**
 	 * {@inheritDoc}

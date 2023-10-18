@@ -18,19 +18,26 @@ import javafx.beans.value.ObservableValue;
 public class ViewModelState extends ViewModelVertex implements ISearchable {
 	private final StringProperty name;
 
-    public StringProperty name() {
-        return name;
-    }
-
-    public ViewModelState(ModelVertex vertex) {
-		super(vertex);
-        name = new SimpleStringProperty("");
+	public StringProperty name() {
+		return name;
 	}
 
-    public ViewModelState(ModelState vertex) {
+	public ViewModelState(ModelVertex vertex) {
 		super(vertex);
-        name = new SimpleStringProperty(vertex.name());
-    }
+		name = new SimpleStringProperty("");
+		if(vertex instanceof ModelState tvertex)
+			this.name.set(tvertex.name());
+	}
+
+	public ViewModelState(ModelState vertex) {
+		super(vertex);
+		name = new SimpleStringProperty(vertex.name());
+	}
+
+	public ViewModelState(ViewModelVertex vertex) {
+		super(vertex.position(), vertex.shape());
+		name = new SimpleStringProperty("");
+	}
 
 	/**
 	 * {@inheritDoc}

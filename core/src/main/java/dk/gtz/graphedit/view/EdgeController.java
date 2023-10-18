@@ -29,13 +29,13 @@ import javafx.scene.transform.Rotate;
 public class EdgeController extends Group {
     private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
     private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
-    private final MouseTracker tracker;
-    private final UUID edgeKey;
-    private final ViewModelEdge edgeValue;
-    private final ViewModelProjectResource resource;
-    private final Affine viewportAffine;
-    private final Line line, lineArrowLeft, lineArrowRight;
-    private final Line selectionHelperLine;
+    protected final MouseTracker tracker;
+    protected final UUID edgeKey;
+    protected final ViewModelEdge edgeValue;
+    protected final ViewModelProjectResource resource;
+    protected final Affine viewportAffine;
+    protected final Line line, lineArrowLeft, lineArrowRight;
+    protected final Line selectionHelperLine;
     protected ISyntaxFactory syntaxFactory;
 
     public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
