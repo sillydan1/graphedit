@@ -224,6 +224,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		    this.focus();
 		});
 		drawGroup.addChild(c.getKey(), syntaxFactory.createEdge(c.getKey(), c.getValueAdded(), this));
+		drawGroup.getChild(c.getKey()).toBack();
 	    }
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
