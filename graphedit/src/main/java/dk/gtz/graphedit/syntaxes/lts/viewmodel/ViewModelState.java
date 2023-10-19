@@ -70,7 +70,7 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 
 	@Override
 	public ModelVertex toModel() {
-		return new ModelState(position().toModel(), name.getValueSafe());
+		return new ModelState(position().toModel(), name.getValueSafe(), initial.get());
 	}
 
 	@Override
