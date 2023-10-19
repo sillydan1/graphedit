@@ -112,7 +112,7 @@ public class TextVertexController extends VertexController {
 	vertexValue.shape().widthProperty().unbind();
 	vertexValue.shape().heightProperty().unbind();
 	vertexValue.shape().widthProperty().set(graphic.getRadius());
-	vertexValue.shape().widthProperty().set(graphic.getRadius());
+	vertexValue.shape().heightProperty().set(graphic.getRadius());
     }
 
     private void setRectangleGraphic() {
@@ -124,8 +124,8 @@ public class TextVertexController extends VertexController {
 	vertexValue.shape().shapeType().set(ViewModelShapeType.RECTANGLE);
 	vertexValue.shape().widthProperty().unbind();
 	vertexValue.shape().heightProperty().unbind();
-	vertexValue.shape().widthProperty().bind(rectangleGraphic.widthProperty().divide(2));
-	vertexValue.shape().heightProperty().bind(rectangleGraphic.heightProperty().divide(2));
+	vertexValue.shape().widthProperty().bind(rectangleGraphic.widthProperty());
+	vertexValue.shape().heightProperty().bind(rectangleGraphic.heightProperty());
     }
 }
 

@@ -35,8 +35,8 @@ public class StateController extends VertexController {
         this.rectangleGraphic = createRectangleGraphic();
         initializeEventHandlers();
         resizeRectangle(vertex.name().get());
-        setRectangleGraphic();
         getChildren().add(graphicsStack);
+        setRectangleGraphic();
     }
 
     private void initializeEventHandlers() {
@@ -86,10 +86,8 @@ public class StateController extends VertexController {
         resizeRectangle(vertex.name().get());
 
         vertexValue.shape().shapeType().set(ViewModelShapeType.RECTANGLE);
-        vertexValue.shape().widthProperty().unbind();
-        vertexValue.shape().heightProperty().unbind();
-        vertexValue.shape().widthProperty().bind(rectangleGraphic.widthProperty().divide(2));
-        vertexValue.shape().heightProperty().bind(rectangleGraphic.heightProperty().divide(2));
+        vertexValue.shape().widthProperty().bind(rectangleGraphic.widthProperty());
+        vertexValue.shape().heightProperty().bind(rectangleGraphic.heightProperty());
     }
 
     @Override
