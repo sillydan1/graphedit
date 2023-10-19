@@ -94,7 +94,7 @@
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [x] Simple Text
-   - [ ] LTS
+   - [x] LTS
    - [ ] NTTA
    - [ ] HAWK
    - [ ] P/N

@@ -26,6 +26,7 @@ public class StateController extends VertexController {
     private StackPane graphicsStack;
     private Label label;
     private Rectangle rectangleGraphic;
+    private Rectangle outerRectangleGraphic;
 
     public StateController(UUID vertexKey, ViewModelState vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
         super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
@@ -33,6 +34,8 @@ public class StateController extends VertexController {
         this.label = createLabelGraphic();
         this.graphicsStack = new StackPane();
         this.rectangleGraphic = createRectangleGraphic();
+        this.outerRectangleGraphic = createRectangleGraphic();
+        outerRectangleGraphic.visibleProperty().bind(vertex.initial());
         initializeEventHandlers();
         resizeRectangle(vertex.name().get());
         getChildren().add(graphicsStack);
@@ -41,10 +44,13 @@ public class StateController extends VertexController {
 
     private void initializeEventHandlers() {
         vertexValue.getIsSelected().addListener((e,o,n) -> {
-            if(n)
+            if(n) {
                 rectangleGraphic.getStyleClass().add("stroke-selected");
-            else
+                outerRectangleGraphic.getStyleClass().add("stroke-selected");
+            } else {
                 rectangleGraphic.getStyleClass().remove("stroke-selected");
+                outerRectangleGraphic.getStyleClass().remove("stroke-selected");
+            }
         });
     }
 
@@ -77,10 +83,13 @@ public class StateController extends VertexController {
         var wpadding = 18;
         rectangleGraphic.setHeight(height + hpadding);
         rectangleGraphic.setWidth(width + wpadding);
+        outerRectangleGraphic.setHeight(height + (hpadding * 1.5));
+        outerRectangleGraphic.setWidth(width + (wpadding * 1.5));
     }
 
     private void setRectangleGraphic() {
         graphicsStack.getChildren().clear();
+        graphicsStack.getChildren().add(outerRectangleGraphic);
         graphicsStack.getChildren().add(rectangleGraphic);
         graphicsStack.getChildren().add(label);
         resizeRectangle(vertex.name().get());

@@ -9,7 +9,9 @@ import dk.gtz.graphedit.viewmodel.ISearchable;
 import dk.gtz.graphedit.viewmodel.InspectableProperty;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,26 +19,36 @@ import javafx.beans.value.ObservableValue;
 
 public class ViewModelState extends ViewModelVertex implements ISearchable {
 	private final StringProperty name;
+	private final BooleanProperty initial;
 
 	public StringProperty name() {
 		return name;
 	}
 
+	public BooleanProperty initial() {
+		return initial;
+	}
+
 	public ViewModelState(ModelVertex vertex) {
 		super(vertex);
 		name = new SimpleStringProperty("");
-		if(vertex instanceof ModelState tvertex)
+		initial = new SimpleBooleanProperty(false);
+		if(vertex instanceof ModelState tvertex) {
 			this.name.set(tvertex.name());
+			this.initial.set(tvertex.isInitial());
+		}
 	}
 
 	public ViewModelState(ModelState vertex) {
 		super(vertex);
 		name = new SimpleStringProperty(vertex.name());
+		initial = new SimpleBooleanProperty(vertex.isInitial());
 	}
 
 	public ViewModelState(ViewModelVertex vertex) {
 		super(vertex.position(), vertex.shape());
 		name = new SimpleStringProperty("");
+		initial = new SimpleBooleanProperty(false);
 	}
 
 	/**
@@ -46,6 +58,7 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 	@Override
 	public List<InspectableProperty> getInspectableObjects() {
 		var inspectables = new ArrayList<>(super.getInspectableObjects());
+		inspectables.add(new InspectableProperty("Initial", initial));
 		inspectables.add(new InspectableProperty("Label", name));
 		return inspectables;
 	}
