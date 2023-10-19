@@ -113,7 +113,7 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 
 	@Override
 	public boolean isBound() {
-		return super.isBound() && text.isBound();
+		return super.isBound() || text.isBound();
 	}
 
 	@Override

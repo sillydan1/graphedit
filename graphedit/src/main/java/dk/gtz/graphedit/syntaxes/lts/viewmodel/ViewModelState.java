@@ -65,7 +65,10 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 
 	@Override
 	public List<String> getSearchValues() {
-		return List.of(name.getValueSafe());
+		var result = new ArrayList<>(List.of(name.getValueSafe()));
+		if(initial.get())
+			result.add("initial");
+		return result;
 	}
 
 	@Override
@@ -77,63 +80,76 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 	public void addListener(ChangeListener<? super ViewModelVertex> listener) {
 		super.addListener(listener);
 		name.addListener((e,o,n) -> listener.changed(this,this,this));
+		initial.removeListener((e,o,n) -> listener.changed(this,this,this));
 	}
 
 	@Override
 	public void removeListener(ChangeListener<? super ViewModelVertex> listener) {
 		super.addListener(listener);
 		name.removeListener((e,o,n) -> listener.changed(this,this,this));
+		initial.removeListener((e,o,n) -> listener.changed(this,this,this));
 	}
 
 	@Override
 	public void addListener(InvalidationListener listener) {
 		super.addListener(listener);
 		name.addListener(listener);
+		initial.addListener(listener);
 	}
 
 	@Override
 	public void removeListener(InvalidationListener listener) {
 		super.addListener(listener);
 		name.removeListener(listener);
+		initial.removeListener(listener);
 	}
 
 	@Override
 	public void setValue(ViewModelVertex value) {
 		super.setValue(value);
-		if(value instanceof ViewModelState tvalue)
+		if(value instanceof ViewModelState tvalue) {
 			name.setValue(tvalue.name().get());
+			initial.setValue(tvalue.initial().get());
+		}
 	}
 
 	@Override
 	public void bind(ObservableValue<? extends ViewModelVertex> observable) {
 		super.bind(observable);
-		if(observable.getValue() instanceof ViewModelState tobs)
+		if(observable.getValue() instanceof ViewModelState tobs) {
 			name.bind(tobs.name());
+			initial.bind(tobs.initial());
+		}
 	}
 
 	@Override
 	public void unbind() {
 		super.unbind();
 		name.unbind();
+		initial.unbind();
 	}
 
 	@Override
 	public boolean isBound() {
-		return super.isBound() && name.isBound();
+		return super.isBound() || name.isBound() || initial.isBound();
 	}
 
 	@Override
 	public void bindBidirectional(Property<ViewModelVertex> other) {
 		super.bindBidirectional(other);
-		if(other.getValue() instanceof ViewModelState tother)
+		if(other.getValue() instanceof ViewModelState tother) {
 			name.bindBidirectional(tother.name());
+			initial.bindBidirectional(tother.initial());
+		}
 	}
 
 	@Override
 	public void unbindBidirectional(Property<ViewModelVertex> other) {
 		super.unbindBidirectional(other);
-		if(other.getValue() instanceof ViewModelState tother)
+		if(other.getValue() instanceof ViewModelState tother) {
 			name.unbindBidirectional(tother.name());
+			initial.unbindBidirectional(tother.initial());
+		}
 	}
 }
 
