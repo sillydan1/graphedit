@@ -32,8 +32,10 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public String getSyntaxDescription() {
-	// TODO: Write a description
 	return """
+	    A labelled transition system LTS is a way of modelling concurrent systems.
+
+	    This syntax is very inspired by the definition provided in "Principles of Model Checking" by Christel Baier and Joost-Pieter Katoen.
 	    """;
     }
 
