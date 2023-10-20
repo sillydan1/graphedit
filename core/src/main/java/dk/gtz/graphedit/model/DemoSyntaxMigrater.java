@@ -22,7 +22,8 @@ public class DemoSyntaxMigrater implements ISyntaxMigrater {
     public TreeNode migrate(TreeNode input, ObjectMapper objectMapper) {
         var metadata = (ObjectNode)input.get("metadata").get(1);
         var factory = MetadataUtils.getSyntaxFactory(metadata);
-        if(!metadata.get("graphedit_syntax").asText().equals(factory.getSyntaxName()))
+        var syntax = metadata.get("graphedit_syntax");
+        if(syntax == null || !syntax.asText().equals(factory.getSyntaxName()))
             metadata.put("graphedit_syntax", factory.getSyntaxName());
 
         var migraterVersion = metadata.get("graphedit_latest_migrater_version");

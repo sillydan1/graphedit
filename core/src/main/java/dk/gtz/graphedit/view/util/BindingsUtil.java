@@ -24,11 +24,27 @@ public class BindingsUtil {
      * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
      */
     public static DoubleBinding createShapedXBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
-	if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE))
-	    return createRectangularXBinding(sourcePosition, targetPosition, shape);
-	if(shape.shapeType().get().equals(ViewModelShapeType.OVAL))
-	    return createOvalXBinding(sourcePosition, targetPosition, shape);
-	throw new RuntimeException("no binding implemented for shape %s".formatted(shape.shapeType().getName()));
+	// TODO: refactor to reuse some of this duplicated code
+	return Bindings.createDoubleBinding(() -> {
+	    if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE)) {
+		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+		var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+		var intersection = ShapeUtil.rectangleIntersect(shape, diffX, diffY);
+		return targetPosition.getXProperty().get() - intersection.getX();
+	    }
+	    if(shape.shapeType().get().equals(ViewModelShapeType.OVAL)) {
+		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+		var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+		var angle = Math.atan2(diffY, diffX);
+		var opposite = Math.cos(angle);
+		var scaled = opposite * shape.widthProperty().get() * shape.scaleXProperty().get();
+		return targetPosition.getXProperty().get() - scaled;
+	    }
+	    throw new RuntimeException("no binding implemented for shape %s".formatted(shape.shapeType().getName()));
+	},
+	sourcePosition.getXProperty(), sourcePosition.getYProperty(),
+	targetPosition.getXProperty(), targetPosition.getYProperty(),
+	shape.widthProperty(), shape.scaleXProperty());
     }
 
     public static DoubleBinding createRectangularXBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
@@ -68,11 +84,27 @@ public class BindingsUtil {
      * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
      */
     public static DoubleBinding createShapedYBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
-	if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE))
-	    return createRectangularYBinding(sourcePosition, targetPosition, shape);
-	if(shape.shapeType().get().equals(ViewModelShapeType.OVAL))
-	    return createOvalYBinding(sourcePosition, targetPosition, shape);
-	throw new RuntimeException("no binding implemented for shape %s".formatted(shape.shapeType().getName()));
+	// TODO: refactor to reuse some of this duplicated code
+	return Bindings.createDoubleBinding(() -> {
+	    if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE)) {
+		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+		var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+		var intersection = ShapeUtil.rectangleIntersect(shape, diffX, diffY);
+		return targetPosition.getYProperty().get() - intersection.getY();
+	    }
+	    if(shape.shapeType().get().equals(ViewModelShapeType.OVAL)) {
+		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
+		var diffY = targetPosition.getYProperty().get() - sourcePosition.getYProperty().get();
+		var angle = Math.atan2(diffY, diffX);
+		var opposite = Math.sin(angle);
+		var scaled = opposite * shape.heightProperty().get() * shape.scaleYProperty().get();
+		return targetPosition.getYProperty().get() - scaled;
+	    }
+	    throw new RuntimeException("no binding implemented for shape %s".formatted(shape.shapeType().getName()));
+	},
+	sourcePosition.getXProperty(), sourcePosition.getYProperty(),
+	targetPosition.getXProperty(), targetPosition.getYProperty(),
+	shape.widthProperty(), shape.scaleXProperty());
     }
 
     public static DoubleBinding createRectangularYBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {

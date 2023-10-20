@@ -359,6 +359,7 @@ public class ProjectFilesViewController {
 	    openBuffers.open(p.toString().replace(basePath, ""));
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
+	    logger.debug(e.getMessage(), e);
 	}
     }
 }

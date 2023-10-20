@@ -13,6 +13,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class UnifiedModellingTool extends AbstractBaseTool {
     private final VertexCreateTool vertexCreateTool;
@@ -90,16 +91,22 @@ public class UnifiedModellingTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        if(edgeCreateTool.isCurrentlyCreatingEdge())
-            edgeCreateTool.onKeyEvent(e);
-        if(e.event().getCode().equals(KeyCode.DELETE) || (e.event().getCode().equals(KeyCode.BACK_SPACE)) && e.event().isShortcutDown() && e.event().isShiftDown()) {
-            for(var element : selectTool.getSelection()) {
-                if(element.selectable() instanceof ViewModelEdge edge)
-                    edgeDeleteTool.delete(element.id(), edge, e.graph());
-                if(element.selectable() instanceof ViewModelVertex vertex)
-                    vertexDeleteTool.delete(element.id(), vertex, e.graph());
-            }
+        edgeCreateTool.onKeyEvent(e);
+        if(!isDeleteKeyCombo(e.event()))
+            return;
+        for(var element : selectTool.getSelection()) {
+            if(element.selectable() instanceof ViewModelEdge edge)
+                edgeDeleteTool.delete(element.id(), edge, e.graph());
+            if(element.selectable() instanceof ViewModelVertex vertex)
+                vertexDeleteTool.delete(element.id(), vertex, e.graph());
         }
+    }
+
+    private boolean isDeleteKeyCombo(KeyEvent event) {
+        var delete = event.getCode().equals(KeyCode.DELETE);
+        // This is good for keyboards without a delete button (e.g. some macbooks)
+        var shortcutShiftBackspace = (event. getCode().equals(KeyCode.BACK_SPACE)) && event.isShortcutDown() && event.isShiftDown();
+        return delete || shortcutShiftBackspace;
     }
 }
 

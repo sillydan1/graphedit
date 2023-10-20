@@ -167,7 +167,8 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
 
     @Override
     public void unbind() {
-	throw new UnsupportedOperationException("Unimplemented method 'unbind'");
+	source.unbind();
+	target.unbind();
     }
 
     @Override

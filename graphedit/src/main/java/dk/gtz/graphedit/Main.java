@@ -1,6 +1,7 @@
 package dk.gtz.graphedit;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,7 @@ import com.beust.jcommander.JCommander;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.syntaxes.lts.LTSSyntaxFactory;
 import dk.gtz.graphedit.syntaxes.text.TextSyntaxFactory;
 import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.view.ISyntaxFactory;
@@ -31,12 +33,16 @@ public class Main {
         }
         // TODO: This should be an interface
         var factories = new HashMap<String, ISyntaxFactory>();
-        var textSyntaxFactory = new TextSyntaxFactory();
-        factories.put(textSyntaxFactory.getSyntaxName(), textSyntaxFactory);
+        addSyntaxFactory(factories, new TextSyntaxFactory());
+        addSyntaxFactory(factories, new LTSSyntaxFactory());
         DI.add("syntax_factories", factories);
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         GraphEditApplication.launchApp(argv);
         logger.info("goodbye from {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
+    }
+
+    private static void addSyntaxFactory(Map<String,ISyntaxFactory> map, ISyntaxFactory factory) {
+        map.put(factory.getSyntaxName(), factory);
     }
 }
 

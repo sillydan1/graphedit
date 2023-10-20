@@ -1,5 +1,10 @@
 package dk.gtz.graphedit.syntaxes.text.viewmodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.syntaxes.text.model.ModelTextVertex;
 import dk.gtz.graphedit.viewmodel.ISearchable;
 import dk.gtz.graphedit.viewmodel.InspectableProperty;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
@@ -12,12 +17,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import dk.gtz.graphedit.model.ModelVertex;
-import dk.gtz.graphedit.syntaxes.text.model.ModelTextVertex;
 
 public class ViewModelTextVertex extends ViewModelVertex implements ISearchable {
 	private final StringProperty text;
@@ -114,7 +113,7 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 
 	@Override
 	public boolean isBound() {
-		return super.isBound() && text.isBound();
+		return super.isBound() || text.isBound();
 	}
 
 	@Override
