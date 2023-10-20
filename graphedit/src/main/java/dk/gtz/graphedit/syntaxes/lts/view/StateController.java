@@ -85,6 +85,8 @@ public class StateController extends VertexController {
         rectangleGraphic.setWidth(width + wpadding);
         outerRectangleGraphic.setHeight(height + (hpadding * 1.5));
         outerRectangleGraphic.setWidth(width + (wpadding * 1.5));
+        outerRectangleGraphic.setArcWidth(rectangleGraphic.getArcWidth() + ((wpadding * 1.5) - wpadding));
+        outerRectangleGraphic.setArcHeight(rectangleGraphic.getArcHeight() + ((hpadding * 1.5) - hpadding));
     }
 
     private void setRectangleGraphic() {
