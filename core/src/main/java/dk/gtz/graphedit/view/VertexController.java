@@ -64,8 +64,10 @@ public class VertexController extends StackPane {
     protected Circle initializeVertexRepresentation() {
 	var diameter = 20.0;
 	var circle = new Circle(diameter);
-	vertexValue.shape().widthProperty().set(diameter);
-	vertexValue.shape().heightProperty().set(diameter);
+	if(!vertexValue.shape().widthProperty().isBound())
+	    vertexValue.shape().widthProperty().set(diameter);
+	if(!vertexValue.shape().heightProperty().isBound())
+	    vertexValue.shape().heightProperty().set(diameter);
 	circle.strokeTypeProperty().set(StrokeType.INSIDE);
 	circle.getStyleClass().add("vertex-node");
 	return circle;
