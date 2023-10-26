@@ -171,5 +171,25 @@ public class BindingsUtil {
     public static <T> StringBinding createToStringBinding(String prefix, Property<T> dependency, String postfix) {
 	return Bindings.createStringBinding(() -> prefix + dependency.getValue().toString() + postfix, dependency);
     }
+
+    public static DoubleBinding getLineOffsetXBinding(DoubleProperty lineStartX, DoubleProperty lineStartY, DoubleProperty lineEndX, DoubleProperty lineEndY, DoubleProperty scalar) {
+        return Bindings.createDoubleBinding(() -> {
+            var dirX = lineEndX.get() - lineStartX.get();
+            var dirY = lineEndY.get() - lineStartY.get();
+            var len = Math.sqrt(Math.pow(dirX, 2) + Math.pow(dirY, 2));
+            var nDirX = dirX / len;
+            return lineStartX.get() + (nDirX * (scalar.get() * len));
+        }, lineStartX, lineStartY, lineEndX, lineEndY, scalar);
+    }
+
+    public static DoubleBinding getLineOffsetYBinding(DoubleProperty lineStartX, DoubleProperty lineStartY, DoubleProperty lineEndX, DoubleProperty lineEndY, DoubleProperty scalar) {
+        return Bindings.createDoubleBinding(() -> {
+            var dirX = lineEndX.get() - lineStartX.get();
+            var dirY = lineEndY.get() - lineStartY.get();
+            var len = Math.sqrt(Math.pow(dirX, 2) + Math.pow(dirY, 2));
+            var nDirY = dirY / len;
+            return lineStartY.get() + (nDirY * (scalar.get() * len));
+        }, lineStartX, lineStartY, lineEndX, lineEndY, scalar);
+    }
 }
 
