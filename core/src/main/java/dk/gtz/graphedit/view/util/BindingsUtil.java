@@ -5,7 +5,12 @@ import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.StringProperty;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 
@@ -140,11 +145,31 @@ public class BindingsUtil {
     }
 
     public static DoubleBinding createAffineOffsetXBinding(DoubleProperty dependency, Affine offset) {
-	return Bindings.createDoubleBinding(() -> dependency.subtract(offset.getTx()).divide(offset.getMxx()).get(), dependency);
+	return dependency.subtract(offset.getTx()).divide(offset.getMxx());
     }
 
     public static DoubleBinding createAffineOffsetYBinding(DoubleProperty dependency, Affine offset) {
-	return Bindings.createDoubleBinding(() -> dependency.subtract(offset.getTy()).divide(offset.getMyy()).get(), dependency);
+	return dependency.subtract(offset.getTy()).divide(offset.getMyy());
+    }
+
+    public static IntegerBinding createStringInterpretedIntegerBinding(StringProperty dependency) {
+	return Bindings.createIntegerBinding(() -> Integer.valueOf(dependency.get()), dependency);
+    }
+
+    public static DoubleBinding createStringInterpretedDoubleBinding(StringProperty dependency) {
+	return Bindings.createDoubleBinding(() -> Double.valueOf(dependency.get()), dependency);
+    }
+
+    public static <T> StringBinding createToStringBinding(Property<T> dependency) {
+	return createToStringBinding("", dependency, "");
+    }
+
+    public static <T> StringBinding createToStringBinding(String prefix, Property<T> dependency) {
+	return createToStringBinding(prefix, dependency, "");
+    }
+
+    public static <T> StringBinding createToStringBinding(String prefix, Property<T> dependency, String postfix) {
+	return Bindings.createStringBinding(() -> prefix + dependency.getValue().toString() + postfix, dependency);
     }
 }
 

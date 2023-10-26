@@ -8,12 +8,12 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 
 public class ViewModelTransition extends ViewModelVertex implements ISearchable {
     public ViewModelTransition(ModelVertex vertex) {
-        super(vertex);
+	super(vertex);
     }
 
-	@Override
-	public List<String> getSearchValues() {
-        return List.of();
-	}
+    @Override
+    public List<String> getSearchValues() {
+	return List.of();
+    }
 }
 
