@@ -9,9 +9,11 @@ import dk.gtz.graphedit.syntaxes.petrinet.viewmodel.ViewModelPlace;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.VertexController;
+import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import javafx.beans.property.ObjectProperty;
+import javafx.scene.control.Label;
 import javafx.scene.transform.Affine;
 
 public class PlaceController extends VertexController {
@@ -25,12 +27,14 @@ public class PlaceController extends VertexController {
 
     @Override
     protected void addLabel() {
-        // Do nothing
+        getChildren().add(createLabelGraphic());
     }
 
-    @Override
-    protected void addGraphic() {
-        // Do nothing
+    private Label createLabelGraphic() {
+        var label = new Label("#".concat(String.valueOf(vertex.initialTokenCount().get())));
+        label.textProperty().bind(BindingsUtil.createToStringBinding("#", vertex.initialTokenCount()));
+        label.getStyleClass().add("outline");
+        return label;
     }
 }
 
