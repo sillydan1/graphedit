@@ -10,6 +10,7 @@ import com.beust.jcommander.JCommander;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.syntaxes.lts.LTSSyntaxFactory;
+import dk.gtz.graphedit.syntaxes.petrinet.PNSyntaxFactory;
 import dk.gtz.graphedit.syntaxes.text.TextSyntaxFactory;
 import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.view.ISyntaxFactory;
@@ -35,6 +36,7 @@ public class Main {
         var factories = new HashMap<String, ISyntaxFactory>();
         addSyntaxFactory(factories, new TextSyntaxFactory());
         addSyntaxFactory(factories, new LTSSyntaxFactory());
+        addSyntaxFactory(factories, new PNSyntaxFactory());
         DI.add("syntax_factories", factories);
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         GraphEditApplication.launchApp(argv);

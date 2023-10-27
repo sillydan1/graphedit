@@ -25,6 +25,13 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
             initialTokenCount.set(tvertex.initialTokenCount());
     }
 
+    public ViewModelPlace(ViewModelVertex vertex) {
+        super(vertex.toModel());
+        initialTokenCount = new SimpleIntegerProperty(1);
+        if(vertex instanceof ViewModelPlace tvertex)
+            initialTokenCount.set(tvertex.initialTokenCount().get());
+    }
+
     public ViewModelPlace(ViewModelPoint position, ViewModelVertexShape shape) {
         super(position, shape);
         this.initialTokenCount = new SimpleIntegerProperty(1);
