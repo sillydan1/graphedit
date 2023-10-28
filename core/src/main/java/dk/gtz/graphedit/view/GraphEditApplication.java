@@ -125,15 +125,14 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupToolbox() {
-	var toolbox = new Toolbox("inspect", new ViewTool());
-	toolbox.addDefaultTool(new UnifiedModellingTool());
-	toolbox.add("edit",
+	var toolbox = new Toolbox("edit", new UnifiedModellingTool(),
 		new VertexDragMoveTool(),
 		new EdgeCreateTool(),
 		new EdgeDeleteTool(),
 		new VertexCreateTool(),
 		new VertexDeleteTool(),
 		new SelectTool());
+	toolbox.add("inspect", new ViewTool());
 	DI.add(IToolbox.class, toolbox);
 	toolbox.selectTool(toolbox.getDefaultTool());
     }
