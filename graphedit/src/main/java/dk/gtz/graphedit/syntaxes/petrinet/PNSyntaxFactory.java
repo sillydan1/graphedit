@@ -10,6 +10,8 @@ import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.syntaxes.petrinet.model.ModelArc;
 import dk.gtz.graphedit.syntaxes.petrinet.model.ModelPlace;
 import dk.gtz.graphedit.syntaxes.petrinet.model.ModelTransition;
+import dk.gtz.graphedit.syntaxes.petrinet.tool.PlaceTool;
+import dk.gtz.graphedit.syntaxes.petrinet.tool.TransitionTool;
 import dk.gtz.graphedit.syntaxes.petrinet.view.ArcController;
 import dk.gtz.graphedit.syntaxes.petrinet.view.PlaceController;
 import dk.gtz.graphedit.syntaxes.petrinet.view.TransitionController;
@@ -17,6 +19,7 @@ import dk.gtz.graphedit.syntaxes.petrinet.viewmodel.ViewModelArc;
 import dk.gtz.graphedit.syntaxes.petrinet.viewmodel.ViewModelPlace;
 import dk.gtz.graphedit.syntaxes.petrinet.viewmodel.ViewModelTransition;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.tool.Toolbox;
 import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
@@ -25,6 +28,14 @@ import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
 
 public class PNSyntaxFactory implements ISyntaxFactory {
+    private final IToolbox toolbox;
+
+    public PNSyntaxFactory() {
+        toolbox = new Toolbox("vertices", 
+                new PlaceTool(),
+                new TransitionTool());
+    }
+
     @Override
     public String getSyntaxName() {
         return "Petrinet";
@@ -42,27 +53,27 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
-		var toolbox = DI.get(IToolbox.class);
-		if(vertexValue instanceof ViewModelPlace placeVertex)
+    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+        var toolbox = DI.get(IToolbox.class);
+        if(vertexValue instanceof ViewModelPlace placeVertex)
             return new PlaceController(vertexKey, placeVertex,
-                creatorController.getViewportTransform(),
-                creatorController.getProjectResource().syntax(),
-                creatorController.getEditorSettings(),
-                toolbox.getSelectedTool(),
-                this);
-		if(vertexValue instanceof ViewModelTransition transitionVertex)
+                    creatorController.getViewportTransform(),
+                    creatorController.getProjectResource().syntax(),
+                    creatorController.getEditorSettings(),
+                    toolbox.getSelectedTool(),
+                    this);
+        if(vertexValue instanceof ViewModelTransition transitionVertex)
             return new TransitionController(vertexKey, transitionVertex,
-                creatorController.getViewportTransform(),
-                creatorController.getProjectResource().syntax(),
-                creatorController.getEditorSettings(),
-                toolbox.getSelectedTool(),
-                this);
+                    creatorController.getViewportTransform(),
+                    creatorController.getProjectResource().syntax(),
+                    creatorController.getEditorSettings(),
+                    toolbox.getSelectedTool(),
+                    this);
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public ViewModelVertex createVertex(ModelVertex vertexValue) {
+    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
         if(vertexValue instanceof ModelPlace place)
             return new ViewModelPlace(place);
         if(vertexValue instanceof ModelTransition transition)
@@ -71,20 +82,20 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createEdge(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
-		var toolbox = DI.get(IToolbox.class);
+    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+        var toolbox = DI.get(IToolbox.class);
         if(edgeValue instanceof ViewModelArc arc)
             return new ArcController(edgeKey, arc,
-                creatorController.getProjectResource(),
-                creatorController.getViewportTransform(),
-                creatorController.getEditorSettings(),
-                toolbox.getSelectedTool(),
-                this);
+                    creatorController.getProjectResource(),
+                    creatorController.getViewportTransform(),
+                    creatorController.getEditorSettings(),
+                    toolbox.getSelectedTool(),
+                    this);
         throw new RuntimeException("not a petrinet edge: %s".formatted(edgeValue.getClass().getName()));
     }
 
     @Override
-    public ViewModelEdge createEdge(ModelEdge edgeValue) {
+    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
         if(edgeValue instanceof ModelArc arc)
             return new ViewModelArc(arc);
         throw new RuntimeException("not a petrinet edge: %s".formatted(edgeValue.getClass().getName()));
@@ -92,6 +103,11 @@ public class PNSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public Optional<ISyntaxMigrater> getMigrater() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<IToolbox> getSyntaxTools() {
         return Optional.empty();
     }
 }

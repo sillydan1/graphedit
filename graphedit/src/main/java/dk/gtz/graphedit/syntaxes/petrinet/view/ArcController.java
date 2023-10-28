@@ -24,14 +24,14 @@ public class ArcController extends EdgeController {
     private Label label;
     private DoubleProperty labelDirOffset;
 
-	public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-		super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory);
+    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
+        super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory);
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
         this.label = createWeightLabel();
         this.label.textProperty().bind(BindingsUtil.createToStringBinding(edge.weight()));
         getChildren().add(this.label);
-	}
+    }
 
     private Label createWeightLabel() {
         var result = new Label(String.valueOf(edge.weight().get()));

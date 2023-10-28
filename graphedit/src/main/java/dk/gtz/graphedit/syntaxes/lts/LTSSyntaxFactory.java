@@ -40,7 +40,7 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
 	var vertex = new ViewModelState(vertexValue);
 	if(vertexValue instanceof ViewModelState tvertex)
@@ -54,12 +54,12 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public ViewModelVertex createVertex(ModelVertex vertexValue) {
+    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
 	return new ViewModelState(vertexValue);
     }
 
     @Override
-    public Node createEdge(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
 	var edge = new ViewModelTransition(edgeValue);
 	if(edgeValue instanceof ViewModelTransition tedge)
@@ -73,12 +73,17 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public ViewModelEdge createEdge(ModelEdge edgeValue) {
+    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
 	return new ViewModelTransition(edgeValue);
     }
 
     @Override
     public Optional<ISyntaxMigrater> getMigrater() {
+	return Optional.empty();
+    }
+
+    @Override
+    public Optional<IToolbox> getSyntaxTools() {
 	return Optional.empty();
     }
 }

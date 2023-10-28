@@ -54,9 +54,9 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     public ViewModelGraph(ModelGraph graph, ISyntaxFactory syntaxFactory) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
         for(var v : graph.vertices().entrySet())
-            vertices.put(v.getKey(), syntaxFactory.createVertex(v.getValue()));
+            vertices.put(v.getKey(), syntaxFactory.createVertexViewModel(v.getValue()));
         for(var e : graph.edges().entrySet())
-            edges.put(e.getKey(), syntaxFactory.createEdge(e.getValue()));
+            edges.put(e.getKey(), syntaxFactory.createEdgeViewModel(e.getValue()));
     }
 
     /**

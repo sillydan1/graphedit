@@ -22,9 +22,19 @@ public class Toolbox implements IToolbox {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultTool;
         this.selectedTool = new SimpleObjectProperty<>();
-        tools = new HashMap<>();
+        this.tools = new HashMap<>();
         add(getDefaultTool());
         this.selectedTool.set(getDefaultTool());
+    }
+
+    public Toolbox(String defaultCategory, ITool defaultTool, ITool... tools) {
+        this.defaultCategory = defaultCategory;
+        this.defaultTool = defaultTool;
+        this.selectedTool = new SimpleObjectProperty<>();
+        this.tools = new HashMap<>();
+        add(getDefaultTool());
+        this.selectedTool.set(getDefaultTool());
+        this.add(tools);
     }
 
     @Override
