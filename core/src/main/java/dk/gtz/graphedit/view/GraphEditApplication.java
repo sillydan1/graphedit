@@ -35,6 +35,7 @@ import dk.gtz.graphedit.view.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
@@ -138,12 +139,9 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupPreferences() {
-	if(!DI.contains("syntax_factories"))
-	    DI.add("syntax_factories", new HashMap<String,ISyntaxFactory>());
+	if(!DI.contains(SyntaxFactoryCollection.class))
+	    DI.add(SyntaxFactoryCollection.class, new SyntaxFactoryCollection());
 
-	var demoSyntaxFactory = new DemoSyntaxFactory();
-	// TODO: make a type wrapper instead of this insecure casting
-	((Map<String,ISyntaxFactory>)DI.get("syntax_factories")).putIfAbsent(demoSyntaxFactory.getSyntaxName(), demoSyntaxFactory);
 	var settings = DI.get(ViewModelEditorSettings.class);
 	onUseLightThemeChange(settings.useLightTheme().get());
         settings.useLightTheme().addListener((e,o,n) -> onUseLightThemeChange(n));

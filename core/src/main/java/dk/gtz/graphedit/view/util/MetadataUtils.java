@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 
 import dk.gtz.graphedit.view.DemoSyntaxFactory;
 import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.yalibs.yadi.DI;
 
 public class MetadataUtils {
@@ -41,8 +42,7 @@ public class MetadataUtils {
     }
 
     public static ISyntaxFactory getSyntaxFactory(String syntax, ISyntaxFactory defaultValue) {
-	// TODO: syntax_factories should be a class / type of itself
-	var factories = (Map<String,ISyntaxFactory>)DI.get("syntax_factories");
+	var factories = DI.get(SyntaxFactoryCollection.class);
 	if(factories.containsKey(syntax))
 	    return factories.get(syntax);
 	for(var factory : factories.entrySet())
