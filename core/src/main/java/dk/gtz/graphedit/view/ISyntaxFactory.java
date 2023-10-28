@@ -7,6 +7,7 @@ import java.util.UUID;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
+import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
@@ -73,6 +74,10 @@ public interface ISyntaxFactory {
      */
     Optional<ISyntaxMigrater> getMigrater();
 
+    /**
+     * Get a {@link IToolbox} with all the appropriate {@link ITool} instances used to create syntax elements with.
+     * @return empty if no additional tools are required or available
+     */
     Optional<IToolbox> getSyntaxTools();
 }
 
