@@ -63,13 +63,9 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	initializeToolbar();
 	initializeDrawGroup();
 	initializeMetadataEventHandlers();
-	var toolbox = DI.get(IToolbox.class);
-	initializeToolEventHandlers(toolbox);
-	var syntaxTools = syntaxFactory.getSyntaxTools();
-	if(syntaxTools.isPresent())
-	    initializeToolEventHandlers(syntaxTools.get());
 	initializeVertexCollectionChangeHandlers();
 	initializeEdgeCollectionChangeHandlers();
+	initializeToolEventHandlers();
     }
 
     private void initializeViewport() {
@@ -82,7 +78,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool(), resource);
 	var top = new VBox(toolbar);
 	var syntaxTools = syntaxFactory.getSyntaxTools();
-	if(syntaxTools.isPresent()) // TODO: remove when syntax changes
+	if(syntaxTools.isPresent())
 	    top.getChildren().add(new ModelEditorToolbar(syntaxTools.get(), syntaxTools.get().getSelectedTool(), resource));
 	setTop(top);
     }
@@ -188,16 +184,38 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	    var changedKey = e.getKey();
 	    switch(changedKey) {
 		case "graphedit_syntax":
-		    this.syntaxFactory = MetadataUtils.getSyntaxFactory(resource.metadata(), syntaxFactory);
+		    syntaxFactory = MetadataUtils.getSyntaxFactory(resource.metadata(), syntaxFactory);
+		    initializeToolbar();
 		    break;
 		default: break;
 	    }
 	});
     }
 
-    private void initializeToolEventHandlers(IToolbox toolbox) {
-	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings)));
-	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings))));
+    private void initializeToolEventHandlers() {
+	Platform.runLater(() -> {
+	    viewport.addEventHandler(MouseEvent.ANY, this::onMouseEvent);
+	    getScene().addEventHandler(KeyEvent.ANY, this::onKeyEvent);
+	});
+    }
+
+    private void onMouseEvent(MouseEvent e) {
+	var toolbox = DI.get(IToolbox.class);
+	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
+	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), settings);
+	toolbox.getSelectedTool().get().onViewportMouseEvent(mouseEvent);
+	var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	if(syntaxToolbox.isPresent())
+	    syntaxToolbox.get().getSelectedTool().get().onViewportMouseEvent(mouseEvent);
+    }
+
+    private void onKeyEvent(KeyEvent e) {
+	var toolbox = DI.get(IToolbox.class);
+	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, syntaxFactory, resource.syntax(), settings);
+	toolbox.getSelectedTool().get().onKeyEvent(keyEvent);
+	var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	if(syntaxToolbox.isPresent())
+	    syntaxToolbox.get().getSelectedTool().get().onKeyEvent(keyEvent);
     }
 
     private void initializeVertexCollectionChangeHandlers() {
