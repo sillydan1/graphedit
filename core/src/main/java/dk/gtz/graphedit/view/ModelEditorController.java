@@ -211,7 +211,8 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void onKeyEvent(KeyEvent e) {
 	var toolbox = DI.get(IToolbox.class);
-	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, syntaxFactory, resource.syntax(), settings);
+	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
+	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, e.getTarget() == getParent().getParent(), syntaxFactory, resource.syntax(), settings);
 	toolbox.getSelectedTool().get().onKeyEvent(keyEvent);
 	var syntaxToolbox = syntaxFactory.getSyntaxTools();
 	if(syntaxToolbox.isPresent())

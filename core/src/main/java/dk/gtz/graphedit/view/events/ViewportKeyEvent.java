@@ -12,6 +12,7 @@ import javafx.scene.transform.Affine;
 public record ViewportKeyEvent(
 		KeyEvent event,
 		Affine viewportAffine,
+		boolean isTargetDrawpane,
 		ISyntaxFactory syntax,
 		ViewModelGraph graph,
 		ViewModelEditorSettings editorSettings) {}

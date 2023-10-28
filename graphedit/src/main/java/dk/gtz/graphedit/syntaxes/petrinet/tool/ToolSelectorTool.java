@@ -21,30 +21,30 @@ public abstract class ToolSelectorTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        return;
-        // TODO: Re-enable this when the event system can detect if an event is meant for the model editor or something else
-        // if(!e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
-        //     return;
-        // if(e.event().getCode().equals(KeyCode.DIGIT1))
-        //     safeSelectTool(0);
-        // if(e.event().getCode().equals(KeyCode.DIGIT2))
-        //     safeSelectTool(1);
-        // if(e.event().getCode().equals(KeyCode.DIGIT3))
-        //     safeSelectTool(2);
-        // if(e.event().getCode().equals(KeyCode.DIGIT4))
-        //     safeSelectTool(3);
-        // if(e.event().getCode().equals(KeyCode.DIGIT5))
-        //     safeSelectTool(4);
-        // if(e.event().getCode().equals(KeyCode.DIGIT6))
-        //     safeSelectTool(5);
-        // if(e.event().getCode().equals(KeyCode.DIGIT7))
-        //     safeSelectTool(6);
-        // if(e.event().getCode().equals(KeyCode.DIGIT8))
-        //     safeSelectTool(7);
-        // if(e.event().getCode().equals(KeyCode.DIGIT9))
-        //     safeSelectTool(8);
-        // if(e.event().getCode().equals(KeyCode.DIGIT0))
-        //     safeSelectTool(9);
+        if(!e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
+            return;
+        if(!e.isTargetDrawpane())
+            return;
+        if(e.event().getCode().equals(KeyCode.DIGIT1))
+            safeSelectTool(0);
+        if(e.event().getCode().equals(KeyCode.DIGIT2))
+            safeSelectTool(1);
+        if(e.event().getCode().equals(KeyCode.DIGIT3))
+            safeSelectTool(2);
+        if(e.event().getCode().equals(KeyCode.DIGIT4))
+            safeSelectTool(3);
+        if(e.event().getCode().equals(KeyCode.DIGIT5))
+            safeSelectTool(4);
+        if(e.event().getCode().equals(KeyCode.DIGIT6))
+            safeSelectTool(5);
+        if(e.event().getCode().equals(KeyCode.DIGIT7))
+            safeSelectTool(6);
+        if(e.event().getCode().equals(KeyCode.DIGIT8))
+            safeSelectTool(7);
+        if(e.event().getCode().equals(KeyCode.DIGIT9))
+            safeSelectTool(8);
+        if(e.event().getCode().equals(KeyCode.DIGIT0))
+            safeSelectTool(9);
     }
 
     private void safeSelectTool(int index) {
@@ -53,7 +53,7 @@ public abstract class ToolSelectorTool extends AbstractBaseTool {
         var tools = parentToolbox.getToolsByCategory().get(category);
         if(index >= tools.size())
             return;
-        logger.info("trying to select " + tools.get(index).getClass().getName());
+        logger.trace("selecting " + tools.get(index).getClass().getName());
         parentToolbox.selectTool(tools.get(index));
     }
 }
