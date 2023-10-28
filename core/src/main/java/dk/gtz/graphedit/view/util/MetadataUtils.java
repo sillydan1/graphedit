@@ -15,6 +15,7 @@ import dk.yalibs.yadi.DI;
 
 public class MetadataUtils {
     private static Logger logger = LoggerFactory.getLogger(MetadataUtils.class);
+    private static String SYNTAX_KEY = "graphedit_syntax";
 
     public static ISyntaxFactory getSyntaxFactory(Map<String,String> metadata) {
 	return getSyntaxFactory(metadata, new DemoSyntaxFactory());
@@ -29,15 +30,14 @@ public class MetadataUtils {
     }
 
     public static ISyntaxFactory getSyntaxFactory(Map<String,String> metadata, ISyntaxFactory defaultValue) {
-	// TODO: magic values
-	metadata.putIfAbsent("graphedit_syntax", defaultValue.getSyntaxName());
-	return getSyntaxFactory(metadata.get("graphedit_syntax"), defaultValue);
+	metadata.putIfAbsent(SYNTAX_KEY, defaultValue.getSyntaxName());
+	return getSyntaxFactory(metadata.get(SYNTAX_KEY), defaultValue);
     }
 
     public static ISyntaxFactory getSyntaxFactory(TreeNode metadataNode, ISyntaxFactory defaultValue) {
-	if(metadataNode.path("graphedit_syntax").isMissingNode())
+	if(metadataNode.path(SYNTAX_KEY).isMissingNode())
 	    return defaultValue;
-	var val = (ValueNode)metadataNode.get("graphedit_syntax");
+	var val = (ValueNode)metadataNode.get(SYNTAX_KEY);
 	return getSyntaxFactory(val.asText(), defaultValue);
     }
 
