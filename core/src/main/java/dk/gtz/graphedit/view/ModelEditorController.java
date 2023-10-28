@@ -75,11 +75,11 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeToolbar() {
 	var toolbox = DI.get(IToolbox.class);
-	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool(), resource);
+	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool(), resource).withSyntaxSelector().withButtons();
 	var top = new VBox(toolbar);
 	var syntaxTools = syntaxFactory.getSyntaxTools();
 	if(syntaxTools.isPresent())
-	    top.getChildren().add(new ModelEditorToolbar(syntaxTools.get(), syntaxTools.get().getSelectedTool(), resource));
+	    top.getChildren().add(new ModelEditorToolbar(syntaxTools.get(), syntaxTools.get().getSelectedTool(), resource).withButtons());
 	setTop(top);
     }
 
