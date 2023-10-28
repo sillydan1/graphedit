@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.syntaxes.petrinet.tool;
 
+import java.util.Optional;
+
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -21,6 +23,11 @@ public class PlaceTool extends ToolSelectorTool {
         return """
             Create new petrinet place vertices
             """;
+    }
+
+    @Override
+    public Optional<String> getTooltip() {
+        return Optional.of("Create place vertices");
     }
 }
 
