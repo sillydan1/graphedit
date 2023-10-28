@@ -48,6 +48,8 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     @Override
     public String getSyntaxDescription() {
         return """
+            A Petri net consists of places, transitions, and arcs.
+            Arcs run from a place to a transition or vice versa, never between places or between transitions.
             """;
     }
 
