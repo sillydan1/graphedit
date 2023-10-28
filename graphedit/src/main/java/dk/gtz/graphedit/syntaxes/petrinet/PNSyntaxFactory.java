@@ -69,6 +69,22 @@ public class PNSyntaxFactory implements ISyntaxFactory {
                     creatorController.getEditorSettings(),
                     toolbox.getSelectedTool(),
                     this);
+
+        if(this.toolbox.getSelectedTool().get() instanceof PlaceTool)
+            return new PlaceController(vertexKey, new ViewModelPlace(vertexValue),
+                    creatorController.getViewportTransform(),
+                    creatorController.getProjectResource().syntax(),
+                    creatorController.getEditorSettings(),
+                    toolbox.getSelectedTool(),
+                    this);
+        if(this.toolbox.getSelectedTool().get() instanceof TransitionTool)
+            return new TransitionController(vertexKey, new ViewModelTransition(vertexValue.toModel()),
+                    creatorController.getViewportTransform(),
+                    creatorController.getProjectResource().syntax(),
+                    creatorController.getEditorSettings(),
+                    toolbox.getSelectedTool(),
+                    this);
+
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
@@ -78,27 +94,34 @@ public class PNSyntaxFactory implements ISyntaxFactory {
             return new ViewModelPlace(place);
         if(vertexValue instanceof ModelTransition transition)
             return new ViewModelTransition(transition);
+
+        if(toolbox.getSelectedTool().get() instanceof PlaceTool)
+            return new ViewModelPlace(vertexValue);
+        if(toolbox.getSelectedTool().get() instanceof TransitionTool)
+            return new ViewModelTransition(vertexValue);
+
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
     public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
         var toolbox = DI.get(IToolbox.class);
-        if(edgeValue instanceof ViewModelArc arc)
-            return new ArcController(edgeKey, arc,
-                    creatorController.getProjectResource(),
-                    creatorController.getViewportTransform(),
-                    creatorController.getEditorSettings(),
-                    toolbox.getSelectedTool(),
-                    this);
-        throw new RuntimeException("not a petrinet edge: %s".formatted(edgeValue.getClass().getName()));
+        var arc = new ViewModelArc(edgeValue.toModel());
+        if(edgeValue instanceof ViewModelArc tarc)
+            arc = tarc;
+        return new ArcController(edgeKey, arc,
+                creatorController.getProjectResource(),
+                creatorController.getViewportTransform(),
+                creatorController.getEditorSettings(),
+                toolbox.getSelectedTool(),
+                this);
     }
 
     @Override
     public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
         if(edgeValue instanceof ModelArc arc)
             return new ViewModelArc(arc);
-        throw new RuntimeException("not a petrinet edge: %s".formatted(edgeValue.getClass().getName()));
+        return new ViewModelArc(edgeValue);
     }
 
     @Override
@@ -108,7 +131,7 @@ public class PNSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public Optional<IToolbox> getSyntaxTools() {
-        return Optional.empty();
+        return Optional.of(toolbox);
     }
 }
 

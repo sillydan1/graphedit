@@ -23,11 +23,12 @@ public class PlaceController extends VertexController {
     public PlaceController(UUID vertexKey, ViewModelPlace vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
         super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
         this.vertex = vertex;
+        getChildren().add(createLabelGraphic());
     }
 
     @Override
     protected void addLabel() {
-        getChildren().add(createLabelGraphic());
+        // do nothing
     }
 
     private Label createLabelGraphic() {
