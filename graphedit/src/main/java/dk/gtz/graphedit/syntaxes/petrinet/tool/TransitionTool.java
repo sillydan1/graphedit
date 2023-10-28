@@ -3,10 +3,14 @@ package dk.gtz.graphedit.syntaxes.petrinet.tool;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.tool.AbstractBaseTool;
+import dk.gtz.graphedit.tool.IToolbox;
 import javafx.scene.Node;
 
-public class TransitionTool extends AbstractBaseTool {
+public class TransitionTool extends ToolSelectorTool {
+    public TransitionTool(IToolbox parent) {
+	super(parent, "vertices");
+    }
+
     @Override
     public Node getGraphic() {
 	return new FontIcon(BootstrapIcons.SQUARE_FILL);

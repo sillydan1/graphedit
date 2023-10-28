@@ -40,7 +40,6 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
-    private ModelEditorToolbar syntaxToolbar;
     private MapGroup<UUID> drawGroup;
     private GridPane gridPane;
     private Pane drawPane;
@@ -64,7 +63,11 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	initializeToolbar();
 	initializeDrawGroup();
 	initializeMetadataEventHandlers();
-	initializeToolEventHandlers();
+	var toolbox = DI.get(IToolbox.class);
+	initializeToolEventHandlers(toolbox);
+	var syntaxTools = syntaxFactory.getSyntaxTools();
+	if(syntaxTools.isPresent())
+	    initializeToolEventHandlers(syntaxTools.get());
 	initializeVertexCollectionChangeHandlers();
 	initializeEdgeCollectionChangeHandlers();
     }
@@ -192,8 +195,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	});
     }
 
-    private void initializeToolEventHandlers() {
-	var toolbox = DI.get(IToolbox.class);
+    private void initializeToolEventHandlers(IToolbox toolbox) {
 	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings)));
 	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, MetadataUtils.getSyntaxFactory(resource.metadata()), resource.syntax(), settings))));
     }

@@ -29,12 +29,20 @@ public class ArcController extends EdgeController {
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
         this.label = createWeightLabel();
-        this.label.textProperty().bind(BindingsUtil.createToStringBinding(edge.weight()));
+        edge.weight().addListener((e,o,n) -> setLabelGraphic(this.label, n));
         getChildren().add(this.label);
     }
 
+    private void setLabelGraphic(Label label, Number val) {
+        if(val.intValue() == 1)
+            label.textProperty().set("");
+        else
+            label.textProperty().set(val.toString());
+    }
+
     private Label createWeightLabel() {
-        var result = new Label(String.valueOf(edge.weight().get()));
+        var result = new Label();
+        setLabelGraphic(result, edge.weight().get());
         result.getStyleClass().add("outline");
         result.translateXProperty().bind(BindingsUtil.getLineOffsetXBinding(
                     line.startXProperty(), line.startYProperty(),

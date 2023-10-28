@@ -18,6 +18,20 @@ public class Toolbox implements IToolbox {
     private ITool defaultTool;
     private SimpleObjectProperty<ITool> selectedTool;
 
+    @FunctionalInterface
+    public static interface IToolConstructor {
+        ITool ctor(IToolbox parent);
+    }
+
+    public Toolbox(String defaultCategory, IToolConstructor defaultToolCtor) {
+        this.defaultCategory = defaultCategory;
+        this.defaultTool = defaultToolCtor.ctor(this);
+        this.selectedTool = new SimpleObjectProperty<>();
+        this.tools = new HashMap<>();
+        add(getDefaultTool());
+        this.selectedTool.set(getDefaultTool());
+    }
+
     public Toolbox(String defaultCategory, ITool defaultTool) {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultTool;

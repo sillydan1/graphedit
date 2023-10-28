@@ -9,7 +9,6 @@ import dk.gtz.graphedit.syntaxes.petrinet.viewmodel.ViewModelPlace;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.VertexController;
-import dk.gtz.graphedit.view.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import javafx.beans.property.ObjectProperty;
@@ -32,10 +31,18 @@ public class PlaceController extends VertexController {
     }
 
     private Label createLabelGraphic() {
-        var label = new Label("#".concat(String.valueOf(vertex.initialTokenCount().get())));
-        label.textProperty().bind(BindingsUtil.createToStringBinding("#", vertex.initialTokenCount()));
+        var label = new Label();
+        setLabelGraphic(label, vertex.initialTokenCount().get());
+        vertex.initialTokenCount().addListener((e,o,n) -> setLabelGraphic(label, n));
         label.getStyleClass().add("outline");
         return label;
+    }
+
+    private void setLabelGraphic(Label label, Number val) {
+        if(val.intValue() == 0)
+            label.textProperty().set("");
+        else
+            label.textProperty().set("#"+val.toString());
     }
 }
 

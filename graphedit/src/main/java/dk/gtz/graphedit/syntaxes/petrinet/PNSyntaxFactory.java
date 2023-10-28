@@ -31,9 +31,8 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     private final IToolbox toolbox;
 
     public PNSyntaxFactory() {
-        toolbox = new Toolbox("vertices", 
-                new PlaceTool(),
-                new TransitionTool());
+        toolbox = new Toolbox("vertices", PlaceTool::new);
+        toolbox.add(new TransitionTool(toolbox));
     }
 
     @Override
