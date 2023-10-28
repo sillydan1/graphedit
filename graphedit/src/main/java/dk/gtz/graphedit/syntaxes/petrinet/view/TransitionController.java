@@ -19,11 +19,14 @@ import javafx.scene.transform.Affine;
 public class TransitionController extends VertexController {
     private final Logger logger = LoggerFactory.getLogger(TransitionController.class);
     private final ViewModelTransition vertex;
+    private final Rectangle rectangleGraphic;
 
     public TransitionController(UUID vertexKey, ViewModelTransition vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
 	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
 	this.vertex = vertex;
-	getChildren().add(createRectangleGraphic());
+        this.rectangleGraphic = createRectangleGraphic();
+        initializeEventHandlers();
+	getChildren().add(rectangleGraphic);
     }
 
     @Override
@@ -36,6 +39,15 @@ public class TransitionController extends VertexController {
 	// do nothing
     }
 
+    private void initializeEventHandlers() {
+        vertex.getIsSelected().addListener((e,o,n) -> {
+            if(n)
+                rectangleGraphic.getStyleClass().add("stroke-selected");
+            else
+                rectangleGraphic.getStyleClass().remove("stroke-selected");
+        });
+    }
+
     private Rectangle createRectangleGraphic() {
         var result = new Rectangle(20,40);
         result.getStyleClass().add("vertex-node");
@@ -43,6 +55,8 @@ public class TransitionController extends VertexController {
         result.setArcHeight(8);
         addEventHandler(MouseEvent.MOUSE_ENTERED, event -> result.getStyleClass().add("stroke-hover"));
         addEventHandler(MouseEvent.MOUSE_EXITED,  event -> result.getStyleClass().remove("stroke-hover"));
+        vertexValue.shape().widthProperty().bind(result.widthProperty());
+        vertexValue.shape().heightProperty().bind(result.heightProperty());
         return result;
     }
 }
