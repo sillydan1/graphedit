@@ -112,6 +112,8 @@ public class EdgeCreateTool extends AbstractBaseTool {
             logger.warn("edge release target is not in the same graph as the source target");
             return;
         }
+        if(!currentEdge.get().isTargetValid(releaseTarget, graph))
+            return;
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
@@ -122,6 +124,8 @@ public class EdgeCreateTool extends AbstractBaseTool {
     }
 
     public void create(UUID sourceTarget, ViewModelGraph graph) {
+        if(!currentEdge.get().isSourceValid(sourceTarget, graph))
+            return;
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
         currentEdge = Optional.of(new ViewModelEdge(sourceTarget, tracker.getTrackerUUID()));

@@ -77,6 +77,14 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
 	return target;
     }
 
+    public boolean isTargetValid(UUID target, ViewModelGraph graph) {
+	return true;
+    }
+
+    public boolean isSourceValid(UUID source, ViewModelGraph graph) {
+	return true;
+    }
+
     @Override
     public BooleanProperty getIsSelected() {
 	return isSelected;
