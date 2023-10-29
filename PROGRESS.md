@@ -97,7 +97,7 @@
    - [x] LTS
    - [ ] NTTA
    - [ ] HAWK
-   - [ ] P/N
+   - [x] P/N
    - [ ] TIOA 
  - [ ] Fix TODOs
  - [ ] Release `v1.1.0
