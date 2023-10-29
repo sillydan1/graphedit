@@ -59,7 +59,7 @@ public class VertexCreateTool extends AbstractBaseTool {
     }
 
     public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph, ISyntaxFactory syntaxFactory) {
-        var vertex = syntaxFactory.createVertex(new ModelVertex(point.toModel()));
+        var vertex = syntaxFactory.createVertexViewModel(new ModelVertex(point.toModel()));
         var id = UUID.randomUUID();
         graph.vertices().put(id, vertex);
         undoSystem.push(new Undoable("vertex create action",

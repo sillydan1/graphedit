@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.ObjectProperty;
@@ -32,7 +33,18 @@ public class ModelEditorToolbar extends ToolBar {
 	this.selectedTool = selectedTool;
 	this.resource = resource;
 	setupStyle();
+    }
+
+    public ModelEditorToolbar withSyntaxSelector() {
+	if(resource.metadata().containsKey("graphedit_syntax"))
+	    addSyntaxSelector();
+	addSeparator();
+	return this;
+    }
+
+    public ModelEditorToolbar withButtons() {
 	setupContent();
+	return this;
     }
 
     private void setupStyle() {
@@ -40,10 +52,6 @@ public class ModelEditorToolbar extends ToolBar {
     }
 
     private void setupContent() {
-	// Zoom / viewport stuff
-	if(resource.metadata().containsKey("graphedit_syntax"))
-	    addSyntaxSelector();
-	addSeparator();
 	for(var toolCategory : toolbox.getToolsByCategory().entrySet()) {
 	    for(var tool : toolCategory.getValue())
 		addButton(tool);
@@ -52,7 +60,7 @@ public class ModelEditorToolbar extends ToolBar {
     }
 
     private void addSyntaxSelector() {
-	var factories = (Map<String,ISyntaxFactory>)DI.get("syntax_factories");
+	var factories = DI.get(SyntaxFactoryCollection.class);
 	ObservableList<String> list = FXCollections.observableArrayList();
 	for(var factory : factories.entrySet())
 	    list.add(factory.getKey());

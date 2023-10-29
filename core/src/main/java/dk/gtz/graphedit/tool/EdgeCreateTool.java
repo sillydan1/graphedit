@@ -8,6 +8,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.model.ModelEdge;
+import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.view.MouseTracker;
 import dk.gtz.graphedit.view.events.VertexMouseEvent;
 import dk.gtz.graphedit.view.events.ViewportKeyEvent;
@@ -60,7 +62,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
     public void onVertexMouseEvent(VertexMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
             if(!isCurrentlyCreatingEdge()) {
-                create(e.vertexId(), e.graph());
+                create(e.vertexId(), e.graph(), e.syntax());
                 return;
             }
             if(e.vertexId().equals(currentEdge.get().source().get())) {
@@ -112,6 +114,8 @@ public class EdgeCreateTool extends AbstractBaseTool {
             logger.warn("edge release target is not in the same graph as the source target");
             return;
         }
+        if(!currentEdge.get().isTargetValid(releaseTarget, graph))
+            return;
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
@@ -121,10 +125,14 @@ public class EdgeCreateTool extends AbstractBaseTool {
         clear();
     }
 
-    public void create(UUID sourceTarget, ViewModelGraph graph) {
+    public void create(UUID sourceTarget, ViewModelGraph graph, ISyntaxFactory factory) {
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
-        currentEdge = Optional.of(new ViewModelEdge(sourceTarget, tracker.getTrackerUUID()));
+        currentEdge = Optional.of(factory.createEdgeViewModel(new ModelEdge(sourceTarget, tracker.getTrackerUUID())));
+        if(!currentEdge.get().isSourceValid(sourceTarget, graph)) {
+            clear();
+            return;
+        }
         graph.edges().put(currenEdgeId.get(), currentEdge.get());
     }
 

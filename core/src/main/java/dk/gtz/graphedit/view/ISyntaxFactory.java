@@ -7,6 +7,8 @@ import java.util.UUID;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
+import dk.gtz.graphedit.tool.ITool;
+import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
@@ -41,14 +43,14 @@ public interface ISyntaxFactory {
      * @param creatorController The model editor to attach the vertex to. TODO: Consider removing, or interfacing this
      * @return The new vertex javafx representation
      */
-    Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
+    Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
 
     /**
      * Create a new viewmodel vertex representation
      * @param vertexValue The model vertex to base on
      * @return A new instance of a viewmodel vertex representation specific to this syntax.
      */
-    ViewModelVertex createVertex(ModelVertex vertexValue);
+    ViewModelVertex createVertexViewModel(ModelVertex vertexValue);
 
     /**
      * Create a new javafx edge representation
@@ -57,19 +59,25 @@ public interface ISyntaxFactory {
      * @param creatorController The model editor to attach the edge to. TODO: Consider removing, or interfacing this
      * @return The new edge javafx representation
      */
-    Node createEdge(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
+    Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
 
     /**
      * Create a new viewmodel edge representation
      * @param edgeValue The model edge to base on
      * @return A new instance of a viewmodel edge representation specific to this syntax.
      */
-    ViewModelEdge createEdge(ModelEdge edgeValue);
+    ViewModelEdge createEdgeViewModel(ModelEdge edgeValue);
 
     /**
      * Get the associated syntax version migrater.
      * @return empty if this syntax does not support version migration. Otherwise an instance of the appropriate migrater for this syntax.
      */
     Optional<ISyntaxMigrater> getMigrater();
+
+    /**
+     * Get a {@link IToolbox} with all the appropriate {@link ITool} instances used to create syntax elements with.
+     * @return empty if no additional tools are required or available
+     */
+    Optional<IToolbox> getSyntaxTools();
 }
 

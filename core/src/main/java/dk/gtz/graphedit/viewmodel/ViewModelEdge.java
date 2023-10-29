@@ -19,8 +19,8 @@ import javafx.beans.value.ObservableValue;
  * Edges connects vertices with other vertices.
  */
 public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Property<ViewModelEdge> {
-    private final ObjectProperty<UUID> source;
-    private final ObjectProperty<UUID> target;
+    protected final ObjectProperty<UUID> source;
+    protected final ObjectProperty<UUID> target;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
 
@@ -75,6 +75,14 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
      */
     public ObjectProperty<UUID> target() {
 	return target;
+    }
+
+    public boolean isTargetValid(UUID target, ViewModelGraph graph) {
+	return true;
+    }
+
+    public boolean isSourceValid(UUID source, ViewModelGraph graph) {
+	return true;
     }
 
     @Override

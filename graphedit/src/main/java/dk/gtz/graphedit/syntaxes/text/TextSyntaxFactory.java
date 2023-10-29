@@ -37,7 +37,7 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	}
 
 	@Override
-	public Node createVertex(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+	public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 		var toolbox = DI.get(IToolbox.class);
 		var vertex = new ViewModelTextVertex(vertexValue);
 		if(vertexValue instanceof ViewModelTextVertex textVertexValue)
@@ -51,7 +51,7 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	}
 
 	@Override
-	public Node createEdge(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+	public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
 		var toolbox = DI.get(IToolbox.class);
 		return new EdgeController(edgeKey, edgeValue,
 			creatorController.getProjectResource(),
@@ -62,17 +62,22 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	}
 
 	@Override
-	public ViewModelVertex createVertex(ModelVertex vertexValue) {
+	public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
 		return new ViewModelTextVertex(vertexValue);
 	}
 
 	@Override
-	public ViewModelEdge createEdge(ModelEdge edgeValue) {
+	public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
 		return new ViewModelEdge(edgeValue);
 	}
 
 	@Override
 	public Optional<ISyntaxMigrater> getMigrater() {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<IToolbox> getSyntaxTools() {
 		return Optional.empty();
 	}
 }
