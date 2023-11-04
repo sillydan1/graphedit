@@ -1,8 +1,6 @@
 package dk.gtz.graphedit.view;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
