@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +40,7 @@ public class PluginLoader {
 
 	public PluginLoader loadPlugins() {
 		for(var pluginsDir : pluginsDirs) {
-			logger.trace("looking for plugins in {}", pluginsDir);
+			logger.trace("looking for plugins in {}", pluginsDir.getAbsolutePath());
 			if(!pluginsDir.exists() || !pluginsDir.isDirectory()) {
 				logger.error("skipping plugin dir, no such file or directory {}", pluginsDir);
 				continue;
@@ -48,8 +49,7 @@ public class PluginLoader {
 			if(loading.compareAndSet(false, true)) {
 				var files = requireNonNull(pluginsDir.listFiles());
 				for (var pluginDir : files)
-					if (pluginDir.isDirectory())
-						loadPlugin(pluginDir);
+					loadPlugin(pluginDir);
 			}
 		}
 		return this;
@@ -58,22 +58,25 @@ public class PluginLoader {
 	private void loadPlugin(File pluginDir) {
 		var currentClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
-			logger.trace("loading plugin: {}", pluginDir);
+			logger.trace("trying to load plugin: {}", pluginDir);
 			var pluginClassLoader = createPluginClassLoader(pluginDir);
 			Thread.currentThread().setContextClassLoader(pluginClassLoader);
 			for(var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
 				loadPlugin(plugin);
+		} catch(ServiceConfigurationError e) {
+			logger.warn("failed to load plugin: {}", e.getMessage());
 		} finally {
 			Thread.currentThread().setContextClassLoader(currentClassLoader);
 		}
 	}
 
 	private void loadPlugin(IPlugin plugin) {
+		logger.trace("loaded plugin: {}", plugin.getName());
 		loadedPlugins.add(plugin);
 	}
 
-	private URLClassLoader createPluginClassLoader(File dir) {
-		var urls = Arrays.stream(Optional.of(dir.listFiles()).orElse(new File[]{}))
+	private URLClassLoader createPluginClassLoader(File file) {
+		var urls = Arrays.stream(Optional.ofNullable(file.listFiles()).orElse(new File[]{file}))
 			.sorted()
 			.map(File::toURI)
 			.map(this::toUrl)

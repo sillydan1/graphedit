@@ -20,7 +20,6 @@ public class Main {
     private static Logger logger = (Logger)LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] argv) throws Exception {
-        // parse cli args
         var args = new Args();
         var builder = JCommander.newBuilder()
             .programName(BuildConfig.APP_NAME)
@@ -41,12 +40,9 @@ public class Main {
         for(var plugin : loader.getLoadedPlugins().getPlugins())
             factories.add(plugin.getSyntaxFactories());
 
-        // TODO: Extract this into a plugin
-        factories.add(new TextSyntaxFactory());
-        // TODO: Extract this into a plugin
-        factories.add(new LTSSyntaxFactory());
-        // TODO: Extract this into a plugin
-        factories.add(new PNSyntaxFactory());
+        factories.add(new TextSyntaxFactory()); // TODO: Extract this into a plugin
+        factories.add(new LTSSyntaxFactory()); // TODO: Extract this into a plugin
+        factories.add(new PNSyntaxFactory()); // TODO: Extract this into a plugin
 
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         GraphEditApplication.launchApp(argv);

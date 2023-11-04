@@ -2,4 +2,5 @@ gradle.ext.javaVersion = JavaVersion.VERSION_17
 rootProject.name = 'graphedit'
 include 'core'
 include 'graphedit'
+include 'std'
 

@@ -12,7 +12,7 @@ import java.util.List;
  * Only the classes in SHARED_PACKAGES are visible to the plugin.
  */
 public class PluginClassLoader extends URLClassLoader {
-	public static final List<String> SHARED_PACKAGES = Arrays.asList("spi");
+	public static final List<String> SHARED_PACKAGES = Arrays.asList("dk.gtz.graphedit.spi");
 	private final ClassLoader parentClassLoader;
 
 	public PluginClassLoader(URL[] urls, ClassLoader parentClassLoader) {
