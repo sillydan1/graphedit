@@ -88,14 +88,20 @@
  - [ ] CD (needs a pre-release for prototyping purposes)
    - [ ] flathub (needs an actual binary release)
  - [x] gitignored Project cache, such as what files did you have open last etc.
- - [ ] Custom keybinds
  - [x] windows menubar not showing
  - [x] Migraters
  - [ ] Plugin system
-   - [ ] general plugin system
-   - [ ] refactor into "vscode" style layout
-   - [ ] refactor views into `std`
+   - [x] general plugin system
+   - [x] refactor into "vscode" style layout
+   - [ ] refactor things into `std`
+     - [ ] File Explorer
+     - [ ] Syntactic Element Inspector
+     - [ ] Syntax factories
+   - [ ] polish (Ugly UI should be prettier)
    - [ ] cut dependencies off in build.gradle please
+ - [ ] TODOs round
+ - [ ] Release `v1.1.0
+ - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [x] Simple Text
@@ -105,7 +111,8 @@
    - [x] P/N
    - [ ] TIOA 
  - [ ] Fix TODOs
- - [ ] Release `v1.1.0
+ - [ ] Polish
+ - [ ] Release `v1.2.0
  - [ ] Trace-traverser & specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
