@@ -311,6 +311,7 @@ public class ProjectFilesViewController {
 	root.setVisible(!root.visibleProperty().get());
     }
 
+    // TODO: This should be in the EditorActions instead
     public void createNewModelFile() {
 	try {
 	    var fileName = EditorActions.newFile();

@@ -96,7 +96,6 @@ public class ModelEditorToolbar extends ToolBar {
 	if(tool.getTooltip().isEmpty())
 	    return;
 	var tip = new Tooltip(tool.getTooltip().get());
-	tip.setAnchorLocation(AnchorLocation.WINDOW_TOP_RIGHT);
 	tip.setPrefWidth(200);
 	tip.setWrapText(true);
 	btn.setTooltip(tip);

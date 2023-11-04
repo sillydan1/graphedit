@@ -6,7 +6,9 @@ import com.beust.jcommander.JCommander;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.plugins.DummyPlugin;
 import dk.gtz.graphedit.plugins.PluginLoader;
+import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.syntaxes.lts.LTSSyntaxFactory;
 import dk.gtz.graphedit.syntaxes.petrinet.PNSyntaxFactory;
 import dk.gtz.graphedit.syntaxes.text.TextSyntaxFactory;
@@ -35,7 +37,8 @@ public class Main {
         var loader = new PluginLoader(args.pluginDirs).loadPlugins();
         var factories = new SyntaxFactoryCollection();
         DI.add(SyntaxFactoryCollection.class, factories);
-        for(var plugin : loader.getLoadedPlugins())
+        DI.add(IPluginsContainer.class, loader.getLoadedPlugins().add(new DummyPlugin(), new DummyPlugin()));
+        for(var plugin : loader.getLoadedPlugins().getPlugins())
             factories.add(plugin.getSyntaxFactories());
 
         // TODO: Extract this into a plugin

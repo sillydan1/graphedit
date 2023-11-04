@@ -11,7 +11,6 @@ import dk.gtz.graphedit.tool.EditorActions;
 import dk.gtz.graphedit.view.util.HeightDragResizer;
 import dk.gtz.graphedit.view.util.PlatformUtils;
 import dk.gtz.graphedit.view.util.WidthDragResizer;
-import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
@@ -23,7 +22,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -31,8 +29,6 @@ import javafx.stage.Window;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
-    @FXML
-    private ProjectFilesViewController filePaneController;
     @FXML
     private VBox menubarTopBox;
     @FXML
@@ -44,9 +40,9 @@ public class EditorController {
     @FXML
     private MenuItem runTargetMenuItem;
     @FXML
-    private Pane inspectorGroup;
-    @FXML
     private Label statusBar;
+    @FXML
+    private SidePanelController sidePanelController;
     private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
 
@@ -58,7 +54,6 @@ public class EditorController {
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
-	initInspectorPane();
     }
 
     private void initProjectMenu() {
@@ -89,11 +84,6 @@ public class EditorController {
             menubarTopBox.setVisible(false);
             menubarTopBox.setManaged(false);
         }
-    }
-
-    private void initInspectorPane() {
-	inspectorGroup.visibleProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
-	inspectorGroup.managedProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
     }
 
     @FXML
@@ -186,11 +176,6 @@ public class EditorController {
     @FXML
     private void openSearchPane() {
 	EditorActions.openSearchPane();
-    }
-
-    @FXML
-    private void newFile() {
-	filePaneController.createNewModelFile();
     }
 
     @FXML

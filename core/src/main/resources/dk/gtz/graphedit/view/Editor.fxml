@@ -12,7 +12,7 @@
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
                     <Menu text="File">
-                        <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/>
+                        <!-- <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/> -->
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
@@ -47,13 +47,12 @@
             </VBox>
         </top>
         <left>
-            <fx:include fx:id="filePane" source="FileView.fxml"/>
+            <fx:include fx:id="sidePanel" source="SidePanel.fxml"/>
         </left>
         <center>
             <fx:include source="EditorTabPane.fxml"/>
         </center>
         <right>
-            <fx:include fx:id="inspectorGroup" source="Inspector.fxml"/>
         </right>
         <bottom>
             <BorderPane>

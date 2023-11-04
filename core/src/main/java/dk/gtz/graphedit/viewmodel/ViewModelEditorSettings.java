@@ -22,7 +22,7 @@ public record ViewModelEditorSettings(
                 BooleanProperty gridSnap,
                 BooleanProperty useLightTheme,
                 BooleanProperty autoOpenLastProject,
-                BooleanProperty showInspectorPane,
+                BooleanProperty showInspectorPane, // TODO: Deprecated in favor of plugin-system
                 BooleanProperty showInfoToasts,
                 BooleanProperty showWarnToasts,
                 BooleanProperty showErrorToasts,

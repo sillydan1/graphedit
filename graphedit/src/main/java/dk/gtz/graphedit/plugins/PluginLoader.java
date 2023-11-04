@@ -18,10 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.spi.IPlugin;
+import dk.gtz.graphedit.spi.IPluginsContainer;
 
 public class PluginLoader {
 	private static Logger logger = LoggerFactory.getLogger(PluginLoader.class);
-	private final List<IPlugin> loadedPlugins;
+	private final IPluginsContainer loadedPlugins;
 	private final List<File> pluginsDirs;
 	private final AtomicBoolean loading = new AtomicBoolean();
 
@@ -29,10 +30,10 @@ public class PluginLoader {
 		this.pluginsDirs = new ArrayList<>(pluginsDirs.size());
 		for(var pluginStr : pluginsDirs)
 			this.pluginsDirs.add(new File(pluginStr));
-		loadedPlugins = new ArrayList<>();
+		loadedPlugins = new ListPluginsContainer();
 	}
 
-	public List<IPlugin> getLoadedPlugins() {
+	public IPluginsContainer getLoadedPlugins() {
 		return loadedPlugins;
 	}
 
