@@ -60,6 +60,7 @@ public class ModelEditorToolbar extends ToolBar {
     }
 
     private void addSyntaxSelector() {
+	// TODO: This should be an EditorAction (The VetoChangeListener should still exist)
 	var factories = DI.get(SyntaxFactoryCollection.class);
 	ObservableList<String> list = FXCollections.observableArrayList();
 	for(var factory : factories.entrySet())

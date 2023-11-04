@@ -48,7 +48,7 @@ public class MetadataUtils {
 	for(var factory : factories.entrySet())
 	    if(factory.getValue().getLegacyNames().stream().filter(s -> s.equals(syntax)).findAny().isPresent())
 		return factory.getValue();
-	logger.warn("No such syntax: {}", syntax);
+	logger.warn("No such syntax: {}", syntax); // TODO: If this happens during file-open, we should rather say "no such syntax found, are you missing a plugin?" or similar
 	return defaultValue;
     }
 }

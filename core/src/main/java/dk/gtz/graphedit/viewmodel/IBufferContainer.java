@@ -1,6 +1,5 @@
 package dk.gtz.graphedit.viewmodel;
 
-import dk.gtz.graphedit.view.ISyntaxFactory;
 import javafx.collections.ObservableMap;
 
 /**
