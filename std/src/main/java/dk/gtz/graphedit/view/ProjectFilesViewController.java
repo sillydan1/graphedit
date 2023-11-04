@@ -35,7 +35,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -51,7 +50,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
 
-public class ProjectFilesViewController {
+public class ProjectFilesViewController extends VBox {
     private static record FileTreeEntry(Path path) {
 	@Override
 	public String toString() {
@@ -72,10 +71,10 @@ public class ProjectFilesViewController {
     private boolean isGitInstalled;
     private Thread watcherThread;
 
-    @FXML
-    public VBox root;
+    public ProjectFilesViewController() {
+	initialize();
+    }
 
-    @FXML
     private void initialize() {
 	isGitInstalled = PlatformUtils.isProgramInstalled("git");
 	openProject = DI.get(ViewModelProject.class);
@@ -87,8 +86,8 @@ public class ProjectFilesViewController {
 	initializeGlobMatchers();
 	fileTree = createTreeView(openProject.name().get(), Path.of(openProject.rootDirectory().get()));
 	var toolbar = createToolbar();
-	root.getChildren().clear();
-	root.getChildren().addAll(toolbar, fileTree);
+	getChildren().clear();
+	getChildren().addAll(toolbar, fileTree);
 	watchForFileTreeChanges();
 	openProject.rootDirectory().addListener((e,o,n) -> {
 	    initialize();
@@ -308,7 +307,7 @@ public class ProjectFilesViewController {
     }
 
     public void toggle() {
-	root.setVisible(!root.visibleProperty().get());
+	setVisible(!visibleProperty().get());
     }
 
     // TODO: This should be in the EditorActions instead
