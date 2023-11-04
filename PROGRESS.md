@@ -91,6 +91,11 @@
  - [ ] Custom keybinds
  - [x] windows menubar not showing
  - [x] Migraters
+ - [ ] Plugin system
+   - [ ] general plugin system
+   - [ ] refactor into "vscode" style layout
+   - [ ] refactor views into `std`
+   - [ ] cut dependencies off in build.gradle please
  - [ ] Cut / Copy / Paste support
  - [ ] Additional Syntaxes
    - [x] Simple Text
