@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.util;
+package dk.gtz.graphedit.util;
 
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
@@ -6,7 +6,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;

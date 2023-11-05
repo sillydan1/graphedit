@@ -3,7 +3,7 @@ package dk.gtz.graphedit.plugins.view;
 import java.util.ArrayList;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.IInspectable;
 import dk.gtz.graphedit.viewmodel.ViewModelSelection;

@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.events;
+package dk.gtz.graphedit.events;
 
 import dk.gtz.graphedit.view.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;

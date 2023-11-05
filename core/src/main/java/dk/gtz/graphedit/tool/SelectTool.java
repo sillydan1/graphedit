@@ -8,10 +8,10 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
@@ -20,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Pair;
 
 public class SelectTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(SelectTool.class);

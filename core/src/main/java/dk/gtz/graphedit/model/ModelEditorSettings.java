@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.gtz.graphedit.view.util.PlatformUtils;
+import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 
 /**

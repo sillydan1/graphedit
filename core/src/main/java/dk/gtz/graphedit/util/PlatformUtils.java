@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.util;
+package dk.gtz.graphedit.util;
 
 import java.io.File;
 

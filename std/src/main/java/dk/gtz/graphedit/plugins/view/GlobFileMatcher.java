@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.util;
+package dk.gtz.graphedit.plugins.view;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;

@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;

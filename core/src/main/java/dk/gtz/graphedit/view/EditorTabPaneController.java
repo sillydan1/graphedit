@@ -1,7 +1,7 @@
 package dk.gtz.graphedit.view;
 
 import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;

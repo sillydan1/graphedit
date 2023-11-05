@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.HeightDragResizer;
-import dk.gtz.graphedit.view.util.PlatformUtils;
-import dk.gtz.graphedit.view.util.WidthDragResizer;
+import dk.gtz.graphedit.util.HeightDragResizer;
+import dk.gtz.graphedit.util.PlatformUtils;
+import dk.gtz.graphedit.util.WidthDragResizer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;

@@ -9,7 +9,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;

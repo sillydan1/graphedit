@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.util;
+package dk.gtz.graphedit.util;
 
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;

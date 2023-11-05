@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
 import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 import javafx.beans.Observable;

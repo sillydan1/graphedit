@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.plugins.syntaxes.text.model.ModelTextVertex;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class TextSyntaxMigrater implements ISyntaxMigrater {
 	private final Logger logger = LoggerFactory.getLogger(TextSyntaxMigrater.class);

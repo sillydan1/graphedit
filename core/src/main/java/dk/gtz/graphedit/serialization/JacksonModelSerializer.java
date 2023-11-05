@@ -18,7 +18,7 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class JacksonModelSerializer implements IModelSerializer {
     private final Logger logger = LoggerFactory.getLogger(JacksonModelSerializer.class);

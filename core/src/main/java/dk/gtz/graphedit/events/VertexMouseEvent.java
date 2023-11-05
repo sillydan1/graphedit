@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view.events;
+package dk.gtz.graphedit.events;
 
 import java.util.UUID;
 

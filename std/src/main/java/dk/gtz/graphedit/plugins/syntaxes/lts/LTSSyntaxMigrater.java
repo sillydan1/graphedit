@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.plugins.syntaxes.lts.model.ModelState;
 import dk.gtz.graphedit.plugins.syntaxes.lts.model.ModelTransition;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class LTSSyntaxMigrater implements ISyntaxMigrater {
     private final Logger logger = LoggerFactory.getLogger(LTSSyntaxMigrater.class);

@@ -12,7 +12,7 @@ import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelArc;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelPlace;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelTransition;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class PNSyntaxMigrater implements ISyntaxMigrater {
     private final Logger logger = LoggerFactory.getLogger(PNSyntaxMigrater.class);

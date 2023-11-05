@@ -16,6 +16,7 @@ public class PluginClassLoader extends URLClassLoader {
 			"dk.gtz.graphedit.spi",
 			"dk.gtz.graphedit.view", // TODO: This should be removed
 			"dk.gtz.graphedit.util",
+			"dk.gtz.graphedit.events",
 			"dk.gtz.graphedit.viewmodel",
 			"dk.gtz.graphedit.model",
 			"dk.gtz.graphedit.logging",

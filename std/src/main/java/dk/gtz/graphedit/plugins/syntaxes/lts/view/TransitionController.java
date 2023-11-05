@@ -9,7 +9,7 @@ import dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel.ViewModelTransition;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.view.EdgeController;
 import dk.gtz.graphedit.view.ISyntaxFactory;
-import dk.gtz.graphedit.view.util.BindingsUtil;
+import dk.gtz.graphedit.util.BindingsUtil;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import javafx.beans.property.DoubleProperty;

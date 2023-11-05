@@ -13,7 +13,7 @@ import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEnvironmentVariable;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;

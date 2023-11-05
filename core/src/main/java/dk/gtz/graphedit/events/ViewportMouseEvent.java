@@ -1,22 +1,18 @@
-package dk.gtz.graphedit.view.events;
-
-import java.util.UUID;
+package dk.gtz.graphedit.events;
 
 import dk.gtz.graphedit.view.ISyntaxFactory;
-import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
 /**
- * When a {@link MouseEvent} occurs on an {@link ViewModelEdge}.
+ * When a {@link MouseEvent} occurs on the model editor viewport
  */
-public record EdgeMouseEvent(
+public record ViewportMouseEvent(
 		MouseEvent event,
-		UUID edgeId,
-		ViewModelEdge edge,
 		Affine viewportAffine,
+		boolean isTargetDrawPane,
 		ISyntaxFactory syntax,
 		ViewModelGraph graph,
 		ViewModelEditorSettings editorSettings) {}

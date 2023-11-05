@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.AbstractBaseTool;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
