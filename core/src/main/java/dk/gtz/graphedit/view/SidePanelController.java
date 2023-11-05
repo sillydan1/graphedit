@@ -26,8 +26,10 @@ public class SidePanelController {
 
     public void initialize() {
 	var plugins = DI.get(IPluginsContainer.class);
-	if(plugins.getPlugins().isEmpty())
-	    throw new RuntimeException("No plugins! Cannot initialize side panel with no plugins!"); // TODO: stub functions if no plugins
+	if(plugins.getPlugins().isEmpty()) {
+	    logger.warn("No plugins are loaded, cannot show sidepanel");
+	    return;
+	}
 	for(var plugin : plugins.getPlugins()) {
 	    try {
 		initializePluginTab(plugin);

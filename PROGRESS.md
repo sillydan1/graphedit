@@ -99,7 +99,7 @@
      - [x] Syntax factories
    - [ ] polish
      - [x] move things into proper packages and remove old stuff
-     - [ ] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
+     - [x] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
      - [ ] ugly UI
    - [ ] cut dependencies off in build.gradle please
  - [ ] TODOs round
