@@ -9,6 +9,7 @@ import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.events.EdgeMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.util.BindingsUtil;
+import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;

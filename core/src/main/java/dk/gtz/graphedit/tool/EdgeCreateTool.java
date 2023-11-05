@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
-import dk.gtz.graphedit.view.MouseTracker;
+import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;

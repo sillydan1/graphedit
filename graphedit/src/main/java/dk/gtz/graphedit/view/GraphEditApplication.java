@@ -29,6 +29,7 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
+import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;

@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view;
+package dk.gtz.graphedit.util;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 /**
- * A mouse tracking utility class, access through the skyhook DI system
+ * A mouse tracking utility
  */
 public class MouseTracker {
     private final DoubleProperty xProperty;
