@@ -13,16 +13,17 @@ import java.util.List;
 public class PluginClassLoader extends URLClassLoader {
 	private final ClassLoader parentClassLoader;
 	public static final List<String> SHARED_PACKAGES = List.of(
-			"dk.gtz.graphedit.spi",
-			"dk.gtz.graphedit.view", // TODO: This should be removed
-			"dk.gtz.graphedit.util",
 			"dk.gtz.graphedit.events",
-			"dk.gtz.graphedit.viewmodel",
-			"dk.gtz.graphedit.model",
-			"dk.gtz.graphedit.logging",
 			"dk.gtz.graphedit.exceptions",
+			// "dk.gtz.graphedit.internal", // NOTE: We explicitly dont include internal. It is internal, not shared.
+			"dk.gtz.graphedit.logging",
+			"dk.gtz.graphedit.model",
 			"dk.gtz.graphedit.serialization",
+			"dk.gtz.graphedit.spi",
 			"dk.gtz.graphedit.tool",
+			"dk.gtz.graphedit.util",
+			"dk.gtz.graphedit.view", // TODO: This should be removed (currently required by Vertex/EdgeController stuff)
+			"dk.gtz.graphedit.viewmodel",
 			"dk.yalibs",
 			"atlantafx",
 			"javafx",
