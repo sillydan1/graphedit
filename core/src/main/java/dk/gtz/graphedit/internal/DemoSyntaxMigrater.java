@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
-import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.spi.ISyntaxMigrater;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class DemoSyntaxMigrater implements ISyntaxMigrater {
     private final Logger logger = LoggerFactory.getLogger(DemoSyntaxMigrater.class);

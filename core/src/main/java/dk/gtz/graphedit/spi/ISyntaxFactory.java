@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
-import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.ModelEditorController;

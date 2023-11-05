@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.model.migration;
+package dk.gtz.graphedit.spi;
 
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

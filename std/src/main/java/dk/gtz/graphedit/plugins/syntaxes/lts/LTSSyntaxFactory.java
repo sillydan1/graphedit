@@ -6,12 +6,12 @@ import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
-import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.plugins.syntaxes.lts.view.StateController;
 import dk.gtz.graphedit.plugins.syntaxes.lts.view.TransitionController;
 import dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel.ViewModelState;
 import dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel.ViewModelTransition;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;

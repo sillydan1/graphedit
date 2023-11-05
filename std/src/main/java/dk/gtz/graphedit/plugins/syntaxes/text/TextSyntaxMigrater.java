@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.plugins.syntaxes.text.model.ModelTextVertex;
+import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.util.MetadataUtils;
 
 public class TextSyntaxMigrater implements ISyntaxMigrater {
