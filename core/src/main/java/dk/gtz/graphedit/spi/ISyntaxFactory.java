@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view;
+package dk.gtz.graphedit.spi;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,7 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.model.migration.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;

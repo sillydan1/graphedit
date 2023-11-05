@@ -12,6 +12,7 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;

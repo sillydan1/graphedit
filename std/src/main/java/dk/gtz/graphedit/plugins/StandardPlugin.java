@@ -7,7 +7,7 @@ import dk.gtz.graphedit.plugins.syntaxes.petrinet.PNSyntaxFactory;
 import dk.gtz.graphedit.plugins.syntaxes.text.TextSyntaxFactory;
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginPanel;
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 
 public class StandardPlugin implements IPlugin {
     @Override

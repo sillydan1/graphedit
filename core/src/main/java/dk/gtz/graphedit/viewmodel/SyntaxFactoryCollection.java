@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.gtz.graphedit.internal.DemoSyntaxFactory;
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 
 public final class SyntaxFactoryCollection extends HashMap<String,ISyntaxFactory> {
     public SyntaxFactoryCollection() {

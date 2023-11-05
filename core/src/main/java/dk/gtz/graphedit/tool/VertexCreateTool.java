@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelVertex;
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;

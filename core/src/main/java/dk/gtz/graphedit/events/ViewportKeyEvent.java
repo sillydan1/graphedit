@@ -1,6 +1,6 @@
 package dk.gtz.graphedit.events;
 
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import javafx.scene.input.KeyEvent;

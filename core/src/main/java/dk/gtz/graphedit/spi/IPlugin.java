@@ -2,8 +2,6 @@ package dk.gtz.graphedit.spi;
 
 import java.util.List;
 
-import dk.gtz.graphedit.view.ISyntaxFactory;
-
 public interface IPlugin {
     String getName();
 

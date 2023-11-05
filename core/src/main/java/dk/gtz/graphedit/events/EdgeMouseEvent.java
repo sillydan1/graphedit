@@ -2,7 +2,7 @@ package dk.gtz.graphedit.events;
 
 import java.util.UUID;
 
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;

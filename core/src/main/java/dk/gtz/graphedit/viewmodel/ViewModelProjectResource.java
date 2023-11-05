@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import dk.gtz.graphedit.internal.DemoSyntaxFactory;
-import dk.gtz.graphedit.view.ISyntaxFactory;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.yalibs.yadi.DI;
 
