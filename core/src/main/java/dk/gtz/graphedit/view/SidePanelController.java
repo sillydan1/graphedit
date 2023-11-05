@@ -11,6 +11,7 @@ import dk.yalibs.yadi.DI;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
@@ -30,6 +31,8 @@ public class SidePanelController {
 	    logger.warn("No plugins are loaded, cannot show sidepanel");
 	    return;
 	}
+	left.setSpacing(20);
+	left.setPadding(new Insets(15));
 	for(var plugin : plugins.getPlugins()) {
 	    try {
 		initializePluginTab(plugin);
@@ -43,6 +46,8 @@ public class SidePanelController {
     private void initializePluginTab(IPlugin plugin) throws Exception {
 	for(var panel : plugin.getPanels()) {
 	    var btn = new ToggleButton(null, panel.getIcon());
+	    btn.setScaleX(1.35f);
+	    btn.setScaleY(1.35f);
 	    btn.setTooltip(new Tooltip(panel.getTooltip()));
 	    btn.getStyleClass().addAll(Styles.BUTTON_ICON);
 	    btn.setOnMouseClicked(e -> selectedPlugin.set(panel));

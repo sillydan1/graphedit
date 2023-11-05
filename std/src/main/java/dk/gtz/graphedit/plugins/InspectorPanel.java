@@ -23,7 +23,7 @@ public class InspectorPanel implements IPluginPanel {
 
     @Override
     public Node getIcon() {
-        return new FontIcon(BootstrapIcons.EYEDROPPER);
+        return new FontIcon(BootstrapIcons.CARD_TEXT);
     }
 
     @Override

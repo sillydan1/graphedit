@@ -22,7 +22,7 @@ public class ProjectFilesViewPanel implements IPluginPanel {
 
     @Override
     public Node getIcon() {
-        return new FontIcon(BootstrapIcons.FILES);
+        return new FontIcon(BootstrapIcons.FOLDER_FILL);
     }
 
     @Override
