@@ -14,7 +14,7 @@ import javafx.scene.transform.TransformChangedEvent;
  * A javafx {@link Pane} with a movable line-grid background.
  * Not to be confused with {@link javafx.scene.layout.GridPane}
  */
-public class GridPane extends Pane {
+public class GridPaneController extends Pane {
     private DoubleProperty gridsizeX;
     private DoubleProperty gridsizeY;
     private double offsetX;
@@ -28,7 +28,7 @@ public class GridPane extends Pane {
      * @param gridsize the width and height size of the grid
      * @param transform the transform matrix. Use this to zoom in/out and translate the grid
      */
-    public GridPane(DoubleProperty gridsize, Affine transform) {
+    public GridPaneController(DoubleProperty gridsize, Affine transform) {
 	this(gridsize, gridsize, transform);
     }
 
@@ -38,7 +38,7 @@ public class GridPane extends Pane {
      * @param gridsizeY the height size of the grid
      * @param transform the transform matrix. Use this to zoom in/out and translate the grid
      */
-    public GridPane(DoubleProperty gridsizeX, DoubleProperty gridsizeY, Affine transform) {
+    public GridPaneController(DoubleProperty gridsizeX, DoubleProperty gridsizeY, Affine transform) {
 	super();
 	this.gridsizeX = gridsizeX;
 	this.gridsizeY = gridsizeY;

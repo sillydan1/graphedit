@@ -41,7 +41,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
-    private GridPane gridPane;
+    private GridPaneController gridPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
@@ -100,7 +100,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	gridPane = new GridPane(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
+	gridPane = new GridPaneController(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
