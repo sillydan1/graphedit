@@ -26,7 +26,7 @@ import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
-import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;

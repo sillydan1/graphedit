@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
-import dk.yalibs.yadi.DI;
 
 public class PluginLoader {
 	private static Logger logger = LoggerFactory.getLogger(PluginLoader.class);

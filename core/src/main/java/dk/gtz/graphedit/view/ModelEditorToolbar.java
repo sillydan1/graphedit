@@ -1,7 +1,5 @@
 package dk.gtz.graphedit.view;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +18,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.stage.PopupWindow.AnchorLocation;
 
 public class ModelEditorToolbar extends ToolBar {
     private Logger logger = LoggerFactory.getLogger(ModelEditorToolbar.class);
