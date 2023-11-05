@@ -93,10 +93,10 @@
  - [ ] Plugin system
    - [x] general plugin system
    - [x] refactor into "vscode" style layout
-   - [ ] refactor things into `std`
-     - [ ] File Explorer
-     - [ ] Syntactic Element Inspector
-     - [ ] Syntax factories
+   - [x] refactor things into `std`
+     - [x] File Explorer
+     - [x] Syntactic Element Inspector
+     - [x] Syntax factories
    - [ ] polish (Ugly UI should be prettier)
    - [ ] cut dependencies off in build.gradle please
  - [ ] TODOs round
