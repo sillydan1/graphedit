@@ -35,8 +35,8 @@ import javafx.stage.StageStyle;
  * @author Michael Berry
  * @author Asger Gitz-Johansen
  */
-public class DraggableTab extends Tab {
-    private static final Logger logger = LoggerFactory.getLogger(DraggableTab.class);
+public class DraggableTabController extends Tab {
+    private static final Logger logger = LoggerFactory.getLogger(DraggableTabController.class);
     private record InsertData(int index, TabPane insertPane) {}
     private static final Set<TabPane> tabPanes = new HashSet<>();
     private Label nameLabel;
@@ -54,7 +54,7 @@ public class DraggableTab extends Tab {
 	markerStage.setScene(new Scene(markerStack));
     }
 
-    public DraggableTab() {
+    public DraggableTabController() {
 	this("Tab");
     }
 
@@ -65,7 +65,7 @@ public class DraggableTab extends Tab {
      * <p>
      * @param text the text to appear on the tag label.
      */
-    public DraggableTab(String text) {
+    public DraggableTabController(String text) {
 	nameLabel = new Label(text);
 	setGraphic(nameLabel);
 	detachable = true;
@@ -110,19 +110,19 @@ public class DraggableTab extends Tab {
 	    if(!t.isStillSincePress()) {
 		var screenPoint = new Point2D(t.getScreenX(), t.getScreenY());
 		var oldTabPane = getTabPane();
-		var oldIndex = oldTabPane.getTabs().indexOf(DraggableTab.this);
+		var oldIndex = oldTabPane.getTabs().indexOf(DraggableTabController.this);
 		tabPanes.add(oldTabPane);
 		var insertData = getInsertData(screenPoint);
 		if(insertData != null) {
 		    var addIndex = insertData.index();
 		    if(oldTabPane == insertData.insertPane() && oldTabPane.getTabs().size() == 1)
 			return;
-		    oldTabPane.getTabs().remove(DraggableTab.this);
+		    oldTabPane.getTabs().remove(DraggableTabController.this);
 		    if(oldIndex < addIndex && oldTabPane == insertData.insertPane())
 			addIndex--;
 		    if(addIndex > insertData.insertPane().getTabs().size())
 			addIndex = insertData.insertPane().getTabs().size();
-		    insertData.insertPane().getTabs().add(addIndex, DraggableTab.this);
+		    insertData.insertPane().getTabs().add(addIndex, DraggableTabController.this);
 		    insertData.insertPane().selectionModelProperty().get().select(addIndex);
 		    return;
 		}
@@ -133,8 +133,8 @@ public class DraggableTab extends Tab {
 		pane.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 		tabPanes.add(pane);
 		newStage.setOnHiding(t1 -> tabPanes.remove(pane));
-		getTabPane().getTabs().remove(DraggableTab.this);
-		pane.getTabs().add(DraggableTab.this);
+		getTabPane().getTabs().remove(DraggableTabController.this);
+		pane.getTabs().add(DraggableTabController.this);
 		pane.getTabs().addListener((ListChangeListener<Tab>) change -> {
 		    if(pane.getTabs().isEmpty())
 			newStage.hide();
@@ -202,7 +202,7 @@ public class DraggableTab extends Tab {
 			for(var i = 0; i < tabPane.getTabs().size() - 1; i++) {
 			    var leftTab = tabPane.getTabs().get(i);
 			    var rightTab = tabPane.getTabs().get(i + 1);
-			    if(leftTab instanceof DraggableTab && rightTab instanceof DraggableTab) {
+			    if(leftTab instanceof DraggableTabController && rightTab instanceof DraggableTabController) {
 				var leftTabRect = getAbsoluteRect(leftTab);
 				var rightTabRect = getAbsoluteRect(rightTab);
 				if(betweenX(leftTabRect, rightTabRect, screenPoint.getX())) {
@@ -227,7 +227,7 @@ public class DraggableTab extends Tab {
     }
 
     private Rectangle2D getAbsoluteRect(Tab tab) {
-	var node = ((DraggableTab) tab).getLabel();
+	var node = ((DraggableTabController) tab).getLabel();
 	return getAbsoluteRect(node);
     }
 
