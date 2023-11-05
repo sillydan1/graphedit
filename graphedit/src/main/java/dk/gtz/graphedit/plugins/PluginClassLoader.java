@@ -26,7 +26,8 @@ public class PluginClassLoader extends URLClassLoader {
 			"atlantafx",
 			"javafx",
 			"org.kordamp",
-			"org.slf4j"
+			"org.slf4j",
+			"com.fasterxml.jackson"
 	);
 
 	public PluginClassLoader(URL[] urls, ClassLoader parentClassLoader) {

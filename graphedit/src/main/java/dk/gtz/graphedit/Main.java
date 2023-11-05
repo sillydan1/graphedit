@@ -7,10 +7,9 @@ import com.beust.jcommander.JCommander;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.plugins.PluginLoader;
+import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
-import dk.gtz.graphedit.syntaxes.lts.LTSSyntaxFactory;
-import dk.gtz.graphedit.syntaxes.petrinet.PNSyntaxFactory;
-import dk.gtz.graphedit.syntaxes.text.TextSyntaxFactory;
 import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.yalibs.yadi.DI;
@@ -32,7 +31,8 @@ public class Main {
             return;
         }
 
-        var loader = new PluginLoader(args.pluginDirs).loadPlugins();
+        DI.add(IModelSerializer.class, new JacksonModelSerializer());
+        var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         var factories = new SyntaxFactoryCollection();
         DI.add(SyntaxFactoryCollection.class, factories);
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
@@ -43,10 +43,8 @@ public class Main {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
             }
         }
-
-        factories.add(new TextSyntaxFactory()); // TODO: Extract this into a plugin
-        factories.add(new LTSSyntaxFactory()); // TODO: Extract this into a plugin
-        factories.add(new PNSyntaxFactory()); // TODO: Extract this into a plugin
+        if(factories.isEmpty())
+            throw new Exception("Refusing to start the editor without any syntaxes. Please check your plugins directory");
 
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         GraphEditApplication.launchApp(argv);

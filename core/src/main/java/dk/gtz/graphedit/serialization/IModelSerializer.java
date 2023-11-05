@@ -22,5 +22,7 @@ public interface IModelSerializer {
     ModelEditorSettings deserializeEditorSettings(File file) throws SerializationException, IOException;
 
     List<String> getSupportedContentTypes();
+
+    void addClassLoader(ClassLoader loader);
 }
 

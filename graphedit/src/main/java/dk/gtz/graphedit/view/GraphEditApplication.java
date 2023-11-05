@@ -102,7 +102,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	var undoSystem = new ObservableStackUndoSystem();
 	DI.add(IUndoSystem.class, undoSystem);
 	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this - This relates to https://github.com/sillydan1/graphedit/issues/1
-	DI.add(IModelSerializer.class, () -> new JacksonModelSerializer());
+	if(!DI.contains(IModelSerializer.class))
+	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);

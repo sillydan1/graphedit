@@ -3,7 +3,7 @@ package dk.gtz.graphedit.viewmodel;
 import java.util.HashMap;
 import java.util.List;
 
-import dk.gtz.graphedit.view.DemoSyntaxFactory;
+import dk.gtz.graphedit.internal.DemoSyntaxFactory;
 import dk.gtz.graphedit.view.ISyntaxFactory;
 
 public final class SyntaxFactoryCollection extends HashMap<String,ISyntaxFactory> {

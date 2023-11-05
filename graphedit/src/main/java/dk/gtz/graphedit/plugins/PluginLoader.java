@@ -18,20 +18,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
+import dk.yalibs.yadi.DI;
 
 public class PluginLoader {
 	private static Logger logger = LoggerFactory.getLogger(PluginLoader.class);
 	private final IPluginsContainer loadedPlugins;
 	private final List<File> pluginsDirs;
 	private final AtomicBoolean loading = new AtomicBoolean();
+	private final IModelSerializer serializer;
 
-	public PluginLoader(List<String> pluginsDirs) {
+	public PluginLoader(List<String> pluginsDirs, IModelSerializer serializer) {
 		this.pluginsDirs = new ArrayList<>(pluginsDirs.size());
 		for(var pluginStr : pluginsDirs)
 			this.pluginsDirs.add(new File(pluginStr));
-		loadedPlugins = new ListPluginsContainer();
+		this.loadedPlugins = new ListPluginsContainer();
+		this.serializer = serializer;
 	}
 
 	public IPluginsContainer getLoadedPlugins() {
@@ -62,7 +66,7 @@ public class PluginLoader {
 			var pluginClassLoader = createPluginClassLoader(pluginDir, currentClassLoader);
 			Thread.currentThread().setContextClassLoader(pluginClassLoader);
 			for(var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
-				loadPlugin(plugin);
+				loadPlugin(plugin, pluginClassLoader);
 		} catch(ServiceConfigurationError e) {
 			logger.warn("failed to load plugin: {}", e.getMessage());
 		} finally {
@@ -70,9 +74,10 @@ public class PluginLoader {
 		}
 	}
 
-	private void loadPlugin(IPlugin plugin) {
+	private void loadPlugin(IPlugin plugin, ClassLoader loader) {
 		logger.trace("loaded plugin: {}", plugin.getName());
 		loadedPlugins.add(plugin);
+		serializer.addClassLoader(loader);
 	}
 
 	private URLClassLoader createPluginClassLoader(File file, ClassLoader loader) {
