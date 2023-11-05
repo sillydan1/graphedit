@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view;
+package dk.gtz.graphedit.util;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

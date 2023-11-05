@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.util.VetoChangeListener;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
