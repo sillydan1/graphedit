@@ -38,10 +38,10 @@ public class SidePanelController {
 	selectedPlugin.addListener((e,o,n) -> root.setCenter(n.getPanel()));
     }
 
-    private void initializePluginTab(IPlugin plugin) {
+    private void initializePluginTab(IPlugin plugin) throws Exception {
 	for(var panel : plugin.getPanels()) {
 	    var btn = new ToggleButton(null, panel.getIcon());
-	    btn.setTooltip(new Tooltip(plugin.getName()));
+	    btn.setTooltip(new Tooltip(panel.getTooltip()));
 	    btn.getStyleClass().addAll(Styles.BUTTON_ICON);
 	    btn.setOnMouseClicked(e -> selectedPlugin.set(panel));
 	    btn.selectedProperty().set(selectedPlugin.get() == panel);

@@ -1,33 +1,35 @@
 package dk.gtz.graphedit.plugins;
 
+import java.io.IOException;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import dk.gtz.graphedit.plugins.view.InspectorController;
 import dk.gtz.graphedit.spi.IPluginPanel;
-import dk.gtz.graphedit.plugins.view.ProjectFilesViewController;
 import javafx.scene.Node;
 
-public class ProjectFilesViewPanel implements IPluginPanel {
+public class InspectorPanel implements IPluginPanel {
     private final Node panel;
 
-    public ProjectFilesViewPanel() {
-        panel = new ProjectFilesViewController();
+    public InspectorPanel() throws IOException {
+        panel = new InspectorController();
     }
 
     @Override
     public String getTooltip() {
-        return "Files";
+        return "Attribute Inspector";
     }
 
     @Override
     public Node getIcon() {
-        return new FontIcon(BootstrapIcons.FILES);
+        return new FontIcon(BootstrapIcons.EYEDROPPER);
     }
 
     @Override
     public Node getPanel() {
         return panel;
     }
+
 }
 

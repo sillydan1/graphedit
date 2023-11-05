@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view;
+package dk.gtz.graphedit.plugins.view;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -26,18 +25,20 @@ import javafx.scene.layout.VBox;
  * The javafx controller for the syntax property inspector panel
  */
 public class InspectorController extends StackPane {
-    @FXML
     private VBox propertiesContainer;
-    @FXML
     private ScrollPane scrollPane;
     private final ObservableList<ViewModelSelection> selectedElements;
 
     public InspectorController() {
 	selectedElements = DI.get("selectedElements");
+	initialize();
     }
 
-    @FXML
     private void initialize() {
+	propertiesContainer = new VBox();
+	scrollPane = new ScrollPane(propertiesContainer);
+	scrollPane.setFitToWidth(true);
+	getChildren().add(scrollPane);
 	propertiesContainer.setSpacing(5);
 	propertiesContainer.setPadding(new Insets(10));
 	scrollPane.setContent(propertiesContainer);

@@ -13,13 +13,15 @@ public class StandardPlugin implements IPlugin {
     }
 
     @Override
-    public List<ISyntaxFactory> getSyntaxFactories() {
+    public List<ISyntaxFactory> getSyntaxFactories() throws Exception {
         return List.of();
     }
 
     @Override
-    public List<IPluginPanel> getPanels() {
-        return List.of(new ProjectFilesViewPanel());
+    public List<IPluginPanel> getPanels() throws Exception {
+        return List.of(
+                new ProjectFilesViewPanel(),
+                new InspectorPanel());
     }
 }
 

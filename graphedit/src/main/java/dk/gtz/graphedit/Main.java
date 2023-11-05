@@ -6,7 +6,6 @@ import com.beust.jcommander.JCommander;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.plugins.DummyPlugin;
 import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.syntaxes.lts.LTSSyntaxFactory;
@@ -36,9 +35,14 @@ public class Main {
         var loader = new PluginLoader(args.pluginDirs).loadPlugins();
         var factories = new SyntaxFactoryCollection();
         DI.add(SyntaxFactoryCollection.class, factories);
-        DI.add(IPluginsContainer.class, loader.getLoadedPlugins().add(new DummyPlugin(), new DummyPlugin()));
-        for(var plugin : loader.getLoadedPlugins().getPlugins())
-            factories.add(plugin.getSyntaxFactories());
+        DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
+        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
+            try {
+                factories.add(plugin.getSyntaxFactories());
+            } catch (Exception e) {
+                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
+            }
+        }
 
         factories.add(new TextSyntaxFactory()); // TODO: Extract this into a plugin
         factories.add(new LTSSyntaxFactory()); // TODO: Extract this into a plugin
