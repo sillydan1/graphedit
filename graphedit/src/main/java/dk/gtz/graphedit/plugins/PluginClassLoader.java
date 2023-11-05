@@ -2,7 +2,6 @@ package dk.gtz.graphedit.plugins;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,8 +11,23 @@ import java.util.List;
  * Only the classes in SHARED_PACKAGES are visible to the plugin.
  */
 public class PluginClassLoader extends URLClassLoader {
-	public static final List<String> SHARED_PACKAGES = Arrays.asList("dk.gtz.graphedit.spi");
 	private final ClassLoader parentClassLoader;
+	public static final List<String> SHARED_PACKAGES = List.of(
+			"dk.gtz.graphedit.spi",
+			"dk.gtz.graphedit.view", // TODO: This should be removed
+			"dk.gtz.graphedit.util",
+			"dk.gtz.graphedit.viewmodel",
+			"dk.gtz.graphedit.model",
+			"dk.gtz.graphedit.logging",
+			"dk.gtz.graphedit.exceptions",
+			"dk.gtz.graphedit.serialization",
+			"dk.gtz.graphedit.tool",
+			"dk.yalibs",
+			"atlantafx",
+			"javafx",
+			"org.kordamp",
+			"org.slf4j"
+	);
 
 	public PluginClassLoader(URL[] urls, ClassLoader parentClassLoader) {
 		super(urls, null);

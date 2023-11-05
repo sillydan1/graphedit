@@ -59,7 +59,7 @@ public class PluginLoader {
 		var currentClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
 			logger.trace("trying to load plugin: {}", pluginDir);
-			var pluginClassLoader = createPluginClassLoader(pluginDir);
+			var pluginClassLoader = createPluginClassLoader(pluginDir, currentClassLoader);
 			Thread.currentThread().setContextClassLoader(pluginClassLoader);
 			for(var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
 				loadPlugin(plugin);
@@ -75,13 +75,13 @@ public class PluginLoader {
 		loadedPlugins.add(plugin);
 	}
 
-	private URLClassLoader createPluginClassLoader(File file) {
+	private URLClassLoader createPluginClassLoader(File file, ClassLoader loader) {
 		var urls = Arrays.stream(Optional.ofNullable(file.listFiles()).orElse(new File[]{file}))
 			.sorted()
 			.map(File::toURI)
 			.map(this::toUrl)
 			.toArray(URL[]::new);
-		return new PluginClassLoader(urls, getClass().getClassLoader());
+		return new PluginClassLoader(urls, loader);
 	}
 
 	private URL toUrl(URI uri) {

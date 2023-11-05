@@ -5,7 +5,7 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import dk.gtz.graphedit.spi.IPluginPanel;
-import dk.gtz.graphedit.view.ProjectFilesViewController;
+import dk.gtz.graphedit.plugins.view.ProjectFilesViewController;
 import javafx.scene.Node;
 
 public class ProjectFilesViewPanel implements IPluginPanel {
