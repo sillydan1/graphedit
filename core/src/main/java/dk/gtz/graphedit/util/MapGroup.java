@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.view;
+package dk.gtz.graphedit.util;
 
 import java.util.HashMap;
 import java.util.Map;
