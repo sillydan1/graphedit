@@ -28,10 +28,10 @@ public class HeightDragResizer {
 
     private static void makeResizable(Region region, boolean inverted) {
         var resizer = new HeightDragResizer(region, inverted);
-        region.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> resizer.mousePressed(e));
-        region.addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> resizer.mouseDragged(e));
-        region.addEventFilter(MouseEvent.MOUSE_MOVED, e -> resizer.mouseOver(e));
-        region.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> resizer.mouseReleased(e));
+        region.addEventFilter(MouseEvent.MOUSE_PRESSED, resizer::mousePressed);
+        region.addEventFilter(MouseEvent.MOUSE_DRAGGED, resizer::mouseDragged);
+        region.addEventFilter(MouseEvent.MOUSE_MOVED, resizer::mouseOver);
+        region.addEventFilter(MouseEvent.MOUSE_RELEASED, resizer::mouseReleased);
     }
 
     /**

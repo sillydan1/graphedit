@@ -51,6 +51,7 @@ public class EditorController {
 	selectedRunTarget = Optional.empty();
 	runTargetThread = new Thread(this::runTarget);
 	WidthDragResizer.makeResizableRight((Region)primaryBorderPane.getLeft());
+	((Region)primaryBorderPane.getLeft()).setPrefWidth(300);
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
