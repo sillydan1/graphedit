@@ -97,10 +97,10 @@
      - [x] File Explorer
      - [x] Syntactic Element Inspector
      - [x] Syntax factories
-   - [ ] polish
+   - [x] polish
      - [x] move things into proper packages and remove old stuff
      - [x] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
-     - [ ] ugly UI
+     - [x] ugly UI
    - [ ] cut dependencies off in build.gradle please
  - [ ] TODOs round
  - [ ] Release `v1.1.0
