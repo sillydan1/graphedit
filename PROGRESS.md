@@ -90,7 +90,7 @@
  - [x] gitignored Project cache, such as what files did you have open last etc.
  - [x] windows menubar not showing
  - [x] Migraters
- - [ ] Plugin system
+ - [x] Plugin system
    - [x] general plugin system
    - [x] refactor into "vscode" style layout
    - [x] refactor things into `std`
@@ -101,7 +101,7 @@
      - [x] move things into proper packages and remove old stuff
      - [x] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
      - [x] ugly UI
-   - [ ] cut dependencies off in build.gradle please
+   - [x] cut dependencies off in build.gradle please
  - [ ] TODOs round
  - [ ] Release `v1.1.0
  - [ ] Custom keybinds
