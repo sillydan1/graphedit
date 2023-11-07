@@ -1,17 +1,18 @@
 package dk.gtz.graphedit.plugins;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
+import javafx.collections.ObservableSet;
+import javafx.collections.FXCollections;
 
-public class ListPluginsContainer implements IPluginsContainer {
-	private final List<IPlugin> plugins;
+public class ObservableSetPluginsContainer implements IPluginsContainer {
+	private final ObservableSet<IPlugin> plugins;
 
-	public ListPluginsContainer() {
-		plugins = new ArrayList<>();
+	public ObservableSetPluginsContainer() {
+		plugins = FXCollections.observableSet();
 	}
 
 	@Override
@@ -48,9 +49,8 @@ public class ListPluginsContainer implements IPluginsContainer {
 		return Optional.empty();
 	}
 
-	// TODO: This should be an observable list
 	@Override
-	public List<IPlugin> getPlugins() {
+	public ObservableSet<IPlugin> getPlugins() {
 		return plugins;
 	}
 }

@@ -33,7 +33,7 @@ public class PluginLoader {
 		this.pluginsDirs = new ArrayList<>(pluginsDirs.size());
 		for(var pluginStr : pluginsDirs)
 			this.pluginsDirs.add(new File(pluginStr));
-		this.loadedPlugins = new ListPluginsContainer();
+		this.loadedPlugins = new ObservableSetPluginsContainer();
 		this.serializer = serializer;
 	}
 

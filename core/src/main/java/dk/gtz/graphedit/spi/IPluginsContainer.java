@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.spi;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,6 @@ public interface IPluginsContainer {
     IPluginsContainer add(IPlugin... plugins);
     IPluginsContainer remove(IPlugin plugin);
     Optional<IPlugin> get(String name);
-    List<IPlugin> getPlugins();
+    Collection<IPlugin> getPlugins();
 }
 
