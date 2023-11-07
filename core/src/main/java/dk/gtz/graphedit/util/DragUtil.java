@@ -13,12 +13,12 @@ import javafx.scene.transform.Affine;
 public class DragUtil {
     /**
      * Add some event handlers to the provided node that makes it draggable through a {@link ViewModelPoint}
-     * @param mouseSubject The node that will catch the related mouse events
+     * @param node The node that will catch the related mouse events
      * @param point View model point values that will be modified
      * @param viewportAffine Affine of the viewport
      */
-    public static void makeDraggable(Node mouseSubject, ViewModelPoint point, Affine viewportAffine) {
-        // Must be properties due to java's final/effectively final lambda restriction
+    public static void makeDraggable(Node node, ViewModelPoint point, Affine viewportAffine) {
+        // NOTE: Must be properties due to java's final/effectively final lambda restriction
         var undoSystem = DI.get(IUndoSystem.class);
         var oldX = new SimpleDoubleProperty();
         var oldY = new SimpleDoubleProperty();
@@ -27,7 +27,7 @@ public class DragUtil {
         var undoAction = new SimpleObjectProperty<Runnable>(null);
         var redoAction = new SimpleObjectProperty<Runnable>(null);
 
-        mouseSubject.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        node.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             if(!event.isPrimaryButtonDown())
                 return;
             oldX.set(event.getScreenX());
@@ -42,7 +42,7 @@ public class DragUtil {
             });
         });
 
-        mouseSubject.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             if(!event.isPrimaryButtonDown())
                 return;
             var newX = event.getScreenX();
@@ -59,9 +59,37 @@ public class DragUtil {
             });
         });
 
-        mouseSubject.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        node.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if(undoAction.get() != null && redoAction.get() != null)
                 undoSystem.push(new Undoable("move action", undoAction.get(), redoAction.get()));
+        });
+    }
+
+    /**
+     * Add event handlers to the provided node such that the provided {@link Affine} will be inversely translated on mouse dragging
+     *
+     * NB: The provided affine only gets changes on mouse secondary button presses
+     * @param node The node that will catch the related mouse events
+     * @param transform The affine to add translation delta to
+     */
+    public static void makeDraggableInverse(Node node, Affine transform) {
+        // NOTE: Must be properties due to java's final/effectively final lambda restriction
+        var drawPaneDragStartX = new SimpleDoubleProperty();
+        var drawPaneDragStartY = new SimpleDoubleProperty();
+
+        node.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            drawPaneDragStartX.set(event.getX());
+            drawPaneDragStartY.set(event.getY());
+        });
+
+        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            if(!event.isSecondaryButtonDown())
+                return;
+            var dx = event.getX() - drawPaneDragStartX.get();
+            var dy = event.getY() - drawPaneDragStartY.get();
+            transform.appendTranslation(dx, dy);
+            drawPaneDragStartX.set(event.getX());
+            drawPaneDragStartY.set(event.getY());
         });
     }
 }
