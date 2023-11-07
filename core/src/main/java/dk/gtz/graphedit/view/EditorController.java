@@ -185,6 +185,11 @@ public class EditorController {
     }
 
     @FXML
+    private void openModel() {
+	EditorActions.openModel();
+    }
+
+    @FXML
     private void newProject() {
 	var file = EditorActions.newFile();
 	if(!file.isPresent())

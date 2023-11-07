@@ -13,6 +13,7 @@
                 <MenuBar useSystemMenuBar="true">
                     <Menu text="File">
                         <MenuItem onAction="#newModel" text="New Model File" accelerator="Shortcut+N"/>
+                        <MenuItem onAction="#openModel" text="Open Model File" accelerator="Shortcut+O"/>
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>

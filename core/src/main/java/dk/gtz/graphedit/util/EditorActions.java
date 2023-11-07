@@ -25,6 +25,7 @@ import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
@@ -459,6 +460,54 @@ public class EditorActions {
             saveModelToFile(newFilePath, newModel);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Prompt the user to pick a file to open
+     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFile() {
+        var fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("json files", "*.json"));
+        fileChooser.setTitle("Open file");
+        return Optional.ofNullable(fileChooser.showOpenDialog(DI.get(Window.class)));
+    }
+
+    /**
+     * Open a file as a model file.
+     * Will prompt the user to pick a file
+     */
+    public static void openModel() {
+        var file = openFile();
+        if(file.isPresent())
+            openModel(file.get().toPath());
+    }
+
+    /**
+     * Open specified path as a model file.
+     * @param path Path to a file to try to open as a model
+     */
+    public static void openModel(Path path) {
+        try {
+            if(!Files.isRegularFile(path)) {
+                logger.warn("not a file {}", path.toString());
+                return;
+            }
+            logger.trace("opening file {}", path.toString());
+            var fileType = DI.get(IMimeTypeChecker.class).getMimeType(path);
+            var serializer = DI.get(IModelSerializer.class);
+            if(!serializer.getSupportedContentTypes().contains(fileType)) {
+                logger.error("cannot open unsupported filetype '{}'", fileType);
+                return;
+            }
+            var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
+	        var openBuffers = DI.get(IBufferContainer.class);
+            openBuffers.open(path.toString().replace(basePath, ""));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            logger.debug(e.getMessage(), e);
         }
     }
 
