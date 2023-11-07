@@ -42,7 +42,7 @@ public class EditorTabPaneController {
 		var tabTitle = changedKey;
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
-		var tab = new DraggableTabController(tabTitle); // TODO: title should be the ViewModelProject.name stringproperty instead
+		var tab = new DraggableTabController(tabTitle);
 		changedVal.addView(tab);
 		changedVal.addListener((e,o,n) -> tab.setHighlight());
 		EditorActions.addSaveListener(tab::unsetHighlight);
