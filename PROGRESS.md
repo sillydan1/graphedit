@@ -103,8 +103,8 @@
      - [x] ugly UI
    - [x] cut dependencies off in build.gradle please
  - [x] Release format (ship plugins)
- - [ ] TODOs round
- - [ ] update readme (screenshots etc)
+ - [x] TODOs round
+ - [x] update readme (screenshots etc)
  - [ ] Release `v1.1.0
  - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support
