@@ -141,6 +141,15 @@ public class ProjectFilesViewController extends VBox {
 	showHiddenFilesTip.setWrapText(true);
 	showHiddenFilesButton.setTooltip(showHiddenFilesTip);
 
+	var newFileButton = new Button(null, new FontIcon(BootstrapIcons.FILE_EARMARK_PLUS));
+	newFileButton.getStyleClass().addAll(Styles.BUTTON_ICON);
+	var newFileTip = new Tooltip("New model file");
+	newFileTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	newFileTip.setPrefWidth(200);
+	newFileTip.setWrapText(true);
+	newFileButton.setTooltip(newFileTip);
+	newFileButton.setOnAction(e -> EditorActions.createNewModelFile());
+
 	var manualRefreshButton = new Button(null, new FontIcon(BootstrapIcons.ARROW_CLOCKWISE));
 	manualRefreshButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	var refreshTip = new Tooltip("Refresh");
@@ -151,7 +160,8 @@ public class ProjectFilesViewController extends VBox {
 	manualRefreshButton.setOnAction(e -> updateTreeView());
 
 	var result = new ToolBar(
-		// TODO: newfile, newfolder etc.
+		newFileButton,
+		new Separator(Orientation.VERTICAL),
 		grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton,
 		new Separator(Orientation.VERTICAL),
 		manualRefreshButton);
