@@ -42,6 +42,8 @@ public class PluginLoader {
 	}
 
 	public PluginLoader loadPlugins() {
+		if(loading.compareAndSet(false, true))
+			loadPlugin();
 		for(var pluginsDir : pluginsDirs) {
 			logger.trace("looking for plugins in {}", pluginsDir.getAbsolutePath());
 			if(!pluginsDir.exists() || !pluginsDir.isDirectory()) {
@@ -58,6 +60,15 @@ public class PluginLoader {
 		return this;
 	}
 
+	private void loadPlugin() {
+		try {
+			for(var plugin : ServiceLoader.load(IPlugin.class))
+				loadPlugin(plugin);
+		} catch(ServiceConfigurationError e) {
+			logger.warn("failed to load plugin: {}", e.getMessage());
+		}
+	}
+
 	private void loadPlugin(File pluginDir) {
 		var currentClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
@@ -71,6 +82,11 @@ public class PluginLoader {
 		} finally {
 			Thread.currentThread().setContextClassLoader(currentClassLoader);
 		}
+	}
+
+	private void loadPlugin(IPlugin plugin) {
+		logger.trace("loaded plugin: {}", plugin.getName());
+		loadedPlugins.add(plugin);
 	}
 
 	private void loadPlugin(IPlugin plugin, ClassLoader loader) {

@@ -15,6 +15,7 @@ javafx {
 
 dependencies {
     implementation project(':core');
+    implementation project(':std'); // TODO: this should be handled with a package manager
 }
 
 application {
