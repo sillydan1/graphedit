@@ -37,6 +37,7 @@ import javafx.scene.transform.Affine;
 
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
+    private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
     private ISyntaxFactory syntaxFactory;
@@ -109,7 +110,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void onScrollingDrawPane(ScrollEvent event) {
 	if(event.isControlDown())
-	    zoomDrawPane(1 - (event.getDeltaY() * 0.01f)); // TODO: Consider having an adjustable scalar
+	    zoomDrawPane(1 - (event.getDeltaY() * ZOOM_SPEED_SCALAR));
 	else
 	    drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
     }
