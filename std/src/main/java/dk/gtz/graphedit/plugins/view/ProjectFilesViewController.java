@@ -1,6 +1,5 @@
 package dk.gtz.graphedit.plugins.view;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -8,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
-import java.util.HashMap;
-import java.util.UUID;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -20,10 +17,6 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.logging.Toast;
-import dk.gtz.graphedit.model.ModelEdge;
-import dk.gtz.graphedit.model.ModelGraph;
-import dk.gtz.graphedit.model.ModelProjectResource;
-import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.util.EditorActions;
@@ -306,38 +299,6 @@ public class ProjectFilesViewController extends VBox {
 
     public void toggle() {
 	setVisible(!visibleProperty().get());
-    }
-
-    // TODO: This should be in the EditorActions instead
-    public void createNewModelFile() {
-	try {
-	    var fileName = EditorActions.newFile();
-	    if(fileName.isEmpty())
-		return;
-	    logger.trace("creating file {}", fileName.get());
-	    var newfile = new File("%s".formatted(fileName.get()));
-	    var newFilePath = Path.of(newfile.getCanonicalPath());
-	    Files.createDirectories(newFilePath.getParent());
-	    if(!newfile.createNewFile()) {
-		logger.error("file already exists");
-		return;
-	    }
-	    var model = createNewModel(PlatformUtils.removeFileExtension(newFilePath.getFileName().toString()));
-	    var serializedModel = DI.get(IModelSerializer.class).serialize(model);
-	    Files.write(newFilePath, serializedModel.getBytes());
-	    Toast.success("created file %s".formatted(newFilePath.toString()));
-	} catch (Exception e) {
-	    logger.error(e.getMessage(), e);
-	}
-    }
-
-    public ModelProjectResource createNewModel(String modelName) {
-	var exampleVertices = new HashMap<UUID,ModelVertex>();
-	var exampleEdges = new HashMap<UUID,ModelEdge>();
-	var exampleMetaData = new HashMap<String,String>();
-	exampleMetaData.put("name", modelName);
-	var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
-	return new ModelProjectResource(exampleMetaData, exampleGraph);
     }
 
     private void onPathClicked(FileTreeEntry f) {

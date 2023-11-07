@@ -180,6 +180,11 @@ public class EditorController {
     }
 
     @FXML
+    private void newModel() {
+	EditorActions.createNewModelFile();
+    }
+
+    @FXML
     private void newProject() {
 	var file = EditorActions.newFile();
 	if(!file.isPresent())

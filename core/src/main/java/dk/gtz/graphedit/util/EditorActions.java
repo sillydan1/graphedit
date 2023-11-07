@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,12 @@ import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.BuildConfig;
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.logging.Toast;
+import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelEditorSettings;
+import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
@@ -48,8 +54,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Window;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 /**
  * The central point of all scriptable editor actions. These actions can help you modify the editor to your hearts content
@@ -431,5 +437,80 @@ public class EditorActions {
             return Optional.of(false);
         return Optional.of(true);
     }
-}
 
+    /**
+     * Prompt the user to create a new file and save the provided model
+     * If the file already exists, nothing will be saved
+     * @param newModel The model to serialize and save
+     */
+    public static void createNewModelFile(ModelProjectResource newModel) {
+        try {
+            var fileName = EditorActions.newFile();
+            if(fileName.isEmpty())
+                return;
+            logger.trace("creating file {}", fileName.get());
+            var newfile = new File("%s".formatted(fileName.get()));
+            var newFilePath = Path.of(newfile.getCanonicalPath());
+            Files.createDirectories(newFilePath.getParent());
+            if(!newfile.createNewFile()) {
+                logger.error("file already exists");
+                return;
+            }
+            saveModelToFile(newFilePath, newModel);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Prompt the user to create a new file, that will become a new {@link ModelProjectResource} and save it
+     * If the file already exists, nothing will be saved
+     */
+    public static void createNewModelFile() {
+        try {
+            var fileName = EditorActions.newFile();
+            if(fileName.isEmpty())
+                return;
+            logger.trace("creating file {}", fileName.get());
+            var newfile = new File("%s".formatted(fileName.get()));
+            var newFilePath = Path.of(newfile.getCanonicalPath());
+            Files.createDirectories(newFilePath.getParent());
+            if(!newfile.createNewFile()) {
+                logger.error("file already exists");
+                return;
+            }
+            var newModel = createNewModel(PlatformUtils.removeFileExtension(newFilePath.getFileName().toString()));
+            saveModelToFile(newFilePath, newModel);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+    }
+
+    /**
+     * Save a specified model to a specified file path
+     * @param newFilePath The path to write to
+     * @param newModel The model to serialize and save
+     * @throws IOException If an I/O error ocurs writing or creating the file
+     */
+    public static void saveModelToFile(Path newFilePath, ModelProjectResource newModel) throws IOException {
+        var serializedModel = DI.get(IModelSerializer.class).serialize(newModel);
+        Files.write(newFilePath, serializedModel.getBytes());
+        logger.trace("created file %s".formatted(newFilePath.toString()));
+        Toast.success("created file %s".formatted(newFilePath.toString()));
+    }
+
+    /**
+     * Create a new empty project resource model object with a specified name
+     * @param modelName The name of the model
+     * @return A new empty model project resource with no syntactic elements
+     */
+    public static ModelProjectResource createNewModel(String modelName) {
+        var exampleVertices = new HashMap<UUID,ModelVertex>();
+        var exampleEdges = new HashMap<UUID,ModelEdge>();
+        var exampleMetaData = new HashMap<String,String>();
+        exampleMetaData.put("name", modelName);
+        var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
+        return new ModelProjectResource(exampleMetaData, exampleGraph);
+    }
+}
