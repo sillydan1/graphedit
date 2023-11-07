@@ -102,10 +102,12 @@
      - [x] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
      - [x] ugly UI
    - [x] cut dependencies off in build.gradle please
+ - [x] Release format (ship plugins)
  - [ ] TODOs round
  - [ ] Release `v1.1.0
  - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support
+ - [ ] Release core as a library on ossrch
  - [ ] Additional Syntaxes
    - [x] Simple Text
    - [x] LTS
