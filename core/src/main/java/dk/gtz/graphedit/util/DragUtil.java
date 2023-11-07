@@ -1,8 +1,5 @@
 package dk.gtz.graphedit.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
@@ -13,10 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
-@Deprecated
 public class DragUtil {
-    private static Logger logger = LoggerFactory.getLogger(DragUtil.class);
-
+    /**
+     * Add some event handlers to the provided node that makes it draggable through a {@link ViewModelPoint}
+     * @param mouseSubject The node that will catch the related mouse events
+     * @param point View model point values that will be modified
+     * @param viewportAffine Affine of the viewport
+     */
     public static void makeDraggable(Node mouseSubject, ViewModelPoint point, Affine viewportAffine) {
         // Must be properties due to java's final/effectively final lambda restriction
         var undoSystem = DI.get(IUndoSystem.class);
@@ -65,4 +65,3 @@ public class DragUtil {
         });
     }
 }
-
