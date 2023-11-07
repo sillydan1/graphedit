@@ -12,7 +12,7 @@
             <VBox fx:id="menubarTopBox">
                 <MenuBar useSystemMenuBar="true">
                     <Menu text="File">
-                        <!-- <MenuItem onAction="#newFile" text="New File" accelerator="Shortcut+N"/> -->
+                        <MenuItem onAction="#newModel" text="New Model File" accelerator="Shortcut+N"/>
                         <MenuItem onAction="#newProject" text="New Project..." accelerator="Shortcut+Shift+N"/>
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
@@ -26,14 +26,15 @@
                     </Menu>
                     <Menu text="View">
                         <MenuItem onAction="#toggleTheme" text="Toggle Theme" accelerator="Shortcut+0"/>
-                        <MenuItem onAction="#openProjectEditor" text="Change Project Settings" accelerator="Shortcut+Shift+P"/>
-                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+O"/>
+                        <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+8"/>
+                        <MenuItem onAction="#openProjectEditor" text="Change Project Settings" accelerator="Shortcut+Shift+9"/>
+                        <MenuItem onAction="#openSettingsEditor" text="Change Editor Settings" accelerator="Shortcut+Shift+0"/>
                     </Menu>
                     <Menu fx:id="projectMenu" text="Project">
                         <MenuItem onAction="#openSearchPane" text="Search..." accelerator="Shortcut+F"/>
                         <SeparatorMenuItem/>
                         <MenuItem fx:id="runTargetMenuItem" onAction="#runSelectedRunTarget" text="Start Selected RunTarget" accelerator="Shortcut+R"/>
-                        <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+R"/>
+                        <MenuItem onAction="#editRunTargets" text="Edit RunTargets..." accelerator="Shortcut+Shift+8"/>
                         <Menu fx:id="runTargetsMenu" text="RunTargets"/>
                         <SeparatorMenuItem/>
                     </Menu>
