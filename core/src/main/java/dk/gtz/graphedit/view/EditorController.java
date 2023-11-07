@@ -189,7 +189,6 @@ public class EditorController {
 	var file = EditorActions.newFile();
 	if(!file.isPresent())
 	    return;
-	// TODO: project data inspector / editor so people can change the project name later
 	var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
 	EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
 	EditorActions.openProject(file.get());
