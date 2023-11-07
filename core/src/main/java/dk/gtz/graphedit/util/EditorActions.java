@@ -307,7 +307,11 @@ public class EditorActions {
         var aboutNode = new VBox(
             createText.run("Graphedit", Styles.TITLE_1),
             createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
-            new Text("")); // TODO: write a description about graphedit... or something
+            new Text("""
+                Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes.
+
+                We are always looking for more people to join the project, please check out the github: https://github.com/sillydan1/graphedit 
+                """));
         openModal(aboutNode, "About");
     }
 
