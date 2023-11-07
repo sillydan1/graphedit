@@ -115,7 +115,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     }
 
     private void onDraggingDrawPane(MouseEvent event) {
-	if(!event.isSecondaryButtonDown()) // TODO: The button to press should be configurable
+	if(!event.isSecondaryButtonDown())
 	    return;
 	var dx = event.getX() - drawPaneDragStartX;
 	var dy = event.getY() - drawPaneDragStartY;
