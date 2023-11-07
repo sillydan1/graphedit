@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 
 public class SidePanelController {
     private static Logger logger = LoggerFactory.getLogger(SidePanelController.class);
+    private static float PLUGIN_ICON_SCALE_FACTOR = 1.35f;
     @FXML
     public BorderPane root;
     @FXML
@@ -46,8 +47,8 @@ public class SidePanelController {
     private void initializePluginTab(IPlugin plugin) throws Exception {
 	for(var panel : plugin.getPanels()) {
 	    var btn = new ToggleButton(null, panel.getIcon());
-	    btn.setScaleX(1.35f);
-	    btn.setScaleY(1.35f);
+	    btn.setScaleX(PLUGIN_ICON_SCALE_FACTOR);
+	    btn.setScaleY(PLUGIN_ICON_SCALE_FACTOR);
 	    btn.setTooltip(new Tooltip(panel.getTooltip()));
 	    btn.getStyleClass().addAll(Styles.BUTTON_ICON);
 	    btn.setOnMouseClicked(e -> selectedPlugin.set(panel));
@@ -61,4 +62,3 @@ public class SidePanelController {
 	}
     }
 }
-
