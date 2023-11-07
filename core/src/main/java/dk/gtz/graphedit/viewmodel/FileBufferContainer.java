@@ -78,4 +78,3 @@ public class FileBufferContainer implements IBufferContainer {
         Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
-
