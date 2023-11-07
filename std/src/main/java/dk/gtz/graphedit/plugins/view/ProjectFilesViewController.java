@@ -312,24 +312,7 @@ public class ProjectFilesViewController extends VBox {
     }
 
     private void onPathClicked(FileTreeEntry f) {
-	try {
-	    var p = f.path();
-	    if(!Files.isRegularFile(p)) {
-		logger.trace("not a file. ignoring click. {}", p.toString());
-		return;
-	    }
-	    logger.debug("opening file {}", p.toString());
-	    var fileType = DI.get(IMimeTypeChecker.class).getMimeType(p);
-	    if(!serializer.getSupportedContentTypes().contains(fileType)) {
-		logger.error("cannot open unsupported filetype '{}'", fileType);
-		return;
-	    }
-	    var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
-	    openBuffers.open(p.toString().replace(basePath, ""));
-	} catch (Exception e) {
-	    logger.error(e.getMessage());
-	    logger.debug(e.getMessage(), e);
-	}
+	EditorActions.openModel(f.path());
     }
 }
 
