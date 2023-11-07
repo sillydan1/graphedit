@@ -38,6 +38,7 @@ public class Main {
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
         for(var plugin : loader.getLoadedPlugins().getPlugins()) {
             try {
+                plugin.onInitialize();
                 factories.add(plugin.getSyntaxFactories());
             } catch (Exception e) {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);

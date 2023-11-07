@@ -1,7 +1,7 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import dk.gtz.graphedit.internal.DemoSyntaxFactory;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
@@ -15,7 +15,7 @@ public final class SyntaxFactoryCollection extends HashMap<String,ISyntaxFactory
         put(factory.getSyntaxName(), factory);
     }
 
-    public void add(List<ISyntaxFactory> factories) {
+    public void add(Collection<ISyntaxFactory> factories) {
         for(var factory : factories)
             add(factory);
     }

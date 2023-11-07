@@ -1,16 +1,49 @@
 package dk.gtz.graphedit.spi;
 
+import java.util.Collection;
 import java.util.List;
 
+import dk.yalibs.yadi.DI;
+
 public interface IPlugin {
+    /**
+     * Get the name of this plugin.
+     * Should try to be unique
+     * @return The name of this plugin implementation
+     */
     String getName();
 
-    default List<ISyntaxFactory> getSyntaxFactories() throws Exception {
+    /**
+     * Event called when the plugin is initialized.
+     * At this point, most things are registered in {@link DI}.
+     */
+    default void onInitialize() {
+
+    }
+
+    /**
+     * Event called when the plugin is disabled by the user.
+     * Use this to clean up any processed or resources that has been loaded.
+     */
+    default void onDestroy() {
+
+    }
+
+    /**
+     * Get a collection of syntax factories provided by this plugin. Will return an empty list by default.
+     * @return A collection of syntax factories
+     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     */
+    default Collection<ISyntaxFactory> getSyntaxFactories() throws Exception {
         return List.of();
     }
 
-    default List<IPluginPanel> getPanels() throws Exception {
+    /**
+     * Get a collection of plugin panels provided by this plugin. Will return an empty list by default.
+     * @return A collection of plugin panels
+     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     */
+    default Collection<IPluginPanel> getPanels() throws Exception {
         return List.of();
     }
 }
-

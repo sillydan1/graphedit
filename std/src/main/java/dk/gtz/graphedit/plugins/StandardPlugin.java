@@ -30,4 +30,3 @@ public class StandardPlugin implements IPlugin {
                 new InspectorPanel());
     }
 }
-
