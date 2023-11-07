@@ -30,6 +30,4 @@ public class InspectorPanel implements IPluginPanel {
     public Node getPanel() {
         return panel;
     }
-
 }
-
