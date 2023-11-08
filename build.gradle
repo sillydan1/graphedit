@@ -10,7 +10,7 @@ def gitCommitSha = { ->
             commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8';
             standardOutput = stdout;
         }
-        if(result.exitValue() != 0)
+        if(result.getExitValue() != 0)
             return "";
         return stdout.toString().trim();
     } catch (Exception e) {
@@ -25,7 +25,7 @@ def gitCommitShaLong = { ->
             commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40';
             standardOutput = stdout;
         }
-        if(result.exitValue() != 0)
+        if(result.getExitValue() != 0)
             return "";
         return stdout.toString().trim();
     } catch (Exception e) {
@@ -33,9 +33,46 @@ def gitCommitShaLong = { ->
     }
 }
 
+def gitHeadName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream();
+        def stderr = new ByteArrayOutputStream();
+        def result = exec {
+            commandLine 'git', 'describe', '--tags', '--exact-match'
+            standardOutput = stdout;
+            errorOutput = stderr;
+            ignoreExitValue = true;
+        }
+        if(result.exitValue == 0)
+            return stdout.toString().trim();
+
+        stdout.reset();
+        stderr.reset();
+        exec {
+            commandLine 'git', 'symbolic-ref', '-q', '--short', 'HEAD'
+            standardOutput = stdout;
+            errorOutput = stderr;
+            ignoreExitValue = true;
+        }
+        return stdout.toString().trim();
+    } catch (Exception e) {
+        return "HEAD";
+    }
+}
+
+def getVersion = { ->
+    def version = '1.1.0';
+    def headName = gitHeadName();
+    if(headName.equals('v'+version))
+        return version;
+    if(headName.equals('main'))
+        return version;
+    return version + '+' + gitCommitSha() + '-SNAPSHOT';
+}
+
 allprojects {
     group = 'dk.gtz.graphedit';
-    version = '1.1.0';
+    version = getVersion();
 }
 
 subprojects {

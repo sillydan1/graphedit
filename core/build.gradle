@@ -1,6 +1,8 @@
 plugins {
     id 'java';
     id 'org.openjfx.javafxplugin' version '0.0.13';
+    id 'maven-publish'
+    id 'signing'
 }
 
 javafx {
@@ -14,6 +16,20 @@ javafx {
 dependencies {
 }
 
+// Some extra information. Useful for debugging the CI
+def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+def releaseRepoUrl = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+println '+ TARGET REPO: ' + releaseRepoUrl
+
+ext {
+    pomGroupId = group
+    pomVersion = version
+    pomArtifactId = "graphedit.core"
+    pomArtifactName = "graphedit.core"
+    jdkCompileVersion = 17
+}
+
 jar {
     manifest {
         attributes(
@@ -23,5 +39,56 @@ jar {
                 "Implementation-URL": "https://github.com/sillydan1/graphedit"
                 );
     };
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "${pomGroupId}"
+            artifactId = "${pomArtifactId}"
+            version = "${pomVersion}"
+            from components.java
+            pom {
+                name = "${pomArtifactId}"
+                description = 'Core package for the Graphedit editor'
+                url = 'https://www.gtz.dk'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sillydan1'
+                        name = 'Asger Gitz-Johansen'
+                        email = 'asger.gitz@hotmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/sillydan1/graphedit.git'
+                    developerConnection = 'scm:git:ssh://github.com/sillydan1/graphedit.git'
+                    url = 'https://github.com/sillydan1/graphedit/'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = releaseRepoUrl
+            credentials {
+                username = findProperty("ossrhUsername")
+                password = findProperty("ossrhPassword")
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = findProperty("signingKey") ?: System.getenv("GPG_SIGNING_KEY")
+    def signingPassword = findProperty("signingPassword") ?: System.getenv("GPG_SIGNING_PASSWORD")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
 }
 
