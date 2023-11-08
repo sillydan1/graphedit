@@ -1,0 +1,44 @@
+name: Gradle Build and Publish Release to OSSRH
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-publish-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: set up jdk 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        settings-path: ${{ github.workspace }}
+
+    - name: use gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      with:
+        gradle-version: current
+
+    - name: build
+      run: gradle build -PsigningKey="${GPG_SIGNING_KEY}" -PsigningPassword="${GPG_SIGNING_PASSWORD}" -PossrhUsername="${OSSRH_USERNAME}" -PossrhPassword="${OSSRH_PASSWORD}"
+      env:
+        GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+        GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+
+    - name: publish
+      run: gradle publish -PsigningKey="${GPG_SIGNING_KEY}" -PsigningPassword="${GPG_SIGNING_PASSWORD}" -PossrhUsername="${OSSRH_USERNAME}" -PossrhPassword="${OSSRH_PASSWORD}"
+      env:
+        GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+        GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}

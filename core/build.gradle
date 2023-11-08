@@ -25,8 +25,8 @@ println '+ TARGET REPO: ' + releaseRepoUrl
 ext {
     pomGroupId = group
     pomVersion = version
-    pomArtifactId = "graphedit.core"
-    pomArtifactName = "graphedit.core"
+    pomArtifactId = "core"
+    pomArtifactName = "core"
     jdkCompileVersion = 17
 }
 
