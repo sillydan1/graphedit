@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.ITool;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;

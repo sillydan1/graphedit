@@ -5,14 +5,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.gtz.graphedit.view.util.PlatformUtils;
+import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 
 /**
  * General editor settings model object containing a users' prefered theme, recent projects and other edior-wide preferences and settings.
  * This is meant to be serialized and deserialized to/from disk
  */
-public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, boolean autoOpenLastProject, boolean showInspectorPane, boolean showInfoToasts, boolean showWarnToasts, boolean showErrorToasts, boolean showTraceToasts, String lastOpenedProject, List<String> recentProjects) {
+public record ModelEditorSettings(double gridSizeX, double gridSizeY, boolean gridSnap, boolean useLightTheme, boolean autoOpenLastProject, @Deprecated boolean showInspectorPane, boolean showInfoToasts, boolean showWarnToasts, boolean showErrorToasts, boolean showTraceToasts, String lastOpenedProject, List<String> recentProjects) {
     /**
      * Creates a ModelEditorSettings instance with default values.
      */

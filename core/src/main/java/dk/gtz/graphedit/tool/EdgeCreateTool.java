@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelEdge;
-import dk.gtz.graphedit.view.ISyntaxFactory;
-import dk.gtz.graphedit.view.MouseTracker;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.util.MouseTracker;
+import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.yalibs.yadi.DI;

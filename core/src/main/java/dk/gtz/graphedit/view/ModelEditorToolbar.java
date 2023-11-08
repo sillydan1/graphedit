@@ -1,13 +1,12 @@
 package dk.gtz.graphedit.view;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.util.VetoChangeListener;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
@@ -20,7 +19,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.stage.PopupWindow.AnchorLocation;
 
 public class ModelEditorToolbar extends ToolBar {
     private Logger logger = LoggerFactory.getLogger(ModelEditorToolbar.class);
@@ -95,7 +93,6 @@ public class ModelEditorToolbar extends ToolBar {
 	if(tool.getTooltip().isEmpty())
 	    return;
 	var tip = new Tooltip(tool.getTooltip().get());
-	tip.setAnchorLocation(AnchorLocation.WINDOW_TOP_RIGHT);
 	tip.setPrefWidth(200);
 	tip.setWrapText(true);
 	btn.setTooltip(tip);

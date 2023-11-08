@@ -10,7 +10,7 @@ def gitCommitSha = { ->
             commandLine 'git', 'describe', '--long', '--always', '--dirty', '--exclude=*', '--abbrev=8';
             standardOutput = stdout;
         }
-        if(result.exitValue() != 0)
+        if(result.getExitValue() != 0)
             return "";
         return stdout.toString().trim();
     } catch (Exception e) {
@@ -25,7 +25,7 @@ def gitCommitShaLong = { ->
             commandLine 'git', 'describe','--long','--always','--exclude=*','--abbrev=40';
             standardOutput = stdout;
         }
-        if(result.exitValue() != 0)
+        if(result.getExitValue() != 0)
             return "";
         return stdout.toString().trim();
     } catch (Exception e) {
@@ -33,9 +33,46 @@ def gitCommitShaLong = { ->
     }
 }
 
+def gitHeadName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream();
+        def stderr = new ByteArrayOutputStream();
+        def result = exec {
+            commandLine 'git', 'describe', '--tags', '--exact-match'
+            standardOutput = stdout;
+            errorOutput = stderr;
+            ignoreExitValue = true;
+        }
+        if(result.exitValue == 0)
+            return stdout.toString().trim();
+
+        stdout.reset();
+        stderr.reset();
+        exec {
+            commandLine 'git', 'symbolic-ref', '-q', '--short', 'HEAD'
+            standardOutput = stdout;
+            errorOutput = stderr;
+            ignoreExitValue = true;
+        }
+        return stdout.toString().trim();
+    } catch (Exception e) {
+        return "HEAD";
+    }
+}
+
+def getVersion = { ->
+    def version = '1.1.0';
+    def headName = gitHeadName();
+    if(headName.equals('v'+version))
+        return version;
+    if(headName.equals('main'))
+        return version;
+    return version + '+' + gitCommitSha() + '-SNAPSHOT';
+}
+
 allprojects {
     group = 'dk.gtz.graphedit';
-    version = '1.1.0';
+    version = getVersion();
 }
 
 subprojects {
@@ -65,6 +102,23 @@ subprojects {
 
     dependencies {
         implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.7';
+        implementation group: 'com.beust', name: 'jcommander', version: '1.82';
+        implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
+        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+        implementation group: 'dk.yalibs', name: 'yadi', version: '1.1.0';
+        implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
+        implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '2.0.1';
+        implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.0'
+        implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.0'
+        implementation group: 'org.kordamp.ikonli', name: 'ikonli-bootstrapicons-pack', version: '12.3.1';
+        implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '12.3.1';
+        implementation group: 'org.openjfx', name: 'javafx', version: '20.0.1';
+        implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
+        implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
+        implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
     }
 

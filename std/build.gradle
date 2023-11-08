@@ -1,0 +1,29 @@
+plugins {
+    id 'java';
+    id 'org.openjfx.javafxplugin' version '0.0.13';
+}
+
+javafx {
+    version = '20';
+    modules = ['javafx.controls',
+            'javafx.fxml',
+            'javafx.graphics',
+            'javafx.base'];
+}
+
+dependencies {
+    implementation project(':core');
+}
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "GraphEdit Standard Plugins Package",
+                "Implementation-Version": archiveVersion,
+                "Implementation-Vendor": "gtz.dk",
+                "Implementation-URL": "https://github.com/sillydan1/graphedit"
+                );
+    };
+}
+
+

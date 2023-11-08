@@ -3,6 +3,10 @@ package dk.gtz.graphedit.serialization;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +18,10 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class JacksonModelSerializer implements IModelSerializer {
+    private final Logger logger = LoggerFactory.getLogger(JacksonModelSerializer.class);
     private final ObjectMapper objectMapper;
 
     public JacksonModelSerializer() {
@@ -40,6 +45,11 @@ public class JacksonModelSerializer implements IModelSerializer {
 	om.enable(SerializationFeature.INDENT_OUTPUT);
 	om.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
 	return om;
+    }
+
+    @Override
+    public void addClassLoader(ClassLoader loader) {
+	this.objectMapper.setTypeFactory(this.objectMapper.getTypeFactory().withClassLoader(loader));
     }
 
     @Override
@@ -68,6 +78,8 @@ public class JacksonModelSerializer implements IModelSerializer {
 	    var migrater = factory.getMigrater();
 	    if(migrater.isPresent())
 		node = migrater.get().migrate(node, objectMapper);
+	    else
+		logger.trace("no migrater available, trying to raw-dog it");
 	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
@@ -82,6 +94,8 @@ public class JacksonModelSerializer implements IModelSerializer {
 	    var migrater = factory.getMigrater();
 	    if(migrater.isPresent())
 		node = migrater.get().migrate(node, objectMapper);
+	    else
+		logger.trace("no migrater available, trying to raw-dog it");
 	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);

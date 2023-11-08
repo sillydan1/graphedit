@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 import javafx.beans.Observable;
@@ -30,7 +30,6 @@ public class EditorSettingsController {
 	addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
 	addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
 	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
-	addInspector("Show Inspector", "Enable the selection property inspector pane", editorSettings.showInspectorPane());
 	inspectorPane.getChildren().add(new Separator());
 	addInspector("Info Popups", "Show toast popups when info level logs are added", editorSettings.showInfoToasts());
 	addInspector("Warn Popups", "Show toast popups when warning level logs are added", editorSettings.showWarnToasts());

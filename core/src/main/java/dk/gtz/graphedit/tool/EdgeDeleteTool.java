@@ -8,7 +8,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.yalibs.yadi.DI;

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;

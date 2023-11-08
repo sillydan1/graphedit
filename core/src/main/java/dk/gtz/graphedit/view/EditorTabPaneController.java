@@ -1,7 +1,7 @@
 package dk.gtz.graphedit.view;
 
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
@@ -42,7 +42,7 @@ public class EditorTabPaneController {
 		var tabTitle = changedKey;
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
-		var tab = new DraggableTab(tabTitle); // TODO: title should be the ViewModelProject.name stringproperty instead
+		var tab = new DraggableTabController(tabTitle);
 		changedVal.addView(tab);
 		changedVal.addListener((e,o,n) -> tab.setHighlight());
 		EditorActions.addSaveListener(tab::unsetHighlight);
@@ -68,4 +68,3 @@ public class EditorTabPaneController {
 	});
     }
 }
-

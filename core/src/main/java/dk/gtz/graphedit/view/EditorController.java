@@ -7,11 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelProject;
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.HeightDragResizer;
-import dk.gtz.graphedit.view.util.PlatformUtils;
-import dk.gtz.graphedit.view.util.WidthDragResizer;
-import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.HeightDragResizer;
+import dk.gtz.graphedit.util.PlatformUtils;
+import dk.gtz.graphedit.util.WidthDragResizer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
@@ -23,7 +22,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -31,8 +29,6 @@ import javafx.stage.Window;
 
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
-    @FXML
-    private ProjectFilesViewController filePaneController;
     @FXML
     private VBox menubarTopBox;
     @FXML
@@ -44,9 +40,9 @@ public class EditorController {
     @FXML
     private MenuItem runTargetMenuItem;
     @FXML
-    private Pane inspectorGroup;
-    @FXML
     private Label statusBar;
+    @FXML
+    private SidePanelController sidePanelController;
     private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
 
@@ -55,10 +51,10 @@ public class EditorController {
 	selectedRunTarget = Optional.empty();
 	runTargetThread = new Thread(this::runTarget);
 	WidthDragResizer.makeResizableRight((Region)primaryBorderPane.getLeft());
+	((Region)primaryBorderPane.getLeft()).setPrefWidth(320);
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
-	initInspectorPane();
     }
 
     private void initProjectMenu() {
@@ -89,11 +85,6 @@ public class EditorController {
             menubarTopBox.setVisible(false);
             menubarTopBox.setManaged(false);
         }
-    }
-
-    private void initInspectorPane() {
-	inspectorGroup.visibleProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
-	inspectorGroup.managedProperty().bind(DI.get(ViewModelEditorSettings.class).showInspectorPane());
     }
 
     @FXML
@@ -189,8 +180,13 @@ public class EditorController {
     }
 
     @FXML
-    private void newFile() {
-	filePaneController.createNewModelFile();
+    private void newModel() {
+	EditorActions.createNewModelFile();
+    }
+
+    @FXML
+    private void openModel() {
+	EditorActions.openModel();
     }
 
     @FXML
@@ -198,7 +194,6 @@ public class EditorController {
 	var file = EditorActions.newFile();
 	if(!file.isPresent())
 	    return;
-	// TODO: project data inspector / editor so people can change the project name later
 	var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
 	EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
 	EditorActions.openProject(file.get());

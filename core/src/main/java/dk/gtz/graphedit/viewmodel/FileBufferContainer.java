@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
@@ -78,4 +78,3 @@ public class FileBufferContainer implements IBufferContainer {
         Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
-

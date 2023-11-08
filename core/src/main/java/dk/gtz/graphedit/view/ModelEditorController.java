@@ -10,9 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
-import dk.gtz.graphedit.view.util.MetadataUtils;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.util.DragUtil;
+import dk.gtz.graphedit.util.MapGroup;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
@@ -34,14 +37,14 @@ import javafx.scene.transform.Affine;
 
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
-    private double drawPaneDragStartX, drawPaneDragStartY;
+    private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
     private ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
-    private GridPane gridPane;
+    private GridPaneController gridPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
@@ -93,38 +96,21 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
-	// TODO: make an abstraction called DeltaDragEvent or something
-	drawPane.setOnMousePressed(this::onPressingDrawPane);
-	drawPane.setOnMouseDragged(this::onDraggingDrawPane);
+	DragUtil.makeDraggableInverse(drawPane, drawGroupTransform);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	gridPane = new GridPane(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
+	gridPane = new GridPaneController(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
 	gridPane.toBack();
     }
 
-    private void onPressingDrawPane(MouseEvent event) {
-	drawPaneDragStartX = event.getX();
-	drawPaneDragStartY = event.getY();
-    }
-
-    private void onDraggingDrawPane(MouseEvent event) {
-	if(!event.isSecondaryButtonDown()) // TODO: The button to press should be configurable
-	    return;
-	var dx = event.getX() - drawPaneDragStartX;
-	var dy = event.getY() - drawPaneDragStartY;
-	drawGroupTransform.appendTranslation(dx, dy);
-	drawPaneDragStartX = event.getX();
-	drawPaneDragStartY = event.getY();
-    }
-
     private void onScrollingDrawPane(ScrollEvent event) {
 	if(event.isControlDown())
-	    zoomDrawPane(1 - (event.getDeltaY() * 0.01f)); // TODO: Consider having an adjustable scalar
+	    zoomDrawPane(1 - (event.getDeltaY() * ZOOM_SPEED_SCALAR));
 	else
 	    drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
     }
@@ -280,4 +266,3 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	onFocusEventHandlers.forEach(Runnable::run);
     }
 }
-
