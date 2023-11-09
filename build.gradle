@@ -85,7 +85,6 @@ subprojects {
     java {
         sourceCompatibility = gradle.ext.javaVersion;
         targetCompatibility = gradle.ext.javaVersion;
-        withJavadocJar()
         withSourcesJar()
     }
 

@@ -30,6 +30,10 @@ ext {
     jdkCompileVersion = 17
 }
 
+java {
+    withJavadocJar()
+}
+
 jar {
     manifest {
         attributes(
