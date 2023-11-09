@@ -15,6 +15,17 @@ import javafx.collections.FXCollections;
 
 /**
  * View model representation of the global editor settings
+ * @param gridSizeX Width of snapgrid cells
+ * @param gridSizeY Height of snapgrid cells
+ * @param gridSnap When true, vertices will snap to the grid
+ * @param useLightTheme When true, the editor will use a light color scheme
+ * @param autoOpenLastProject When true, the last opened project will be automatically opened next time you start the editor
+ * @param showInspectorPane (Deprecated) doesn't do anything anymore
+ * @param showInfoToasts When true, will display toasts on logger.info calls
+ * @param showWarnToasts When true, will display toasts on logger.warn calls
+ * @param showErrorToasts When true, will display toasts on logger.error calls
+ * @param lastOpenedProject Filepath to the last opened graphedit project file
+ * @param recentProjects List of filepaths that have been recently opened
  */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
