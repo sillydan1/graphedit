@@ -7,6 +7,9 @@ import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
 
+/**
+ * Most of the default implementations for a simple {@link ITool}
+ */
 public abstract class AbstractBaseTool implements ITool {
     @Override
     public Optional<String> getTooltip() {
