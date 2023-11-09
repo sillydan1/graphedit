@@ -15,10 +15,41 @@ import javafx.collections.FXCollections;
 
 /**
  * View model representation of a {@link ModelRunTarget}.
+ * @param name The name of the runtarget
+ * @param command The command to run - must be a valid path to an executable
+ * @param currentWorkingDirectory Where to execute the command from
+ * @param runAsShell When true, will run the command in a shell
+ * @param saveBeforeRun When true, will save the project before running the runtarget
+ * @param arguments List of command arguments
+ * @param environment List of environment variable assignments
  */
-public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty command, SimpleStringProperty currentWorkingDirectory, SimpleBooleanProperty runAsShell, SimpleBooleanProperty saveBeforeRun, SimpleListProperty<StringProperty> arguments, SimpleListProperty<ViewModelEnvironmentVariable> environment) {
+public record ViewModelRunTarget(
+        SimpleStringProperty name,
+        SimpleStringProperty command,
+        SimpleStringProperty currentWorkingDirectory,
+        SimpleBooleanProperty runAsShell,
+        SimpleBooleanProperty saveBeforeRun,
+        SimpleListProperty<StringProperty> arguments,
+        SimpleListProperty<ViewModelEnvironmentVariable> environment) {
 
-    public ViewModelRunTarget(String name, String command, String currentWorkingDirectory, boolean runAsShell, boolean saveBeforeRun, List<String> arguments, Map<String,String> environment) {
+    /**
+     * Constructs a new viewmodel for runtargets
+     * @param name The name of the runtarget
+     * @param command The command to run - must be a valid path to an executable
+     * @param currentWorkingDirectory Where to execute the command from
+     * @param runAsShell When true, will run the command in a shell
+     * @param saveBeforeRun When true, will save the project before running the runtarget
+     * @param arguments List of command arguments
+     * @param environment List of environment variable assignments
+     */
+    public ViewModelRunTarget(
+            String name,
+            String command,
+            String currentWorkingDirectory,
+            boolean runAsShell,
+            boolean saveBeforeRun,
+            List<String> arguments,
+            Map<String,String> environment) {
         this(new SimpleStringProperty(name),
             new SimpleStringProperty(command),
             new SimpleStringProperty(currentWorkingDirectory),
@@ -32,6 +63,10 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
             this.environment.add(new ViewModelEnvironmentVariable(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue())));
     }
 
+    /**
+     * Constructs a new viewmodel for runtargets
+     * @param runTarget The model equivalent runtarget
+     */
     public ViewModelRunTarget(ModelRunTarget runTarget) {
         this(runTarget.name(),
                 runTarget.command(),
@@ -46,6 +81,10 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
             this.environment.add(new ViewModelEnvironmentVariable(new SimpleStringProperty(env.getKey()), new SimpleStringProperty(env.getValue())));
     }
 
+    /**
+     * Converts this viewmodel into a model type
+     * @return A model version of this runtarget data
+     */
     public ModelRunTarget toModel() {
         var args = new ArrayList<String>(arguments().size());
         for(var arg : arguments())
@@ -63,4 +102,3 @@ public record ViewModelRunTarget(SimpleStringProperty name, SimpleStringProperty
                 envs);
     }
 }
-
