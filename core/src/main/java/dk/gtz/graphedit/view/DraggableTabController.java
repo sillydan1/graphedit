@@ -31,7 +31,6 @@ import javafx.stage.StageStyle;
  *
  * Edits by Asger Gitz-Johansen: General code cleanup and make it easier to use 
  * in an FXML context.
- * <p>
  * @author Michael Berry
  * @author Asger Gitz-Johansen
  */
