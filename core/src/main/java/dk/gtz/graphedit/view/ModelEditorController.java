@@ -35,6 +35,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Affine;
 
+/**
+ * View controller for the main model editor viewport.
+ */
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
     private static float ZOOM_SPEED_SCALAR = 0.01f;
@@ -49,10 +52,21 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
 
+    /**
+     * Creates a new instance with a provided resource and syntax
+     * @param resource The viewmodel project resource to edit
+     * @param syntaxFactory The syntax factory of the resource
+     */
     public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
 	this(resource, DI.get(ViewModelEditorSettings.class), syntaxFactory);
     }
 
+    /**
+     * Creates a new instance with a provided resource, settings object and syntax
+     * @param resource The viewmodel project resource to edit
+     * @param settings The viewmodel editor settings object to use
+     * @param syntaxFactory The syntax factory of the resource
+     */
     public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
 	this.resource = resource;
 	this.settings = settings;
@@ -244,14 +258,26 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	});
     }
 
+    /**
+     * Get the resource being edited
+     * @return The viewmodel project resource that is being edited by this editor view controller
+     */
     public ViewModelProjectResource getProjectResource() {
 	return resource;
     }
 
+    /**
+     * Get the transform, scale and rotation matrix of the viewport
+     * @return The affine that governs the view of the viewport
+     */
     public Affine getViewportTransform() {
 	return drawGroupTransform;
     }
 
+    /**
+     * Get the current editor settings
+     * @return The current viewmodel editor settings object
+     */
     public ViewModelEditorSettings getEditorSettings() {
 	return settings;
     }
