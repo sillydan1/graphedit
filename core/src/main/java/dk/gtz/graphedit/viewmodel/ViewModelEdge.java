@@ -41,7 +41,7 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
      * @param edge the model edge to convert
      */
     public ViewModelEdge(ModelEdge edge) {
-	this(edge.source(), edge.target());
+	this(edge.source, edge.target);
     }
 
     /**
