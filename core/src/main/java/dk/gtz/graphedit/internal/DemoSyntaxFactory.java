@@ -23,6 +23,13 @@ import javafx.scene.Node;
  * Syntax factory implementation for the default basic demonstration syntax
  */
 public class DemoSyntaxFactory implements ISyntaxFactory {
+    /**
+     * Constructs a new instance of the demo syntaxfactory
+     */
+    public DemoSyntaxFactory() {
+
+    }
+
     @Override
     public String getSyntaxName() {
 	return "Demo";
