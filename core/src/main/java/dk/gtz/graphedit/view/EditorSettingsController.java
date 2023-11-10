@@ -17,13 +17,17 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for the editor settings modal.
+ */
 public class EditorSettingsController {
     private static final Logger logger = LoggerFactory.getLogger(EditorSettingsController.class);
     @FXML
     private VBox inspectorPane;
     private ViewModelEditorSettings editorSettings;
 
-    public void initialize() {
+    @FXML
+    private void initialize() {
 	editorSettings = DI.get(ViewModelEditorSettings.class);
 	addInspector("Use GridSnap", "Makes vertices snap to the background grid", editorSettings.gridSnap());
 	addInspector("GridSnap XSize", "", editorSettings.gridSizeX());
@@ -65,4 +69,3 @@ public class EditorSettingsController {
 	inspectorPane.getChildren().addAll(new Separator(), pane);
     }
 }
-
