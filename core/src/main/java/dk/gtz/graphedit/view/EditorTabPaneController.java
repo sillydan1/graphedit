@@ -13,13 +13,23 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * View controller for the panel that contains tabs of model editor views as tabs.
+ */
 public class EditorTabPaneController {
     @FXML
-    public TabPane tabpane;
+    private TabPane tabpane;
     @FXML
-    public Text placeholder;
+    private Text placeholder;
     @FXML
-    public VBox root;
+    private VBox root;
+
+    /**
+     * Constructs a new instance of the editor tab panel view controller
+     */
+    public EditorTabPaneController() {
+
+    }
 
     @FXML
     private void initialize() {
