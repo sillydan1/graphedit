@@ -15,11 +15,17 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 
+/**
+ * View controll for the log tabpane containing all the logs
+ */
 public class LogTabPaneController {
     private static Logger logger = LoggerFactory.getLogger(LogTabPaneController.class);
     @FXML
     private TabPane tabpane;
 
+    /**
+     * Create a new instance
+     */
     public LogTabPaneController() {
 
     }
@@ -54,4 +60,3 @@ public class LogTabPaneController {
 	return tab;
     }
 }
-
