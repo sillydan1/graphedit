@@ -28,7 +28,7 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
                         t.setStyle(e.getStyle().toCss());
                     }),
                     hyperlink -> createStyledTextNode(t -> {
-                        if (hyperlink.isReal()) {
+                        if (!hyperlink.isEmpty()) {
                             t.setText(hyperlink.getDisplayedText());
                             t.getStyleClass().addAll(styleClasses);
                             t.getStyleClass().add("hyperlink");
