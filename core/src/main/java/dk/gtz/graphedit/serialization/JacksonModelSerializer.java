@@ -71,7 +71,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
+    public ModelProjectResource deserializeProjectResource(String serializedContent) throws SerializationException {
 	try {
 	    TreeNode node = objectMapper.readTree(serializedContent);
 	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
@@ -87,7 +87,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public ModelProjectResource deserialize(File file) throws SerializationException, IOException {
+    public ModelProjectResource deserializeProjectResource(File file) throws SerializationException, IOException {
 	try {
 	    TreeNode node = objectMapper.readTree(file);
 	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
@@ -126,7 +126,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public String serializeEditorSettings(ModelEditorSettings settings) throws SerializationException {
+    public String serialize(ModelEditorSettings settings) throws SerializationException {
 	try {
 	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(settings);
 	} catch (JsonProcessingException e) {

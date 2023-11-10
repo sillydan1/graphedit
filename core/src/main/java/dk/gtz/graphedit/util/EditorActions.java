@@ -90,6 +90,7 @@ public class EditorActions {
     /**
      * Remove a registered save callback function
      * @param runner The callback function to remove
+     * @return true if the callback function was removed
      */
     public static boolean removeSaveListener(Runnable runner) {
         return saveListeners.remove(runner);
@@ -163,7 +164,7 @@ public class EditorActions {
             var serializer = DI.get(IModelSerializer.class);
             var fileToLoad = ModelEditorSettings.getEditorSettingsFile();
             if(!fileToLoad.toFile().exists()) {
-                var data = serializer.serializeEditorSettings(new ModelEditorSettings());
+                var data = serializer.serialize(new ModelEditorSettings());
                 Files.createDirectories(fileToLoad.getParent());
                 Files.write(fileToLoad, data.getBytes());
             }
@@ -184,7 +185,7 @@ public class EditorActions {
     public static void saveEditorSettings(ViewModelEditorSettings settings) {
         try {
             var serializer = DI.get(IModelSerializer.class);
-            var data = serializer.serializeEditorSettings(new ModelEditorSettings(settings));
+            var data = serializer.serialize(new ModelEditorSettings(settings));
             var fileToSave = ModelEditorSettings.getEditorSettingsFile();
             if(!fileToSave.toFile().exists())
                 Files.createDirectories(fileToSave.getParent());
