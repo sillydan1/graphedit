@@ -34,6 +34,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * Runtarget editor view controller.
+ */
 public class RunTargetsEditorController {
     private static Logger logger = LoggerFactory.getLogger(RunTargetsEditorController.class);
     private static class RunTargetViewNode extends Label {
