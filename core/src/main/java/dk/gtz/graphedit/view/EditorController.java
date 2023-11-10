@@ -27,6 +27,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 
+/**
+ * View controller for the main editor.
+ */
 public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(EditorController.class);
     @FXML
@@ -45,6 +48,13 @@ public class EditorController {
     private SidePanelController sidePanelController;
     private Thread runTargetThread;
     private Optional<ViewModelRunTarget> selectedRunTarget;
+
+    /**
+     * Constructs a new instance of the editor view controller
+     */
+    public EditorController() {
+
+    }
 
     @FXML
     private void initialize() {
@@ -207,4 +217,3 @@ public class EditorController {
 	    EditorActions.openProject(file.get());
     }
 }
-
