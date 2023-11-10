@@ -20,12 +20,21 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 
+/**
+ * Toolbar view controller governing a {@link IToolbox} instance
+ */
 public class ModelEditorToolbar extends ToolBar {
     private Logger logger = LoggerFactory.getLogger(ModelEditorToolbar.class);
     private final IToolbox toolbox;
     private final ObjectProperty<ITool> selectedTool;
     private final ViewModelProjectResource resource;
 
+    /**
+     * Create a new instance
+     * @param toolbox The toolbox to govern
+     * @param selectedTool Object property of the currently selected tool
+     * @param resource The model resource edited by the model editor
+     */
     public ModelEditorToolbar(IToolbox toolbox, ObjectProperty<ITool> selectedTool, ViewModelProjectResource resource) {
 	this.toolbox = toolbox;
 	this.selectedTool = selectedTool;
@@ -33,6 +42,10 @@ public class ModelEditorToolbar extends ToolBar {
 	setupStyle();
     }
 
+    /**
+     * Add a syntax selector drop-down menu to the toolbar
+     * @return Builder-pattern style reference to this
+     */
     public ModelEditorToolbar withSyntaxSelector() {
 	if(resource.metadata().containsKey("graphedit_syntax"))
 	    addSyntaxSelector();
@@ -40,6 +53,10 @@ public class ModelEditorToolbar extends ToolBar {
 	return this;
     }
 
+    /**
+     * Add buttons for the tools in the toolbox
+     * @return Builder-pattern style reference to this
+     */
     public ModelEditorToolbar withButtons() {
 	setupContent();
 	return this;
@@ -102,4 +119,3 @@ public class ModelEditorToolbar extends ToolBar {
 	getItems().add(new Separator(Orientation.VERTICAL));
     }
 }
-
