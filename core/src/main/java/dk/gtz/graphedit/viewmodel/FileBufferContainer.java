@@ -16,11 +16,18 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
+/**
+ * Buffer container implementation using filepaths as keys.
+ */
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
     private final ObservableMap<String, ViewModelProjectResource> openBuffers;
     private final IModelSerializer serializer;
 
+    /**
+     * Constructs a new filepath keyed buffer container.
+     * @param serializer The serializer to use when deserializing the buffers
+     */
     public FileBufferContainer(IModelSerializer serializer) {
         openBuffers = FXCollections.observableHashMap(); 
         this.serializer = serializer;
