@@ -3,7 +3,6 @@ package dk.gtz.graphedit.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -16,6 +15,9 @@ public class MapGroup<K> {
     private final Group group;
     private final Map<K,Node> childrenMap;
 
+    /**
+     * Create a new instance
+     */
     public MapGroup() {
 	this.group = new Group();
 	this.childrenMap = new HashMap<>();
@@ -30,12 +32,12 @@ public class MapGroup<K> {
 	return group;
     }
 
-    public ObservableList<Transform> getTransforms() {
-	return group.getTransforms();
-    }
-
-    public ObservableList<Node> getChildrenUnmodifiable() {
-	return group.getChildrenUnmodifiable();
+    /**
+     * Add a transform to the group
+     * @param transform the transform to add
+     */
+    public void addTransform(Transform transform) {
+	group.getTransforms().add(transform);
     }
 
     /**

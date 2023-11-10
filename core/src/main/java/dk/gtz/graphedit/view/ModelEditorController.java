@@ -91,7 +91,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	drawGroupTransform = new Affine();
 	drawGroup.addChildren(initializeEdges());
 	drawGroup.addChildren(initializeVertices());
-	drawGroup.getTransforms().add(drawGroupTransform);
+	drawGroup.addTransform(drawGroupTransform);
 
 	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
