@@ -53,10 +53,6 @@ public class DraggableTabController extends Tab {
 	markerStage.setScene(new Scene(markerStack));
     }
 
-    public DraggableTabController() {
-	this("Tab");
-    }
-
     /**
      * Create a new draggable tab. This can be added to any normal TabPane,
      * however a TabPane with draggable tabs must *only* have DraggableTabs,

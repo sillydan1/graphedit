@@ -27,7 +27,7 @@ import javafx.scene.input.MouseEvent;
 /**
  * Tool to create edges between vertices.
  * When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
- * You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing <ESC>
+ * You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing ESC
  *
  * Note that the action completes at edge completion (second click) rather than edge creation (first click).
  */
