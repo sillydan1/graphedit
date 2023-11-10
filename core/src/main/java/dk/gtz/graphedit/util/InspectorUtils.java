@@ -30,6 +30,10 @@ import javafx.scene.layout.VBox;
  * General utilities for manipulating and creating {@link Property} inspectors / editors.
  */
 public class InspectorUtils {
+    private InspectorUtils() {
+
+    }
+
     /**
      * General inspector creator function, use if you dont know what concrete type of {@link Observable} you have.
      * @param o the thing that the inspector modifies
@@ -52,6 +56,11 @@ public class InspectorUtils {
 	throw new RuntimeException("No such property inspector implemented for type '%s'".formatted(o.getClass().getSimpleName()));
     }
 
+    /**
+     * Get an inspector for a list of strings
+     * @param list The list that the inspector modifies
+     * @return a javafx component that can modify the values of the provided list
+     */
     public static Node getPropertyInspectorList(ListProperty<StringProperty> list) {
 	var listView = new VBox();
 	listView.setSpacing(5);
