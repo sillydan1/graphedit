@@ -19,6 +19,9 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
 
+/**
+ * Syntax factory implementation for the default basic demonstration syntax
+ */
 public class DemoSyntaxFactory implements ISyntaxFactory {
     @Override
     public String getSyntaxName() {
