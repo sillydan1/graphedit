@@ -24,12 +24,22 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Tool to create edges between vertices.
+ * When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
+ * You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing <ESC>
+ *
+ * Note that the action completes at edge completion (second click) rather than edge creation (first click).
+ */
 public class EdgeCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(EdgeCreateTool.class);
     private Optional<UUID> currenEdgeId;
     private Optional<ViewModelEdge> currentEdge;
     private final IUndoSystem undoSystem;
 
+    /**
+     * Create a new instance of {@link EdgeCreateTool}
+     */
     public EdgeCreateTool() {
         this.currenEdgeId = Optional.empty();
         this.currentEdge = Optional.empty();
@@ -95,10 +105,18 @@ public class EdgeCreateTool extends AbstractBaseTool {
                 cancel(e.graph());
     }
 
+    /**
+     * Check if the tool is currently creating a new edge or not
+     * @return true when the tool is in a state where an edge is being created, otherwise false
+     */
     public boolean isCurrentlyCreatingEdge() {
         return currentEdge.isPresent();
     }
 
+    /**
+     * Stops / cancels the edge creation process
+     * @param graph The graph where the current temporary edge is located in
+     */
     public void cancel(ViewModelGraph graph) {
         if(isCurrentlyCreatingEdge())
             graph.edges().remove(currenEdgeId.get());
@@ -109,6 +127,12 @@ public class EdgeCreateTool extends AbstractBaseTool {
         return graph.vertices().containsKey(source) && graph.vertices().containsKey(target);
     }
 
+    /**
+     * Finishes the edge creation process.
+     * Will fail with a warning if the provided graph is not the same one you started creating the edge in
+     * @param releaseTarget Id of the target vertex to finalize the edge to
+     * @param graph The graph where the current temporary edge is located in
+     */
     public void release(UUID releaseTarget, ViewModelGraph graph) {
         if(!isReleaseTargetAndSourceTargetInSameGraph(currentEdge.get().source().get(), releaseTarget, graph)) {
             logger.warn("edge release target is not in the same graph as the source target");
@@ -125,6 +149,12 @@ public class EdgeCreateTool extends AbstractBaseTool {
         clear();
     }
 
+    /**
+     * Start the edge creation process.
+     * @param sourceTarget Id of the source vertex to start creating an edge from
+     * @param graph The graph where the temporary edge shall be located in
+     * @param factory The associated syntax factory
+     */
     public void create(UUID sourceTarget, ViewModelGraph graph, ISyntaxFactory factory) {
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
@@ -141,4 +171,3 @@ public class EdgeCreateTool extends AbstractBaseTool {
         currentEdge = Optional.empty();
     }
 }
-
