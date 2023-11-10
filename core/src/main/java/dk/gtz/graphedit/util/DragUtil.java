@@ -10,6 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
+/**
+ * Utility class for mousedragging behaviors.
+ * Note that there are differing "types" of the concept of "dragging" with a mouse.
+ *  - If the intention is to have an object follow the mouse, this class simply calls that "dragging"
+ *  - If the intention is to have a viewport and all its elements move with the mouse, this class calls that "inverse dragging"
+ *  - If the intention is to have a drag and drop behavior, this class calls that "dnd"
+ */
 public class DragUtil {
     /**
      * Add some event handlers to the provided node that makes it draggable through a {@link ViewModelPoint}
