@@ -15,6 +15,11 @@ public class MouseTracker {
     private final DoubleProperty yProperty;
     private final UUID uuid;
 
+    /**
+     * Construct a new instance
+     * @param owner The root stage
+     * @param managed Whether if this tracker is externally managed or not
+     */
     public MouseTracker(Stage owner, boolean managed) {
         uuid = UUID.randomUUID();
         xProperty = new SimpleDoubleProperty();
@@ -29,16 +34,28 @@ public class MouseTracker {
         });
     }
 
+    /**
+     * Get the X value property
+     * @return The X-value property of the mouse
+     */
     public DoubleProperty getXProperty() {
         return xProperty;
     }
 
+    /**
+     * Get the Y value property
+     * @return The Y-value property of the mouse
+     */
     public DoubleProperty getYProperty() {
         return yProperty;
     }
 
+    /**
+     * Get the uuid of the mousetracker.
+     * This is useful when determining if an edge is targeting the mousetracker or a vertex
+     * @return The uuid of the mousetracker
+     */
     public UUID getTrackerUUID() {
         return uuid;
     }
 }
-
