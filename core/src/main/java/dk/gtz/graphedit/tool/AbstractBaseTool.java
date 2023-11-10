@@ -11,6 +11,9 @@ import dk.gtz.graphedit.events.ViewportMouseEvent;
  * Most of the default implementations for a simple {@link ITool}
  */
 public abstract class AbstractBaseTool implements ITool {
+    /**
+     * Create a new instance
+     */
     protected AbstractBaseTool() {
 
     }
