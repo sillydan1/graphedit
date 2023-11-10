@@ -13,6 +13,9 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.util.MetadataUtils;
 
+/**
+ * Syntax migration class for the default demonstration syntax
+ */
 public class DemoSyntaxMigrater implements ISyntaxMigrater {
     private final Logger logger = LoggerFactory.getLogger(DemoSyntaxMigrater.class);
 
@@ -75,4 +78,3 @@ public class DemoSyntaxMigrater implements ISyntaxMigrater {
         return input;
     }
 }
-
