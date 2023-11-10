@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+/**
+ * Implementation of a toolbox
+ */
 public class Toolbox implements IToolbox {
     private static Logger logger = LoggerFactory.getLogger(Toolbox.class);
     private final String defaultCategory;
@@ -23,6 +26,11 @@ public class Toolbox implements IToolbox {
         ITool ctor(IToolbox parent);
     }
 
+    /**
+     * Construct a new toolbox with a default category and a constructor for the default tool
+     * @param defaultCategory The category of the default tool
+     * @param defaultToolCtor Constructor function that can create the default tool. Will be created and selected immediately
+     */
     public Toolbox(String defaultCategory, IToolConstructor defaultToolCtor) {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultToolCtor.ctor(this);
@@ -32,6 +40,11 @@ public class Toolbox implements IToolbox {
         this.selectedTool.set(getDefaultTool());
     }
 
+    /**
+     * Construct a new toolbox with a default category and a default tool
+     * @param defaultCategory The category of the default tool
+     * @param defaultTool The default tool. Will be selected immediately
+     */
     public Toolbox(String defaultCategory, ITool defaultTool) {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultTool;
@@ -41,6 +54,12 @@ public class Toolbox implements IToolbox {
         this.selectedTool.set(getDefaultTool());
     }
 
+    /**
+     * Construct a new toolbox with a default category, a default tool and a list of additional tools
+     * @param defaultCategory The category of the default tool
+     * @param defaultTool The default tool. Will be selected immediately
+     * @param tools List of additional tools to put in the default category
+     */
     public Toolbox(String defaultCategory, ITool defaultTool, ITool... tools) {
         this.defaultCategory = defaultCategory;
         this.defaultTool = defaultTool;
@@ -94,4 +113,3 @@ public class Toolbox implements IToolbox {
         selectedTool.set(tool);
     }
 }
-
