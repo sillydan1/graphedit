@@ -20,15 +20,21 @@ import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.util.MetadataUtils;
 
+/**
+ * Implementation of {@link IModelSerializer} using the jackson xml serializer
+ */
 public class JacksonModelSerializer implements IModelSerializer {
     private final Logger logger = LoggerFactory.getLogger(JacksonModelSerializer.class);
     private final ObjectMapper objectMapper;
 
+    /**
+     * Construct a new instance
+     */
     public JacksonModelSerializer() {
 	this.objectMapper = getMapper();
     }
 
-    public ObjectMapper getMapper() {
+    private ObjectMapper getMapper() {
 	var om = new ObjectMapper(); // TODO: https://www.baeldung.com/jackson-yaml is better for git-managed projects
 	om.registerModule(new Jdk8Module());
 	var ptv = BasicPolymorphicTypeValidator.builder()
@@ -152,4 +158,3 @@ public class JacksonModelSerializer implements IModelSerializer {
 	}
     }
 }
-
