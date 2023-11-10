@@ -26,6 +26,13 @@ public class EditorSettingsController {
     private VBox inspectorPane;
     private ViewModelEditorSettings editorSettings;
 
+    /**
+     * Construct a new instance
+     */
+    public EditorSettingsController() {
+
+    }
+
     @FXML
     private void initialize() {
 	editorSettings = DI.get(ViewModelEditorSettings.class);
