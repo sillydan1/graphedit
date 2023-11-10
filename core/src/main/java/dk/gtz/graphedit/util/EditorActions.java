@@ -66,6 +66,9 @@ import javafx.stage.Window;
 public class EditorActions {
     private static final Logger logger = LoggerFactory.getLogger(EditorActions.class);
     private static List<Runnable> saveListeners = new ArrayList<>();
+    private EditorActions() {
+
+    }
 
     /**
      * Will immediately quit the application with no hesitation.
@@ -75,10 +78,19 @@ public class EditorActions {
     }
 
 
+    /**
+     * Register a callback function that will be called when the project is saved.
+     * This is useful to detect things such as "unsaved changes" and similar
+     * @param runner The callback function to call when projects are saved
+     */
     public static void addSaveListener(Runnable runner) {
         saveListeners.add(runner);
     }
 
+    /**
+     * Remove a registered save callback function
+     * @param runner The callback function to remove
+     */
     public static boolean removeSaveListener(Runnable runner) {
         return saveListeners.remove(runner);
     }
@@ -208,8 +220,8 @@ public class EditorActions {
 
     /**
      * Save a model project to a specific file
-     * @param project
-     * @param projectFilePath
+     * @param project The model project to save
+     * @param projectFilePath The file to attempt to save to
      */
     public static void saveProject(ModelProject project, Path projectFilePath) {
         try {
@@ -224,6 +236,9 @@ public class EditorActions {
         }
     }
 
+    /**
+     * Save the currently opened project to disk
+     */
     public static void saveProject() {
         var project = DI.get(ViewModelProject.class);
         if(project.isSavedInTemp().get()) {
@@ -277,6 +292,9 @@ public class EditorActions {
         openModal("EditorSettings.fxml", "Editor Settings");
     }
 
+    /**
+     * Open the {@see ViewModelProject} editor modal pane
+     */
     public static void openProjectSettings() {
         openModal("ProjectSettings.fxml", "Project Settings");
     }
@@ -317,7 +335,8 @@ public class EditorActions {
 
     /**
      * Opens an injected modal
-     * @param node the modal to show
+     * @param node The modal to show
+     * @param title The title displayed at the top of the modal
      */
     public static void openModal(Node node, String title) {
         var modalPane = DI.get(ModalPane.class);
@@ -341,6 +360,7 @@ public class EditorActions {
     /**
      * Opens an FXML based modal
      * @param fxmlFile the .fxml file to open, must be from the perspective of {@see EditorController}
+     * @param title The title displayed at the top of the modal
      */
     public static void openModal(String fxmlFile, String title) {
         try {
