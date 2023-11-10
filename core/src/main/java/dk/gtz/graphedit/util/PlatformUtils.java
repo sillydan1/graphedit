@@ -57,8 +57,8 @@ public class PlatformUtils {
      * Check if a command-line program is installed on the current running platform
      *
      * Note that this may not work on Microsoft Windows
-     * @param executableName
-     * @return
+     * @param executableName The executable to check for
+     * @return true if the program is discoverable through the PATH variable, false otherwise
      */
     public static boolean isProgramInstalled(String executableName) {
 	var pathVariable = System.getenv("PATH");
