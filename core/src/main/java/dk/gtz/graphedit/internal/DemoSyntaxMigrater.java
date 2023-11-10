@@ -17,6 +17,13 @@ import dk.gtz.graphedit.util.MetadataUtils;
  * Syntax migration class for the default demonstration syntax
  */
 public class DemoSyntaxMigrater implements ISyntaxMigrater {
+    /**
+     * Constructs a new instance of the demo syntax migrater
+     */
+    public DemoSyntaxMigrater() {
+
+    }
+
     private final Logger logger = LoggerFactory.getLogger(DemoSyntaxMigrater.class);
 
     private String getMigraterVersion() {
