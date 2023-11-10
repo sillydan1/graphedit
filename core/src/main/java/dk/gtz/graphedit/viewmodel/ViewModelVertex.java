@@ -44,7 +44,7 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
      * @param shape the shape at which edges should follow
      */
     public ViewModelVertex(ModelVertex vertex, ViewModelVertexShape shape) {
-	this(new ViewModelPoint(vertex.position()), shape);
+	this(new ViewModelPoint(vertex.position), shape);
     }
 
     /**
