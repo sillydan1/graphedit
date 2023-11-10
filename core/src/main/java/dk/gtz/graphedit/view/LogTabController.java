@@ -27,6 +27,9 @@ public class LogTabController extends StackPane {
     private Pattern linkMatcher;
     private IBufferContainer bufferContainer;
 
+    /**
+     * Create a new instance
+     */
     public LogTabController() {
 	linkMatcher = getPattern();
         bufferContainer = DI.get(IBufferContainer.class);
@@ -43,7 +46,7 @@ public class LogTabController extends StackPane {
      * var logMessageWithALink = "error at [this vertex](f53ec9f0-dd57-4099-b3dd-3b72bda282df).";
      * }
      * </pre>
-     * @param logMessage
+     * @param logMessage The log message to add
      */
     public void addLog(String logMessage) {
         if(logMessage == null) {
