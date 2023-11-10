@@ -18,6 +18,10 @@ import javafx.scene.transform.Affine;
  *  - If the intention is to have a drag and drop behavior, this class calls that "dnd"
  */
 public class DragUtil {
+    private DragUtil() {
+
+    }
+
     /**
      * Add some event handlers to the provided node that makes it draggable through a {@link ViewModelPoint}
      * @param node The node that will catch the related mouse events
