@@ -5,6 +5,10 @@ import java.util.List;
 
 import dk.yalibs.yadi.DI;
 
+/**
+ * Base interface for a third-party plugin.
+ * Each plugin must implement this to be discoverable by the plugin loader.
+ */
 public interface IPlugin {
     /**
      * Get the name of this plugin.
