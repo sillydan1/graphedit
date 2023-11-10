@@ -8,11 +8,17 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 
+/**
+ * Implementation of an observable undosystem
+ */
 public class ObservableStackUndoSystem implements IObservableUndoSystem {
     private int cursorIndex;
     private final List<Undoable> actions;
     private ObjectProperty<Undoable> currentAction;
 
+    /**
+     * Construct a new instance
+     */
     public ObservableStackUndoSystem() {
 	this.actions = new ArrayList<>();
         this.cursorIndex = -1;
