@@ -25,13 +25,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
+/**
+ * Project settings editor view controller.
+ */
 public class ProjectSettingsController {
     private static final Logger logger = LoggerFactory.getLogger(ProjectSettingsController.class);
     @FXML
     private VBox inspectorPane;
     private ViewModelProject settings;
 
-    public void initialize() {
+    @FXML
+    private void initialize() {
 	settings = DI.get(ViewModelProject.class);
 	var tile = new Tile("Name", "The name of the project");
 	var nameInspector = InspectorUtils.getPropertyInspectorField(settings.name());
