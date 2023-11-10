@@ -20,6 +20,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
  * @param showInfoToasts When true, will display toasts on logger.info calls
  * @param showWarnToasts When true, will display toasts on logger.warn calls
  * @param showErrorToasts When true, will display toasts on logger.error calls
+ * @param showTraceToasts When true, will display toasts on logger.trace calls
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
  */
