@@ -44,14 +44,8 @@ public class ArcController extends EdgeController {
         var result = new Label();
         setLabelGraphic(result, edge.weight().get());
         result.getStyleClass().add("outline");
-        result.translateXProperty().bind(BindingsUtil.getLineOffsetXBinding(
-                    line.startXProperty(), line.startYProperty(),
-                    line.endXProperty(), line.endYProperty(),
-                    labelDirOffset).subtract(result.widthProperty().divide(2)));
-        result.translateYProperty().bind(BindingsUtil.getLineOffsetYBinding(
-                    line.startXProperty(), line.startYProperty(),
-                    line.endXProperty(), line.endYProperty(),
-                    labelDirOffset).subtract(result.heightProperty().divide(2)));
+        result.translateXProperty().bind(BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
+        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset).subtract(result.heightProperty().divide(2)));
         return result;
     }
 }
