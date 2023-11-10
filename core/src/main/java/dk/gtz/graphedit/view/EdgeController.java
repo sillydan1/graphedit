@@ -28,18 +28,65 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 
+/**
+ * The view baseclass for graph edges.
+ * Contains all the logic needed for the demonstration syntax.
+ * If you extend from this and dont want all the features, you should overwrite the unwanted initialize functions
+ */
 public class EdgeController extends Group {
     private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
     private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
+    /**
+     * A construct that tracks the mouse position. Useful when the edge is being edited
+     */
     protected final MouseTracker tracker;
+    /**
+     * The edge id
+     */
     protected final UUID edgeKey;
+    /**
+     * The viewmodel value of this edge
+     */
     protected final ViewModelEdge edgeValue;
+    /**
+     * The project resource containing the parent graph
+     */
     protected final ViewModelProjectResource resource;
+    /**
+     * The affine matrix relating to this edge
+     */
     protected final Affine viewportAffine;
-    protected final Line line, lineArrowLeft, lineArrowRight;
+    /**
+     * The main line
+     */
+    protected final Line line;
+    /**
+     * The left side of the arrowhead
+     */
+    protected final Line lineArrowLeft;
+    /**
+     * The right side of the arrowhead
+     */
+    protected final Line lineArrowRight;
+    /**
+     * A slightly thicker invisible line that helps edge selection
+     */
     protected final Line selectionHelperLine;
+    /**
+     * The associated syntax factory
+     */
     protected ISyntaxFactory syntaxFactory;
 
+    /**
+     * Constructs a new edgecontroller view component
+     * @param edgeKey The id of the edge
+     * @param edge The viewmodel data of the edge
+     * @param resource The project resource containing the edge
+     * @param viewportAffine The affine matrix relating to the edge
+     * @param editorSettings The current editor settings
+     * @param selectedTool The object property specifying which tool is currently selected
+     * @param syntaxFactory The associated syntax factory
+     */
     public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
@@ -180,4 +227,3 @@ public class EdgeController extends Group {
 	addEventHandler(MouseEvent.MOUSE_EXITED, event -> lineArrowRight.getStyleClass().remove("stroke-hover"));
     }
 }
-
