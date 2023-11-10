@@ -17,16 +17,20 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for the plugin sidepanel
+ */
 public class SidePanelController {
     private static Logger logger = LoggerFactory.getLogger(SidePanelController.class);
     private static float PLUGIN_ICON_SCALE_FACTOR = 1.35f;
     @FXML
-    public BorderPane root;
+    private BorderPane root;
     @FXML
-    public VBox left;
+    private VBox left;
     private final ObjectProperty<IPluginPanel> selectedPlugin = new SimpleObjectProperty<>(null);
 
-    public void initialize() {
+    @FXML
+    private void initialize() {
 	var plugins = DI.get(IPluginsContainer.class);
 	if(plugins.getPlugins().isEmpty()) {
 	    logger.warn("No plugins are loaded, cannot show sidepanel");
