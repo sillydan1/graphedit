@@ -10,9 +10,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for search result display.
+ */
 public class SearchResultController extends VBox {
     private IFocusable focusable;
 
+    /**
+     * Construct a new instance
+     * @param icon The icon indicating the type of search result
+     * @param text The text to display on the search result
+     * @param focusable The focusable object that was found during the search
+     */
     public SearchResultController(BootstrapIcons icon, String text, IFocusable focusable) {
 	var ficon = new FontIcon(icon);
 	var label = new Label(text);
@@ -25,8 +34,10 @@ public class SearchResultController extends VBox {
 	VBox.setVgrow(box, Priority.ALWAYS);
     }
 
+    /**
+     * Focus on the search result object
+     */
     public void focus() {
 	focusable.focus();
     }
 }
-
