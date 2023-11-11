@@ -62,7 +62,7 @@
    - [x] dont install in /opt
    - [x] license
    - [x] /bin/graphedit > /bin/Graphedit
- - [ ] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
+ - [x] Release `v1.0.0` ([gradle publishing guide](https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html))
    - [x] Runtargets are not serializing
    - [x] dont package /doc
    - [x] Desktop icon not functioning on .dekstop file for linux
@@ -85,17 +85,40 @@
    - [x] flatpak
    - [x] GNOME store?
    - [x] javadoc
- - [ ] flathub (needs an actual binary release)
  - [ ] CD (needs a pre-release for prototyping purposes)
- - [ ] gitignored Project cache, such as what files did you have open last etc.
+   - [ ] flathub (needs an actual binary release)
+ - [x] gitignored Project cache, such as what files did you have open last etc.
+ - [x] windows menubar not showing
+ - [x] Migraters
+ - [x] Plugin system
+   - [x] general plugin system
+   - [x] refactor into "vscode" style layout
+   - [x] refactor things into `std`
+     - [x] File Explorer
+     - [x] Syntactic Element Inspector
+     - [x] Syntax factories
+   - [x] polish
+     - [x] move things into proper packages and remove old stuff
+     - [x] launchable with no plugins (we shouldn't _depend_ on plugins. That would be bass ackwards)
+     - [x] ugly UI
+   - [x] cut dependencies off in build.gradle please
+ - [x] Release format (ship plugins)
+ - [x] TODOs round
+ - [x] update readme (screenshots etc)
+ - [ ] Release `v1.1.0
  - [ ] Custom keybinds
  - [ ] Cut / Copy / Paste support
+ - [ ] Release core as a library on ossrch
  - [ ] Additional Syntaxes
+   - [x] Simple Text
+   - [x] LTS
    - [ ] NTTA
    - [ ] HAWK
-   - [ ] P/N
+   - [x] P/N
    - [ ] TIOA 
- - [ ] Release `v1.1.0
+ - [ ] Fix TODOs
+ - [ ] Polish
+ - [ ] Release `v1.2.0
  - [ ] Trace-traverser & specification
  - [ ] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
@@ -111,13 +134,3 @@
    - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
  - [ ] Release `v2.0.0`
 
- ```sh
-# (alpine)
-apk add dpkg rpm gradle fakeroot git binutils gcc g++
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
-# (gradle:jammy)
-apt install rpm dpkg dpkg-dev binutils git fakeroot
-git config --global --add safe.directory /graphedit
-gradle jpackage --info
- ```

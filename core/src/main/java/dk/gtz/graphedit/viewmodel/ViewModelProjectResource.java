@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;
@@ -26,17 +27,18 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
 
     /**
      * Constructs a new view model project resource based on the provided model project resource
-     * @param projectResource the model project resource to base on
+     * @param projectResource The model project resource to base on
+     * @param syntaxFactory The associated syntax factory
      */
-    public ViewModelProjectResource(ModelProjectResource projectResource) {
-	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax()));
+    public ViewModelProjectResource(ModelProjectResource projectResource, ISyntaxFactory syntaxFactory) {
+	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax(), syntaxFactory));
 	metadata.putAll(projectResource.metadata());
     }
 
     /**
      * Constructs a new view model project resource based on provided metadata and view model graph
-     * @param metadata a map of metadata, useful for storing properties that aren't necessarily part of the specification
-     * @param syntax the graph containing the model
+     * @param metadata A map of metadata, useful for storing properties that aren't necessarily part of the specification
+     * @param syntax The graph containing the model
      */
     public ViewModelProjectResource(MapProperty<String,String> metadata, ViewModelGraph syntax) {
 	this.metadata = metadata;

@@ -1,5 +1,8 @@
 plugins {
+    id 'java';
     id 'org.openjfx.javafxplugin' version '0.0.13';
+    id 'maven-publish'
+    id 'signing'
 }
 
 javafx {
@@ -11,25 +14,24 @@ javafx {
 }
 
 dependencies {
-    implementation group: 'org.openjfx', name: 'javafx', version: '20.0.1';
-    implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
-    implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
-    implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
-    implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '12.3.1';
-    implementation group: 'org.kordamp.ikonli', name: 'ikonli-bootstrapicons-pack', version: '12.3.1';
-    implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '2.0.1';
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.0'
+}
 
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+// Some extra information. Useful for debugging the CI
+def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+def releaseRepoUrl = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+println '+ TARGET REPO: ' + releaseRepoUrl
 
-    implementation group: 'dk.yalibs', name: 'yadi', version: '1.0.0';
-    implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
-    implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
-    implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
-    implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
+ext {
+    pomGroupId = group
+    pomVersion = version
+    pomArtifactId = "core"
+    pomArtifactName = "core"
+    jdkCompileVersion = 17
+}
 
-    implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.0'
+java {
+    withJavadocJar()
 }
 
 jar {
@@ -41,5 +43,56 @@ jar {
                 "Implementation-URL": "https://github.com/sillydan1/graphedit"
                 );
     };
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "${pomGroupId}"
+            artifactId = "${pomArtifactId}"
+            version = "${pomVersion}"
+            from components.java
+            pom {
+                name = "${pomArtifactId}"
+                description = 'Core package for the Graphedit editor'
+                url = 'https://www.gtz.dk'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sillydan1'
+                        name = 'Asger Gitz-Johansen'
+                        email = 'asger.gitz@hotmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/sillydan1/graphedit.git'
+                    developerConnection = 'scm:git:ssh://github.com/sillydan1/graphedit.git'
+                    url = 'https://github.com/sillydan1/graphedit/'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = releaseRepoUrl
+            credentials {
+                username = findProperty("ossrhUsername")
+                password = findProperty("ossrhPassword")
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = findProperty("signingKey") ?: System.getenv("GPG_SIGNING_KEY")
+    def signingPassword = findProperty("signingPassword") ?: System.getenv("GPG_SIGNING_PASSWORD")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
 }
 

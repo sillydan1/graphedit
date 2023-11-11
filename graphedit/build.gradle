@@ -1,33 +1,26 @@
 plugins {
-   id 'application';
-   id 'org.openjfx.javafxplugin' version '0.0.13';
-   id 'org.beryx.runtime' version '1.12.7';
+    id 'java';
+    id 'application';
+    id 'org.openjfx.javafxplugin' version '0.0.13';
+    id 'org.beryx.runtime' version '1.12.7';
 }
 
 javafx {
-   version = '20';
-   modules = ['javafx.controls',
-           'javafx.fxml',
-           'javafx.graphics',
-           'javafx.base'];
+    version = '20';
+    modules = ['javafx.controls',
+            'javafx.fxml',
+            'javafx.graphics',
+            'javafx.base'];
 }
 
 dependencies {
-   implementation project(':core');
-
-   implementation group: 'org.openjfx', name: 'javafx', version: '20.0.1';
-   implementation group: 'org.openjfx', name: 'javafx-base', version: '20.0.1';
-   implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
-   implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
-
-   implementation group: 'com.beust', name: 'jcommander', version: '1.82';
-   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
-   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+    implementation project(':core');
+    implementation project(':std'); // TODO: this should be handled with a package manager
 }
 
 application {
-   mainClass = "dk.gtz.graphedit.Main";
-   applicationDefaultJvmArgs = [];
+    mainClass = "dk.gtz.graphedit.Main";
+    applicationDefaultJvmArgs = [];
 }
 
 runtime {

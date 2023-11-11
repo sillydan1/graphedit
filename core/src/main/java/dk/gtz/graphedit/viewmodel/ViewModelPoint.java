@@ -154,7 +154,6 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 
     @Override
     public void removeListener(ChangeListener<? super ViewModelPoint> listener) {
-	// TODO: This may not work, but lets just try it out
 	x.removeListener((e,o,n) -> listener.changed(this, this, this));
 	y.removeListener((e,o,n) -> listener.changed(this, this, this));
     }

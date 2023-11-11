@@ -5,15 +5,26 @@ import java.util.Optional;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
+/**
+ * An aggregate tool that unifies the following tools:
+ *
+ * - vertex creation (Shift+click)
+ * - vertex moving (Leftmouse Drag)
+ * - vertex deletion (Delete or Backspace key)
+ * - edge creation (Shift+click vertex)
+ * - edge deletion (Delete or Backspace key)
+ * - selection management (Leftmouse Click)
+ */
 public class UnifiedModellingTool extends AbstractBaseTool {
     private final VertexCreateTool vertexCreateTool;
     private final VertexDragMoveTool vertexDragMoveTool;
@@ -22,6 +33,9 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     private final EdgeDeleteTool edgeDeleteTool;
     private final SelectTool selectTool;
 
+    /**
+     * Cronstruct a new instance
+     */
     public UnifiedModellingTool() {
         this.vertexCreateTool = new VertexCreateTool();
         this.vertexDragMoveTool = new VertexDragMoveTool();
@@ -90,16 +104,21 @@ public class UnifiedModellingTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        if(edgeCreateTool.isCurrentlyCreatingEdge())
-            edgeCreateTool.onKeyEvent(e);
-        if(e.event().getCode().equals(KeyCode.DELETE) || e.event().getCode().equals(KeyCode.BACK_SPACE)) {
-            for(var element : selectTool.getSelection()) {
-                if(element.selectable() instanceof ViewModelEdge edge)
-                    edgeDeleteTool.delete(element.id(), edge, e.graph());
-                if(element.selectable() instanceof ViewModelVertex vertex)
-                    vertexDeleteTool.delete(element.id(), vertex, e.graph());
-            }
+        edgeCreateTool.onKeyEvent(e);
+        if(!isDeleteKeyCombo(e.event()))
+            return;
+        for(var element : selectTool.getSelection()) {
+            if(element.selectable() instanceof ViewModelEdge edge)
+                edgeDeleteTool.delete(element.id(), edge, e.graph());
+            if(element.selectable() instanceof ViewModelVertex vertex)
+                vertexDeleteTool.delete(element.id(), vertex, e.graph());
         }
     }
-}
 
+    private boolean isDeleteKeyCombo(KeyEvent event) {
+        var delete = event.getCode().equals(KeyCode.DELETE);
+        // This is good for keyboards without a delete button (e.g. some macbooks)
+        var shortcutShiftBackspace = (event. getCode().equals(KeyCode.BACK_SPACE)) && event.isShortcutDown() && event.isShiftDown();
+        return delete || shortcutShiftBackspace;
+    }
+}

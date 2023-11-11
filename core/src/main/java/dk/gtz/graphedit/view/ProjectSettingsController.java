@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.ListProperty;
@@ -25,13 +25,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
+/**
+ * Project settings editor view controller.
+ */
 public class ProjectSettingsController {
     private static final Logger logger = LoggerFactory.getLogger(ProjectSettingsController.class);
     @FXML
     private VBox inspectorPane;
     private ViewModelProject settings;
 
-    public void initialize() {
+    /**
+     * Construct a new instance
+     */
+    public ProjectSettingsController() {
+
+    }
+
+    @FXML
+    private void initialize() {
 	settings = DI.get(ViewModelProject.class);
 	var tile = new Tile("Name", "The name of the project");
 	var nameInspector = InspectorUtils.getPropertyInspectorField(settings.name());

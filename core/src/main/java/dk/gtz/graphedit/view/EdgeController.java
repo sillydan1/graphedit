@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.tool.ITool;
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
-import dk.gtz.graphedit.view.util.BindingsUtil;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.util.BindingsUtil;
+import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
@@ -26,23 +28,72 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 
+/**
+ * The view baseclass for graph edges.
+ * Contains all the logic needed for the demonstration syntax.
+ * If you extend from this and dont want all the features, you should overwrite the unwanted initialize functions
+ */
 public class EdgeController extends Group {
     private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
     private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
-    private final MouseTracker tracker;
-    private final UUID edgeKey;
-    private final ViewModelEdge edgeValue;
-    private final ViewModelProjectResource resource;
-    private final Affine viewportAffine;
-    private final Line line, lineArrowLeft, lineArrowRight;
-    private final Line selectionHelperLine;
+    /**
+     * A construct that tracks the mouse position. Useful when the edge is being edited
+     */
+    protected final MouseTracker tracker;
+    /**
+     * The edge id
+     */
+    protected final UUID edgeKey;
+    /**
+     * The viewmodel value of this edge
+     */
+    protected final ViewModelEdge edgeValue;
+    /**
+     * The project resource containing the parent graph
+     */
+    protected final ViewModelProjectResource resource;
+    /**
+     * The affine matrix relating to this edge
+     */
+    protected final Affine viewportAffine;
+    /**
+     * The main line
+     */
+    protected final Line line;
+    /**
+     * The left side of the arrowhead
+     */
+    protected final Line lineArrowLeft;
+    /**
+     * The right side of the arrowhead
+     */
+    protected final Line lineArrowRight;
+    /**
+     * A slightly thicker invisible line that helps edge selection
+     */
+    protected final Line selectionHelperLine;
+    /**
+     * The associated syntax factory
+     */
+    protected ISyntaxFactory syntaxFactory;
 
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool) {
+    /**
+     * Constructs a new edgecontroller view component
+     * @param edgeKey The id of the edge
+     * @param edge The viewmodel data of the edge
+     * @param resource The project resource containing the edge
+     * @param viewportAffine The affine matrix relating to the edge
+     * @param editorSettings The current editor settings
+     * @param selectedTool The object property specifying which tool is currently selected
+     * @param syntaxFactory The associated syntax factory
+     */
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
 	this.tracker = DI.get(MouseTracker.class);
 	this.resource = resource;
+	this.syntaxFactory = syntaxFactory;
 	this.line = initialize(selectedTool, editorSettings);
 	this.lineArrowLeft = initializeLeftArrow(line);
 	this.lineArrowRight = initializeRightArrow(line);
@@ -120,7 +171,7 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, resource.syntax(), editorSettings)));
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, resource.syntax(), editorSettings)));
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n) {
 		line.getStyleClass().add("stroke-selected");
@@ -176,4 +227,3 @@ public class EdgeController extends Group {
 	addEventHandler(MouseEvent.MOUSE_EXITED, event -> lineArrowRight.getStyleClass().remove("stroke-hover"));
     }
 }
-

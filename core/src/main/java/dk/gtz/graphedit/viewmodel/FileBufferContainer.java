@@ -9,17 +9,25 @@ import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
+/**
+ * Buffer container implementation using filepaths as keys.
+ */
 public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
     private final ObservableMap<String, ViewModelProjectResource> openBuffers;
     private final IModelSerializer serializer;
 
+    /**
+     * Constructs a new filepath keyed buffer container.
+     * @param serializer The serializer to use when deserializing the buffers
+     */
     public FileBufferContainer(IModelSerializer serializer) {
         openBuffers = FXCollections.observableHashMap(); 
         this.serializer = serializer;
@@ -64,8 +72,8 @@ public class FileBufferContainer implements IBufferContainer {
             while(s.hasNextLine())
                 b.append(s.nextLine());
             s.close();
-            var newModel = serializer.deserialize(b.toString());
-            open(filename, new ViewModelProjectResource(newModel));
+            var newModel = serializer.deserializeProjectResource(b.toString());
+            open(filename, new ViewModelProjectResource(newModel, MetadataUtils.getSyntaxFactory(newModel.metadata())));
         } catch (SerializationException | FileNotFoundException e) {
             logger.error("not a proper model file {}", filename, e);
             logger.trace(e.getMessage());
@@ -77,4 +85,3 @@ public class FileBufferContainer implements IBufferContainer {
         Platform.runLater(() -> openBuffers.put(filename, model));
     }
 }
-

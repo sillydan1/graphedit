@@ -1,38 +1,44 @@
 package dk.gtz.graphedit.view.log;
 
-import javafx.scene.paint.Color;
-import org.fxmisc.richtext.model.Codec;
-
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
+import javafx.scene.paint.Color;
+
 /**
  * Holds information about the style of a text fragment.
  */
 public class TextStyle {
+    /**
+     * A text style with only default values
+     */
     public static final TextStyle EMPTY = new TextStyle();
-    public static final TextStyle WHITE = new TextStyle().updateTextColor(Color.WHITE);
-    public static final Codec<TextStyle> CODEC = new TextStyleCodec();
 
-    public static TextStyle bold(boolean bold) { return EMPTY.updateBold(bold); }
-    public static TextStyle italic(boolean italic) { return EMPTY.updateItalic(italic); }
-    public static TextStyle underline(boolean underline) { return EMPTY.updateUnderline(underline); }
-    public static TextStyle strikethrough(boolean strikethrough) { return EMPTY.updateStrikethrough(strikethrough); }
-    public static TextStyle fontSize(int fontSize) { return EMPTY.updateFontSize(fontSize); }
-    public static TextStyle fontFamily(String family) { return EMPTY.updateFontFamily(family); }
-    public static TextStyle textColor(Color color) { return EMPTY.updateTextColor(color); }
-    public static TextStyle backgroundColor(Color color) { return EMPTY.updateBackgroundColor(color); }
+    /**
+     * A text style using white text color
+     */
+    public static final TextStyle WHITE = new TextStyle().setTextColor(Color.WHITE);
+
+    /**
+     * Create a new text style with a random text color
+     * @return A new randomly colored text style
+     */
     public static TextStyle randomTextColor() {
         var r = new Random();
-        return EMPTY.updateTextColor(Color.color(
+        return EMPTY.setTextColor(Color.color(
                 r.nextDouble(),
                 r.nextDouble(),
                 r.nextDouble()));
     }
 
-    static String cssColor(Color color) {
+    /**
+     * Create a new text style with a specified text color
+     * @param color The color to use
+     * @return A new colored text style
+     */
+    public static String cssColor(Color color) {
         int red = (int) (color.getRed() * 255);
         int green = (int) (color.getGreen() * 255);
         int blue = (int) (color.getBlue() * 255);
@@ -48,6 +54,9 @@ public class TextStyle {
     final Optional<Color> textColor;
     final Optional<Color> backgroundColor;
 
+    /**
+     * Construct a new text style instance
+     */
     public TextStyle() {
         this(Optional.empty(),
              Optional.empty(),
@@ -59,6 +68,17 @@ public class TextStyle {
              Optional.empty());
     }
 
+    /**
+     * Construct a new text style istance
+     * @param bold Should the text be bold
+     * @param italic Should the text be italic
+     * @param underline Should the text be underlined
+     * @param strikethrough Should the text be strikethrough
+     * @param fontSize Text size of the text style
+     * @param fontFamily The font to use
+     * @param textColor The color to use
+     * @param backgroundColor The background color
+     */
     public TextStyle(Optional<Boolean> bold,
                      Optional<Boolean> italic,
                      Optional<Boolean> underline,
@@ -111,6 +131,10 @@ public class TextStyle {
         return String.join(",", styles);
     }
 
+    /**
+     * Convert the current settings into one big javafx css expression
+     * @return A new css expression string
+     */
     public String toCss() {
         var sb = new StringBuilder();
         bold.ifPresent(b -> sb.append("-fx-font-weight: ").append(b ? "bold" : "normal").append(";"));
@@ -124,6 +148,11 @@ public class TextStyle {
         return sb.toString();
     }
 
+    /**
+     * Mix / merge a different text style with this one.
+     * @param mixin The other text style to merge with
+     * @return A new merged / mixed text style
+     */
     public TextStyle updateWith(TextStyle mixin) {
         return new TextStyle(
                 mixin.bold.isPresent() ? mixin.bold : bold,
@@ -136,40 +165,84 @@ public class TextStyle {
                 mixin.backgroundColor.isPresent() ? mixin.backgroundColor : backgroundColor);
     }
 
-    public TextStyle updateBold(boolean bold) {
+    /**
+     * Set the bold attribute of the text style
+     * @param bold Whether or not the text should be bold
+     * @return a new text style
+     */
+    public TextStyle setBold(boolean bold) {
         return new TextStyle(Optional.of(bold), italic, underline, strikethrough, fontSize, fontFamily, textColor, backgroundColor);
     }
 
-    public TextStyle updateItalic(boolean italic) {
+    /**
+     * Set the italic attribute of the text style
+     * @param italic Whether or not the text should be italic
+     * @return a new text style
+     */
+    public TextStyle setItalic(boolean italic) {
         return new TextStyle(bold, Optional.of(italic), underline, strikethrough, fontSize, fontFamily, textColor, backgroundColor);
     }
 
-    public TextStyle updateUnderline(boolean underline) {
+    /**
+     * Set the underline attribute of the text style
+     * @param underline Whether or not the text should be underlined
+     * @return a new text style
+     */
+    public TextStyle setUnderline(boolean underline) {
         return new TextStyle(bold, italic, Optional.of(underline), strikethrough, fontSize, fontFamily, textColor, backgroundColor);
     }
 
-    public TextStyle updateStrikethrough(boolean strikethrough) {
+    /**
+     * Set the strikethrough attribute of the text style
+     * @param strikethrough Whether or not the text should be strikethrough
+     * @return a new text style
+     */
+    public TextStyle setStrikethrough(boolean strikethrough) {
         return new TextStyle(bold, italic, underline, Optional.of(strikethrough), fontSize, fontFamily, textColor, backgroundColor);
     }
 
-    public TextStyle updateFontSize(int fontSize) {
+    /**
+     * Set the font size attribute of the text style
+     * @param fontSize The size (in pt's) of the text
+     * @return a new text style
+     */
+    public TextStyle setFontSize(int fontSize) {
         return new TextStyle(bold, italic, underline, strikethrough, Optional.of(fontSize), fontFamily, textColor, backgroundColor);
     }
 
-    public TextStyle updateFontFamily(String fontFamily) {
+    /**
+     * Set the font of the text style
+     * @param fontFamily The font to use
+     * @return a new text style
+     */
+    public TextStyle setFontFamily(String fontFamily) {
         return new TextStyle(bold, italic, underline, strikethrough, fontSize, Optional.of(fontFamily), textColor, backgroundColor);
     }
 
-    public TextStyle updateTextColor(Color textColor) {
+    /**
+     * Set the text color attribute of the text style
+     * @param textColor The new color of the text
+     * @return a new text style
+     */
+    public TextStyle setTextColor(Color textColor) {
         return new TextStyle(bold, italic, underline, strikethrough, fontSize, fontFamily, Optional.of(textColor), backgroundColor);
     }
 
-    public TextStyle updateTextColorWeb(String webColor) {
-        return updateTextColor(Color.web(webColor));
+    /**
+     * Set the text color attribute of the text style using hex-codes
+     * @param webColor Hexcode formatted color of the text
+     * @return a new text style
+     */
+    public TextStyle setTextColorWeb(String webColor) {
+        return setTextColor(Color.web(webColor));
     }
 
-    public TextStyle updateBackgroundColor(Color backgroundColor) {
+    /**
+     * Set the text background color attribute of the text style
+     * @param backgroundColor The new background color of the text
+     * @return a new text style
+     */
+    public TextStyle setBackgroundColor(Color backgroundColor) {
         return new TextStyle(bold, italic, underline, strikethrough, fontSize, fontFamily, textColor, Optional.of(backgroundColor));
     }
 }
-

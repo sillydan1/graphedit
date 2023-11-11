@@ -15,6 +15,18 @@ import javafx.collections.FXCollections;
 
 /**
  * View model representation of the global editor settings
+ * @param gridSizeX Width of snapgrid cells
+ * @param gridSizeY Height of snapgrid cells
+ * @param gridSnap When true, vertices will snap to the grid
+ * @param useLightTheme When true, the editor will use a light color scheme
+ * @param autoOpenLastProject When true, the last opened project will be automatically opened next time you start the editor
+ * @param showInspectorPane (Deprecated) doesn't do anything anymore
+ * @param showInfoToasts When true, will display toasts on logger.info calls
+ * @param showWarnToasts When true, will display toasts on logger.warn calls
+ * @param showErrorToasts When true, will display toasts on logger.error calls
+ * @param showTraceToasts When true, will display toasts on logger.trace calls
+ * @param lastOpenedProject Filepath to the last opened graphedit project file
+ * @param recentProjects List of filepaths that have been recently opened
  */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
@@ -22,7 +34,7 @@ public record ViewModelEditorSettings(
                 BooleanProperty gridSnap,
                 BooleanProperty useLightTheme,
                 BooleanProperty autoOpenLastProject,
-                BooleanProperty showInspectorPane,
+                @Deprecated BooleanProperty showInspectorPane,
                 BooleanProperty showInfoToasts,
                 BooleanProperty showWarnToasts,
                 BooleanProperty showErrorToasts,
@@ -30,6 +42,10 @@ public record ViewModelEditorSettings(
                 StringProperty lastOpenedProject,
                 ListProperty<String> recentProjects) {
 
+        /**
+         * Construct a new instance
+         * @param settings The settings model object to base on
+         */
         public ViewModelEditorSettings(ModelEditorSettings settings) {
                 this(
                         settings.gridSizeX(),
@@ -48,17 +64,32 @@ public record ViewModelEditorSettings(
                 this.recentProjects.addAll(settings.recentProjects());
         }
 
+        /**
+         * Construct a new instance
+         * @param gridSizeX Width of snapgrid cells
+         * @param gridSizeY Height of snapgrid cells
+         * @param gridSnap When true, vertices will snap to the grid
+         * @param useLightTheme When true, the editor will use a light color scheme
+         * @param autoOpenLastProject When true, the last opened project will be automatically opened next time you start the editor
+         * @param showInspectorPane (Deprecated) doesn't do anything anymore
+         * @param showInfoToasts When true, will display toasts on logger.info calls
+         * @param showWarnToasts When true, will display toasts on logger.warn calls
+         * @param showErrorToasts When true, will display toasts on logger.error calls
+         * @param showTraceToasts When true, will display toasts on logger.trace calls
+         * @param lastOpenedProject Filepath to the last opened graphedit project file
+         * @param recentProjects List of filepaths that have been recently opened
+         */
         public ViewModelEditorSettings(
                         double gridSizeX, 
                         double gridSizeY,
                         boolean gridSnap,
                         boolean useLightTheme,
                         boolean autoOpenLastProject,
-                        boolean showInspectorPane,
-                        boolean ignoreInfoToasts,
-                        boolean ignoreWarnToasts,
-                        boolean ignoreErrorToasts,
-                        boolean ignoreTraceToasts,
+                        @Deprecated boolean showInspectorPane,
+                        boolean showInfoToasts,
+                        boolean showWarnToasts,
+                        boolean showErrorToasts,
+                        boolean showTraceToasts,
                         String lastOpenedProject,
                         List<String> recentProjects) {
                 this(
@@ -68,14 +99,13 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(useLightTheme),
                         new SimpleBooleanProperty(autoOpenLastProject),
                         new SimpleBooleanProperty(showInspectorPane),
-                        new SimpleBooleanProperty(ignoreInfoToasts),
-                        new SimpleBooleanProperty(ignoreWarnToasts),
-                        new SimpleBooleanProperty(ignoreErrorToasts),
-                        new SimpleBooleanProperty(ignoreTraceToasts),
+                        new SimpleBooleanProperty(showInfoToasts),
+                        new SimpleBooleanProperty(showWarnToasts),
+                        new SimpleBooleanProperty(showErrorToasts),
+                        new SimpleBooleanProperty(showTraceToasts),
                         new SimpleStringProperty(lastOpenedProject),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
                 this.recentProjects.addAll(recentProjects);
         }
 }
-

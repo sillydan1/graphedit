@@ -17,6 +17,13 @@ public class EditorLogAppender extends AppenderBase<ILoggingEvent> {
     private static record LogConsumer(Level level, Consumer<String> consumer) {}
     private static Map<UUID, LogConsumer> subscribers = new HashMap<>();
 
+    /**
+     * Constructs a new EditorLogAppender instance
+     */
+    public EditorLogAppender() {
+
+    }
+
     @Override
     protected void append(ILoggingEvent eventObject) { }
 

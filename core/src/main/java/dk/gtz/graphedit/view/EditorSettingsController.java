@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 import javafx.beans.Observable;
@@ -17,20 +17,30 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for the editor settings modal.
+ */
 public class EditorSettingsController {
     private static final Logger logger = LoggerFactory.getLogger(EditorSettingsController.class);
     @FXML
     private VBox inspectorPane;
     private ViewModelEditorSettings editorSettings;
 
-    public void initialize() {
+    /**
+     * Construct a new instance
+     */
+    public EditorSettingsController() {
+
+    }
+
+    @FXML
+    private void initialize() {
 	editorSettings = DI.get(ViewModelEditorSettings.class);
 	addInspector("Use GridSnap", "Makes vertices snap to the background grid", editorSettings.gridSnap());
 	addInspector("GridSnap XSize", "", editorSettings.gridSizeX());
 	addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
 	addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
 	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
-	addInspector("Show Inspector", "Enable the selection property inspector pane", editorSettings.showInspectorPane());
 	inspectorPane.getChildren().add(new Separator());
 	addInspector("Info Popups", "Show toast popups when info level logs are added", editorSettings.showInfoToasts());
 	addInspector("Warn Popups", "Show toast popups when warning level logs are added", editorSettings.showWarnToasts());
@@ -66,4 +76,3 @@ public class EditorSettingsController {
 	inspectorPane.getChildren().addAll(new Separator(), pane);
     }
 }
-

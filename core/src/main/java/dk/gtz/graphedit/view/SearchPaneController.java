@@ -26,6 +26,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for the search pane modal.
+ */
 public class SearchPaneController implements IFocusable, ICloseable {
     private static Logger logger = LoggerFactory.getLogger(SearchResultController.class);
     @FXML
@@ -41,6 +44,13 @@ public class SearchPaneController implements IFocusable, ICloseable {
     private Optional<Runnable> onCloseRunner = Optional.empty();
     private List<Runnable> focusEventHandlers;
     private IBufferContainer bufferContainer;
+
+    /**
+     * Construct a new instance
+     */
+    public SearchPaneController() {
+
+    }
 
     @FXML
     private void initialize() {
@@ -157,4 +167,3 @@ public class SearchPaneController implements IFocusable, ICloseable {
 	focusEventHandlers.forEach(Runnable::run);
     }
 }
-

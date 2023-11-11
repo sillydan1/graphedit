@@ -8,7 +8,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.view.events.EdgeMouseEvent;
+import dk.gtz.graphedit.events.EdgeMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.yalibs.yadi.DI;
@@ -17,9 +17,17 @@ import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Tool to delete edges between vertices.
+ *
+ * When selected, click an edge to delete it.
+ */
 public class EdgeDeleteTool extends AbstractBaseTool {
     private final IUndoSystem undoSystem;
 
+    /**
+     * Create a new instance of the edge delete tool
+     */
     public EdgeDeleteTool() {
         this.undoSystem = DI.get(IUndoSystem.class);
     }
@@ -54,6 +62,12 @@ public class EdgeDeleteTool extends AbstractBaseTool {
             delete(e.edgeId(), e.edge(), e.graph());
     }
 
+    /**
+     * Deletes a specified edge
+     * @param edgeId The id of the edge to delete
+     * @param edge The edge to delete
+     * @param graph The graph containing the edge to delete
+     */
     public void delete(UUID edgeId, ViewModelEdge edge, ViewModelGraph graph) {
         var deletedEdge = graph.edges().remove(edgeId);
         if(deletedEdge == null)
@@ -63,4 +77,3 @@ public class EdgeDeleteTool extends AbstractBaseTool {
                     () -> graph.edges().remove(edgeId)));
     }
 }
-

@@ -9,7 +9,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.view.events.VertexMouseEvent;
+import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
@@ -18,9 +18,17 @@ import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Tool to delete vertices.
+ *
+ * When selected, click an vertex to delete it.
+ */
 public class VertexDeleteTool extends AbstractBaseTool {
     private final IUndoSystem undoSystem;
 
+    /**
+     * Construct a new instance
+     */
     public VertexDeleteTool() {
         this.undoSystem = DI.get(IUndoSystem.class);
     }
@@ -55,6 +63,12 @@ public class VertexDeleteTool extends AbstractBaseTool {
             delete(e.vertexId(), e.vertex(), e.graph());
     }
 
+    /**
+     * Delete a specified vertex
+     * @param vertexId The id of the vertex to delete
+     * @param vertex The viewmodel object of the vertex to delete
+     * @param graph The graph that contains the vertex
+     */
     public void delete(UUID vertexId, ViewModelVertex vertex, ViewModelGraph graph) {
         var linkedEdges = graph.edges()
             .entrySet()
@@ -78,4 +92,3 @@ public class VertexDeleteTool extends AbstractBaseTool {
                     }));
     }
 }
-

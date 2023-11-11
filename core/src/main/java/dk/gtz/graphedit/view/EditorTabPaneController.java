@@ -1,9 +1,7 @@
 package dk.gtz.graphedit.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.gtz.graphedit.tool.EditorActions;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
@@ -15,14 +13,23 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * View controller for the panel that contains tabs of model editor views as tabs.
+ */
 public class EditorTabPaneController {
-    private static Logger logger = LoggerFactory.getLogger(EditorTabPaneController.class);
     @FXML
-    public TabPane tabpane;
+    private TabPane tabpane;
     @FXML
-    public Text placeholder;
+    private Text placeholder;
     @FXML
-    public VBox root;
+    private VBox root;
+
+    /**
+     * Constructs a new instance of the editor tab panel view controller
+     */
+    public EditorTabPaneController() {
+
+    }
 
     @FXML
     private void initialize() {
@@ -45,7 +52,7 @@ public class EditorTabPaneController {
 		var tabTitle = changedKey;
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
-		var tab = new DraggableTab(tabTitle); // TODO: title should be the ViewModelProject.name stringproperty instead
+		var tab = new DraggableTabController(tabTitle);
 		changedVal.addView(tab);
 		changedVal.addListener((e,o,n) -> tab.setHighlight());
 		EditorActions.addSaveListener(tab::unsetHighlight);
@@ -54,7 +61,7 @@ public class EditorTabPaneController {
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
-		var editorController = new ModelEditorController(changedVal, DI.get(ISyntaxFactory.class));
+		var editorController = new ModelEditorController(changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
 		editorController.addFocusListener(() -> {
@@ -71,4 +78,3 @@ public class EditorTabPaneController {
 	});
     }
 }
-

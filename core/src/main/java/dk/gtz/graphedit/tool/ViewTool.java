@@ -11,6 +11,13 @@ import javafx.scene.Node;
  * The simplest tool. You can only view the model 
  */
 public class ViewTool extends AbstractBaseTool {
+    /**
+     * Construct a new instance
+     */
+    public ViewTool () {
+
+    }
+
     @Override
     public String getHelpDescription() {
 	return """

@@ -5,9 +5,15 @@ import java.nio.file.Path;
 
 import org.apache.tika.Tika;
 
+/**
+ * MIME type checker implementation using the {@link Tika}'s implementation
+ */
 public class TikaMimeTypeChecker implements IMimeTypeChecker {
     private Tika tika;
 
+    /**
+     * Construct a new instance
+     */
     public TikaMimeTypeChecker() {
 	tika = new Tika();
     }
@@ -22,4 +28,3 @@ public class TikaMimeTypeChecker implements IMimeTypeChecker {
 	return getMimeType(Path.of(filePath));
     }
 }
-

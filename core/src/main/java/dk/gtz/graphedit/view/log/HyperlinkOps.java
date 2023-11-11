@@ -4,7 +4,14 @@ import org.fxmisc.richtext.model.SegmentOpsBase;
 
 import java.util.Optional;
 
+/**
+ * Segment operations implementation for {@link Hyperlink} instances
+ * @param <S> Styles type
+ */
 public class HyperlinkOps<S> extends SegmentOpsBase<Hyperlink, S> {
+    /**
+     * Construct a new instance
+     */
     public HyperlinkOps() {
         super(new Hyperlink("", "", ""));
     }
@@ -51,4 +58,3 @@ public class HyperlinkOps<S> extends SegmentOpsBase<Hyperlink, S> {
         return Optional.of(leftSeg.mapDisplayedText(leftSeg.getDisplayedText() + rightSeg.getDisplayedText()));
     }
 }
-

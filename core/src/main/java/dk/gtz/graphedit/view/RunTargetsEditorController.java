@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import atlantafx.base.controls.Tile;
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.tool.EditorActions;
-import dk.gtz.graphedit.view.util.InspectorUtils;
+import dk.gtz.graphedit.util.EditorActions;
+import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelEnvironmentVariable;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
@@ -34,6 +34,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * Runtarget editor view controller.
+ */
 public class RunTargetsEditorController {
     private static Logger logger = LoggerFactory.getLogger(RunTargetsEditorController.class);
     private static class RunTargetViewNode extends Label {
@@ -59,6 +62,13 @@ public class RunTargetsEditorController {
     @FXML
     private VBox inspectorPane;
     private ViewModelProject project;
+
+    /**
+     * Construct a new instance
+     */
+    public RunTargetsEditorController() {
+
+    }
 
     @FXML
     private void initialize() {

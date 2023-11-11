@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
@@ -13,16 +18,24 @@ import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.util.MetadataUtils;
 
+/**
+ * Implementation of {@link IModelSerializer} using the jackson xml serializer
+ */
 public class JacksonModelSerializer implements IModelSerializer {
+    private final Logger logger = LoggerFactory.getLogger(JacksonModelSerializer.class);
     private final ObjectMapper objectMapper;
 
+    /**
+     * Construct a new instance
+     */
     public JacksonModelSerializer() {
 	this.objectMapper = getMapper();
     }
 
-    public ObjectMapper getMapper() {
-	var om = new ObjectMapper();
+    private ObjectMapper getMapper() {
+	var om = new ObjectMapper(); // TODO: https://www.baeldung.com/jackson-yaml is better for git-managed projects
 	om.registerModule(new Jdk8Module());
 	var ptv = BasicPolymorphicTypeValidator.builder()
 	    // allow collection types
@@ -35,13 +48,20 @@ public class JacksonModelSerializer implements IModelSerializer {
 	    .allowIfSubType("dk.gtz.graphedit")
 	    .build();
 	om.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+	om.enable(SerializationFeature.INDENT_OUTPUT);
+	om.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
 	return om;
+    }
+
+    @Override
+    public void addClassLoader(ClassLoader loader) {
+	this.objectMapper.setTypeFactory(this.objectMapper.getTypeFactory().withClassLoader(loader));
     }
 
     @Override
     public String serialize(ModelProject model) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(model);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -50,25 +70,39 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public String serialize(ModelProjectResource model) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(model);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
     }
 
     @Override
-    public ModelProjectResource deserialize(String serializedContent) throws SerializationException {
+    public ModelProjectResource deserializeProjectResource(String serializedContent) throws SerializationException {
 	try {
-	    return objectMapper.readValue(serializedContent, ModelProjectResource.class);
+	    TreeNode node = objectMapper.readTree(serializedContent);
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
+	    var migrater = factory.getMigrater();
+	    if(migrater.isPresent())
+		node = migrater.get().migrate(node, objectMapper);
+	    else
+		logger.trace("no migrater available, trying to raw-dog it");
+	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
     }
 
     @Override
-    public ModelProjectResource deserialize(File file) throws SerializationException, IOException {
+    public ModelProjectResource deserializeProjectResource(File file) throws SerializationException, IOException {
 	try {
-	    return objectMapper.readValue(file, ModelProjectResource.class);
+	    TreeNode node = objectMapper.readTree(file);
+	    var factory = MetadataUtils.getSyntaxFactory(node.get("metadata").get(1));
+	    var migrater = factory.getMigrater();
+	    if(migrater.isPresent())
+		node = migrater.get().migrate(node, objectMapper);
+	    else
+		logger.trace("no migrater available, trying to raw-dog it");
+	    return objectMapper.treeToValue(node, ModelProjectResource.class);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -98,9 +132,9 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
-    public String serializeEditorSettings(ModelEditorSettings settings) throws SerializationException {
+    public String serialize(ModelEditorSettings settings) throws SerializationException {
 	try {
-	    return objectMapper.writeValueAsString(settings);
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(settings);
 	} catch (JsonProcessingException e) {
 	    throw new SerializationException(e);
 	}
@@ -124,4 +158,3 @@ public class JacksonModelSerializer implements IModelSerializer {
 	}
     }
 }
-

@@ -10,8 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.events.ViewportKeyEvent;
-import dk.gtz.graphedit.view.events.ViewportMouseEvent;
+import dk.gtz.graphedit.events.ViewportKeyEvent;
+import dk.gtz.graphedit.events.ViewportMouseEvent;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.util.DragUtil;
+import dk.gtz.graphedit.util.MapGroup;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
@@ -28,26 +32,41 @@ import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.transform.Affine;
 
+/**
+ * View controller for the main model editor viewport.
+ */
 public class ModelEditorController extends BorderPane implements IFocusable {
     private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
-    private double drawPaneDragStartX, drawPaneDragStartY;
+    private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
-    private final ISyntaxFactory syntaxFactory;
+    private ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
-    private GridPane gridPane;
+    private GridPaneController gridPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
 
+    /**
+     * Creates a new instance with a provided resource and syntax
+     * @param resource The viewmodel project resource to edit
+     * @param syntaxFactory The syntax factory of the resource
+     */
     public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
 	this(resource, DI.get(ViewModelEditorSettings.class), syntaxFactory);
     }
 
+    /**
+     * Creates a new instance with a provided resource, settings object and syntax
+     * @param resource The viewmodel project resource to edit
+     * @param settings The viewmodel editor settings object to use
+     * @param syntaxFactory The syntax factory of the resource
+     */
     public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
 	this.resource = resource;
 	this.settings = settings;
@@ -60,9 +79,10 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	initializeViewport();
 	initializeToolbar();
 	initializeDrawGroup();
-	initializeToolEventHandlers();
+	initializeMetadataEventHandlers();
 	initializeVertexCollectionChangeHandlers();
 	initializeEdgeCollectionChangeHandlers();
+	initializeToolEventHandlers();
     }
 
     private void initializeViewport() {
@@ -72,52 +92,39 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     private void initializeToolbar() {
 	var toolbox = DI.get(IToolbox.class);
-	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool());
-	setRight(toolbar);
+	toolbar = new ModelEditorToolbar(toolbox, toolbox.getSelectedTool(), resource).withSyntaxSelector().withButtons();
+	var top = new VBox(toolbar);
+	var syntaxTools = syntaxFactory.getSyntaxTools();
+	if(syntaxTools.isPresent())
+	    top.getChildren().add(new ModelEditorToolbar(syntaxTools.get(), syntaxTools.get().getSelectedTool(), resource).withButtons());
+	setTop(top);
     }
 
     private void initializeDrawGroup() {
 	drawGroup = new MapGroup<>();
 	drawGroupTransform = new Affine();
 	drawGroup.addChildren(initializeEdges());
-	drawGroup.addChildren(initializeLocations());
-	drawGroup.getTransforms().add(drawGroupTransform);
+	drawGroup.addChildren(initializeVertices());
+	drawGroup.addTransform(drawGroupTransform);
 
 	drawPane = new Pane(drawGroup.getGroup());
 	drawPane.setOnScroll(this::onScrollingDrawPane);
 	drawPane.setOnZoom(this::onZoomDrawPane);
-	// TODO: make an abstraction called DeltaDragEvent or something
-	drawPane.setOnMousePressed(this::onPressingDrawPane);
-	drawPane.setOnMouseDragged(this::onDraggingDrawPane);
+	DragUtil.makeDraggableInverse(drawPane, drawGroupTransform);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
 	viewport.getChildren().add(drawPane);
 
-	gridPane = new GridPane(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
+	gridPane = new GridPaneController(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 	viewport.getChildren().add(gridPane);
 	gridPane.toBack();
     }
 
-    private void onPressingDrawPane(MouseEvent event) {
-	drawPaneDragStartX = event.getX();
-	drawPaneDragStartY = event.getY();
-    }
-
-    private void onDraggingDrawPane(MouseEvent event) {
-	if(!event.isSecondaryButtonDown()) // TODO: The button to press should be configurable
-	    return;
-	var dx = event.getX() - drawPaneDragStartX;
-	var dy = event.getY() - drawPaneDragStartY;
-	drawGroupTransform.appendTranslation(dx, dy);
-	drawPaneDragStartX = event.getX();
-	drawPaneDragStartY = event.getY();
-    }
-
     private void onScrollingDrawPane(ScrollEvent event) {
 	if(event.isControlDown())
-	    zoomDrawPane(1 - (event.getDeltaY() * 0.01f)); // TODO: Consider having an adjustable scalar
+	    zoomDrawPane(1 - (event.getDeltaY() * ZOOM_SPEED_SCALAR));
 	else
 	    drawGroupTransform.appendTranslation(event.getDeltaX(), event.getDeltaY());
     }
@@ -138,10 +145,10 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	zoomDrawPane(event.getZoomFactor());
     }
 
-    private Map<UUID,Node> initializeLocations() {
+    private Map<UUID,Node> initializeVertices() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet()) {
-	    nodes.put(vertex.getKey(), syntaxFactory.createVertex(vertex.getKey(), vertex.getValue(), this));
+	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(vertex.getKey(), vertex.getValue(), this));
 	    vertex.getValue().addFocusListener(() -> {
 		var halfWidth = getWidth() * 0.5;
 		var halfHeight = getHeight() * 0.5;
@@ -167,21 +174,55 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		this.drawGroupTransform.setTy(halfHeight - center.getY());
 		this.focus();
 	    });
-	    nodes.put(edge.getKey(), syntaxFactory.createEdge(edge.getKey(), edge.getValue(), this));
+	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(edge.getKey(), edge.getValue(), this));
 	}
 	return nodes;
     }
 
+    private void initializeMetadataEventHandlers() {
+	resource.metadata().addListener((MapChangeListener<String,String>)e -> {
+	    var changedKey = e.getKey();
+	    switch(changedKey) {
+		case "graphedit_syntax":
+		    syntaxFactory = MetadataUtils.getSyntaxFactory(resource.metadata(), syntaxFactory);
+		    initializeToolbar();
+		    break;
+		default: break;
+	    }
+	});
+    }
+
     private void initializeToolEventHandlers() {
+	Platform.runLater(() -> {
+	    viewport.addEventHandler(MouseEvent.ANY, this::onMouseEvent);
+	    getScene().addEventHandler(KeyEvent.ANY, this::onKeyEvent);
+	});
+    }
+
+    private void onMouseEvent(MouseEvent e) {
 	var toolbox = DI.get(IToolbox.class);
-	viewport.addEventHandler(MouseEvent.ANY, e -> toolbox.getSelectedTool().get().onViewportMouseEvent(new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, resource.syntax(), settings)));
-	Platform.runLater(() -> getScene().addEventHandler(KeyEvent.ANY, e -> toolbox.getSelectedTool().get().onKeyEvent(new ViewportKeyEvent(e, drawGroupTransform, resource.syntax(), settings))));
+	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
+	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), settings);
+	toolbox.getSelectedTool().get().onViewportMouseEvent(mouseEvent);
+	var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	if(syntaxToolbox.isPresent())
+	    syntaxToolbox.get().getSelectedTool().get().onViewportMouseEvent(mouseEvent);
+    }
+
+    private void onKeyEvent(KeyEvent e) {
+	var toolbox = DI.get(IToolbox.class);
+	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
+	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, e.getTarget() == getParent().getParent(), syntaxFactory, resource.syntax(), settings);
+	toolbox.getSelectedTool().get().onKeyEvent(keyEvent);
+	var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	if(syntaxToolbox.isPresent())
+	    syntaxToolbox.get().getSelectedTool().get().onKeyEvent(keyEvent);
     }
 
     private void initializeVertexCollectionChangeHandlers() {
 	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
 	    if(c.wasAdded()) {
-		drawGroup.addChild(c.getKey(), syntaxFactory.createVertex(c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(c.getKey(), c.getValueAdded(), this));
 		c.getValueAdded().addFocusListener(() -> {
 		    var halfWidth = getWidth() * 0.5;
 		    var halfHeight = getHeight() * 0.5;
@@ -209,21 +250,34 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		    this.drawGroupTransform.setTy(halfHeight - center.getY());
 		    this.focus();
 		});
-		drawGroup.addChild(c.getKey(), syntaxFactory.createEdge(c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(c.getKey(), c.getValueAdded(), this));
+		drawGroup.getChild(c.getKey()).toBack();
 	    }
 	    if(c.wasRemoved())
 		drawGroup.removeChild(c.getKey());
 	});
     }
 
+    /**
+     * Get the resource being edited
+     * @return The viewmodel project resource that is being edited by this editor view controller
+     */
     public ViewModelProjectResource getProjectResource() {
 	return resource;
     }
 
+    /**
+     * Get the transform, scale and rotation matrix of the viewport
+     * @return The affine that governs the view of the viewport
+     */
     public Affine getViewportTransform() {
 	return drawGroupTransform;
     }
 
+    /**
+     * Get the current editor settings
+     * @return The current viewmodel editor settings object
+     */
     public ViewModelEditorSettings getEditorSettings() {
 	return settings;
     }
@@ -238,4 +292,3 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	onFocusEventHandlers.forEach(Runnable::run);
     }
 }
-

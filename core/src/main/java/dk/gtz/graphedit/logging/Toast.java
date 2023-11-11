@@ -24,6 +24,7 @@ import javafx.util.Duration;
 public final class Toast {
     private static final Logger logger = LoggerFactory.getLogger(Toast.class);
     private static StackPane toaster;
+    private Toast() {}
 
     /**
      * Set the {@link StackPane} of which to place toast notification popups
@@ -68,6 +69,10 @@ public final class Toast {
 	    notify(msg, new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE), Duration.INDEFINITE, Styles.DANGER);
     }
 
+    /**
+     * Show a "trace" styled toast.
+     * @param msg The message to display
+     */
     public static void trace(String msg) {
 	if(DI.get(ViewModelEditorSettings.class).showTraceToasts().get())
 	    notify(msg, new FontIcon(BootstrapIcons.ARCHIVE), Duration.seconds(1), "");

@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelGraph;
+import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;
@@ -20,22 +24,42 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph implements Property<ViewModelGraph> {
+    private Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     private StringProperty declarations;
     private MapProperty<UUID,ViewModelVertex> vertices;
     private MapProperty<UUID,ViewModelEdge> edges;
 
+    /**
+     * Get the declarations portion of the graph.
+     * The declarations are a string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
+     * @return The string property value of the declarations
+     */
     public StringProperty declarations() {
         return declarations;
     }
 
+    /**
+     * Get the vertices mapping
+     * @return The mapping of vertex ids to viewmodel entries
+     */
     public MapProperty<UUID, ViewModelVertex> vertices() {
         return vertices;
     }
 
+    /**
+     * Get the edges mapping
+     * @return The mapping of edge ids to viewmodel entries
+     */
     public MapProperty<UUID, ViewModelEdge> edges() {
         return edges;
     }
 
+    /**
+     * Construct a new instance
+     * @param declarations A string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
+     * @param vertices A mapping of vertex ids to model vertex-values
+     * @param edges A mapping of edge ids to model edge-values
+     */
     public ViewModelGraph(StringProperty declarations, MapProperty<UUID,ViewModelVertex> vertices, MapProperty<UUID,ViewModelEdge> edges) {
         this.declarations = declarations;
         this.vertices = vertices;
@@ -44,14 +68,15 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
 
     /**
      * Constructs a new view model graph instance based on a model graph instance
-     * @param graph the model graph to convert
+     * @param graph The model graph to convert
+     * @param syntaxFactory The associated syntax factory
      */
-    public ViewModelGraph(ModelGraph graph) {
+    public ViewModelGraph(ModelGraph graph, ISyntaxFactory syntaxFactory) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
         for(var v : graph.vertices().entrySet())
-            vertices.put(v.getKey(), new ViewModelVertex(v.getValue(), new ViewModelVertexShape(ViewModelShapeType.OVAL)));
+            vertices.put(v.getKey(), syntaxFactory.createVertexViewModel(v.getValue()));
         for(var e : graph.edges().entrySet())
-            edges.put(e.getKey(), new ViewModelEdge(e.getValue()));
+            edges.put(e.getKey(), syntaxFactory.createEdgeViewModel(e.getValue()));
     }
 
     /**
@@ -66,6 +91,14 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
                 edges.get().entrySet().stream().collect(Collectors.toMap(
                         e -> e.getKey(),
                         e -> e.getValue().toModel())));
+    }
+
+    /**
+     * Check if the graph contains no syntactic elements
+     * @return true if there are no declarations, vertices or edges
+     */
+    public boolean isEmpty() {
+        return declarations.getValueSafe().trim().isEmpty() && vertices.isEmpty() && edges.isEmpty();
     }
 
     @Override
@@ -180,4 +213,3 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
         edges.unbindBidirectional(other.getValue().edges());
     }
 }
-

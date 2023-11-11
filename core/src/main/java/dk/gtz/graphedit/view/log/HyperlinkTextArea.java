@@ -11,11 +11,20 @@ import org.reactfx.util.Either;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Richtext Textarea implementation that can contain {@link Hyperlink}s.
+ * Styled with {@link TextStyle}.
+ */
 public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hyperlink>, TextStyle> {
     private static final TextOps<String, TextStyle> STYLED_TEXT_OPS = SegmentOps.styledTextOps();
     private static final HyperlinkOps<TextStyle> HYPERLINK_OPS = new HyperlinkOps<>();
     private static final TextOps<Either<String, Hyperlink>, TextStyle> EITHER_OPS = STYLED_TEXT_OPS._or(HYPERLINK_OPS, (s1, s2) -> Optional.empty());
 
+    /**
+     * Construct a new instance
+     * @param showLink Callback function for when a {@link Hyperlink} is clicked
+     * @param styleClasses Optionally extra css styleclasses
+     */
     public HyperlinkTextArea(Consumer<Hyperlink> showLink, String... styleClasses) {
         super(null,
                 (t, p) -> {},
@@ -28,7 +37,7 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
                         t.setStyle(e.getStyle().toCss());
                     }),
                     hyperlink -> createStyledTextNode(t -> {
-                        if (hyperlink.isReal()) {
+                        if (!hyperlink.isEmpty()) {
                             t.setText(hyperlink.getDisplayedText());
                             t.getStyleClass().addAll(styleClasses);
                             t.getStyleClass().add("hyperlink");
@@ -38,18 +47,42 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
         getStyleClass().add("text-hyperlink-area");
     }
 
+    /**
+     * Add styled text to the text area
+     * @param text The text value to add
+     * @param style The style that the text should have
+     */
     public void append(String text, TextStyle style) {
         replace(getLength(), getLength(), ReadOnlyStyledDocument.fromString(text, null, style, EITHER_OPS));
     }
 
+    /**
+     * Add a styled {@link Hyperlink} to the text area
+     * @param displayedText The text to display in the link
+     * @param link The link value
+     * @param style The style that the text should have
+     */
     public void appendWithLink(String displayedText, String link, TextStyle style) {
         replaceWithLink(getLength(), getLength(), displayedText, link, style);
     }
 
+    /**
+     * Add a {@link Hyperlink} to the text area
+     * @param displayedText The text to display in the link
+     * @param link The link value
+     */
     public void appendWithLink(String displayedText, String link) {
         appendWithLink(displayedText, link, TextStyle.randomTextColor());
     }
 
+    /**
+     * Replace a segment of the text area with a {@link Hyperlink}
+     * @param start the beginning index, inclusive
+     * @param end the ending index, exclusive
+     * @param displayedText The text to display in the link
+     * @param link The link value
+     * @param style The style that the text should have
+     */
     public void replaceWithLink(int start, int end, String displayedText, String link, TextStyle style) {
         replace(start, end, ReadOnlyStyledDocument.fromSegment(
                     Either.right(new Hyperlink(displayedText, displayedText, link)),
@@ -74,11 +107,10 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
         replace(start, end, ReadOnlyStyledDocument.fromString(text, getParagraphStyleForInsertionAt(start), getTextStyleForInsertionAt(start), EITHER_OPS));
     }
 
-    public static TextExt createStyledTextNode(Consumer<TextExt> applySegment) {
+    private static TextExt createStyledTextNode(Consumer<TextExt> applySegment) {
         var t = new TextExt();
         t.setTextOrigin(VPos.TOP);
         applySegment.accept(t);
         return t;
     }
 }
-
