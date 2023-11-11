@@ -29,18 +29,37 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     private MapProperty<UUID,ViewModelVertex> vertices;
     private MapProperty<UUID,ViewModelEdge> edges;
 
+    /**
+     * Get the declarations portion of the graph.
+     * The declarations are a string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
+     * @return The string property value of the declarations
+     */
     public StringProperty declarations() {
         return declarations;
     }
 
+    /**
+     * Get the vertices mapping
+     * @return The mapping of vertex ids to viewmodel entries
+     */
     public MapProperty<UUID, ViewModelVertex> vertices() {
         return vertices;
     }
 
+    /**
+     * Get the edges mapping
+     * @return The mapping of edge ids to viewmodel entries
+     */
     public MapProperty<UUID, ViewModelEdge> edges() {
         return edges;
     }
 
+    /**
+     * Construct a new instance
+     * @param declarations A string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
+     * @param vertices A mapping of vertex ids to model vertex-values
+     * @param edges A mapping of edge ids to model edge-values
+     */
     public ViewModelGraph(StringProperty declarations, MapProperty<UUID,ViewModelVertex> vertices, MapProperty<UUID,ViewModelEdge> edges) {
         this.declarations = declarations;
         this.vertices = vertices;
@@ -49,7 +68,8 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
 
     /**
      * Constructs a new view model graph instance based on a model graph instance
-     * @param graph the model graph to convert
+     * @param graph The model graph to convert
+     * @param syntaxFactory The associated syntax factory
      */
     public ViewModelGraph(ModelGraph graph, ISyntaxFactory syntaxFactory) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
@@ -189,4 +209,3 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
         edges.unbindBidirectional(other.getValue().edges());
     }
 }
-
