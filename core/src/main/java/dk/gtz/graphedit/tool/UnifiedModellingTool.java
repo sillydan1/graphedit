@@ -15,6 +15,16 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * An aggregate tool that unifies the following tools:
+ *
+ * - vertex creation (Shift+click)
+ * - vertex moving (Leftmouse Drag)
+ * - vertex deletion (Delete or Backspace key)
+ * - edge creation (Shift+click vertex)
+ * - edge deletion (Delete or Backspace key)
+ * - selection management (Leftmouse Click)
+ */
 public class UnifiedModellingTool extends AbstractBaseTool {
     private final VertexCreateTool vertexCreateTool;
     private final VertexDragMoveTool vertexDragMoveTool;
@@ -23,6 +33,9 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     private final EdgeDeleteTool edgeDeleteTool;
     private final SelectTool selectTool;
 
+    /**
+     * Cronstruct a new instance
+     */
     public UnifiedModellingTool() {
         this.vertexCreateTool = new VertexCreateTool();
         this.vertexDragMoveTool = new VertexDragMoveTool();
@@ -109,4 +122,3 @@ public class UnifiedModellingTool extends AbstractBaseTool {
         return delete || shortcutShiftBackspace;
     }
 }
-
