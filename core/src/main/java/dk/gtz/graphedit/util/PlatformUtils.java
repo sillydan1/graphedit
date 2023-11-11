@@ -6,6 +6,8 @@ import java.io.File;
  * General utilities relating to the operating system
  */
 public class PlatformUtils {
+    private PlatformUtils() {}
+
     /**
      * Check if the menu bar can be delegated to the OS to handle.
      * @return {@code true} if the OS supports system menu bars
