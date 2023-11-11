@@ -19,10 +19,18 @@ import javafx.beans.value.ObservableValue;
  * Edges connects vertices with other vertices.
  */
 public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Property<ViewModelEdge> {
-    protected final ObjectProperty<UUID> source;
-    protected final ObjectProperty<UUID> target;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
+
+    /**
+     * Property pointing to the source vertex id
+     */
+    protected final ObjectProperty<UUID> source;
+
+    /**
+     * Property pointing to the target vertex id
+     */
+    protected final ObjectProperty<UUID> target;
 
     /**
      * Constructs a new view model edge instance
@@ -77,10 +85,22 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
 	return target;
     }
 
+    /**
+     * Check if the proposed target vertex is a valid target. Use this in your syntax plugins to limit which vertices can be targeted by edges
+     * @param target The proposed vertex id to target
+     * @param graph The graph containing this edge and the proposed target vertex
+     * @return true if the target is a valid target vertex for this edge, false otherwise
+     */
     public boolean isTargetValid(UUID target, ViewModelGraph graph) {
 	return true;
     }
 
+    /**
+     * Check if the proposed source vertex is a valid source. Use this in your syntax plugins to limit which vertices can have edges
+     * @param source The proposed vertex id to source
+     * @param graph The graph containing this edge and the proposed source vertex
+     * @return true if the source is a valid source vertex for this edge, false otherwise
+     */
     public boolean isSourceValid(UUID source, ViewModelGraph graph) {
 	return true;
     }
@@ -196,4 +216,3 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
 	target.unbindBidirectional(other.getValue().target());
     }
 }
-
