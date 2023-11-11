@@ -93,7 +93,12 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
                         e -> e.getValue().toModel())));
     }
 
+    /**
+     * Check if the graph contains no syntactic elements
+     * @return true if there are no declarations, vertices or edges
+     */
     public boolean isEmpty() {
+        // TODO: trim declarations
         return declarations.isEmpty().get() && vertices.isEmpty() && edges.isEmpty();
     }
 
