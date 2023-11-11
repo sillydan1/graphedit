@@ -1,6 +1,7 @@
 name: Gradle Build and Publish Release to OSSRH
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
