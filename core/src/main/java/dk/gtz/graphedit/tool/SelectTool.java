@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent;
  * Tool to select syntactic elements.
  *
  * When selected, click either a vertex or an edge to mark it as selected.
- * You can select more than one element at a time by holding down <CTRL> whilst clicking on a syntactic element.
+ * You can select more than one element at a time by holding down CTRL whilst clicking on a syntactic element.
  */
 public class SelectTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(SelectTool.class);
