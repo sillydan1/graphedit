@@ -98,8 +98,7 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
      * @return true if there are no declarations, vertices or edges
      */
     public boolean isEmpty() {
-        // TODO: trim declarations
-        return declarations.isEmpty().get() && vertices.isEmpty() && edges.isEmpty();
+        return declarations.getValueSafe().trim().isEmpty() && vertices.isEmpty() && edges.isEmpty();
     }
 
     @Override
