@@ -25,14 +25,48 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
+/**
+ * The view baseclass for graph vertices.
+ * Contains all the logic needed for the demonstration syntax.
+ * If you extend from this and dont want all the features, you should overwrite the unwanted initialize functions
+ */
 public class VertexController extends StackPane {
     private final Logger logger = LoggerFactory.getLogger(VertexController.class);
+    /**
+     * The id of the represented vertex
+     */
     protected final UUID vertexKey;
+
+    /**
+     * The viewmodel vertex that this view controller represents
+     */
     protected final ViewModelVertex vertexValue;
+
+    /**
+     * Reference to the transform, scale and rotation matrix of the containing viewport
+     */
     protected final Affine viewportAffine;
+
+    /**
+     * The graphic representation of the vertex. This may be subject to change
+     */
     protected Circle graphic;
+
+    /**
+     * The associated syntax factory
+     */
     protected ISyntaxFactory syntaxFactory;
 
+    /**
+     * Construct a new instance
+     * @param vertexKey The id of the vertex to represent
+     * @param vertex The viewmodel vertex to represent
+     * @param viewportAffine The transform, scale and rotation matrix of the containing viewport
+     * @param graph The parent graph containing the represented viewmodel vertex
+     * @param editorSettings The current editor settings
+     * @param selectedTool The object property specifying which tool is currently selected
+     * @param syntaxFactory The associated syntax factory
+     */
     public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
 	this.vertexKey = vertexKey;
 	this.vertexValue = vertex;
@@ -41,6 +75,12 @@ public class VertexController extends StackPane {
 	initialize(selectedTool, graph, editorSettings);
     }
 
+    /**
+     * Initializer function, will be called during the constructor call
+     * @param selectedTool The object property specifying which tool is currently selected
+     * @param graph The parent graph containing the represented viewmodel vertex
+     * @param editorSettings The current editor settings
+     */
     protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
 	this.graphic = initializeVertexRepresentation();
 	addGraphic();
@@ -54,14 +94,24 @@ public class VertexController extends StackPane {
 	});
     }
 
+    /**
+     * Initializer function that adds the graphic to the display stack. Called during {@link #initialize}
+     */
     protected void addGraphic() {
 	getChildren().add(graphic);
     }
 
+    /**
+     * Initializer function that adds the label from {@link #initializeLabel} to the display stack. Called during {@link #initialize}
+     */
     protected void addLabel() {
 	getChildren().add(initializeLabel());
     }
 
+    /**
+     * Initializer function that creates the {@link #graphic}. Called during {@link #initialize}
+     * @return A new default circle graphic
+     */
     protected Circle initializeVertexRepresentation() {
 	var diameter = 20.0;
 	var circle = new Circle(diameter);
@@ -74,6 +124,10 @@ public class VertexController extends StackPane {
 	return circle;
     }
 
+    /**
+     * Initializer function that creates a styled {@link Label} with the {@link #vertexKey} as content
+     * @return A new label
+     */
     protected Label initializeLabel() {
 	var label = new Label(vertexKey.toString());
 	label.getStyleClass().add("outline");
@@ -152,4 +206,3 @@ public class VertexController extends StackPane {
 	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
     }
 }
-
