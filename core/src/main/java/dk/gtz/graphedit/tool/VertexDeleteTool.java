@@ -26,6 +26,9 @@ import javafx.scene.input.MouseEvent;
 public class VertexDeleteTool extends AbstractBaseTool {
     private final IUndoSystem undoSystem;
 
+    /**
+     * Construct a new instance
+     */
     public VertexDeleteTool() {
         this.undoSystem = DI.get(IUndoSystem.class);
     }
