@@ -16,6 +16,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Tool to manipulate the position of vertices.
+ *
+ * When selected, press down on a vertex and move the mouse around to manipulate to position of said vertex.
+ * Note that the action completes when vertex is released.
+ */
 public class VertexDragMoveTool extends AbstractBaseTool {
     private final DoubleProperty oldX = new SimpleDoubleProperty();
     private final DoubleProperty oldY = new SimpleDoubleProperty();
@@ -25,6 +31,9 @@ public class VertexDragMoveTool extends AbstractBaseTool {
     private final ObjectProperty<Runnable> redoAction = new SimpleObjectProperty<>(null);
     private final IUndoSystem undoSystem;
 
+    /**
+     * Construct a new instance
+     */
     public VertexDragMoveTool() {
         undoSystem = DI.get(IUndoSystem.class);
     }
@@ -103,4 +112,3 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         redoAction.set(null);
     }
 }
-
