@@ -8,6 +8,8 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
  * General utilities for handling geometric shapes
  */
 public class ShapeUtil {
+    private ShapeUtil() {}
+
     /**
      * Will calculate the intersection point on a reactangle shape given a ray (dx,dy)
      * @see <a href="https://math.stackexchange.com/questions/2738250/intersection-of-ray-starting-inside-square-with-that-square/2738727#2738727">inspired stackoverflow answer</a>
