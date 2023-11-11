@@ -21,8 +21,16 @@ public class Toolbox implements IToolbox {
     private ITool defaultTool;
     private SimpleObjectProperty<ITool> selectedTool;
 
+    /**
+     * {@link ITool} Constructor wrapper interface, where the constructor takes a parent toolbox argument. Use with: MyTool::new
+     */
     @FunctionalInterface
     public static interface IToolConstructor {
+        /**
+         * Constructor function that takes a parent toolbox
+         * @param parent The toolbox that should contain this tool
+         * @return A new tool within the parent toolbox
+         */
         ITool ctor(IToolbox parent);
     }
 
