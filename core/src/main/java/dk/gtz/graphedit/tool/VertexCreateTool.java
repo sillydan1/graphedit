@@ -19,10 +19,18 @@ import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Tool to create vertices.
+ *
+ * When selected, click anywhere on the canvas to create a vertex.
+ */
 public class VertexCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(VertexCreateTool.class);
     private final IUndoSystem undoSystem;
 
+    /**
+     * Construct a new instance
+     */
     public VertexCreateTool() {
         this.undoSystem = DI.get(IUndoSystem.class);
     }
@@ -58,7 +66,7 @@ public class VertexCreateTool extends AbstractBaseTool {
         }
     }
 
-    public void createCircleVertex(ViewModelPoint point, ViewModelGraph graph, ISyntaxFactory syntaxFactory) {
+    private void createCircleVertex(ViewModelPoint point, ViewModelGraph graph, ISyntaxFactory syntaxFactory) {
         var vertex = syntaxFactory.createVertexViewModel(new ModelVertex(point.toModel()));
         var id = UUID.randomUUID();
         graph.vertices().put(id, vertex);
@@ -67,4 +75,3 @@ public class VertexCreateTool extends AbstractBaseTool {
                     () -> graph.vertices().put(id, vertex)));
     }
 }
-
