@@ -34,6 +34,13 @@ public class ProjectSettingsController {
     private VBox inspectorPane;
     private ViewModelProject settings;
 
+    /*
+     * Construct a new instance
+     */
+    public ProjectSettingsController() {
+
+    }
+
     @FXML
     private void initialize() {
 	settings = DI.get(ViewModelProject.class);

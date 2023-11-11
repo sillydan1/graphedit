@@ -63,6 +63,13 @@ public class RunTargetsEditorController {
     private VBox inspectorPane;
     private ViewModelProject project;
 
+    /**
+     * Construct a new instance
+     */
+    public RunTargetsEditorController() {
+
+    }
+
     @FXML
     private void initialize() {
 	project = DI.get(ViewModelProject.class);

@@ -45,6 +45,13 @@ public class SearchPaneController implements IFocusable, ICloseable {
     private List<Runnable> focusEventHandlers;
     private IBufferContainer bufferContainer;
 
+    /**
+     * Construct a new instance
+     */
+    public SearchPaneController() {
+
+    }
+
     @FXML
     private void initialize() {
 	focusEventHandlers = new ArrayList<>();

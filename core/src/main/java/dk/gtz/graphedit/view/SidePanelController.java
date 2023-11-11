@@ -29,6 +29,13 @@ public class SidePanelController {
     private VBox left;
     private final ObjectProperty<IPluginPanel> selectedPlugin = new SimpleObjectProperty<>(null);
 
+    /**
+     * Construct a new instance
+     */
+    public SidePanelController() {
+
+    }
+
     @FXML
     private void initialize() {
 	var plugins = DI.get(IPluginsContainer.class);
