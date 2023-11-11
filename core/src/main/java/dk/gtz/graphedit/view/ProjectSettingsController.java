@@ -34,7 +34,7 @@ public class ProjectSettingsController {
     private VBox inspectorPane;
     private ViewModelProject settings;
 
-    /*
+    /**
      * Construct a new instance
      */
     public ProjectSettingsController() {
