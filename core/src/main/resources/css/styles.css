@@ -14,6 +14,11 @@
     -fx-color: -color-accent-emphasis;
 }
 
+.lint-polygon {
+    -fx-stroke: -color-warning-emphasis;
+    -fx-color: -color-accent-emphasis;
+}
+
 .grid-bg {
     -fx-background-color: -color-bg-default,
         linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, -color-accent-fg 5%, transparent 5%),

@@ -48,6 +48,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
     private GridPaneController gridPane;
+    private LintPaneController lintPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
@@ -78,7 +79,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private void initialize() {
 	initializeViewport();
 	initializeToolbar();
-	initializeDrawGroup();
+	initializeViewportLayers();
 	initializeMetadataEventHandlers();
 	initializeVertexCollectionChangeHandlers();
 	initializeEdgeCollectionChangeHandlers();
@@ -100,7 +101,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	setTop(top);
     }
 
-    private void initializeDrawGroup() {
+    private void initializeViewportLayers() {
 	drawGroup = new MapGroup<>();
 	drawGroupTransform = new Affine();
 	drawGroup.addChildren(initializeEdges());
@@ -113,13 +114,16 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	DragUtil.makeDraggableInverse(drawPane, drawGroupTransform);
 	drawPane.prefWidthProperty().bind(widthProperty());
 	drawPane.prefHeightProperty().bind(heightProperty());
-	viewport.getChildren().add(drawPane);
 
 	gridPane = new GridPaneController(settings.gridSizeX(), settings.gridSizeY(), drawGroupTransform);
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
+
+	lintPane = new LintPaneController(resource, drawGroupTransform);
+
 	viewport.getChildren().add(gridPane);
-	gridPane.toBack();
+	viewport.getChildren().add(lintPane);
+	viewport.getChildren().add(drawPane);
     }
 
     private void onScrollingDrawPane(ScrollEvent event) {
