@@ -43,6 +43,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
+    private final String bufferKey;
     private ISyntaxFactory syntaxFactory;
     private StackPane viewport;
     private ModelEditorToolbar toolbar;
@@ -58,8 +59,8 @@ public class ModelEditorController extends BorderPane implements IFocusable {
      * @param resource The viewmodel project resource to edit
      * @param syntaxFactory The syntax factory of the resource
      */
-    public ModelEditorController(ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
-	this(resource, DI.get(ViewModelEditorSettings.class), syntaxFactory);
+    public ModelEditorController(String bufferKey, ViewModelProjectResource resource, ISyntaxFactory syntaxFactory) {
+	this(bufferKey, resource, DI.get(ViewModelEditorSettings.class), syntaxFactory);
     }
 
     /**
@@ -68,7 +69,8 @@ public class ModelEditorController extends BorderPane implements IFocusable {
      * @param settings The viewmodel editor settings object to use
      * @param syntaxFactory The syntax factory of the resource
      */
-    public ModelEditorController(ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
+    public ModelEditorController(String bufferKey, ViewModelProjectResource resource, ViewModelEditorSettings settings, ISyntaxFactory syntaxFactory) {
+	this.bufferKey = bufferKey;
 	this.resource = resource;
 	this.settings = settings;
 	this.syntaxFactory = syntaxFactory;
@@ -119,7 +121,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 
-	lintPane = new LintPaneController(resource, drawGroupTransform);
+	lintPane = new LintPaneController(bufferKey, resource, drawGroupTransform);
 
 	viewport.getChildren().add(gridPane);
 	viewport.getChildren().add(lintPane);

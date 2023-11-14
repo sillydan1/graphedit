@@ -3,14 +3,17 @@ package dk.gtz.graphedit.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import dk.yalibs.yadi.DI;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -22,24 +25,34 @@ public class LintPaneController extends Pane {
     private Logger logger = LoggerFactory.getLogger(LintPaneController.class);
     private final Affine transform;
     private final ViewModelProjectResource resource;
+    private final String bufferKey;
 
-    public LintPaneController(ViewModelProjectResource resource, Affine viewportAffine) {
+    public LintPaneController(String bufferKey, ViewModelProjectResource resource, Affine viewportAffine) {
 	this.transform = viewportAffine;
 	this.resource = resource;
+	this.bufferKey = bufferKey;
 	initialize();
     }
 
     private void initialize() {
 	getTransforms().add(transform);
-	var polygon = new SimpleObjectProperty<>(createConvexHull(resource.syntax().vertices().values()));
-	resource.syntax().vertices().forEach((k, v) -> {
-	    v.addListener((e,o,n) -> {
-		getChildren().remove(polygon.get());
-		polygon.set(createConvexHull(resource.syntax().vertices().values()));
-		getChildren().add(polygon.get());
+	var lints = DI.get(LintContainer.class).get(bufferKey);
+	if(lints == null)
+	    return;
+	for(var lint : lints) {
+	    var vertices = resource.syntax().vertices().entrySet().stream()
+		.filter(s -> lint.affectedElements().contains(s.getKey()))
+		.map(Entry::getValue).toList();
+	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices));
+	    resource.syntax().vertices().forEach((k, v) -> {
+		v.addListener((e,o,n) -> {
+		    getChildren().remove(polygon.get());
+		    polygon.set(createConvexHull(resource.syntax().vertices().values()));
+		    getChildren().add(polygon.get());
+		});
 	    });
-	});
-	getChildren().add(polygon.get());
+	    getChildren().add(polygon.get());
+	}
     }
 
     private Polygon createConvexHull(Collection<ViewModelVertex> vertices) {

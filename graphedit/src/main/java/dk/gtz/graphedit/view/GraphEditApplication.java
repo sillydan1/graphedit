@@ -34,6 +34,7 @@ import dk.gtz.graphedit.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -106,6 +107,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
 	DI.add(ViewModelEditorSettings.class, EditorActions.loadEditorSettings());

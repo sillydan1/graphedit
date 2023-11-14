@@ -61,7 +61,7 @@ public class EditorTabPaneController {
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
-		var editorController = new ModelEditorController(changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
+		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
 		editorController.addFocusListener(() -> {
