@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.view;
 
+import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
@@ -17,6 +17,8 @@ import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.EventType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -45,6 +47,8 @@ public class LintPaneController extends Pane {
 		.map(Entry::getValue).toList();
 	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices, lint));
 	    resource.syntax().vertices().forEach((k, v) -> {
+		if(!lint.affectedElements().contains(k))
+		    return;
 		v.addListener((e,o,n) -> {
 		    getChildren().remove(polygon.get());
 		    polygon.set(createConvexHull(vertices, lint));
@@ -55,6 +59,7 @@ public class LintPaneController extends Pane {
 	}
     }
 
+    // TODO: Polygon is a bit too unperformant. Make a new class called ObservablePolygon or something
     private Polygon createConvexHull(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
 	var points = vertices.stream().flatMap(v -> {
 	    var buffer = 5;

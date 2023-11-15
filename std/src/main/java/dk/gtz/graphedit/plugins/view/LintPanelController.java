@@ -1,15 +1,13 @@
 package dk.gtz.graphedit.plugins.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
-import org.kordamp.ikonli.javafx.FontIcon;
-
 import atlantafx.base.controls.Card;
-import atlantafx.base.controls.Notification;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
@@ -17,7 +15,9 @@ import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.yalibs.yadi.DI;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -32,10 +32,12 @@ public class LintPanelController extends StackPane {
     private final VBox container;
     private final ScrollPane scrollPane;
     private final LintContainer lints;
+    private final Map<ViewModelLint,Node> lintNodeMapping;
 
     public LintPanelController() {
+	lintNodeMapping = new HashMap<>();
 	container = new VBox();
-	container.setSpacing(5);
+	container.setSpacing(10);
 	container.setPadding(new Insets(10));
 	scrollPane = new ScrollPane(container);
 	scrollPane.setFitToWidth(true);
@@ -51,32 +53,48 @@ public class LintPanelController extends StackPane {
 	    var bufferKeyTitle = new Label(lintCollection.getKey());
 	    bufferKeyTitle.getStyleClass().add(Styles.TITLE_3);
 	    bufferKeyTitle.getStyleClass().add(Styles.CENTER);
-	    container.getChildren().add(bufferKeyTitle);
-	    addDebuggingButton(lintCollection.getKey());
-	    // TODO: Consider using Notification styles instead? - That way, the style is uniform
-	    for(var lint : lintCollection.getValue()) {
-		var card = new Card();
-		card.getStyleClass().add(Styles.INTERACTIVE);
-		var icon = IconUtils.getLintTypeIcon(lint.severity().get());
-		switch(lint.severity().get()) {
-		    case ERROR: icon.getStyleClass().add(Styles.DANGER); break;
-		    case WARNING: icon.getStyleClass().add(Styles.WARNING); break;
-		    case INFO:
-		    default: break;
+	    var lintContainer = new VBox();
+	    lintContainer.setSpacing(5);
+	    lintContainer.getChildren().add(bufferKeyTitle);
+	    addDebuggingButton(lintContainer, lintCollection.getKey());
+	    for(var lint : lintCollection.getValue())
+		addLint(lintContainer, lint);
+	    lintCollection.getValue().addListener((ListChangeListener<ViewModelLint>)c -> {
+		c.next();
+		for(var lint : c.getAddedSubList())
+		    addLint(lintContainer, lint);
+		for(var lint : c.getRemoved()) {
+		    var lintNode = lintNodeMapping.get(lint);
+		    if(lintNode == null)
+			continue;
+		    lintContainer.getChildren().remove(lintNode);
+		    lintNodeMapping.remove(lint);
 		}
-		var title = new HBox(
-			icon,
-			new Label(lint.title().get()));
-		title.setSpacing(5);
-		title.getStyleClass().add(Styles.TITLE_4);
-		card.setHeader(title);
-		var body = new TextFlow(new Text(lint.message().get()));
-		body.maxWidthProperty().bind(container.prefWidthProperty());
-		card.setBody(body);
-		container.getChildren().add(card);
-	    }
-	    container.getChildren().add(new Separator());
+	    });
+	    container.getChildren().addAll(lintContainer, new Separator());
 	}
+    }
+
+    private void addLint(VBox container, ViewModelLint lint) {
+	// TODO: Consider using Notification styles instead? - That way, the style is uniform
+	var card = new Card();
+	card.getStyleClass().add(Styles.INTERACTIVE);
+	var icon = IconUtils.getLintTypeIcon(lint.severity().get());
+	switch(lint.severity().get()) {
+	    case ERROR: icon.getStyleClass().add(Styles.DANGER); break;
+	    case WARNING: icon.getStyleClass().add(Styles.WARNING); break;
+	    case INFO:
+	    default: break;
+	}
+	var title = new HBox(icon, new Label(lint.title().get()));
+	title.setSpacing(5);
+	title.getStyleClass().add(Styles.TITLE_4);
+	card.setHeader(title);
+	var body = new TextFlow(new Text(lint.message().get()));
+	body.maxWidthProperty().bind(container.prefWidthProperty());
+	card.setBody(body);
+	lintNodeMapping.put(lint, card);
+	container.getChildren().add(card);
     }
 
     private ModelLintSeverity randomSeverity() {
@@ -84,7 +102,7 @@ public class LintPanelController extends StackPane {
 	return ModelLintSeverity.values()[pick];
     }
 
-    private void addDebuggingButton(String bufferKey) {
+    private void addDebuggingButton(VBox container, String bufferKey) {
 	var button = new Button("Add random lint");
 	button.setOnAction(e -> {
 	    try {
@@ -95,16 +113,16 @@ public class LintPanelController extends StackPane {
 		    if(r.nextBoolean())
 			randomSelection.add(key);
 
+		var rr = r.nextInt(999);
 		var randomLint = new ViewModelLint(new ModelLint(
-			    "I001",
+			    "E%d".formatted(rr),
 			    randomSeverity(),
-			    "lint title (E523)",
+			    "lint title (E%d)".formatted(rr),
 			    """
 			    Description goes here
 			    """,
 			    randomSelection,
-			    List.of()
-			    ));
+			    List.of()));
 		lints.add(bufferKey, randomLint);
 	    } catch(Exception exc) {
 		throw new RuntimeException(exc);
@@ -114,8 +132,6 @@ public class LintPanelController extends StackPane {
     }
 
     private void initializeEventHandlers() {
-	lints.getProperty().addListener((e,o,n) -> {
-	    setLints();
-	});
+	lints.getProperty().addListener((e,o,n) -> setLints());
     }
 }
