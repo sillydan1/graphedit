@@ -14,11 +14,6 @@
     -fx-color: -color-accent-emphasis;
 }
 
-.lint-polygon {
-    -fx-stroke: -color-warning-emphasis;
-    -fx-color: -color-accent-emphasis;
-}
-
 .grid-bg {
     -fx-background-color: -color-bg-default,
         linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, -color-accent-fg 5%, transparent 5%),
@@ -33,8 +28,32 @@
     -fx-stroke: -color-warning-emphasis;
 }
 
+.stroke-warning {
+    -fx-stroke: -color-warning-emphasis;
+}
+
+.stroke-info {
+    -fx-stroke: -color-neutral-emphasis;
+}
+
+.stroke-error {
+    -fx-stroke: -color-danger-emphasis;
+}
+
 .stroke-selected {
     -fx-stroke: -color-success-fg;
+}
+
+.stroke-success {
+    -fx-stroke: -color-success-fg;
+}
+
+.bg-error {
+    -fx-background-color: -color-danger-subtle;
+}
+
+.bg-warning {
+    -fx-background-color: -color-warning-subtle;
 }
 
 .log-text {

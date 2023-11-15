@@ -8,7 +8,9 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.viewmodel.LintContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
@@ -25,29 +27,27 @@ public class LintPaneController extends Pane {
     private Logger logger = LoggerFactory.getLogger(LintPaneController.class);
     private final Affine transform;
     private final ViewModelProjectResource resource;
-    private final String bufferKey;
 
     public LintPaneController(String bufferKey, ViewModelProjectResource resource, Affine viewportAffine) {
 	this.transform = viewportAffine;
 	this.resource = resource;
-	this.bufferKey = bufferKey;
-	initialize();
-    }
-
-    private void initialize() {
 	getTransforms().add(transform);
 	var lints = DI.get(LintContainer.class).get(bufferKey);
-	if(lints == null)
-	    return;
+	setLints(lints);
+	lints.addListener((e,o,n) -> setLints(n));
+    }
+
+    private void setLints(List<ViewModelLint> lints) {
+	getChildren().clear();
 	for(var lint : lints) {
 	    var vertices = resource.syntax().vertices().entrySet().stream()
 		.filter(s -> lint.affectedElements().contains(s.getKey()))
 		.map(Entry::getValue).toList();
-	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices));
+	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices, lint));
 	    resource.syntax().vertices().forEach((k, v) -> {
 		v.addListener((e,o,n) -> {
 		    getChildren().remove(polygon.get());
-		    polygon.set(createConvexHull(resource.syntax().vertices().values()));
+		    polygon.set(createConvexHull(vertices, lint));
 		    getChildren().add(polygon.get());
 		});
 	    });
@@ -55,15 +55,15 @@ public class LintPaneController extends Pane {
 	}
     }
 
-    private Polygon createConvexHull(Collection<ViewModelVertex> vertices) {
+    private Polygon createConvexHull(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
 	var points = vertices.stream().flatMap(v -> {
 	    var buffer = 5;
-	    var sizeX = (v.shape().widthProperty().getValue() * v.shape().scaleXProperty().getValue()) + buffer;
+	    var sizeX = (v.shape().widthProperty().getValue() + buffer);
 	    if(v.shape().shapeType().getValue().equals(ViewModelShapeType.RECTANGLE))
-		sizeX = ((v.shape().widthProperty().getValue() / 2) * v.shape().scaleXProperty().getValue()) + buffer;
-	    var sizeY = (v.shape().heightProperty().getValue() * v.shape().scaleYProperty().getValue()) + buffer;
+		sizeX = ((v.shape().widthProperty().getValue() / 2) + buffer);
+	    var sizeY = (v.shape().heightProperty().getValue() + buffer);
 	    if(v.shape().shapeType().getValue().equals(ViewModelShapeType.RECTANGLE))
-		sizeY = ((v.shape().heightProperty().getValue() / 2) * v.shape().scaleYProperty().getValue()) + buffer;
+		sizeY = ((v.shape().heightProperty().getValue() / 2) + buffer);
 	    return List.of(
 		    new ViewModelPoint(v.position().getXProperty().add(sizeX), v.position().getYProperty().add(sizeY)),
 		    new ViewModelPoint(v.position().getXProperty().subtract(sizeX), v.position().getYProperty().subtract(sizeY)),
@@ -79,7 +79,12 @@ public class LintPaneController extends Pane {
 	}
 	polygon.strokeTypeProperty().set(StrokeType.INSIDE);
 	polygon.setFill(Color.TRANSPARENT);
-	polygon.getStyleClass().add("lint-polygon");
+	switch(lint.severity().get()) {
+	    case ERROR: polygon.getStyleClass().add("stroke-error"); break;
+	    case WARNING: polygon.getStyleClass().add("stroke-warning"); break;
+	    case INFO: polygon.getStyleClass().add("stroke-info"); break;
+	    default: break;
+	}
 	return polygon;
     }
 

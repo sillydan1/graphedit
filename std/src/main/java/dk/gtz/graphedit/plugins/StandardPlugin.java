@@ -27,6 +27,7 @@ public class StandardPlugin implements IPlugin {
     public List<IPluginPanel> getPanels() throws Exception {
         return List.of(
                 new ProjectFilesViewPanel(),
-                new InspectorPanel());
+                new InspectorPanel(),
+                new LintPanel());
     }
 }

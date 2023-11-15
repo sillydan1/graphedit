@@ -3,6 +3,8 @@ package dk.gtz.graphedit.plugins.view;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import dk.gtz.graphedit.model.ModelLintSeverity;
+
 /**
  * General utilities relating to {@code FontIcon} creation and manipulation
  */
@@ -21,5 +23,13 @@ public class IconUtils {
 		return new FontIcon(BootstrapIcons.FILE_EARMARK);
 	}
     }
-}
 
+    public static FontIcon getLintTypeIcon(ModelLintSeverity severity) {
+	switch (severity) {
+	    case ERROR: return new FontIcon(BootstrapIcons.X_CIRCLE);
+	    case INFO: return new FontIcon(BootstrapIcons.INFO_CIRCLE);
+	    case WARNING: return new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE);
+	    default: return new FontIcon(BootstrapIcons.QUESTION_CIRCLE);
+	}
+    }
+}
