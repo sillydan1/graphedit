@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -79,21 +80,30 @@ public class LintInspectorTool extends AbstractBaseTool {
 
     private Node createLint(ViewModelLint lint) {
         var box = new VBox();
-        box.getStyleClass().add(Styles.INTERACTIVE);
-        var icon = new FontIcon(BootstrapIcons.ALARM);
+        var icon = new FontIcon(BootstrapIcons.INFO_CIRCLE);
         switch(lint.severity().get()) {
-            case ERROR: icon.getStyleClass().add(Styles.DANGER); break;
-            case WARNING: icon.getStyleClass().add(Styles.WARNING); break;
+            case ERROR:
+                icon = new FontIcon(BootstrapIcons.X_CIRCLE);
+                icon.getStyleClass().add(Styles.DANGER);
+                break;
+            case WARNING:
+                icon = new FontIcon(BootstrapIcons.EXCLAMATION_CIRCLE);
+                icon.getStyleClass().add(Styles.WARNING);
+                break;
             case INFO:
+                icon = new FontIcon(BootstrapIcons.INFO_CIRCLE);
+                break;
             default: break;
         }
         var title = new HBox(icon, new Label(lint.title().get()));
         title.setSpacing(5);
+        title.setCenterShape(true);
         title.getStyleClass().add(Styles.TITLE_4);
-        box.getChildren().add(title);
-        var body = new TextFlow(new Text(lint.message().get()));
-        box.getChildren().add(body);
-        box.setPrefHeight(100);
+        var body = new Text(lint.message().get());
+        box.getChildren().addAll(title, body);
+        VBox.setVgrow(title, Priority.ALWAYS);
+        VBox.setVgrow(body, Priority.ALWAYS);
+        VBox.setVgrow(box, Priority.ALWAYS);
         return box;
     }
 }
