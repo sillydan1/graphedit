@@ -154,7 +154,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private Map<UUID,Node> initializeVertices() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet()) {
-	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(vertex.getKey(), vertex.getValue(), this));
+	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(bufferKey, vertex.getKey(), vertex.getValue(), this));
 	    vertex.getValue().addFocusListener(() -> {
 		var halfWidth = getWidth() * 0.5;
 		var halfHeight = getHeight() * 0.5;
@@ -180,7 +180,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		this.drawGroupTransform.setTy(halfHeight - center.getY());
 		this.focus();
 	    });
-	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(edge.getKey(), edge.getValue(), this));
+	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(bufferKey, edge.getKey(), edge.getValue(), this));
 	}
 	return nodes;
     }
@@ -208,7 +208,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private void onMouseEvent(MouseEvent e) {
 	var toolbox = DI.get(IToolbox.class);
 	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
-	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), settings);
+	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), bufferKey, settings);
 	toolbox.getSelectedTool().get().onViewportMouseEvent(mouseEvent);
 	var syntaxToolbox = syntaxFactory.getSyntaxTools();
 	if(syntaxToolbox.isPresent())
@@ -218,7 +218,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private void onKeyEvent(KeyEvent e) {
 	var toolbox = DI.get(IToolbox.class);
 	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
-	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, e.getTarget() == getParent().getParent(), syntaxFactory, resource.syntax(), settings);
+	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, e.getTarget() == getParent().getParent(), syntaxFactory, resource.syntax(), bufferKey, settings);
 	toolbox.getSelectedTool().get().onKeyEvent(keyEvent);
 	var syntaxToolbox = syntaxFactory.getSyntaxTools();
 	if(syntaxToolbox.isPresent())
@@ -228,7 +228,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private void initializeVertexCollectionChangeHandlers() {
 	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
 	    if(c.wasAdded()) {
-		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(bufferKey, c.getKey(), c.getValueAdded(), this));
 		c.getValueAdded().addFocusListener(() -> {
 		    var halfWidth = getWidth() * 0.5;
 		    var halfHeight = getHeight() * 0.5;
@@ -256,7 +256,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		    this.drawGroupTransform.setTy(halfHeight - center.getY());
 		    this.focus();
 		});
-		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(bufferKey, c.getKey(), c.getValueAdded(), this));
 		drawGroup.getChild(c.getKey()).toBack();
 	    }
 	    if(c.wasRemoved())

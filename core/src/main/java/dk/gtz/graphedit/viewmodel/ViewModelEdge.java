@@ -13,14 +13,16 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 
 /**
  * The ViewModel representation of a graph edge.
  * Edges connects vertices with other vertices.
  */
-public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Property<ViewModelEdge> {
+public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFocusable, Property<ViewModelEdge> {
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
+    private final ObjectProperty<Node> hoverElement;
 
     /**
      * Property pointing to the source vertex id
@@ -42,6 +44,7 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
 	this.target = target;
 	this.isSelected = new SimpleBooleanProperty(false);
 	this.focusEventHandlers = new ArrayList<>();
+	this.hoverElement = new SimpleObjectProperty<>();
     }
 
     /**
@@ -214,5 +217,25 @@ public class ViewModelEdge implements IInspectable, ISelectable, IFocusable, Pro
     public void unbindBidirectional(Property<ViewModelEdge> other) {
 	source.unbindBidirectional(other.getValue().source());
 	target.unbindBidirectional(other.getValue().target());
+    }
+
+    @Override
+    public void hover(Node hoverDisplay) {
+	hoverElement.set(hoverDisplay);
+    }
+
+    @Override
+    public void unhover() {
+	hoverElement.set(null);
+    }
+
+    @Override
+    public boolean isHovering() {
+	return hoverElement.isNotNull().get();
+    }
+
+    @Override
+    public void addHoverListener(ChangeListener<Node> consumer) {
+	hoverElement.addListener(consumer);
     }
 }

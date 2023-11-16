@@ -38,12 +38,13 @@ public interface ISyntaxFactory {
 
     /**
      * Create a new javafx vertex representation
+     * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The viewmodel value of the new vertex representation
      * @param creatorController The model editor to attach the vertex to. TODO: Consider removing, or interfacing this
      * @return The new vertex javafx representation
      */
-    Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
+    Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
 
     /**
      * Create a new viewmodel vertex representation
@@ -54,12 +55,13 @@ public interface ISyntaxFactory {
 
     /**
      * Create a new javafx edge representation
+     * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param edgeKey The primary key of the new edge representation
      * @param edgeValue The viewmodel value of the new edge representation
      * @param creatorController The model editor to attach the edge to. TODO: Consider removing, or interfacing this
      * @return The new edge javafx representation
      */
-    Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
+    Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
 
     /**
      * Create a new viewmodel edge representation

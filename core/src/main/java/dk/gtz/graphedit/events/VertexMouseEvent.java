@@ -26,5 +26,6 @@ public record VertexMouseEvent(
 	Affine viewportAffine,
 	ISyntaxFactory syntax,
 	ViewModelGraph graph,
+	String bufferId,
 	ViewModelEditorSettings editorSettings) {}
 

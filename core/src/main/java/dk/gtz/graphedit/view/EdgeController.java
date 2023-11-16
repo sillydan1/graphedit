@@ -22,6 +22,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -87,17 +88,26 @@ public class EdgeController extends Group {
      * @param selectedTool The object property specifying which tool is currently selected
      * @param syntaxFactory The associated syntax factory
      */
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
 	this.tracker = DI.get(MouseTracker.class);
 	this.resource = resource;
 	this.syntaxFactory = syntaxFactory;
-	this.line = initialize(selectedTool, editorSettings);
+	this.line = initialize(selectedTool, editorSettings, bufferKey);
 	this.lineArrowLeft = initializeLeftArrow(line);
 	this.lineArrowRight = initializeRightArrow(line);
 	this.selectionHelperLine = initializeSelectionHelperLine();
+	var t = new Tooltip();
+	this.edgeValue.addHoverListener((e,o,n) -> {
+	    if(n == null)
+		Tooltip.uninstall(this, t);
+	    else {
+		t.setGraphic(n);
+		Tooltip.install(this, t);
+	    }
+	});
 	getChildren().addAll(selectionHelperLine, line, lineArrowRight, lineArrowLeft);
 	initializeStyle();
     }
@@ -109,10 +119,10 @@ public class EdgeController extends Group {
 	return line;
     }
 
-    private Line initialize(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
+    private Line initialize(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings, String bufferKey) {
 	var line = initializeLinePresentation();
 	line.getStyleClass().add("stroke-primary");
-	initializeEdgeEventHandlers(selectedTool, editorSettings);
+	initializeEdgeEventHandlers(selectedTool, editorSettings, bufferKey);
 	initializeBindPointChangeHandlers();
 	return line;
     }
@@ -170,8 +180,8 @@ public class EdgeController extends Group {
 	nodeToTransform.getTransforms().add(rotate);
     }
 
-    private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, resource.syntax(), editorSettings)));
+    private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings, String bufferKey) {
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, resource.syntax(), bufferKey, editorSettings)));
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n) {
 		line.getStyleClass().add("stroke-selected");

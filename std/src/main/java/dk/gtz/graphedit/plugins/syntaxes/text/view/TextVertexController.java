@@ -27,8 +27,8 @@ public class TextVertexController extends VertexController {
     private Rectangle rectangleGraphic;
     private Label label;
 
-    public TextVertexController(UUID vertexKey, ViewModelTextVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
+    public TextVertexController(UUID vertexKey, ViewModelTextVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
 	this.vertex = vertex;
 	this.label = createLabelGraphic();
 	this.rectangleGraphic = createRectangleGraphic();

@@ -32,6 +32,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     private final EdgeCreateTool edgeCreateTool;
     private final EdgeDeleteTool edgeDeleteTool;
     private final SelectTool selectTool;
+    private final LintInspectorTool hoverTool;
 
     /**
      * Cronstruct a new instance
@@ -43,6 +44,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
         this.edgeCreateTool = new EdgeCreateTool();
         this.edgeDeleteTool = new EdgeDeleteTool();
         this.selectTool = new SelectTool();
+        this.hoverTool = new LintInspectorTool();
     }
 
     @Override
@@ -84,6 +86,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
+        hoverTool.onVertexMouseEvent(e);
         if(edgeCreateTool.isCurrentlyCreatingEdge()) {
             edgeCreateTool.onVertexMouseEvent(e);
             return;
@@ -98,6 +101,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {
+        hoverTool.onEdgeMouseEvent(e);
         edgeCreateTool.onEdgeMouseEvent(e);
         selectTool.onEdgeMouseEvent(e);
     }

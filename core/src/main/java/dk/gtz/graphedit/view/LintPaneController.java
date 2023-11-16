@@ -1,6 +1,5 @@
 package dk.gtz.graphedit.view;
 
-import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +16,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventType;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;

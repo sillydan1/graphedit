@@ -50,25 +50,25 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
 	return new VertexController(vertexKey, vertexValue, 
 		creatorController.getViewportTransform(),
 		creatorController.getProjectResource().syntax(),
 		creatorController.getEditorSettings(),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
 	return new EdgeController(edgeKey, edgeValue,
 		creatorController.getProjectResource(),
 		creatorController.getViewportTransform(),
 		creatorController.getEditorSettings(),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
@@ -91,4 +91,3 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
 	return Optional.empty();
     }
 }
-
