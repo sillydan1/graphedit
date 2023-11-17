@@ -105,10 +105,16 @@
  - [x] Release format (ship plugins)
  - [x] TODOs round
  - [x] update readme (screenshots etc)
- - [ ] Release `v1.1.0
- - [ ] Custom keybinds
- - [ ] Cut / Copy / Paste support
- - [ ] Release core as a library on ossrch
+ - [x] Release `v1.1.0
+ - [ ] GraphDiff algorithm (look at https://stackoverflow.com/questions/16553343/diff-for-directed-acyclic-graphs)
+   - [ ] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
+   - [ ] Cut / Copy / Paste support
+   - [ ] Plan for git integration
+   - [ ] Diff view?
+ - [x] Lint layer
+   - [ ] Lint protobuf specification
+   - [ ] Implement `ILint` / `ILinter` interfaces
+ - [x] Release core as a library on ossrh
  - [ ] Additional Syntaxes
    - [x] Simple Text
    - [x] LTS
@@ -120,17 +126,16 @@
  - [ ] Polish
  - [ ] Release `v1.2.0
  - [ ] Trace-traverser & specification
+ - [ ] Release `v1.3.0`
  - [ ] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `ILsp` / `ILspEngine` interfaces
-   - [ ] Lint protobuf specification
-   - [ ] Implement `ILint` / `ILinter` interfaces
- - [ ] Release `v1.2.0`
+ - [ ] Release `v1.4.0`
  - [ ] DAP like specification
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `IDap` / `IDapEngine` interfaces
- - [ ] Release `v1.3.0`
+ - [ ] Release `v1.5.0`
  - [ ] Add plugin API and [LuaJava](https://github.com/gudzpoz/luajava/tree/main)
-   - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
+   - [ ] Custom keybinds
+   - [ ] Rewrite the default plugins as a lua plugin. This will simplify the codebase tremendously
  - [ ] Release `v2.0.0`
-
