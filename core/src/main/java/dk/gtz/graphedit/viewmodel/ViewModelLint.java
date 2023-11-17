@@ -1,5 +1,7 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelLint;
@@ -12,13 +14,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
-public class ViewModelLint {
+public class ViewModelLint implements IFocusable {
     private final StringProperty lintIdentifier;
     private final ObjectProperty<ModelLintSeverity> severity;
     private final StringProperty title;
     private final StringProperty message;
     private final ListProperty<UUID> affectedElements;
     private final ListProperty<ListProperty<ViewModelPoint>> affectedRegions;
+    private final List<Runnable> focustHandlers;
 
     public ViewModelLint(ModelLint lint) {
         this.lintIdentifier = new SimpleStringProperty(lint.lintIdentifier());
@@ -27,6 +30,7 @@ public class ViewModelLint {
         this.message = new SimpleStringProperty(lint.message());
         this.affectedElements = new SimpleListProperty<>(FXCollections.observableList(lint.affectedElements()));
         this.affectedRegions = new SimpleListProperty<>();
+        this.focustHandlers = new ArrayList<>();
         for(var region : lint.affectedRegions()) {
             var l = new SimpleListProperty<>(FXCollections.observableList(region.stream().map(ViewModelPoint::new).toList()));
             this.affectedRegions.add(l);
@@ -56,4 +60,14 @@ public class ViewModelLint {
     public ListProperty<ListProperty<ViewModelPoint>> affectedRegions() {
         return affectedRegions;
     }
+
+	@Override
+	public void addFocusListener(Runnable focusEventHandler) {
+        focustHandlers.add(focusEventHandler);
+	}
+
+	@Override
+	public void focus() {
+        focustHandlers.forEach(Runnable::run);
+	}
 }

@@ -5,13 +5,12 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
-import dk.yalibs.yadi.DI;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -25,7 +24,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 /**

@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import atlantafx.base.util.Animations;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
@@ -15,12 +16,18 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
+import javafx.util.Duration;
 
 public class LintPaneController extends Pane {
     private Logger logger = LoggerFactory.getLogger(LintPaneController.class);
@@ -42,7 +49,10 @@ public class LintPaneController extends Pane {
 	    var vertices = resource.syntax().vertices().entrySet().stream()
 		.filter(s -> lint.affectedElements().contains(s.getKey()))
 		.map(Entry::getValue).toList();
+	    if(vertices.isEmpty())
+		continue;
 	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices, lint));
+	    setFocusHandler(lint, polygon.get());
 	    resource.syntax().vertices().forEach((k, v) -> {
 		if(!lint.affectedElements().contains(k))
 		    return;
@@ -54,6 +64,32 @@ public class LintPaneController extends Pane {
 	    });
 	    getChildren().add(polygon.get());
 	}
+    }
+
+    private Timeline createPulseTimeline(Node node, double intensity, Duration timelineTime) {
+        var scale1x = new KeyValue(node.scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2x = new KeyValue(node.scaleXProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3x = new KeyValue(node.scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale1y = new KeyValue(node.scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2y = new KeyValue(node.scaleYProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3y = new KeyValue(node.scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var kx1 = new KeyFrame(Duration.millis(0), scale1x);
+        var kx2 = new KeyFrame(timelineTime.multiply(0.5), scale2x);
+        var kx3 = new KeyFrame(timelineTime, scale3x);
+        var ky1 = new KeyFrame(Duration.millis(0), scale1y);
+        var ky2 = new KeyFrame(timelineTime.multiply(0.5), scale2y);
+        var ky3 = new KeyFrame(timelineTime, scale3y);
+	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
+    }
+
+    private void setFocusHandler(ViewModelLint lintToFocusOn, Polygon representingPolygon) {
+	var pulseTimeline = createPulseTimeline(representingPolygon, 1.1, Duration.millis(300));
+	lintToFocusOn.addFocusListener(() -> {
+	    pulseTimeline.playFromStart();
+	    // TODO: move transform.Tx/Ty to polygon center
+	    // TODO: Scale transform to fit polygon (plus 10% viewport buffer)
+	    resource.focus();
+	});
     }
 
     // TODO: Polygon is a bit too unperformant. Make a new class called ObservablePolygon or something

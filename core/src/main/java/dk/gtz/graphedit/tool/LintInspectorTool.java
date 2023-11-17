@@ -22,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 public class LintInspectorTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(LintInspectorTool.class);
