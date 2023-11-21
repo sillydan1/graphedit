@@ -20,6 +20,7 @@ import javafx.scene.Node;
  * Edges connects vertices with other vertices.
  */
 public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFocusable, Property<ViewModelEdge> {
+    private final UUID uuid;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
     private final ObjectProperty<Node> hoverElement;
@@ -39,7 +40,8 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
      * @param source the syntactic element where the edge originates from
      * @param target the syntactic element where the edge targets
      */
-    public ViewModelEdge(ObjectProperty<UUID> source, ObjectProperty<UUID> target) {
+    public ViewModelEdge(UUID uuid, ObjectProperty<UUID> source, ObjectProperty<UUID> target) {
+	this.uuid = uuid;
 	this.source = source;
 	this.target = target;
 	this.isSelected = new SimpleBooleanProperty(false);
@@ -51,8 +53,8 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
      * Constructs a new view model edge instance based on a model edge instance
      * @param edge the model edge to convert
      */
-    public ViewModelEdge(ModelEdge edge) {
-	this(edge.source, edge.target);
+    public ViewModelEdge(UUID uuid, ModelEdge edge) {
+	this(uuid, edge.source, edge.target);
     }
 
     /**
@@ -60,8 +62,8 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
      * @param source the syntactic element where the edge originates from
      * @param target the syntactic element where the edge targets
      */
-    public ViewModelEdge(UUID source, UUID target) {
-	this(new SimpleObjectProperty<>(source), new SimpleObjectProperty<>(target));
+    public ViewModelEdge(UUID uuid, UUID source, UUID target) {
+	this(uuid, new SimpleObjectProperty<>(source), new SimpleObjectProperty<>(target));
     }
 
     /**
@@ -237,5 +239,19 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
     @Override
     public void addHoverListener(ChangeListener<Node> consumer) {
 	hoverElement.addListener(consumer);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+	if(other == null)
+	    return false;
+	if(!(other instanceof ViewModelEdge vother))
+	    return false;
+	return uuid.equals(vother.uuid) && source.equals(vother.source) && target.equals(vother.target);
+    }
+
+    @Override
+    public int hashCode() {
+	return uuid.hashCode() ^ source.hashCode() ^ target.hashCode();
     }
 }

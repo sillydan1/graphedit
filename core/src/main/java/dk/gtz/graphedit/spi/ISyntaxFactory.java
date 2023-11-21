@@ -48,10 +48,11 @@ public interface ISyntaxFactory {
 
     /**
      * Create a new viewmodel vertex representation
+     * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The model vertex to base on
      * @return A new instance of a viewmodel vertex representation specific to this syntax.
      */
-    ViewModelVertex createVertexViewModel(ModelVertex vertexValue);
+    ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue);
 
     /**
      * Create a new javafx edge representation
@@ -65,10 +66,11 @@ public interface ISyntaxFactory {
 
     /**
      * Create a new viewmodel edge representation
+     * @param edgeKey The primary key of the new edge representation
      * @param edgeValue The model edge to base on
      * @return A new instance of a viewmodel edge representation specific to this syntax.
      */
-    ViewModelEdge createEdgeViewModel(ModelEdge edgeValue);
+    ViewModelEdge createEdgeViewModel(UUID edgeId, ModelEdge edgeValue);
 
     /**
      * Get the associated syntax version migrater.

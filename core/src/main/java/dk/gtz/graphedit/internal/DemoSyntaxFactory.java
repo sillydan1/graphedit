@@ -72,13 +72,13 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
-	return new ViewModelVertex(vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+	return new ViewModelVertex(vertexKey, vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
-	return new ViewModelEdge(edgeValue);
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+	return new ViewModelEdge(edgeKey, edgeValue);
     }
 
     @Override

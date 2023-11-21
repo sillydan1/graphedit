@@ -234,5 +234,18 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 	x.unbindBidirectional(other.getValue().x);
 	y.unbindBidirectional(other.getValue().y);
     }
-}
 
+    @Override
+    public boolean equals(Object other) {
+	if(other == null)
+	    return false;
+	if(!(other instanceof ViewModelPoint vother))
+	    return false;
+	return x.get() == vother.x.get() && y.get() == vother.y.get();
+    }
+
+    @Override
+    public int hashCode() {
+	return x.getValue().hashCode() ^ y.getValue().hashCode();
+    }
+}

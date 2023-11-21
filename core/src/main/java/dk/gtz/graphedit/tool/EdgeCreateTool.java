@@ -158,7 +158,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
     public void create(UUID sourceTarget, ViewModelGraph graph, ISyntaxFactory factory) {
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
-        currentEdge = Optional.of(factory.createEdgeViewModel(new ModelEdge(sourceTarget, tracker.getTrackerUUID())));
+        currentEdge = Optional.of(factory.createEdgeViewModel(currenEdgeId.get(), new ModelEdge(sourceTarget, tracker.getTrackerUUID())));
         if(!currentEdge.get().isSourceValid(sourceTarget, graph)) {
             clear();
             return;
