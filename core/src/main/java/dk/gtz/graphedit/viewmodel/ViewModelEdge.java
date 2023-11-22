@@ -91,6 +91,14 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
     }
 
     /**
+     * Get the id of the edge
+     * @return the unique identifier of the edge
+     */
+    public UUID id() {
+	return uuid;
+    }
+
+    /**
      * Check if the proposed target vertex is a valid target. Use this in your syntax plugins to limit which vertices can be targeted by edges
      * @param target The proposed vertex id to target
      * @param graph The graph containing this edge and the proposed target vertex

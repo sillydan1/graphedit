@@ -3,6 +3,7 @@ package dk.gtz.graphedit.viewmodel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
@@ -71,6 +72,14 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
      */
     public MapProperty<String, String> metadata() {
 	return metadata;
+    }
+
+    /**
+     * Get the syntax name metadata field if it exists.
+     * @return optionally a string with the name of the syntax. empty if is not present in the metadata field
+     */
+    public Optional<String> getSyntaxName() {
+	return Optional.ofNullable(metadata.get("graphedit_syntax"));
     }
 
     /**

@@ -87,6 +87,14 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 	return shape;
     }
 
+    /**
+     * Get the id of the vertex
+     * @return the unique identifier of the vertex
+     */
+    public UUID id() {
+	return uuid;
+    }
+
     @Override
     public BooleanProperty getIsSelected() {
 	return isSelected;
