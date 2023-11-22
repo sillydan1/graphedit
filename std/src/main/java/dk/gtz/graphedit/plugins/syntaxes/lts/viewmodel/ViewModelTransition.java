@@ -2,6 +2,7 @@ package dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +27,21 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 		return action;
 	}
 
-	public ViewModelTransition(ModelEdge edge) {
-		super(edge);
+	public ViewModelTransition(UUID uuid, ModelEdge edge) {
+		super(uuid, edge);
 		this.action = new SimpleStringProperty("tau");
 		if(edge instanceof ModelTransition tedge)
 			this.action.set(tedge.action());
 	}
 
-	public ViewModelTransition(ModelTransition edge) {
-		super(edge);
+	public ViewModelTransition(UUID uuid, ModelTransition edge) {
+		super(uuid, edge);
 		logger.info(edge.action());
 		this.action = new SimpleStringProperty(edge.action());
 	}
 
-	public ViewModelTransition(ViewModelEdge edge) {
-		super(edge.source(), edge.target());
+	public ViewModelTransition(UUID uuid, ViewModelEdge edge) {
+		super(uuid, edge.source(), edge.target());
 		this.action = new SimpleStringProperty("tau");
 	}
 
@@ -127,5 +128,18 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 		if(other.getValue() instanceof ViewModelTransition tother)
 			action.unbindBidirectional(tother.action());
 	}
-}
 
+	@Override
+	public boolean equals(Object other) {
+		if(!super.equals(other))
+			return false;
+		if(!(other instanceof ViewModelTransition vother))
+			return false;
+		return action.equals(vother.action());
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ action.hashCode();
+	}
+}

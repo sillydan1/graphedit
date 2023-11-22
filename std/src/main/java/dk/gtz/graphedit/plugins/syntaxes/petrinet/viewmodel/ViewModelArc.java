@@ -24,8 +24,8 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 	private static final Logger logger = LoggerFactory.getLogger(ViewModelArc.class);
 	private final IntegerProperty weight;
 
-	public ViewModelArc(ModelEdge edge) {
-		super(edge);
+	public ViewModelArc(UUID uuid, ModelEdge edge) {
+		super(uuid, edge);
 		weight = new SimpleIntegerProperty(1);
 		if(edge instanceof ModelArc tedge)
 			weight.set(tedge.weight);
@@ -138,5 +138,18 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 		if(other.getValue() instanceof ViewModelArc tother)
 			weight.unbindBidirectional(tother.weight());
 	}
-}
 
+	@Override
+	public boolean equals(Object other) {
+		if(!super.equals(other))
+			return false;
+		if(!(other instanceof ViewModelArc vother))
+			return false;
+		return weight.equals(vother.weight);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ weight.hashCode();
+	}
+}

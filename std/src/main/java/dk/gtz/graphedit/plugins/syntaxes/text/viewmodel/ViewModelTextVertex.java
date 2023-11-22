@@ -2,6 +2,7 @@ package dk.gtz.graphedit.plugins.syntaxes.text.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.plugins.syntaxes.text.model.ModelTextVertex;
@@ -25,17 +26,17 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 		return text;
 	}
 
-	public ViewModelTextVertex(ViewModelVertex base) {
-		this(base.position(), base.shape());
+	public ViewModelTextVertex(UUID uuid, ViewModelVertex base) {
+		this(uuid, base.position(), base.shape());
 	}
 
-	public ViewModelTextVertex(ViewModelPoint position, ViewModelVertexShape shape) {
-		super(position, shape);
+	public ViewModelTextVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
+		super(uuid, position, shape);
 		this.text = new SimpleStringProperty("");
 	}
 
-	public ViewModelTextVertex(ModelVertex vertex) {
-		super(vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+	public ViewModelTextVertex(UUID uuid, ModelVertex vertex) {
+		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
 		this.text = new SimpleStringProperty("");
 		if(vertex instanceof ModelTextVertex textVertex)
 			this.text.set(textVertex.label());
@@ -66,7 +67,6 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 		return new ModelTextVertex(position().toModel(), text.getValueSafe());
 	}
 
-	// TODO: This is a lot of boilerplate... Maybe it can be simplified?
 	@Override
 	public void addListener(ChangeListener<? super ViewModelVertex> listener) {
 		super.addListener(listener);
@@ -129,5 +129,18 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 		if(other.getValue() instanceof ViewModelTextVertex tother)
 			text.unbindBidirectional(tother.text());
 	}
-}
 
+	@Override
+	public boolean equals(Object other) {
+		if(!super.equals(other))
+			return false;
+		if(!(other instanceof ViewModelTextVertex vother))
+			return false;
+		return text.equals(vother.text);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ text.hashCode();
+	}
+}

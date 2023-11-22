@@ -70,7 +70,7 @@ public interface ISyntaxFactory {
      * @param edgeValue The model edge to base on
      * @return A new instance of a viewmodel edge representation specific to this syntax.
      */
-    ViewModelEdge createEdgeViewModel(UUID edgeId, ModelEdge edgeValue);
+    ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue);
 
     /**
      * Get the associated syntax version migrater.
