@@ -56,15 +56,18 @@ public class ViewModelDiff {
         var sortedB = Stream.concat(b.vertices().keySet().stream().sorted(), b.edges().keySet().stream().sorted()).toList();
         var n = sortedA.size();
         var m = sortedB.size();
-        var max = n+m;
+        var max = n + m + 1; // 0 (inclusive) to N+M (inclusive)
+        var offset = max - 1;
+        if(max <= 0)
+            return result;
         var stack = new Stack<List<Optional<Integer>>>();
-        var v = new ArrayList<Optional<Integer>>();
-        for(var i = 0; i <= max * 2; i++)
+        var v = new ArrayList<Optional<Integer>>(max*2);
+        for(var i = 0; i < max*2; i++)
             v.add(Optional.empty());
-        v.set(1+max, Optional.of(0));
+        v.set(1+offset, Optional.of(0));
         for(var d = 0; d <= max; d++) {
             for(var k = -d; k <= d; k += 2) {
-                var ki = k + max;
+                var ki = k + offset;
                 Integer x = null;
                 if(k == -d || (k != d && v.get(ki-1).get() < v.get(ki+1).get()))
                     x = v.get(ki+1).get();
@@ -73,19 +76,27 @@ public class ViewModelDiff {
                 var y = x - k;
                 var outOfRange = x < 0 || x >= n ||
                                  y < 0 || y >= m;
-                while(x < n && y < m && !outOfRange && getSyntaxElement(sortedA.get(x), a).equals(getSyntaxElement(sortedB.get(y), b))) {
+                while(x < n && y < m && !outOfRange && areSyntaxElementsEqual(sortedA.get(x), sortedB.get(y), a, b)) {
                     x++;
                     y++;
                 }
                 v.set(ki, Optional.of(x));
                 if(x >= n && y >= m) {
                     stack.push(new ArrayList<>(v));
-                    return getEditScript(sortedA, sortedB, k, max, stack, result, a, b);
+                    return getEditScript(sortedA, sortedB, k, offset, stack, result, a, b);
                 }
             }
             stack.push(new ArrayList<>(v));
         }
         throw new UncomparableException("no result");
+    }
+
+    private static boolean areSyntaxElementsEqual(UUID idA, UUID idB, ViewModelGraph a, ViewModelGraph b) {
+        if(a.vertices().containsKey(idA))
+            return a.vertices().get(idA).equals(b.vertices().get(idB));
+        if(a.edges().containsKey(idA))
+            return a.edges().get(idA).equals(b.edges().get(idB));
+        return false;
     }
 
     private static Object getSyntaxElement(UUID id, ViewModelGraph g) {
@@ -117,16 +128,16 @@ public class ViewModelDiff {
                 }
             }
             if(vd_1.get(ki-1).isPresent()) {
-                var xd_1v = vd_1.get(ki-1).get();
-                var yd_1v = xd_1v - (k-1);
-                if(xd_1v == xd - 1 && yd_1v == yd) {
+                var xd_1h = vd_1.get(ki-1).get();
+                var yd_1h = xd_1h - (k-1);
+                if(xd_1h == xd - 1 && yd_1h == yd) {
                     acc.addDelete(a.get(xd-1), ga);
                     return getEditScript(a,b,k-1,offset,v,acc,ga,gb);
                 }
             }
             xd--;
             yd--;
-        } while(a.get(xd).equals(b.get(yd)));
+        } while(areSyntaxElementsEqual(a.get(xd), b.get(yd), ga, gb));
         throw new UncomparableException("bad vstack");
     }
 

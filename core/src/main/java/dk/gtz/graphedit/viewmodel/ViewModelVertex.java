@@ -224,7 +224,11 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 	    return false;
 	if(!(other instanceof ViewModelVertex vother))
 	    return false;
-	return position.equals(vother.position) && uuid.equals(vother.uuid);
+	if(!uuid.equals(vother.uuid))
+	    return false;
+	if(!position.equals(vother.position))
+	    return false;
+	return true;
     }
 
     @Override

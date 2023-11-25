@@ -255,7 +255,13 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
 	    return false;
 	if(!(other instanceof ViewModelEdge vother))
 	    return false;
-	return uuid.equals(vother.uuid) && source.equals(vother.source) && target.equals(vother.target);
+	if(!uuid.equals(vother.uuid))
+	    return false;
+	if(!source.get().equals(vother.source.get()))
+	    return false;
+	if(!target.get().equals(vother.target.get()))
+	    return false;
+	return true;
     }
 
     @Override
