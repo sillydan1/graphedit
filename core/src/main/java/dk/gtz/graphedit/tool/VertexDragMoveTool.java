@@ -92,16 +92,16 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         var newY = e.event().getScreenY();
         var moveDiffX = (newX - oldX.get()) / e.viewportAffine().getMxx();
         var moveDiffY = (newY - oldY.get()) / e.viewportAffine().getMyy();
-        point.getXProperty().set(oldPointX.get() + moveDiffX);
-        point.getYProperty().set(oldPointY.get() + moveDiffY);
+        var newPoint = point.copy();
+        newPoint.getXProperty().set(oldPointX.get() + moveDiffX);
+        newPoint.getYProperty().set(oldPointY.get() + moveDiffY);
         if(e.editorSettings().gridSnap().get())
-            point.snapToGrid(e.editorSettings());
+            newPoint.snapToGrid(e.editorSettings());
 
-        var xcpy = point.getX();
-        var ycpy = point.getY();
+        var pointCpy = point.copy();
+        point.setValue(newPoint);
         redoAction.set(() -> { 
-            point.getXProperty().set(xcpy);
-            point.getYProperty().set(ycpy);
+            point.setValue(pointCpy);
         });
     }
 

@@ -145,6 +145,10 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 	return (getX() * other.getX()) + (getY() * other.getY());
     }
 
+    public ViewModelPoint copy() {
+	return new ViewModelPoint(getX(), getY());
+    }
+
     public ViewModelPoint multiply(ViewModelPoint other) {
 	return new ViewModelPoint(getX() * other.getX(), getY() * other.getY());
     }
