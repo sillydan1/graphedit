@@ -135,11 +135,11 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 			return false;
 		if(!(other instanceof ViewModelTransition vother))
 			return false;
-		return action.equals(vother.action());
+		return action.get().equals(vother.action.get());
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ action.hashCode();
+		return super.hashCode() ^ action.getValue().hashCode();
 	}
 }

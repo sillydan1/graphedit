@@ -126,11 +126,11 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 			return false;
 		if(!(other instanceof ViewModelPlace vother))
 			return false;
-		return initialTokenCount.equals(vother.initialTokenCount);
+		return initialTokenCount.get() == vother.initialTokenCount.get();
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ initialTokenCount.hashCode();
+		return super.hashCode() ^ initialTokenCount.getValue().hashCode();
 	}
 }

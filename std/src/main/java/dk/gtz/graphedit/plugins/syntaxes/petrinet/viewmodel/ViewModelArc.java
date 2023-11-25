@@ -145,11 +145,11 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 			return false;
 		if(!(other instanceof ViewModelArc vother))
 			return false;
-		return weight.equals(vother.weight);
+		return weight.get() == vother.weight.get();
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ weight.hashCode();
+		return super.hashCode() ^ weight.getValue().hashCode();
 	}
 }

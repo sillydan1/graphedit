@@ -266,6 +266,6 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
 
     @Override
     public int hashCode() {
-	return uuid.hashCode() ^ source.hashCode() ^ target.hashCode();
+	return uuid.hashCode() ^ source.get().hashCode() ^ target.get().hashCode();
     }
 }

@@ -22,4 +22,18 @@ public class ViewModelTransition extends ViewModelVertex implements ISearchable 
     public ModelTransition toModel() {
 	return new ModelTransition(position().getValue().toModel());
     }
+
+    @Override
+    public boolean equals(Object other) {
+	if(!super.equals(other))
+	    return false;
+	if(!(other instanceof ViewModelTransition vother))
+	    return false;
+	return true;
+    }
+
+    @Override
+    public int hashCode() {
+	return super.hashCode();
+    }
 }

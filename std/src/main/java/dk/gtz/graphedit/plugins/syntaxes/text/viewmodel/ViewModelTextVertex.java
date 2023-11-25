@@ -136,11 +136,11 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 			return false;
 		if(!(other instanceof ViewModelTextVertex vother))
 			return false;
-		return text.equals(vother.text);
+		return text.get().equals(vother.text.get());
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ text.hashCode();
+		return super.hashCode() ^ text.get().hashCode();
 	}
 }

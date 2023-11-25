@@ -159,11 +159,11 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 			return false;
 		if(!(other instanceof ViewModelState vother))
 			return false;
-		return name.equals(vother.name) && initial.equals(vother.initial);
+		return name.get().equals(vother.name.get()) && initial.get() == vother.initial.get();
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ name.hashCode() ^ initial.hashCode();
+		return super.hashCode() ^ name.getValue().hashCode() ^ initial.getValue().hashCode();
 	}
 }
