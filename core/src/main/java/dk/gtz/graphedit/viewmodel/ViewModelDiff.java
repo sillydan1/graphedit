@@ -56,10 +56,10 @@ public class ViewModelDiff {
         var sortedB = Stream.concat(b.vertices().keySet().stream().sorted(), b.edges().keySet().stream().sorted()).toList();
         var n = sortedA.size();
         var m = sortedB.size();
+        if(n+m <= 0)
+            return result;
         var max = n + m + 1; // 0 (inclusive) to N+M (inclusive)
         var offset = max - 1;
-        if(max <= 0)
-            return result;
         var stack = new Stack<List<Optional<Integer>>>();
         var v = new ArrayList<Optional<Integer>>(max*2);
         for(var i = 0; i < max*2; i++)
