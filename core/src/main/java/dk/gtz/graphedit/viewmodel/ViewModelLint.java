@@ -61,13 +61,13 @@ public class ViewModelLint implements IFocusable {
         return affectedRegions;
     }
 
-	@Override
-	public void addFocusListener(Runnable focusEventHandler) {
+    @Override
+    public void addFocusListener(Runnable focusEventHandler) {
         focustHandlers.add(focusEventHandler);
-	}
+    }
 
-	@Override
-	public void focus() {
+    @Override
+    public void focus() {
         focustHandlers.forEach(Runnable::run);
-	}
+    }
 }
