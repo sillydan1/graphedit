@@ -99,14 +99,6 @@ public class ViewModelDiff {
         return false;
     }
 
-    private static Object getSyntaxElement(UUID id, ViewModelGraph g) {
-        if(g.vertices().containsKey(id))
-            return g.vertices().get(id);
-        if(g.edges().containsKey(id))
-            return g.edges().get(id);
-        return null;
-    }
-
     private static ViewModelDiff getEditScript(List<UUID> a, List<UUID> b, int k, int offset, Stack<List<Optional<Integer>>> v, ViewModelDiff acc, ViewModelGraph ga, ViewModelGraph gb) throws UncomparableException {
         // TODO: This scales terribly. Implement the faster way of doing this.
         var vd = v.pop();
