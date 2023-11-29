@@ -11,6 +11,7 @@ import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.view.GraphEditApplication;
+import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.yalibs.yadi.DI;
 
@@ -34,16 +35,28 @@ public class Main {
         DI.add(IModelSerializer.class, new JacksonModelSerializer());
         var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         var factories = new SyntaxFactoryCollection();
+        var servers = new LanguageServerCollection();
         DI.add(SyntaxFactoryCollection.class, factories);
+        DI.add(LanguageServerCollection.class, servers);
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
+        for(var plugin : loader.getLoadedPlugins().getPlugins())
+            plugin.onInitialize();
         for(var plugin : loader.getLoadedPlugins().getPlugins()) {
             try {
-                plugin.onInitialize();
                 factories.add(plugin.getSyntaxFactories());
             } catch (Exception e) {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
             }
         }
+        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
+            try {
+                servers.add(plugin.getLanguageServers());
+            } catch (Exception e) {
+                logger.error("could not load language servers for plugin: {}", plugin.getName(), e);
+            }
+        }
+        if(servers.isEmpty())
+            logger.warn("No language servers loaded. Expect a very simple experience");
         if(factories.isEmpty())
             throw new Exception("Refusing to start the editor without any syntaxes. Please check your plugins directory");
 
@@ -52,4 +65,3 @@ public class Main {
         logger.info("goodbye from {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
     }
 }
-

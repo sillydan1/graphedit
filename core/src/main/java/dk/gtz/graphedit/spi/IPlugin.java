@@ -50,4 +50,8 @@ public interface IPlugin {
     default Collection<IPluginPanel> getPanels() throws Exception {
         return List.of();
     }
+
+    default Collection<ILanguageServer> getLanguageServers() throws Exception {
+        return List.of();
+    }
 }

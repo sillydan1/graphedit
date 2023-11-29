@@ -28,7 +28,7 @@ public class FileBufferContainer implements IBufferContainer {
      * Constructs a new filepath keyed buffer container.
      * @param serializer The serializer to use when deserializing the buffers
      */
-    public FileBufferContainer(IModelSerializer serializer) {
+    public FileBufferContainer(IModelSerializer serializer, LanguageServerCollection lspCollection) {
         openBuffers = FXCollections.observableHashMap(); 
         this.serializer = serializer;
     }
