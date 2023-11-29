@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import atlantafx.base.util.Animations;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;

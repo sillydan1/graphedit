@@ -42,9 +42,14 @@ public class LintContainer {
     }
 
     public LintContainer replaceAll(Collection<ModelLint> lints) {
-        data.clear();
+        clear();
         for(var lint : lints)
             add(lint);
         return this;
+    }
+
+    private void clear() {
+        for(var entry : data.entrySet())
+            entry.getValue().clear();
     }
 }

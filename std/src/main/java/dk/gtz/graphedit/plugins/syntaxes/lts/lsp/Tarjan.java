@@ -1,17 +1,21 @@
 package dk.gtz.graphedit.plugins.syntaxes.lts.lsp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tarjans Strongly connected components algorithm implementation.
  * See https://sites.cs.ucsb.edu/~gilbert/cs240a/Old/cs240aSpr2011/slides/TarjanDFS.pdf for more info
  * TODO: Consider making a yalibs distribution of this
  * */
-public class Tarjan<K, V extends INextable<K>> {
+public class Tarjan<K, V extends Collection<K>> {
     private static class SCCDecoration {
         public int index;
         public int lowLink;
@@ -35,7 +39,7 @@ public class Tarjan<K, V extends INextable<K>> {
         var decorationValue = decorations.get(key);
         stack.push(key);
         index++;
-        for(var w : map.get(key).getNext()) {
+        for(var w : map.get(key)) {
             if(!decorations.containsKey(w)) {
                 strongConnect(w, map, stack, sccs);
                 decorationValue.lowLink = Math.min(decorationValue.lowLink, decorations.get(w).lowLink);
@@ -67,7 +71,7 @@ public class Tarjan<K, V extends INextable<K>> {
         return result;
     }
 
-    public static <K,V extends INextable<K>> List<List<K>> getStronglyConnectedComponents(final Map<K,V> map) {
+    public static <K,V extends Collection<K>> List<List<K>> getStronglyConnectedComponents(final Map<K,V> map) {
         return new Tarjan<K,V>().getStronglyConnectedComponentsHelper(map);
     }
 }

@@ -21,6 +21,22 @@ public class ViewModelDiff {
     private final List<ViewModelVertex> vertexAdditions;
     private final List<ViewModelEdge> edgeAdditions;
 
+	public List<ViewModelVertex> getVertexDeletions() {
+		return vertexDeletions;
+	}
+
+	public List<ViewModelEdge> getEdgeDeletions() {
+		return edgeDeletions;
+	}
+
+	public List<ViewModelVertex> getVertexAdditions() {
+		return vertexAdditions;
+	}
+
+	public List<ViewModelEdge> getEdgeAdditions() {
+		return edgeAdditions;
+	}
+
     public int size() {
         return vertexDeletions.size() +
             edgeDeletions.size() +
@@ -164,7 +180,7 @@ public class ViewModelDiff {
         var graphSyntaxName = resource.getSyntaxName();
         if(graphSyntaxName.isEmpty())
             throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
-        if(diff.syntaxStyle.equals(graphSyntaxName.get()))
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
             throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
 
         var g = resource.syntax();
@@ -195,7 +211,7 @@ public class ViewModelDiff {
         var graphSyntaxName = resource.getSyntaxName();
         if(graphSyntaxName.isEmpty())
             throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
-        if(diff.syntaxStyle.equals(graphSyntaxName.get()))
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
             throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
 
         var g = resource.syntax();
@@ -265,4 +281,12 @@ public class ViewModelDiff {
             result.append("\n").append("+e ").append(x.id().toString());
         return result.toString();
     }
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public String getSyntaxStyle() {
+		return syntaxStyle;
+	}
 }
