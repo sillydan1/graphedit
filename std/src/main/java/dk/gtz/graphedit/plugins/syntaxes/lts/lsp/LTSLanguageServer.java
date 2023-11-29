@@ -28,11 +28,13 @@ public class LTSLanguageServer implements ILanguageServer {
     private List<IRunnable1<ModelNotification>> notificationHandlers;
     private List<IRunnable1<ModelLanguageServerProgress>> progressHandlers;
     private IBufferContainer bufferContainer;
+    private final Map<String,Collection<ModelLint>> lints;
 
     public LTSLanguageServer() {
 	diagnosticsHandlers = new ArrayList<>();
 	notificationHandlers = new ArrayList<>();
 	progressHandlers = new ArrayList<>();
+	lints = new HashMap<>();
     }
 
     @Override
@@ -55,21 +57,17 @@ public class LTSLanguageServer implements ILanguageServer {
 	final var ltsSyntax = MetadataUtils.getSyntaxFactory(getLanguageName());
 	this.bufferContainer = bufferContainer;
 	this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
+	    broadcastAllBufferDiagnostics();
 	    if(c.wasAdded()) {
 		var changedVal = c.getValueAdded();
 		var old = new SimpleObjectProperty<>(changedVal.toModel());
 		changedVal.addListener((e,o,n) -> {
-		    var syntaxName = n.getSyntaxName();
-		    if(syntaxName.isEmpty())
-			return;
-		    if(!syntaxName.get().equals("LTS"))
-			return;
 		    var diff = ViewModelDiff.compare(new ViewModelProjectResource(old.get(), ltsSyntax), n);
 		    old.set(n.toModel());
 		    if(diff.getEdgeAdditions().isEmpty() && diff.getEdgeDeletions().isEmpty())
 			return;
 		    var cpy = ViewModelDiff.applyCopy(changedVal, diff);
-		    broadcastDiagnostics(getSccs(c.getKey(), cpy));
+		    broadcastDiagnostics(c.getKey(), getSccs(c.getKey(), cpy));
 		});
 	    }
 	});
@@ -107,10 +105,14 @@ public class LTSLanguageServer implements ILanguageServer {
 	return result;
     }
 
+    private void broadcastAllBufferDiagnostics() {
+	for(var buffer : bufferContainer.getBuffers().entrySet())
+	    broadcastDiagnostics(buffer.getKey(), getSccs(buffer.getKey(), buffer.getValue()));
+    }
+
     @Override
     public void start() {
-	for(var buffer : bufferContainer.getBuffers().entrySet())
-	    broadcastDiagnostics(getSccs(buffer.getKey(), buffer.getValue()));
+	broadcastAllBufferDiagnostics();
 	while(!Thread.interrupted()) {
 	    try {
 		Thread.sleep(1000);
@@ -140,8 +142,9 @@ public class LTSLanguageServer implements ILanguageServer {
 	progressHandlers.add(callback);
     }
 
-    private void broadcastDiagnostics(Collection<ModelLint> lints) {
-	diagnosticsHandlers.forEach(e -> e.run(lints));
+    private void broadcastDiagnostics(String modelKey, Collection<ModelLint> newLints) {
+	lints.put(modelKey, newLints);
+	diagnosticsHandlers.forEach(e -> e.run(lints.values().stream().flatMap(Collection::stream).toList()));
     }
 
     private void broadcastProgress(ModelLanguageServerProgress report) {
