@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.UncomparableException;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class ViewModelDiff {
     private static Logger logger = LoggerFactory.getLogger(ViewModelDiff.class);
@@ -180,6 +181,16 @@ public class ViewModelDiff {
         // TODO: Check if this actually makes for a valid syntax
     }
 
+    public static ViewModelProjectResource applyCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var modelCpy = resource.toModel();
+        var syntaxName = resource.getSyntaxName();
+        if(syntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        var result = new ViewModelProjectResource(modelCpy, MetadataUtils.getSyntaxFactory(syntaxName.get()));
+        apply(result, diff);
+        return result;
+    }
+
     public static void revert(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
         var graphSyntaxName = resource.getSyntaxName();
         if(graphSyntaxName.isEmpty())
@@ -196,6 +207,16 @@ public class ViewModelDiff {
             g.vertices().put(vertexDeletion.id(), vertexDeletion);
         for(var edgeDeletion : diff.edgeDeletions)
             g.edges().put(edgeDeletion.id(), edgeDeletion);
+    }
+
+    public static ViewModelProjectResource revertCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var modelCpy = resource.toModel();
+        var syntaxName = resource.getSyntaxName();
+        if(syntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        var result = new ViewModelProjectResource(modelCpy, MetadataUtils.getSyntaxFactory(syntaxName.get()));
+        revert(result, diff);
+        return result;
     }
 
     @Override
