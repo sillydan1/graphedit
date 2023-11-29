@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -117,12 +118,14 @@ public class LintPanelController extends StackPane {
 
 		var rr = r.nextInt(999);
 		var randomLint = new ViewModelLint(new ModelLint(
+			    bufferKey,
 			    "E%d".formatted(rr),
 			    randomSeverity(),
 			    "lint title (E%d)".formatted(rr),
 			    """
 			    Description goes here
 			    """,
+			    Optional.empty(),
 			    randomSelection,
 			    List.of()));
 		lints.add(bufferKey, randomLint);
