@@ -62,6 +62,10 @@ public class LTSLanguageServer implements ILanguageServer {
 		var changedVal = c.getValueAdded();
 		var old = new SimpleObjectProperty<>(changedVal.toModel());
 		changedVal.addListener((e,o,n) -> {
+		    if(n.getSyntaxName().isEmpty())
+			return;
+		    if(!n.getSyntaxName().get().equals(getLanguageName()))
+			return;
 		    var diff = ViewModelDiff.compare(new ViewModelProjectResource(old.get(), ltsSyntax), n);
 		    old.set(n.toModel());
 		    if(diff.getEdgeAdditions().isEmpty() && diff.getEdgeDeletions().isEmpty())
@@ -106,8 +110,13 @@ public class LTSLanguageServer implements ILanguageServer {
     }
 
     private void broadcastAllBufferDiagnostics() {
-	for(var buffer : bufferContainer.getBuffers().entrySet())
+	for(var buffer : bufferContainer.getBuffers().entrySet()) {
+	    if(buffer.getValue().getSyntaxName().isEmpty())
+		return;
+	    if(!buffer.getValue().getSyntaxName().get().equals(getLanguageName()))
+		return;
 	    broadcastDiagnostics(buffer.getKey(), getSccs(buffer.getKey(), buffer.getValue()));
+	}
     }
 
     @Override
