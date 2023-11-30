@@ -28,12 +28,12 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
-public class LintPaneController extends Pane {
-    private Logger logger = LoggerFactory.getLogger(LintPaneController.class);
+public class LintLayerController extends Pane {
+    private Logger logger = LoggerFactory.getLogger(LintLayerController.class);
     private final Affine transform;
     private final ViewModelProjectResource resource;
 
-    public LintPaneController(String bufferKey, ViewModelProjectResource resource, Affine viewportAffine) {
+    public LintLayerController(String bufferKey, ViewModelProjectResource resource, Affine viewportAffine) {
 	this.transform = viewportAffine;
 	this.resource = resource;
 	getTransforms().add(transform);

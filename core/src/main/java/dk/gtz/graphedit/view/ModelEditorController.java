@@ -49,7 +49,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private ModelEditorToolbar toolbar;
     private MapGroup<UUID> drawGroup;
     private GridPaneController gridPane;
-    private LintPaneController lintPane;
+    private LintLayerController lintPane;
     private Pane drawPane;
     private Affine drawGroupTransform;
     private List<Runnable> onFocusEventHandlers;
@@ -121,7 +121,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	settings.gridSizeX().addListener((e,o,n) -> gridPane.setGridSize(n.doubleValue(), settings.gridSizeY().get()));
 	settings.gridSizeY().addListener((e,o,n) -> gridPane.setGridSize(settings.gridSizeY().get(), n.doubleValue()));
 
-	lintPane = new LintPaneController(bufferKey, resource, drawGroupTransform);
+	lintPane = new LintLayerController(bufferKey, resource, drawGroupTransform);
 
 	viewport.getChildren().add(gridPane);
 	viewport.getChildren().add(lintPane);
