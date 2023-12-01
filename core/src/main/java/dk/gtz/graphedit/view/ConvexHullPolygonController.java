@@ -27,8 +27,8 @@ public class ConvexHullPolygonController extends Group {
 	fill = Color.TRANSPARENT;
 	strokeTypeProperty = new SimpleObjectProperty<>(StrokeType.INSIDE);
 	this.polygon = getPolygon();
-	getChildren().add(polygon);
 	initializeEvents();
+	getChildren().add(polygon);
     }
 
     private void initializeEvents() {
@@ -66,6 +66,11 @@ public class ConvexHullPolygonController extends Group {
 	}
 	result.getStyleClass().addAll(getStyleClass());
 	return result;
+    }
+
+    public void addStyleClass(String styleClass) {
+	getStyleClass().add(styleClass);
+	polygon.getStyleClass().add(styleClass);
     }
 
     private List<ViewModelPoint> getHull() {

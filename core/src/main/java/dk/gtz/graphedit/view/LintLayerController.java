@@ -47,9 +47,9 @@ public class LintLayerController extends Pane {
 		.map(Entry::getValue).toList();
 	    if(vertices.isEmpty())
 		continue;
-	    var polygon = new SimpleObjectProperty<>(createConvexHull(vertices, lint));
-	    setFocusHandler(lint, polygon.get());
-	    getChildren().add(polygon.get());
+	    var polygon = createConvexHullPolygon(vertices, lint);
+	    setFocusHandler(lint, polygon);
+	    getChildren().add(polygon);
 	}
     }
 
@@ -79,15 +79,15 @@ public class LintLayerController extends Pane {
 	});
     }
 
-    private Node createConvexHull(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
+    private Node createConvexHullPolygon(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
 	var points = vertices.stream().flatMap(v -> {
 	    var buffer = 5;
-	    var sizeX = (v.shape().widthProperty().getValue() + buffer);
+	    var sizeX = v.shape().widthProperty().add(buffer);
 	    if(v.shape().shapeType().getValue().equals(ViewModelShapeType.RECTANGLE))
-		sizeX = ((v.shape().widthProperty().getValue() / 2) + buffer);
-	    var sizeY = (v.shape().heightProperty().getValue() + buffer);
+		sizeX = v.shape().widthProperty().divide(2).add(buffer);
+	    var sizeY = v.shape().heightProperty().add(buffer);
 	    if(v.shape().shapeType().getValue().equals(ViewModelShapeType.RECTANGLE))
-		sizeY = ((v.shape().heightProperty().getValue() / 2) + buffer);
+		sizeY = v.shape().heightProperty().divide(2).add(buffer);
 	    return List.of(
 		    new ViewModelPoint(v.position().getXProperty().add(sizeX), v.position().getYProperty().add(sizeY)),
 		    new ViewModelPoint(v.position().getXProperty().subtract(sizeX), v.position().getYProperty().subtract(sizeY)),
@@ -96,11 +96,10 @@ public class LintLayerController extends Pane {
 		    ).stream();
 	}).toList();
 	var polygon = new ConvexHullPolygonController(points);
-	polygon.setFill(Color.TRANSPARENT);
 	switch(lint.severity().get()) {
-	    case ERROR: polygon.getStyleClass().add("stroke-error"); break;
-	    case WARNING: polygon.getStyleClass().add("stroke-warning"); break;
-	    case INFO: polygon.getStyleClass().add("stroke-info"); break;
+	    case ERROR: polygon.addStyleClass("stroke-error"); break;
+	    case WARNING: polygon.addStyleClass("stroke-warning"); break;
+	    case INFO: polygon.addStyleClass("stroke-info"); break;
 	    default: break;
 	}
 	return polygon;
