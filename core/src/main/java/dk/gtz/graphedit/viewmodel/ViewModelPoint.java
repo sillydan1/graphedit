@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dk.gtz.graphedit.model.ModelPoint;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.DoubleBinding;
@@ -13,6 +16,7 @@ import javafx.beans.value.ObservableValue;
  * View model representation of a 2D point
  */
 public class ViewModelPoint implements Property<ViewModelPoint> {
+    private List<ChangeListener<? super ViewModelPoint>> changeListeners;
     private final DoubleProperty x;
     private final DoubleProperty y;
 
@@ -30,8 +34,7 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
      * @param y the y-coordinate value
      */
     public ViewModelPoint(double x, double y) {
-	this.x = new SimpleDoubleProperty(x);
-	this.y = new SimpleDoubleProperty(y);
+	this(new SimpleDoubleProperty(x), new SimpleDoubleProperty(y));
     }
 
     /**
@@ -42,6 +45,9 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
     public ViewModelPoint(DoubleProperty x, DoubleProperty y) {
 	this.x = x;
 	this.y = y;
+	this.changeListeners = new ArrayList<>();
+	this.x.addListener((e,o,n) -> this.changeListeners.stream().forEach(l -> l.changed(this, this, this)));
+	this.y.addListener((e,o,n) -> this.changeListeners.stream().forEach(l -> l.changed(this, this, this)));
     }
 
     /**
@@ -178,14 +184,12 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 
     @Override
     public void addListener(ChangeListener<? super ViewModelPoint> listener) {
-	x.addListener((e,o,n) -> listener.changed(this, this, this));
-	y.addListener((e,o,n) -> listener.changed(this, this, this));
+	changeListeners.add(listener);
     }
 
     @Override
     public void removeListener(ChangeListener<? super ViewModelPoint> listener) {
-	x.removeListener((e,o,n) -> listener.changed(this, this, this));
-	y.removeListener((e,o,n) -> listener.changed(this, this, this));
+	changeListeners.remove(listener);
     }
 
     @Override
@@ -195,6 +199,7 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 
     @Override
     public void addListener(InvalidationListener listener) {
+	// TODO: This doesn't work
 	x.addListener(listener);
 	y.addListener(listener);
     }
