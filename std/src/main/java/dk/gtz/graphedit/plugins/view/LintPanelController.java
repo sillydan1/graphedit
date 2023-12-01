@@ -1,25 +1,16 @@
 package dk.gtz.graphedit.plugins.view;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 
 import atlantafx.base.controls.Card;
 import atlantafx.base.theme.Styles;
-import dk.gtz.graphedit.model.ModelLint;
-import dk.gtz.graphedit.model.ModelLintSeverity;
-import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
@@ -58,7 +49,6 @@ public class LintPanelController extends StackPane {
 	    var lintContainer = new VBox();
 	    lintContainer.setSpacing(5);
 	    lintContainer.getChildren().add(bufferKeyTitle);
-	    addDebuggingButton(lintContainer, lintCollection.getKey());
 	    for(var lint : lintCollection.getValue())
 		addLint(lintContainer, lint);
 	    lintCollection.getValue().addListener((ListChangeListener<ViewModelLint>)c -> {
@@ -98,42 +88,6 @@ public class LintPanelController extends StackPane {
 	card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> lint.focus());
 	lintNodeMapping.put(lint, card);
 	container.getChildren().add(card);
-    }
-
-    private ModelLintSeverity randomSeverity() {
-	var pick = new Random().nextInt(ModelLintSeverity.values().length);
-	return ModelLintSeverity.values()[pick];
-    }
-
-    private void addDebuggingButton(VBox container, String bufferKey) {
-	var button = new Button("Add random lint");
-	button.setOnAction(e -> {
-	    try {
-		var buffer = DI.get(IBufferContainer.class).get(bufferKey);
-		var r = new Random();
-		var randomSelection = new ArrayList<UUID>();
-		for(var key : buffer.syntax().vertices().keySet())
-		    if(r.nextBoolean())
-			randomSelection.add(key);
-
-		var rr = r.nextInt(999);
-		var randomLint = new ViewModelLint(new ModelLint(
-			    bufferKey,
-			    "E%d".formatted(rr),
-			    randomSeverity(),
-			    "lint title (E%d)".formatted(rr),
-			    """
-			    Description goes here
-			    """,
-			    Optional.empty(),
-			    randomSelection,
-			    List.of()));
-		lints.add(bufferKey, randomLint);
-	    } catch(Exception exc) {
-		throw new RuntimeException(exc);
-	    }
-	});
-	container.getChildren().add(button);
     }
 
     private void initializeEventHandlers() {
