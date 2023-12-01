@@ -21,21 +21,21 @@ public class ViewModelDiff {
     private final List<ViewModelVertex> vertexAdditions;
     private final List<ViewModelEdge> edgeAdditions;
 
-	public List<ViewModelVertex> getVertexDeletions() {
-		return vertexDeletions;
-	}
+    public List<ViewModelVertex> getVertexDeletions() {
+        return vertexDeletions;
+    }
 
-	public List<ViewModelEdge> getEdgeDeletions() {
-		return edgeDeletions;
-	}
+    public List<ViewModelEdge> getEdgeDeletions() {
+        return edgeDeletions;
+    }
 
-	public List<ViewModelVertex> getVertexAdditions() {
-		return vertexAdditions;
-	}
+    public List<ViewModelVertex> getVertexAdditions() {
+        return vertexAdditions;
+    }
 
-	public List<ViewModelEdge> getEdgeAdditions() {
-		return edgeAdditions;
-	}
+    public List<ViewModelEdge> getEdgeAdditions() {
+        return edgeAdditions;
+    }
 
     public int size() {
         return vertexDeletions.size() +
@@ -54,6 +54,16 @@ public class ViewModelDiff {
         edgeDeletions = new ArrayList<>();
         vertexAdditions = new ArrayList<>();
         edgeAdditions = new ArrayList<>();
+    }
+
+    public static boolean areComparable(ViewModelProjectResource a, ViewModelProjectResource b) {
+        var aSyntaxName = a.getSyntaxName();
+        var bSyntaxName = b.getSyntaxName();
+        if(aSyntaxName.isEmpty() || bSyntaxName.isEmpty())
+            return false;
+        if(!aSyntaxName.get().equals(bSyntaxName.get()))
+            return false;
+        return true;
     }
 
     public static ViewModelDiff compare(ViewModelProjectResource a, ViewModelProjectResource b) throws UncomparableException {
@@ -92,7 +102,7 @@ public class ViewModelDiff {
                     x = v.get(ki-1).get() + 1;
                 var y = x - k;
                 var outOfRange = x < 0 || x >= n ||
-                                 y < 0 || y >= m;
+                    y < 0 || y >= m;
                 while(x < n && y < m && !outOfRange && areSyntaxElementsEqual(sortedA.get(x), sortedB.get(y), a, b)) {
                     x++;
                     y++;
@@ -282,11 +292,11 @@ public class ViewModelDiff {
         return result.toString();
     }
 
-	public static Logger getLogger() {
-		return logger;
-	}
+    public static Logger getLogger() {
+        return logger;
+    }
 
-	public String getSyntaxStyle() {
-		return syntaxStyle;
-	}
+    public String getSyntaxStyle() {
+        return syntaxStyle;
+    }
 }

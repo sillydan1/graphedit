@@ -59,19 +59,24 @@ public class EditorTabPaneController {
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
 		var tab = new DraggableTabController(tabTitle);
-		var modelSyntax = new SimpleObjectProperty<>(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		var lastSavedModel = new SimpleObjectProperty<>(changedVal.toModel());
+		var lastSavedModelSyntax = new SimpleObjectProperty<>(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		changedVal.addView(tab);
 		changedVal.addListener((e,o,n) -> {
-		    var diff = ViewModelDiff.compare(new ViewModelProjectResource(lastSavedModel.get(), modelSyntax.get()), n);
+		    var a = new ViewModelProjectResource(lastSavedModel.get(), lastSavedModelSyntax.get());
+		    if(!ViewModelDiff.areComparable(a, n)) {
+			tab.setHighlight();
+			return;
+		    }
+		    var diff = ViewModelDiff.compare(a, n);
 		    if(diff.isEmpty())
 			tab.unsetHighlight();
 		    else
 			tab.setHighlight();
 		});
 		EditorActions.addSaveListener(() -> {
-		    modelSyntax.set(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		    lastSavedModel.set(changedVal.toModel());
+		    lastSavedModelSyntax.set(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		    tab.unsetHighlight();
 		});
 		tab.setOnClosed(e ->  {
