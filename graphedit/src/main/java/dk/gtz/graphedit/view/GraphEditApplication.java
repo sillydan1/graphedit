@@ -21,6 +21,7 @@ import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
+import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.IToolbox;
@@ -191,7 +192,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		new VertexCreateTool(),
 		new VertexDeleteTool(),
 		new SelectTool(),
-		new LintInspectorTool());
+		new LintInspectorTool(),
+		new ClipboardTool());
 	toolbox.add("inspect", new ViewTool());
 	DI.add(IToolbox.class, toolbox);
 	toolbox.selectTool(toolbox.getDefaultTool());

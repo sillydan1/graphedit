@@ -207,6 +207,20 @@ public class ViewModelDiff {
         // TODO: Check if this actually makes for a valid syntax
     }
 
+    public static void applyAdditiveOnly(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var graphSyntaxName = resource.getSyntaxName();
+        if(graphSyntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
+            throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
+
+        var g = resource.syntax();
+        for(var vertexAddition : diff.vertexAdditions)
+            g.vertices().put(vertexAddition.id(), vertexAddition);
+        for(var edgeAddition : diff.edgeAdditions)
+            g.edges().put(edgeAddition.id(), edgeAddition);
+    }
+
     public static ViewModelProjectResource applyCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
         var modelCpy = resource.toModel();
         var syntaxName = resource.getSyntaxName();
@@ -233,6 +247,20 @@ public class ViewModelDiff {
             g.vertices().put(vertexDeletion.id(), vertexDeletion);
         for(var edgeDeletion : diff.edgeDeletions)
             g.edges().put(edgeDeletion.id(), edgeDeletion);
+    }
+
+    public static void revertAdditiveOnly(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var graphSyntaxName = resource.getSyntaxName();
+        if(graphSyntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
+            throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
+
+        var g = resource.syntax();
+        for(var edgeAddition : diff.edgeAdditions)
+            g.edges().remove(edgeAddition.id());
+        for(var vertexAddition : diff.vertexAdditions)
+            g.vertices().remove(vertexAddition.id());
     }
 
     public static ViewModelProjectResource revertCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {

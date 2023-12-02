@@ -85,6 +85,8 @@ public class VertexDragMoveTool extends AbstractBaseTool {
     }
 
     private void handleMouseDraggedEvent(VertexMouseEvent e) {
+        if(undoAction.get() == null)
+            return;
         var point = e.vertex().position();
         if(!e.event().isPrimaryButtonDown())
             return;

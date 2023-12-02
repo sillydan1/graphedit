@@ -66,6 +66,11 @@ public class LTSLanguageServer implements ILanguageServer {
 		var changedVal = c.getValueAdded();
 		var old = new SimpleObjectProperty<>(changedVal.toModel());
 		changedVal.addListener((e,o,n) -> {
+		    var syntaxName = n.getSyntaxName();
+		    if(syntaxName.isEmpty())
+			return;
+		    if(!syntaxName.get().equals(getLanguageName()))
+			return;
 		    var a = new ViewModelProjectResource(old.get(), ltsSyntax);
 		    if(!ViewModelDiff.areComparable(a, n))
 			return;
