@@ -33,6 +33,13 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Tool that enables cut/copy/paste support
+ *
+ * - <Shortcut> + X to cut
+ * - <Shortcut> + C to copy
+ * - <Shortcut> + V to paste
+ */
 public class ClipboardTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(ClipboardTool.class);
     private final ObservableList<ViewModelSelection> selectedElements;
@@ -54,6 +61,11 @@ public class ClipboardTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
+            Tool that enables cut/copy/paste support
+
+             - <Shortcut> + X to cut
+             - <Shortcut> + C to copy
+             - <Shortcut> + V to paste
             """;
     }
 
@@ -71,7 +83,7 @@ public class ClipboardTool extends AbstractBaseTool {
     public void onKeyEvent(ViewportKeyEvent e) {
         if(!e.event().isShortcutDown())
             return;
-		if(!e.event().getEventType().equals(KeyEvent.KEY_PRESSED))
+        if(!e.event().getEventType().equals(KeyEvent.KEY_PRESSED))
             return;
         if(e.event().getCode().equals(KeyCode.C))
             copySelection(e);

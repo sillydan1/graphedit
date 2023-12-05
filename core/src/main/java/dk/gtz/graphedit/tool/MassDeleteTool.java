@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.tool;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
@@ -18,6 +19,11 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Tool to delete the currently selected elements.
+ *
+ * Use the 'Del' or Backspace key to delete selected elements.
+ */
 public class MassDeleteTool extends AbstractBaseTool {
     private final ObservableList<ViewModelSelection> selectedElements;
     private final IUndoSystem undoSystem;
@@ -37,8 +43,17 @@ public class MassDeleteTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
 	return """
+	    Tool to delete the currently selected elements.
+
+	    Use the 'Del' or Backspace key to delete selected elements.
 	    """;
     }
+
+    @Override
+    public Optional<String> getTooltip() {
+	return Optional.of("delete currently selected elements");
+    }
+
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
