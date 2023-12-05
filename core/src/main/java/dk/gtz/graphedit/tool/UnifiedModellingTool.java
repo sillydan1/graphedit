@@ -33,6 +33,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     private final EdgeDeleteTool edgeDeleteTool;
     private final SelectTool selectTool;
     private final LintInspectorTool hoverTool;
+    private final ClipboardTool clipboardTool;
 
     /**
      * Cronstruct a new instance
@@ -45,6 +46,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
         this.edgeDeleteTool = new EdgeDeleteTool();
         this.selectTool = new SelectTool();
         this.hoverTool = new LintInspectorTool();
+        this.clipboardTool = new ClipboardTool();
     }
 
     @Override
@@ -109,6 +111,7 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
         edgeCreateTool.onKeyEvent(e);
+        clipboardTool.onKeyEvent(e);
         if(!isDeleteKeyCombo(e.event()))
             return;
         for(var element : selectTool.getSelection()) {

@@ -101,7 +101,7 @@ public class ClipboardTool extends AbstractBaseTool {
                 if(!selectedVertices.containsKey(edge.getValue().target))
                     selectedVertices.put(edge.getValue().target, buffer.syntax().vertices().get(edge.getValue().target).toModel());
             }
-            var modelGraph = new ModelGraph("", selectedVertices, selectedEdges);
+            var modelGraph = new ModelGraph("", selectedVertices, selectedEdges); // NOTE: Declarations string cannot be copied by this tool
             var resource = new ViewModelProjectResource(buffer.metadata(), new ViewModelGraph(modelGraph, e.syntax())).toModel();
             var serializedModel = serializer.serialize(resource);
             var content = new ClipboardContent();
@@ -119,6 +119,7 @@ public class ClipboardTool extends AbstractBaseTool {
                 logger.error("no plain text in clipboard");
                 return;
             }
+            var syntaxFactory = e.syntax();
             var buffer = buffers.get(e.bufferId());
             var content = clipboard.getString();
             var resource = new ViewModelProjectResource(serializer.deserializeProjectResource(content), e.syntax());
@@ -130,7 +131,7 @@ public class ClipboardTool extends AbstractBaseTool {
                 var v = vertex.getValue();
                 var rerolled = UUID.randomUUID();
                 v.position().setValue(v.position().add(vertexOffset));
-                rerolledVertex.put(rerolled, new ViewModelVertex(rerolled, v.toModel(), v.shape()));
+                rerolledVertex.put(rerolled, syntaxFactory.createVertexViewModel(rerolled, v.toModel()));
                 remapping.put(vertex.getKey(), rerolled);
             }
             for(var edge : resource.syntax().edges().entrySet()) {
@@ -140,7 +141,7 @@ public class ClipboardTool extends AbstractBaseTool {
                 ev.target().set(remapping.get(ev.target().get()));
                 assert ev.source().get() != null;
                 assert ev.target().get() != null;
-                rerolledEdges.put(rerolled, new ViewModelEdge(rerolled, ev.toModel()));
+                rerolledEdges.put(rerolled, syntaxFactory.createEdgeViewModel(rerolled, ev.toModel()));
             }
             resource.syntax().vertices().clear();
             resource.syntax().vertices().putAll(rerolledVertex);
