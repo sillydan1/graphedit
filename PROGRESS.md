@@ -109,33 +109,34 @@
  - [x] GraphDiff algorithm (look at https://stackoverflow.com/questions/16553343/diff-for-directed-acyclic-graphs)
    - [x] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
    - [x] Cut / Copy / Paste support
-   - [ ] Plan for git integration
-   - [ ] Diff view?
  - [x] Lint layer
    - [ ] Lint protobuf specification
    - [x] Implement `ILint` / `ILinter` interfaces
  - [x] Release core as a library on ossrh
- - [ ] Additional Syntaxes
+ - [x] Additional Syntaxes
    - [x] Simple Text
    - [x] LTS
-   - [ ] NTTA
-   - [ ] HAWK
    - [x] P/N
-   - [ ] TIOA 
+ - [ ] Plugin Manager
  - [ ] Fix TODOs
  - [ ] Polish
  - [ ] Release `v1.2.0
+ - [ ] Third party language plugins
+   - [ ] TIOA 
+   - [ ] NTTA
+   - [ ] HAWK
+     - [ ] expr richtextfx.CodeArea implementation
  - [ ] Trace-traverser & specification
- - [ ] Release `v1.3.0`
+ - [ ] Plan for git integration
+ - [ ] Diff view?
+ - [x] Add plugin API and 
  - [x] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [x] Implement `ILsp` / `ILspEngine` interfaces
- - [ ] Release `v1.4.0`
+ - [ ] Release `v1.3.0`
  - [ ] DAP like specification
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `IDap` / `IDapEngine` interfaces
- - [ ] Release `v1.5.0`
- - [ ] Add plugin API and [LuaJava](https://github.com/gudzpoz/luajava/tree/main)
-   - [ ] Custom keybinds
-   - [ ] Rewrite the default plugins as a lua plugin. This will simplify the codebase tremendously
+ - [ ] Release `v1.4.0`
+ - [ ] Example lua plugin [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
  - [ ] Release `v2.0.0`
