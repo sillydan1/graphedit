@@ -40,6 +40,7 @@ public class ClipboardTool extends AbstractBaseTool {
     private final IBufferContainer buffers;
     private final Clipboard clipboard;
     private final IUndoSystem undoSystem;
+    private final MassDeleteTool deleteTool;
 
     public ClipboardTool() {
         selectedElements = DI.get("selectedElements");
@@ -47,6 +48,7 @@ public class ClipboardTool extends AbstractBaseTool {
         buffers = DI.get(IBufferContainer.class);
         undoSystem = DI.get(IUndoSystem.class);
         clipboard = Clipboard.getSystemClipboard();
+        deleteTool = new MassDeleteTool();
     }
 
     @Override
@@ -75,9 +77,8 @@ public class ClipboardTool extends AbstractBaseTool {
             copySelection(e);
         if(e.event().getCode().equals(KeyCode.V))
             pasteModel(e);
-        if(e.event().getCode().equals(KeyCode.X)) {
-            logger.info("cut is wip");
-        }
+        if(e.event().getCode().equals(KeyCode.X))
+            cutSelection(e);
     }
 
     public void copySelection(ViewportKeyEvent e) {
@@ -157,6 +158,17 @@ public class ClipboardTool extends AbstractBaseTool {
         } catch (UncomparableException exc) {
             logger.warn("clipboard model and target model are different syntaxes");
         } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
+    public void cutSelection(ViewportKeyEvent e) {
+        try {
+            if(selectedElements.isEmpty())
+                return;
+            copySelection(e);
+            deleteTool.deleteSelectedElements(e);
+        } catch(Exception exc) {
             throw new RuntimeException(exc);
         }
     }
