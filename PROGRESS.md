@@ -106,14 +106,14 @@
  - [x] TODOs round
  - [x] update readme (screenshots etc)
  - [x] Release `v1.1.0
- - [ ] GraphDiff algorithm (look at https://stackoverflow.com/questions/16553343/diff-for-directed-acyclic-graphs)
-   - [ ] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
-   - [ ] Cut / Copy / Paste support
+ - [x] GraphDiff algorithm (look at https://stackoverflow.com/questions/16553343/diff-for-directed-acyclic-graphs)
+   - [x] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
+   - [x] Cut / Copy / Paste support
    - [ ] Plan for git integration
    - [ ] Diff view?
  - [x] Lint layer
    - [ ] Lint protobuf specification
-   - [ ] Implement `ILint` / `ILinter` interfaces
+   - [x] Implement `ILint` / `ILinter` interfaces
  - [x] Release core as a library on ossrh
  - [ ] Additional Syntaxes
    - [x] Simple Text
@@ -127,9 +127,9 @@
  - [ ] Release `v1.2.0
  - [ ] Trace-traverser & specification
  - [ ] Release `v1.3.0`
- - [ ] LSP like specification (use docusaurus, or github wiki)
+ - [x] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
-   - [ ] Implement `ILsp` / `ILspEngine` interfaces
+   - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.4.0`
  - [ ] DAP like specification
    - [ ] Protobuf specification (that way, you are language agnostic)
