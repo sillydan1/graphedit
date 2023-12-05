@@ -1,5 +1,8 @@
 package dk.gtz.graphedit.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,12 +12,16 @@ import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -29,12 +36,13 @@ public class EditorTabPaneController {
     private Text placeholder;
     @FXML
     private VBox root;
+    private Map<Tab,ModelEditorController> tabControllerMapping;
 
     /**
      * Constructs a new instance of the editor tab panel view controller
      */
     public EditorTabPaneController() {
-
+	tabControllerMapping = new HashMap<>();
     }
 
     @FXML
@@ -87,6 +95,7 @@ public class EditorTabPaneController {
 		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
+		tabControllerMapping.put(tab, editorController);
 		editorController.addFocusListener(() -> {
 		    tabpane.getSelectionModel().select(tab);
 		    tabpane.requestFocus();
@@ -98,6 +107,21 @@ public class EditorTabPaneController {
 	    }
 	    if(c.wasRemoved())
 		c.getValueRemoved().getViews().forEach(v -> tabpane.getTabs().remove(v));
+	});
+
+	Platform.runLater(() -> {
+	    tabpane.getScene().addEventHandler(KeyEvent.ANY, e -> {
+		var c = tabControllerMapping.get(tabpane.selectionModelProperty().get().getSelectedItem());
+		if(c != null)
+		    c.onKeyEvent(e);
+	    });
+	});
+
+	tabpane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
+	    c.next();
+	    if(c.wasRemoved())
+		for(var removedTab : c.getRemoved())
+		    tabControllerMapping.remove(removedTab);
 	});
     }
 }

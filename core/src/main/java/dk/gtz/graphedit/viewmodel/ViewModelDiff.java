@@ -202,9 +202,6 @@ public class ViewModelDiff {
             g.vertices().put(vertexAddition.id(), vertexAddition);
         for(var edgeAddition : diff.edgeAdditions)
             g.edges().put(edgeAddition.id(), edgeAddition);
-
-        // TODO: add an undoable action
-        // TODO: Check if this actually makes for a valid syntax
     }
 
     public static void applyAdditiveOnly(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
@@ -318,10 +315,6 @@ public class ViewModelDiff {
         for(var x : edgeAdditions)
             result.append("\n").append("+e ").append(x.id().toString());
         return result.toString();
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
     public String getSyntaxStyle() {

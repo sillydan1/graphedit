@@ -9,10 +9,10 @@ import java.util.UUID;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.util.DragUtil;
 import dk.gtz.graphedit.util.MapGroup;
 import dk.gtz.graphedit.util.MetadataUtils;
@@ -22,7 +22,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
-import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -193,33 +192,30 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		    syntaxFactory = MetadataUtils.getSyntaxFactory(resource.metadata(), syntaxFactory);
 		    initializeToolbar();
 		    break;
-		default: break;
+		default:
+		    break;
 	    }
 	});
     }
 
     private void initializeToolEventHandlers() {
-	Platform.runLater(() -> {
-	    viewport.addEventHandler(MouseEvent.ANY, this::onMouseEvent);
-	    getScene().addEventHandler(KeyEvent.ANY, this::onKeyEvent);
-	});
+	viewport.addEventHandler(MouseEvent.ANY, this::onMouseEvent);
     }
 
-    private void onMouseEvent(MouseEvent e) {
-	var toolbox = DI.get(IToolbox.class);
+    public void onMouseEvent(MouseEvent e) {
 	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
 	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), bufferKey, settings);
-	toolbox.getSelectedTool().get().onViewportMouseEvent(mouseEvent);
+	DI.get(IToolbox.class).getSelectedTool().get().onViewportMouseEvent(mouseEvent);
 	var syntaxToolbox = syntaxFactory.getSyntaxTools();
 	if(syntaxToolbox.isPresent())
 	    syntaxToolbox.get().getSelectedTool().get().onViewportMouseEvent(mouseEvent);
     }
 
-    private void onKeyEvent(KeyEvent e) {
-	var toolbox = DI.get(IToolbox.class);
+    public void onKeyEvent(KeyEvent e) {
 	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
-	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, e.getTarget() == getParent().getParent(), syntaxFactory, resource.syntax(), bufferKey, settings);
-	toolbox.getSelectedTool().get().onKeyEvent(keyEvent);
+	var isTargetDrawpane = e.getTarget() == getParent().getParent();
+	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, isTargetDrawpane, syntaxFactory, resource.syntax(), bufferKey, settings);
+	DI.get(IToolbox.class).getSelectedTool().get().onKeyEvent(keyEvent);
 	var syntaxToolbox = syntaxFactory.getSyntaxTools();
 	if(syntaxToolbox.isPresent())
 	    syntaxToolbox.get().getSelectedTool().get().onKeyEvent(keyEvent);
