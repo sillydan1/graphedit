@@ -36,9 +36,9 @@ import javafx.scene.input.KeyEvent;
 /**
  * Tool that enables cut/copy/paste support
  *
- * - <Shortcut> + X to cut
- * - <Shortcut> + C to copy
- * - <Shortcut> + V to paste
+ * - ctrl + x to cut
+ * - ctrl + c to copy
+ * - ctrl + v to paste
  */
 public class ClipboardTool extends AbstractBaseTool {
     private final Logger logger = LoggerFactory.getLogger(ClipboardTool.class);
