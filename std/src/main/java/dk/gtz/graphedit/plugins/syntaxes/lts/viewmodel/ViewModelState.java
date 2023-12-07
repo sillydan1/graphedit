@@ -2,6 +2,7 @@ package dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.plugins.syntaxes.lts.model.ModelState;
@@ -29,8 +30,8 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 		return initial;
 	}
 
-	public ViewModelState(ModelVertex vertex) {
-		super(vertex);
+	public ViewModelState(UUID uuid, ModelVertex vertex) {
+		super(uuid, vertex);
 		name = new SimpleStringProperty("");
 		initial = new SimpleBooleanProperty(false);
 		if(vertex instanceof ModelState tvertex) {
@@ -39,14 +40,14 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 		}
 	}
 
-	public ViewModelState(ModelState vertex) {
-		super(vertex);
+	public ViewModelState(UUID uuid, ModelState vertex) {
+		super(uuid, vertex);
 		name = new SimpleStringProperty(vertex.name());
 		initial = new SimpleBooleanProperty(vertex.isInitial());
 	}
 
-	public ViewModelState(ViewModelVertex vertex) {
-		super(vertex.position(), vertex.shape());
+	public ViewModelState(UUID uuid, ViewModelVertex vertex) {
+		super(uuid, vertex.position(), vertex.shape());
 		name = new SimpleStringProperty("");
 		initial = new SimpleBooleanProperty(false);
 	}
@@ -151,5 +152,18 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 			initial.unbindBidirectional(tother.initial());
 		}
 	}
-}
 
+	@Override
+	public boolean equals(Object other) {
+		if(!super.equals(other))
+			return false;
+		if(!(other instanceof ViewModelState vother))
+			return false;
+		return name.get().equals(vother.name.get()) && initial.get() == vother.initial.get();
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ name.getValue().hashCode() ^ initial.getValue().hashCode();
+	}
+}

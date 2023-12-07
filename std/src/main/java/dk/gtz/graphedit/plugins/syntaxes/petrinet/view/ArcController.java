@@ -24,8 +24,8 @@ public class ArcController extends EdgeController {
     private Label label;
     private DoubleProperty labelDirOffset;
 
-    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-        super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory);
+    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+        super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
         this.label = createWeightLabel();

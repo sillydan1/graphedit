@@ -21,5 +21,6 @@ public record ViewportKeyEvent(
 		boolean isTargetDrawpane,
 		ISyntaxFactory syntax,
 		ViewModelGraph graph,
+		String bufferId,
 		ViewModelEditorSettings editorSettings) {}
 

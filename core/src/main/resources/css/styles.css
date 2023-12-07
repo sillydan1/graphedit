@@ -28,8 +28,32 @@
     -fx-stroke: -color-warning-emphasis;
 }
 
+.stroke-warning {
+    -fx-stroke: -color-warning-emphasis;
+}
+
+.stroke-info {
+    -fx-stroke: -color-neutral-emphasis;
+}
+
+.stroke-error {
+    -fx-stroke: -color-danger-emphasis;
+}
+
 .stroke-selected {
     -fx-stroke: -color-success-fg;
+}
+
+.stroke-success {
+    -fx-stroke: -color-success-fg;
+}
+
+.bg-error {
+    -fx-background-color: -color-danger-subtle;
+}
+
+.bg-warning {
+    -fx-background-color: -color-warning-subtle;
 }
 
 .log-text {

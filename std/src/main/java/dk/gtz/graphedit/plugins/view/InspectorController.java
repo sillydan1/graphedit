@@ -25,23 +25,22 @@ import javafx.scene.layout.VBox;
  * The javafx controller for the syntax property inspector panel
  */
 public class InspectorController extends StackPane {
-    private VBox propertiesContainer;
-    private ScrollPane scrollPane;
+    private final VBox propertiesContainer;
+    private final ScrollPane scrollPane;
     private final ObservableList<ViewModelSelection> selectedElements;
 
     public InspectorController() {
 	selectedElements = DI.get("selectedElements");
+	propertiesContainer = new VBox();
+	propertiesContainer.setSpacing(5);
+	propertiesContainer.setPadding(new Insets(10));
+	scrollPane = new ScrollPane(propertiesContainer);
+	scrollPane.setFitToWidth(true);
 	initialize();
     }
 
     private void initialize() {
-	propertiesContainer = new VBox();
-	scrollPane = new ScrollPane(propertiesContainer);
-	scrollPane.setFitToWidth(true);
 	getChildren().add(scrollPane);
-	propertiesContainer.setSpacing(5);
-	propertiesContainer.setPadding(new Insets(10));
-	scrollPane.setContent(propertiesContainer);
 	addAllSelected();
 	initializeSelectionEventHandlers();
     }

@@ -54,7 +54,7 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
         var toolbox = DI.get(IToolbox.class);
         if(vertexValue instanceof ViewModelPlace placeVertex)
             return new PlaceController(vertexKey, placeVertex,
@@ -62,52 +62,52 @@ public class PNSyntaxFactory implements ISyntaxFactory {
                     creatorController.getProjectResource().syntax(),
                     creatorController.getEditorSettings(),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
         if(vertexValue instanceof ViewModelTransition transitionVertex)
             return new TransitionController(vertexKey, transitionVertex,
                     creatorController.getViewportTransform(),
                     creatorController.getProjectResource().syntax(),
                     creatorController.getEditorSettings(),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
 
         if(this.toolbox.getSelectedTool().get() instanceof PlaceTool)
-            return new PlaceController(vertexKey, new ViewModelPlace(vertexValue),
+            return new PlaceController(vertexKey, new ViewModelPlace(vertexKey, vertexValue),
                     creatorController.getViewportTransform(),
                     creatorController.getProjectResource().syntax(),
                     creatorController.getEditorSettings(),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
         if(this.toolbox.getSelectedTool().get() instanceof TransitionTool)
-            return new TransitionController(vertexKey, new ViewModelTransition(vertexValue.toModel()),
+            return new TransitionController(vertexKey, new ViewModelTransition(vertexKey, vertexValue.toModel()),
                     creatorController.getViewportTransform(),
                     creatorController.getProjectResource().syntax(),
                     creatorController.getEditorSettings(),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
 
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
         if(vertexValue instanceof ModelPlace place)
-            return new ViewModelPlace(place);
+            return new ViewModelPlace(vertexKey, place);
         if(vertexValue instanceof ModelTransition transition)
-            return new ViewModelTransition(transition);
+            return new ViewModelTransition(vertexKey, transition);
 
         if(toolbox.getSelectedTool().get() instanceof PlaceTool)
-            return new ViewModelPlace(vertexValue);
+            return new ViewModelPlace(vertexKey, vertexValue);
         if(toolbox.getSelectedTool().get() instanceof TransitionTool)
-            return new ViewModelTransition(vertexValue);
+            return new ViewModelTransition(vertexKey, vertexValue);
 
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
         var toolbox = DI.get(IToolbox.class);
-        var arc = new ViewModelArc(edgeValue.toModel());
+        var arc = new ViewModelArc(edgeKey, edgeValue.toModel());
         if(edgeValue instanceof ViewModelArc tarc)
             arc = tarc;
         return new ArcController(edgeKey, arc,
@@ -115,14 +115,14 @@ public class PNSyntaxFactory implements ISyntaxFactory {
                 creatorController.getViewportTransform(),
                 creatorController.getEditorSettings(),
                 toolbox.getSelectedTool(),
-                this);
+                this, bufferKey);
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
         if(edgeValue instanceof ModelArc arc)
-            return new ViewModelArc(arc);
-        return new ViewModelArc(edgeValue);
+            return new ViewModelArc(edgeKey, arc);
+        return new ViewModelArc(edgeKey, edgeValue);
     }
 
     @Override
@@ -135,4 +135,3 @@ public class PNSyntaxFactory implements ISyntaxFactory {
         return Optional.of(toolbox);
     }
 }
-

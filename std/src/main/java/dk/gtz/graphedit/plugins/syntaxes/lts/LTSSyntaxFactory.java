@@ -40,9 +40,9 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
-	var vertex = new ViewModelState(vertexValue);
+	var vertex = new ViewModelState(vertexKey, vertexValue);
 	if(vertexValue instanceof ViewModelState tvertex)
 	    vertex = tvertex;
 	return new StateController(vertexKey, vertex, 
@@ -50,18 +50,18 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
 		creatorController.getProjectResource().syntax(),
 		creatorController.getEditorSettings(),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
-	return new ViewModelState(vertexValue);
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+	return new ViewModelState(vertexKey, vertexValue);
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
 	var toolbox = DI.get(IToolbox.class);
-	var edge = new ViewModelTransition(edgeValue);
+	var edge = new ViewModelTransition(edgeKey, edgeValue);
 	if(edgeValue instanceof ViewModelTransition tedge)
 	    edge = tedge;
 	return new TransitionController(edgeKey, edge,
@@ -69,12 +69,12 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
 		creatorController.getViewportTransform(),
 		creatorController.getEditorSettings(),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
-	return new ViewModelTransition(edgeValue);
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+	return new ViewModelTransition(edgeKey, edgeValue);
     }
 
     @Override
@@ -87,4 +87,3 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
 	return Optional.empty();
     }
 }
-

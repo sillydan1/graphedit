@@ -20,6 +20,7 @@ import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.tool.LintInspectorTool;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
 import dk.gtz.graphedit.tool.UnifiedModellingTool;
@@ -34,6 +35,7 @@ import dk.gtz.graphedit.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -106,6 +108,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
 	DI.add(ViewModelEditorSettings.class, EditorActions.loadEditorSettings());
@@ -132,7 +135,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		new EdgeDeleteTool(),
 		new VertexCreateTool(),
 		new VertexDeleteTool(),
-		new SelectTool());
+		new SelectTool(),
+		new LintInspectorTool());
 	toolbox.add("inspect", new ViewTool());
 	DI.add(IToolbox.class, toolbox);
 	toolbox.selectTool(toolbox.getDefaultTool());

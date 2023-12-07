@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
@@ -18,6 +18,7 @@ import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -67,12 +68,21 @@ public class VertexController extends StackPane {
      * @param selectedTool The object property specifying which tool is currently selected
      * @param syntaxFactory The associated syntax factory
      */
-    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
+    public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
 	this.vertexKey = vertexKey;
 	this.vertexValue = vertex;
 	this.viewportAffine = viewportAffine;
 	this.syntaxFactory = syntaxFactory;
-	initialize(selectedTool, graph, editorSettings);
+	var t = new Tooltip();
+	this.vertexValue.addHoverListener((e,o,n) -> {
+	    if(n == null)
+		Tooltip.uninstall(this, t);
+	    else {
+		t.setGraphic(n);
+		Tooltip.install(this, t);
+	    }
+	});
+	initialize(selectedTool, graph, editorSettings, bufferKey);
     }
 
     /**
@@ -81,12 +91,12 @@ public class VertexController extends StackPane {
      * @param graph The parent graph containing the represented viewmodel vertex
      * @param editorSettings The current editor settings
      */
-    protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
+    protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
 	this.graphic = initializeVertexRepresentation();
 	addGraphic();
 	addLabel();
 	initializeStyle();
-	initializeVertexEventHandlers(selectedTool, graph, editorSettings);
+	initializeVertexEventHandlers(selectedTool, graph, editorSettings, bufferKey);
 	var pulseTimeline = createPulseTimeline(1.1, Duration.millis(300));
 	this.vertexValue.addFocusListener(() -> {
 	    pulseTimeline.playFromStart();
@@ -180,8 +190,8 @@ public class VertexController extends StackPane {
 	return new Timeline(kx1, ky1, kx2, ky2);
     }
 
-    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, editorSettings)));
+    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, bufferKey, editorSettings)));
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
 		graphic.getStyleClass().add("stroke-selected");

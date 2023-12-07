@@ -2,6 +2,7 @@ package dk.gtz.graphedit.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,32 +11,39 @@ import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 
 /**
  * View model representation of a {@link ModelVertex}.
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
-public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, Property<ViewModelVertex> {
+public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, IFocusable, Property<ViewModelVertex> {
     private Logger logger = LoggerFactory.getLogger(ViewModelVertex.class);
+    private final UUID uuid;
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
+    private final ObjectProperty<Node> hoverElement;
 
     /**
      * Constructs a new view model vertex based on a position and a shape
      * @param position the point at which the vertex is located
      * @param shape the shape at which edges should follow
      */
-    public ViewModelVertex(ViewModelPoint position, ViewModelVertexShape shape) {
+    public ViewModelVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
+	this.uuid = uuid;
 	this.position = position;
 	this.shape = shape;
 	this.isSelected = new SimpleBooleanProperty(false);
 	this.focusEventHandlers = new ArrayList<>();
+	this.hoverElement = new SimpleObjectProperty<>();
     }
 
     /**
@@ -43,16 +51,16 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
      * @param vertex the model vertex to base on
      * @param shape the shape at which edges should follow
      */
-    public ViewModelVertex(ModelVertex vertex, ViewModelVertexShape shape) {
-	this(new ViewModelPoint(vertex.position), shape);
+    public ViewModelVertex(UUID uuid, ModelVertex vertex, ViewModelVertexShape shape) {
+	this(uuid, new ViewModelPoint(vertex.position), shape);
     }
 
     /**
      * Constructs a new view model vertex based on a model vertex
      * @param vertex the model vertex to base on
      */
-    public ViewModelVertex(ModelVertex vertex) {
-	this(vertex, new ViewModelVertexShape());
+    public ViewModelVertex(UUID uuid, ModelVertex vertex) {
+	this(uuid, vertex, new ViewModelVertexShape());
     }
 
     /**
@@ -77,6 +85,14 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
      */
     public ViewModelVertexShape shape() {
 	return shape;
+    }
+
+    /**
+     * Get the id of the vertex
+     * @return the unique identifier of the vertex
+     */
+    public UUID id() {
+	return uuid;
     }
 
     @Override
@@ -181,5 +197,42 @@ public class ViewModelVertex implements IInspectable, ISelectable, IFocusable, P
     public void unbindBidirectional(Property<ViewModelVertex> other) {
 	position.unbindBidirectional(other.getValue().position());
     }
-}
 
+    @Override
+    public void hover(Node node) {
+	hoverElement.set(node);
+    }
+
+    @Override
+    public void addHoverListener(ChangeListener<Node> consumer) {
+	hoverElement.addListener(consumer);
+    }
+
+    @Override
+    public boolean isHovering() {
+	return hoverElement.isNotNull().get();
+    }
+
+    @Override
+    public void unhover() {
+	hoverElement.set(null);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+	if(other == null)
+	    return false;
+	if(!(other instanceof ViewModelVertex vother))
+	    return false;
+	if(!uuid.equals(vother.uuid))
+	    return false;
+	if(!position.equals(vother.position))
+	    return false;
+	return true;
+    }
+
+    @Override
+    public int hashCode() {
+	return position.hashCode() ^ uuid.hashCode();
+    }
+}

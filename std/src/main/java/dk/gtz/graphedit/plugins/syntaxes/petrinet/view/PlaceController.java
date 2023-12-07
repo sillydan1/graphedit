@@ -19,8 +19,8 @@ public class PlaceController extends VertexController {
     private final Logger logger = LoggerFactory.getLogger(PlaceController.class);
     private final ViewModelPlace vertex;
 
-    public PlaceController(UUID vertexKey, ViewModelPlace vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-        super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
+    public PlaceController(UUID vertexKey, ViewModelPlace vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+        super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.vertex = vertex;
         getChildren().add(createLabelGraphic());
     }

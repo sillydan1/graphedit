@@ -15,4 +15,3 @@ public interface IFocusable {
      */
     void focus();
 }
-

@@ -28,8 +28,8 @@ public class StateController extends VertexController {
     private Rectangle rectangleGraphic;
     private Rectangle outerRectangleGraphic;
 
-    public StateController(UUID vertexKey, ViewModelState vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-        super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
+    public StateController(UUID vertexKey, ViewModelState vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+        super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.vertex = vertex;
         this.label = createLabelGraphic();
         this.graphicsStack = new StackPane();

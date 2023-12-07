@@ -87,4 +87,3 @@ public class MapGroup<K> {
 	return group.getChildren().addAll(children.values());
     }
 }
-

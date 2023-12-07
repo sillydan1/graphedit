@@ -136,6 +136,36 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 	return new ViewModelPoint(getX() * scalar, getY() * scalar);
     }
 
+    /**
+     * Calculate the dot product between this and another point (as if they are vectors).
+     * @param other The other point to dot
+     * @return The dot product of this and the other point as a vector 
+     */
+    public double dot(ViewModelPoint other) {
+	return (getX() * other.getX()) + (getY() * other.getY());
+    }
+
+    public ViewModelPoint copy() {
+	return new ViewModelPoint(getX(), getY());
+    }
+
+    public ViewModelPoint multiply(ViewModelPoint other) {
+	return new ViewModelPoint(getX() * other.getX(), getY() * other.getY());
+    }
+
+    public double angle(ViewModelPoint other) {
+	return Math.toDegrees(Math.acos(dot(other) / (distance() * other.distance())));
+    }
+
+    public ViewModelPoint normalized() {
+	var magnitude = distance();
+	return new ViewModelPoint(getX() / magnitude, getY() / magnitude);
+    }
+
+    public double distance() {
+	return Math.sqrt((getX() * getX()) + (getY() * getY()));
+    }
+
     @Override
     public Object getBean() {
 	return null;
@@ -208,5 +238,18 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 	x.unbindBidirectional(other.getValue().x);
 	y.unbindBidirectional(other.getValue().y);
     }
-}
 
+    @Override
+    public boolean equals(Object other) {
+	if(other == null)
+	    return false;
+	if(!(other instanceof ViewModelPoint vother))
+	    return false;
+	return x.get() == vother.x.get() && y.get() == vother.y.get();
+    }
+
+    @Override
+    public int hashCode() {
+	return x.getValue().hashCode() ^ y.getValue().hashCode();
+    }
+}

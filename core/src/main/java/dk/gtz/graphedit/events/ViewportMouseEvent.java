@@ -21,5 +21,6 @@ public record ViewportMouseEvent(
 		boolean isTargetDrawPane,
 		ISyntaxFactory syntax,
 		ViewModelGraph graph,
+		String bufferId,
 		ViewModelEditorSettings editorSettings) {}
 

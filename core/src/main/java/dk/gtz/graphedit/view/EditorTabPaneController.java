@@ -1,11 +1,16 @@
 package dk.gtz.graphedit.view;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -17,6 +22,7 @@ import javafx.scene.text.Text;
  * View controller for the panel that contains tabs of model editor views as tabs.
  */
 public class EditorTabPaneController {
+    private static Logger logger = LoggerFactory.getLogger(EditorTabPaneController.class);
     @FXML
     private TabPane tabpane;
     @FXML
@@ -53,15 +59,27 @@ public class EditorTabPaneController {
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
 		var tab = new DraggableTabController(tabTitle);
+		var modelSyntax = new SimpleObjectProperty<>(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
+		var lastSavedModel = new SimpleObjectProperty<>(changedVal.toModel());
 		changedVal.addView(tab);
-		changedVal.addListener((e,o,n) -> tab.setHighlight());
-		EditorActions.addSaveListener(tab::unsetHighlight);
+		changedVal.addListener((e,o,n) -> {
+		    var diff = ViewModelDiff.compare(new ViewModelProjectResource(lastSavedModel.get(), modelSyntax.get()), n);
+		    if(diff.isEmpty())
+			tab.unsetHighlight();
+		    else
+			tab.setHighlight();
+		});
+		EditorActions.addSaveListener(() -> {
+		    modelSyntax.set(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
+		    lastSavedModel.set(changedVal.toModel());
+		    tab.unsetHighlight();
+		});
 		tab.setOnClosed(e ->  {
 		    changedVal.removeView(tab);
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
-		var editorController = new ModelEditorController(changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
+		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
 		tab.setContent(editorController);
 		tabpane.getTabs().add(tab);
 		editorController.addFocusListener(() -> {

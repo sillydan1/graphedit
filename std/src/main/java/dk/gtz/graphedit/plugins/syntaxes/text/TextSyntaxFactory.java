@@ -37,9 +37,9 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	}
 
 	@Override
-	public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+	public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
 		var toolbox = DI.get(IToolbox.class);
-		var vertex = new ViewModelTextVertex(vertexValue);
+		var vertex = new ViewModelTextVertex(vertexKey, vertexValue);
 		if(vertexValue instanceof ViewModelTextVertex textVertexValue)
 			vertex = textVertexValue;
 		return new TextVertexController(vertexKey, vertex, 
@@ -47,28 +47,28 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 			creatorController.getProjectResource().syntax(),
 			creatorController.getEditorSettings(),
 			toolbox.getSelectedTool(),
-			this);
+			this, bufferKey);
 	}
 
 	@Override
-	public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+	public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
 		var toolbox = DI.get(IToolbox.class);
 		return new EdgeController(edgeKey, edgeValue,
 			creatorController.getProjectResource(),
 			creatorController.getViewportTransform(),
 			creatorController.getEditorSettings(),
 			toolbox.getSelectedTool(),
-			this);
+			this, bufferKey);
 	}
 
 	@Override
-	public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
-		return new ViewModelTextVertex(vertexValue);
+	public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+		return new ViewModelTextVertex(vertexKey, vertexValue);
 	}
 
 	@Override
-	public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
-		return new ViewModelEdge(edgeValue);
+	public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+		return new ViewModelEdge(edgeKey, edgeValue);
 	}
 
 	@Override
@@ -81,4 +81,3 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 		return Optional.empty();
 	}
 }
-

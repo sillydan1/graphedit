@@ -24,8 +24,8 @@ public class TransitionController extends EdgeController {
     private Label label;
     private DoubleProperty labelDirOffset;
 
-    public TransitionController(UUID edgeKey, ViewModelTransition edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-        super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory);
+    public TransitionController(UUID edgeKey, ViewModelTransition edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+        super(edgeKey, edge, resource, viewportAffine, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
         this.label = createActionLabel();
