@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.UncomparableException;
+import dk.gtz.graphedit.util.MetadataUtils;
 
 public class ViewModelDiff {
     private static Logger logger = LoggerFactory.getLogger(ViewModelDiff.class);
@@ -19,6 +20,22 @@ public class ViewModelDiff {
     private final List<ViewModelEdge> edgeDeletions;
     private final List<ViewModelVertex> vertexAdditions;
     private final List<ViewModelEdge> edgeAdditions;
+
+    public List<ViewModelVertex> getVertexDeletions() {
+        return vertexDeletions;
+    }
+
+    public List<ViewModelEdge> getEdgeDeletions() {
+        return edgeDeletions;
+    }
+
+    public List<ViewModelVertex> getVertexAdditions() {
+        return vertexAdditions;
+    }
+
+    public List<ViewModelEdge> getEdgeAdditions() {
+        return edgeAdditions;
+    }
 
     public int size() {
         return vertexDeletions.size() +
@@ -37,6 +54,16 @@ public class ViewModelDiff {
         edgeDeletions = new ArrayList<>();
         vertexAdditions = new ArrayList<>();
         edgeAdditions = new ArrayList<>();
+    }
+
+    public static boolean areComparable(ViewModelProjectResource a, ViewModelProjectResource b) {
+        var aSyntaxName = a.getSyntaxName();
+        var bSyntaxName = b.getSyntaxName();
+        if(aSyntaxName.isEmpty() || bSyntaxName.isEmpty())
+            return false;
+        if(!aSyntaxName.get().equals(bSyntaxName.get()))
+            return false;
+        return true;
     }
 
     public static ViewModelDiff compare(ViewModelProjectResource a, ViewModelProjectResource b) throws UncomparableException {
@@ -75,7 +102,7 @@ public class ViewModelDiff {
                     x = v.get(ki-1).get() + 1;
                 var y = x - k;
                 var outOfRange = x < 0 || x >= n ||
-                                 y < 0 || y >= m;
+                    y < 0 || y >= m;
                 while(x < n && y < m && !outOfRange && areSyntaxElementsEqual(sortedA.get(x), sortedB.get(y), a, b)) {
                     x++;
                     y++;
@@ -163,7 +190,7 @@ public class ViewModelDiff {
         var graphSyntaxName = resource.getSyntaxName();
         if(graphSyntaxName.isEmpty())
             throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
-        if(diff.syntaxStyle.equals(graphSyntaxName.get()))
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
             throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
 
         var g = resource.syntax();
@@ -175,16 +202,37 @@ public class ViewModelDiff {
             g.vertices().put(vertexAddition.id(), vertexAddition);
         for(var edgeAddition : diff.edgeAdditions)
             g.edges().put(edgeAddition.id(), edgeAddition);
+    }
 
-        // TODO: add an undoable action
-        // TODO: Check if this actually makes for a valid syntax
+    public static void applyAdditiveOnly(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var graphSyntaxName = resource.getSyntaxName();
+        if(graphSyntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
+            throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
+
+        var g = resource.syntax();
+        for(var vertexAddition : diff.vertexAdditions)
+            g.vertices().put(vertexAddition.id(), vertexAddition);
+        for(var edgeAddition : diff.edgeAdditions)
+            g.edges().put(edgeAddition.id(), edgeAddition);
+    }
+
+    public static ViewModelProjectResource applyCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var modelCpy = resource.toModel();
+        var syntaxName = resource.getSyntaxName();
+        if(syntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        var result = new ViewModelProjectResource(modelCpy, MetadataUtils.getSyntaxFactory(syntaxName.get()));
+        apply(result, diff);
+        return result;
     }
 
     public static void revert(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
         var graphSyntaxName = resource.getSyntaxName();
         if(graphSyntaxName.isEmpty())
             throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
-        if(diff.syntaxStyle.equals(graphSyntaxName.get()))
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
             throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
 
         var g = resource.syntax();
@@ -196,6 +244,30 @@ public class ViewModelDiff {
             g.vertices().put(vertexDeletion.id(), vertexDeletion);
         for(var edgeDeletion : diff.edgeDeletions)
             g.edges().put(edgeDeletion.id(), edgeDeletion);
+    }
+
+    public static void revertAdditiveOnly(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var graphSyntaxName = resource.getSyntaxName();
+        if(graphSyntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        if(!diff.syntaxStyle.equals(graphSyntaxName.get()))
+            throw new UncomparableException("mismatched syntaxes '%s' diff vs '%s' graph".formatted(diff.syntaxStyle, graphSyntaxName.get()));
+
+        var g = resource.syntax();
+        for(var edgeAddition : diff.edgeAdditions)
+            g.edges().remove(edgeAddition.id());
+        for(var vertexAddition : diff.vertexAdditions)
+            g.vertices().remove(vertexAddition.id());
+    }
+
+    public static ViewModelProjectResource revertCopy(ViewModelProjectResource resource, ViewModelDiff diff) throws UncomparableException {
+        var modelCpy = resource.toModel();
+        var syntaxName = resource.getSyntaxName();
+        if(syntaxName.isEmpty())
+            throw new UncomparableException("graph has no syntax name metadata field, refusing to apply diffs to it");
+        var result = new ViewModelProjectResource(modelCpy, MetadataUtils.getSyntaxFactory(syntaxName.get()));
+        revert(result, diff);
+        return result;
     }
 
     @Override
@@ -243,5 +315,9 @@ public class ViewModelDiff {
         for(var x : edgeAdditions)
             result.append("\n").append("+e ").append(x.id().toString());
         return result.toString();
+    }
+
+    public String getSyntaxStyle() {
+        return syntaxStyle;
     }
 }

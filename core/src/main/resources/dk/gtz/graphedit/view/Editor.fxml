@@ -57,12 +57,11 @@
         <right>
         </right>
         <bottom>
-            <BorderPane>
+            <BorderPane fx:id="bottomBorderPane">
                 <center>
                     <fx:include source="LogTabPane.fxml"/> 
                 </center>
                 <bottom>
-                    <Label fx:id="statusBar" text=""/>
                 </bottom>
             </BorderPane>
         </bottom>

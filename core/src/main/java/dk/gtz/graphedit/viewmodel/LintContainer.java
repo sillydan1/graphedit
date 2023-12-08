@@ -1,7 +1,9 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.Collection;
 import java.util.HashMap;
 
+import dk.gtz.graphedit.model.ModelLint;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -30,5 +32,24 @@ public class LintContainer {
             data.put(bufferKey, new SimpleListProperty<>(FXCollections.observableArrayList()));
         data.get(bufferKey).add(lint);
         return this;
+    }
+
+    public LintContainer add(ModelLint lint) {
+        if(!data.containsKey(lint.modelKey()))
+            data.put(lint.modelKey(), new SimpleListProperty<>(FXCollections.observableArrayList()));
+        data.get(lint.modelKey()).add(new ViewModelLint(lint));
+        return this;
+    }
+
+    public LintContainer replaceAll(Collection<ModelLint> lints) {
+        clear();
+        for(var lint : lints)
+            add(lint);
+        return this;
+    }
+
+    private void clear() {
+        for(var entry : data.entrySet())
+            entry.getValue().clear();
     }
 }
