@@ -22,16 +22,16 @@ public class StatusBarController extends StackPane {
     private int frameIndex;
     private final long intervalMilliseconds = 80;
     private final List<String> frames = List.of(
-    		"⠋",
-    		"⠙",
-    		"⠹",
-    		"⠸",
-    		"⠼",
-    		"⠴",
-    		"⠦",
-    		"⠧",
-    		"⠇",
-    		"⠏");
+	    "\u280B",
+	    "\u2819",
+	    "\u2839",
+	    "\u2838",
+	    "\u283C",
+	    "\u2834",
+	    "\u2826",
+	    "\u2827",
+	    "\u2807",
+	    "\u280F"); // Shamelessly stolen from cli-spinners, see https://github.com/sindresorhus/cli-spinners/blob/main/spinners.json
 
     public StatusBarController() {
 	frameIndex = 0;
@@ -74,7 +74,7 @@ public class StatusBarController extends StackPane {
 		    case END:
 			if(spinnerThread.isAlive())
 			    spinnerThread.interrupt();
-			Platform.runLater(() -> spinnerString.set("✔"));
+			Platform.runLater(() -> spinnerString.set("\u2714")); // checkmark unicode character
 			break;
 		    default:
 			if(spinnerThread.isAlive())
