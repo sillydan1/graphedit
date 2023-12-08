@@ -135,9 +135,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    serverVal.initialize(projectFile, buffers);
 	    serverVal.addNotificationCallback(this::logNotification);
 	    serverVal.addDiagnosticsCallback(lints::replaceAll);
-	    serverVal.addProgressCallback(p -> {
-		logger.trace(p.message()); // TODO: Implement a proper LSP progress indicator
-	    });
 	    logger.trace("starting thread for language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
 	    var t = new Thread(serverVal::start);
 	    t.setName(serverVal.getServerName());

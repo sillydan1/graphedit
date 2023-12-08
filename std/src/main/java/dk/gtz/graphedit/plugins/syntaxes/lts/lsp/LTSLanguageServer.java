@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
+import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.util.MetadataUtils;
@@ -71,15 +72,20 @@ public class LTSLanguageServer implements ILanguageServer {
 			return;
 		    if(!syntaxName.get().equals(getLanguageName()))
 			return;
-		    var a = new ViewModelProjectResource(old.get(), ltsSyntax);
-		    if(!ViewModelDiff.areComparable(a, n))
-			return;
-		    var diff = ViewModelDiff.compare(a, n);
-		    old.set(n.toModel());
-		    if(diff.getEdgeAdditions().isEmpty() && diff.getEdgeDeletions().isEmpty())
-			return;
-		    var cpy = ViewModelDiff.applyCopy(changedVal, diff);
-		    broadcastDiagnostics(c.getKey(), getSccs(c.getKey(), cpy));
+		    try {
+			broadcastProgress(new ModelLanguageServerProgress("", ModelLanguageServerProgressType.PROGRESS, getServerName(), "calculating diffs"));
+			var a = new ViewModelProjectResource(old.get(), ltsSyntax);
+			if(!ViewModelDiff.areComparable(a, n))
+			    return;
+			var diff = ViewModelDiff.compare(a, n);
+			old.set(n.toModel());
+			if(diff.getEdgeAdditions().isEmpty() && diff.getEdgeDeletions().isEmpty())
+			    return;
+			var cpy = ViewModelDiff.applyCopy(changedVal, diff);
+			broadcastDiagnostics(c.getKey(), getSccs(c.getKey(), cpy));
+		    } finally {
+			broadcastProgress(new ModelLanguageServerProgress("", ModelLanguageServerProgressType.END, getServerName(), "done"));
+		    }
 		});
 	    }
 	});
@@ -132,7 +138,7 @@ public class LTSLanguageServer implements ILanguageServer {
 	broadcastAllBufferDiagnostics();
 	while(!Thread.interrupted()) {
 	    try {
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 	    } catch (InterruptedException e) {
 		return;
 	    }
