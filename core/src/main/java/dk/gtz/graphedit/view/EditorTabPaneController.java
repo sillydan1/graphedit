@@ -3,9 +3,6 @@ package dk.gtz.graphedit.view;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -29,7 +26,6 @@ import javafx.scene.text.Text;
  * View controller for the panel that contains tabs of model editor views as tabs.
  */
 public class EditorTabPaneController {
-    private static Logger logger = LoggerFactory.getLogger(EditorTabPaneController.class);
     @FXML
     private TabPane tabpane;
     @FXML
@@ -49,6 +45,7 @@ public class EditorTabPaneController {
     private void initialize() {
 	initPlaceholderText();
 	initTabpaneBufferContainer();
+	initTabEventHandlers();
     }
 
     private void initPlaceholderText() {
@@ -108,7 +105,9 @@ public class EditorTabPaneController {
 	    if(c.wasRemoved())
 		c.getValueRemoved().getViews().forEach(v -> tabpane.getTabs().remove(v));
 	});
+    }
 
+    private void initTabEventHandlers() {
 	Platform.runLater(() -> {
 	    tabpane.getScene().addEventHandler(KeyEvent.ANY, e -> {
 		var c = tabControllerMapping.get(tabpane.selectionModelProperty().get().getSelectedItem());
