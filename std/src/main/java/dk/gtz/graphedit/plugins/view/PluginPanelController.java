@@ -18,11 +18,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
 
-public class PluginPanelController extends StackPane {
+public class PluginPanelController extends VBox {
     private final VBox container;
     private final ScrollPane scrollPane;
     private final ViewModelEditorSettings settings;
@@ -36,8 +35,8 @@ public class PluginPanelController extends StackPane {
 	container.setPadding(new Insets(10));
 	scrollPane = new ScrollPane(container);
 	scrollPane.setFitToWidth(true);
+	getChildren().add(getToolbar());
 	getChildren().add(scrollPane);
-	container.getChildren().add(getToolbar());
 	initializePluginsList();
     }
 
