@@ -63,8 +63,10 @@ public record ViewModelEditorSettings(
                         new SimpleListProperty<String>(FXCollections.observableArrayList()),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
-                this.recentProjects.addAll(settings.recentProjects());
-                this.disabledPlugins.addAll(settings.disabledPlugins());
+                if(settings.recentProjects() != null)
+                        this.recentProjects.addAll(settings.recentProjects());
+                if(settings.disabledPlugins() != null)
+                        this.disabledPlugins.addAll(settings.disabledPlugins());
         }
 
         /**

@@ -44,24 +44,18 @@ public class Main {
 
         var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
-        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
-            if(editorSettings.disabledPlugins().contains(plugin.getName()))
-                continue;
+        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
             plugin.onInitialize();
         }
-        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
+        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
             try {
-                if(editorSettings.disabledPlugins().contains(plugin.getName()))
-                    continue;
                 factories.add(plugin.getSyntaxFactories());
             } catch (Exception e) {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
             }
         }
-        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
+        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
             try {
-                if(editorSettings.disabledPlugins().contains(plugin.getName()))
-                    continue;
                 servers.add(plugin.getLanguageServers());
             } catch (Exception e) {
                 logger.error("could not load language servers for plugin: {}", plugin.getName(), e);

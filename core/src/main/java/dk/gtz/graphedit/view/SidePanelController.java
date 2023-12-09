@@ -47,10 +47,8 @@ public class SidePanelController {
 	}
 	left.setSpacing(20);
 	left.setPadding(new Insets(15));
-	for(var plugin : plugins.getPlugins()) {
+	for(var plugin : plugins.getEnabledPlugins()) {
 	    try {
-		if(settings.disabledPlugins().contains(plugin.getName()))
-		    continue;
 		initializePluginTab(plugin);
 	    } catch(Exception e) {
 		logger.error("could not initialize plugin tab for plugin: {}", plugin.getName(), e);
