@@ -8,19 +8,18 @@ import dk.gtz.graphedit.spi.IPluginPanel;
 import javafx.scene.Node;
 
 public class LintPanel implements IPluginPanel {
-
 	@Override
 	public String getTooltip() {
-        return "Lints";
+		return "Lints";
 	}
 
 	@Override
 	public Node getIcon() {
-        return new FontIcon(BootstrapIcons.STARS);
+		return new FontIcon(BootstrapIcons.STARS);
 	}
 
 	@Override
 	public Node getPanel() {
-        return new LintPanelController();
+		return new LintPanelController();
 	}
 }

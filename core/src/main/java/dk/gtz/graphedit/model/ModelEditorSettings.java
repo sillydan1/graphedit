@@ -70,13 +70,6 @@ public record ModelEditorSettings(
      * @return The OS-specific file path to editor settings
      */
     public static Path getEditorSettingsFile() {
-        if(PlatformUtils.isWindows())
-            return Path.of(System.getenv("AppData") + File.separator + "graphedit-settings.json");
-        var userHome = System.getProperty("user.home");
-        if(PlatformUtils.isMac())
-            userHome += "/Library/Application Support/Graphedit/";
-        else
-            userHome += "/.local/graphedit/";
-        return Path.of(userHome + "graphedit-settings.json");
+        return Path.of(EditorActions.getConfigDir() + File.separator + "graphedit-settings.json");
     }
 }

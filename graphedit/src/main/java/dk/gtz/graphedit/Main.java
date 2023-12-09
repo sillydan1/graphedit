@@ -32,12 +32,13 @@ public class Main {
             return;
         }
 
-        DI.add(IModelSerializer.class, new JacksonModelSerializer());
-        var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         var factories = new SyntaxFactoryCollection();
         var servers = new LanguageServerCollection();
         DI.add(SyntaxFactoryCollection.class, factories);
         DI.add(LanguageServerCollection.class, servers);
+        DI.add(IModelSerializer.class, new JacksonModelSerializer());
+
+        var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
         for(var plugin : loader.getLoadedPlugins().getPlugins())
             plugin.onInitialize();
@@ -55,6 +56,7 @@ public class Main {
                 logger.error("could not load language servers for plugin: {}", plugin.getName(), e);
             }
         }
+
         if(servers.isEmpty())
             logger.warn("No language servers loaded. Expect a very simple experience");
         if(factories.isEmpty())
