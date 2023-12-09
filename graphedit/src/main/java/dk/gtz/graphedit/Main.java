@@ -10,9 +10,11 @@ import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
+import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 
 public class Main {
@@ -37,13 +39,20 @@ public class Main {
         DI.add(SyntaxFactoryCollection.class, factories);
         DI.add(LanguageServerCollection.class, servers);
         DI.add(IModelSerializer.class, new JacksonModelSerializer());
+        var editorSettings = EditorActions.loadEditorSettings();
+        DI.add(ViewModelEditorSettings.class, editorSettings);
 
         var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
         DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
-        for(var plugin : loader.getLoadedPlugins().getPlugins())
+        for(var plugin : loader.getLoadedPlugins().getPlugins()) {
+            if(editorSettings.disabledPlugins().contains(plugin.getName()))
+                continue;
             plugin.onInitialize();
+        }
         for(var plugin : loader.getLoadedPlugins().getPlugins()) {
             try {
+                if(editorSettings.disabledPlugins().contains(plugin.getName()))
+                    continue;
                 factories.add(plugin.getSyntaxFactories());
             } catch (Exception e) {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
@@ -51,6 +60,8 @@ public class Main {
         }
         for(var plugin : loader.getLoadedPlugins().getPlugins()) {
             try {
+                if(editorSettings.disabledPlugins().contains(plugin.getName()))
+                    continue;
                 servers.add(plugin.getLanguageServers());
             } catch (Exception e) {
                 logger.error("could not load language servers for plugin: {}", plugin.getName(), e);

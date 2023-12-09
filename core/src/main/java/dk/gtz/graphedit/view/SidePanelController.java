@@ -7,6 +7,7 @@ import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginPanel;
 import dk.gtz.graphedit.spi.IPluginsContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -39,6 +40,7 @@ public class SidePanelController {
     @FXML
     private void initialize() {
 	var plugins = DI.get(IPluginsContainer.class);
+	var settings = DI.get(ViewModelEditorSettings.class);
 	if(plugins.getPlugins().isEmpty()) {
 	    logger.warn("No plugins are loaded, cannot show sidepanel");
 	    return;
@@ -47,6 +49,8 @@ public class SidePanelController {
 	left.setPadding(new Insets(15));
 	for(var plugin : plugins.getPlugins()) {
 	    try {
+		if(settings.disabledPlugins().contains(plugin.getName()))
+		    continue;
 		initializePluginTab(plugin);
 	    } catch(Exception e) {
 		logger.error("could not initialize plugin tab for plugin: {}", plugin.getName(), e);

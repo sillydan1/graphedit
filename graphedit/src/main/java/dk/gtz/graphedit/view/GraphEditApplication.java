@@ -34,7 +34,6 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
-import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableStackUndoSystem;
@@ -119,7 +118,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
-	DI.add(ViewModelEditorSettings.class, EditorActions.loadEditorSettings());
     }
 
     private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {
@@ -172,7 +170,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    var settings = DI.get(ViewModelEditorSettings.class);
 	    var projectFilePath = Path.of(settings.lastOpenedProject().get());
 	    if(!projectFilePath.toFile().exists())
-		throw new Exception("not a valid project file path, will load temp project " + projectFilePath.toString());
+		throw new Exception("project file path does not exist '" + projectFilePath.toString() + "', loading tmp project instead");
 	    var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	    DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
 	    setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
@@ -235,6 +233,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
     @Override
     public void stop() {
 	logger.trace("shutting down...");
+	if(lspThreads == null)
+	    return;
 	for(var lspThread : lspThreads) {
 	    logger.trace("interrupting lsp thread {}", lspThread.getName());
 	    lspThread.interrupt();

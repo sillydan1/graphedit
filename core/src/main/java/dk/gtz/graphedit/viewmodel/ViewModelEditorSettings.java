@@ -40,7 +40,8 @@ public record ViewModelEditorSettings(
                 BooleanProperty showErrorToasts,
                 BooleanProperty showTraceToasts,
                 StringProperty lastOpenedProject,
-                ListProperty<String> recentProjects) {
+                ListProperty<String> recentProjects,
+                ListProperty<String> disabledPlugins) {
 
         /**
          * Construct a new instance
@@ -59,9 +60,11 @@ public record ViewModelEditorSettings(
                         settings.showErrorToasts(),
                         settings.showTraceToasts(),
                         settings.lastOpenedProject(),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
                 this.recentProjects.addAll(settings.recentProjects());
+                this.disabledPlugins.addAll(settings.disabledPlugins());
         }
 
         /**
@@ -91,7 +94,8 @@ public record ViewModelEditorSettings(
                         boolean showErrorToasts,
                         boolean showTraceToasts,
                         String lastOpenedProject,
-                        List<String> recentProjects) {
+                        List<String> recentProjects,
+                        List<String> disabledPlugins) {
                 this(
                         new SimpleDoubleProperty(gridSizeX),
                         new SimpleDoubleProperty(gridSizeY),
@@ -104,8 +108,10 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(showErrorToasts),
                         new SimpleBooleanProperty(showTraceToasts),
                         new SimpleStringProperty(lastOpenedProject),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
                 this.recentProjects.addAll(recentProjects);
+                this.disabledPlugins.addAll(disabledPlugins);
         }
 }

@@ -54,4 +54,3 @@ public class ObservableSetPluginsContainer implements IPluginsContainer {
 		return plugins;
 	}
 }
-

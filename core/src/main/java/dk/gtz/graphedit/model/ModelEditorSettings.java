@@ -4,8 +4,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import dk.gtz.graphedit.util.PlatformUtils;
+import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 
 /**
@@ -23,6 +24,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
  * @param showTraceToasts When true, will display toasts on logger.trace calls
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
+ * @param disabledPlugins List of plugin filepaths that are disabled
  */
 public record ModelEditorSettings(
         double gridSizeX,
@@ -36,13 +38,14 @@ public record ModelEditorSettings(
         boolean showErrorToasts,
         boolean showTraceToasts,
         String lastOpenedProject,
-        List<String> recentProjects) {
+        List<String> recentProjects,
+        List<String> disabledPlugins) {
 
     /**
      * Constructs a ModelEditorSettings instance with default values.
      */
     public ModelEditorSettings() {
-        this(20.0d, 20.0d, true, false, true, false, true, true, true, false, "", new ArrayList<>());
+        this(20.0d, 20.0d, true, false, true, false, true, true, true, false, "", new ArrayList<>(), new ArrayList<>());
     }
 
     /**
@@ -61,7 +64,9 @@ public record ModelEditorSettings(
             viewmodel.showErrorToasts().get(),
             viewmodel.showTraceToasts().get(),
             viewmodel.lastOpenedProject().get(),
-            new ArrayList<String>(viewmodel.recentProjects().get()));
+            new ArrayList<String>(viewmodel.recentProjects().get()),
+            new ArrayList<String>(viewmodel.disabledPlugins().get())
+        );
     }
 
     /**

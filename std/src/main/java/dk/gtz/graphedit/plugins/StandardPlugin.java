@@ -19,6 +19,27 @@ public class StandardPlugin implements IPlugin {
     }
 
     @Override
+    public String getDescription() {
+        return """
+            Standard plugin. Provides all the basics. Be careful disabling this.
+            
+            Syntaxes provided:
+                - LTS
+                - Petrinet
+                - Simple
+
+            Language Servers provided:
+                - lts-ls (Example language server for LTS syntax)
+
+            Panels provided:
+                - Files panel
+                - Syntax Element Property Editor panel
+                - Lint Inspector panel
+                - Plugin panel
+            """;
+    }
+
+    @Override
     public List<ISyntaxFactory> getSyntaxFactories() throws Exception {
         return List.of(
                 new LTSSyntaxFactory(),
@@ -31,7 +52,8 @@ public class StandardPlugin implements IPlugin {
         return List.of(
                 new ProjectFilesViewPanel(),
                 new InspectorPanel(),
-                new LintPanel());
+                new LintPanel(),
+                new PluginPanel());
     }
 
     @Override
