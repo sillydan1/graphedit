@@ -42,7 +42,7 @@ public class PluginPanelController extends StackPane {
     }
 
     private Node getToolbar() {
-	var saveButton = new Button(null, new FontIcon(BootstrapIcons.SAVE));
+	var saveButton = new Button(null, new FontIcon(BootstrapIcons.HDD));
 	saveButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	var saveTip = new Tooltip("Save Settings");
 	saveTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
