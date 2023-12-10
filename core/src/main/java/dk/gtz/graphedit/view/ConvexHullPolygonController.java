@@ -3,9 +3,6 @@ package dk.gtz.graphedit.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -15,13 +12,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeType;
 
+/**
+ * Responsive polygon that fits to the convex hull of a set points.
+ * The convex hull is calculated using the quickhull algorithm.
+ */
 public class ConvexHullPolygonController extends Group {
-    private Logger logger = LoggerFactory.getLogger(ConvexHullPolygonController.class);
     private final List<ViewModelPoint> points;
     private ObjectProperty<StrokeType> strokeTypeProperty;
     private Color fill;
     private Polygon polygon;
 
+    /**
+     * Constructs a new convex hull polygon view
+     * @param points The points to calculate the convex hull from
+     */
     public ConvexHullPolygonController(List<ViewModelPoint> points) {
 	this.points = points;
 	fill = Color.TRANSPARENT;
@@ -41,10 +45,19 @@ public class ConvexHullPolygonController extends Group {
 	});
     }
 
+    /**
+     * Set polygon fill color
+     * @param fillColor The color to fill the convex hull polygon with
+     */
     public void setFill(Color fillColor) {
 	this.fill = fillColor;
     }
 
+    /**
+     * Get the center point of the polygon.
+     * Note that this point doesn't automatically update.
+     * @return The current center of the convex hull polygon
+     */
     public ViewModelPoint getCenter() {
 	var points = polygon.getPoints();
 	var result = new ViewModelPoint(0,0);
@@ -80,6 +93,10 @@ public class ConvexHullPolygonController extends Group {
 	return result;
     }
 
+    /**
+     * Add a styleclass to the polygon
+     * @param styleClass The new CSS style class to add
+     */
     public void addStyleClass(String styleClass) {
 	getStyleClass().add(styleClass);
 	polygon.getStyleClass().add(styleClass);
