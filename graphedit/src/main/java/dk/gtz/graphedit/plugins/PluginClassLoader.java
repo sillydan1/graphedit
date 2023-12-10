@@ -22,7 +22,7 @@ public class PluginClassLoader extends URLClassLoader {
 			"dk.gtz.graphedit.spi",
 			"dk.gtz.graphedit.tool",
 			"dk.gtz.graphedit.util",
-			"dk.gtz.graphedit.view", // TODO: This should be removed (currently required by Vertex/EdgeController stuff)
+			// "dk.gtz.graphedit.view",
 			"dk.gtz.graphedit.viewmodel",
 			"dk.yalibs",
 			"atlantafx",
