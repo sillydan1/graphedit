@@ -587,4 +587,13 @@ public class EditorActions {
         var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
         return new ModelProjectResource(exampleMetaData, exampleGraph);
     }
+
+    public static String getConfigDir() {
+        if(PlatformUtils.isWindows())
+            return String.join(File.separator, System.getenv("AppData"), "graphedit").toString();
+        var userHome = System.getProperty("user.home");
+        if(PlatformUtils.isMac())
+            return String.join(File.separator, userHome, "Library", "Application Support", "Graphedit");
+        return String.join(File.separator, userHome, ".local", "graphedit");
+    }
 }

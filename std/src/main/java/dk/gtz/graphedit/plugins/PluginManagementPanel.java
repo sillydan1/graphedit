@@ -3,23 +3,23 @@ package dk.gtz.graphedit.plugins;
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import dk.gtz.graphedit.plugins.view.LintPanelController;
+import dk.gtz.graphedit.plugins.view.PluginManagementPanelController;
 import dk.gtz.graphedit.spi.IPluginPanel;
 import javafx.scene.Node;
 
-public class LintPanel implements IPluginPanel {
+public class PluginManagementPanel implements IPluginPanel {
 	@Override
 	public String getTooltip() {
-		return "Lints";
+		return "Plugins";
 	}
 
 	@Override
 	public Node getIcon() {
-		return new FontIcon(BootstrapIcons.STARS);
+		return new FontIcon(BootstrapIcons.PLUG);
 	}
 
 	@Override
 	public Node getPanel() {
-		return new LintPanelController();
+		return new PluginManagementPanelController();
 	}
 }

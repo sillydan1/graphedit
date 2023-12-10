@@ -49,4 +49,10 @@ public interface IPluginsContainer {
      * @return The underlying collection of plugins
      */
     Collection<IPlugin> getPlugins();
+
+    /**
+     * Get a collection of plugins filtered such that it only contains the enabled plugins
+     * @return A collection of the enabled plugins
+     */
+    Collection<IPlugin> getEnabledPlugins();
 }

@@ -18,6 +18,14 @@ public interface IPlugin {
     String getName();
 
     /**
+     * Get a general description of this plugin
+     * @return A description of what kinds of utilities this plugin provides
+     */
+    default String getDescription() {
+        return "";
+    }
+
+    /**
      * Event called when the plugin is initialized.
      * At this point, most things are registered in {@link DI}.
      */

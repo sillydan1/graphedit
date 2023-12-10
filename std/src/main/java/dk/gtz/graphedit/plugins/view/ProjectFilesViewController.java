@@ -18,10 +18,8 @@ import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
-import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.PlatformUtils;
-import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
@@ -51,8 +49,6 @@ public class ProjectFilesViewController extends VBox {
 
     private static Logger logger = LoggerFactory.getLogger(ProjectFilesViewController.class);
     private ViewModelProject openProject;
-    private IModelSerializer serializer;
-    private IBufferContainer openBuffers;
     private TreeView<FileTreeEntry> fileTree;
     private WatchService watchService;
     private SimpleBooleanProperty useGitignoreMatcher;
@@ -69,8 +65,6 @@ public class ProjectFilesViewController extends VBox {
     private void initialize() {
 	isGitInstalled = PlatformUtils.isProgramInstalled("git");
 	openProject = DI.get(ViewModelProject.class);
-	serializer = DI.get(IModelSerializer.class);
-	openBuffers = DI.get(IBufferContainer.class);
 	useGitignoreMatcher = new SimpleBooleanProperty(true);
 	useGrapheditIgnoreMatcher = new SimpleBooleanProperty(true);
 	showHiddenFiles = new SimpleBooleanProperty(false);
