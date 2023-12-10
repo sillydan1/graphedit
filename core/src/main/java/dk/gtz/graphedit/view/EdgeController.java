@@ -83,6 +83,7 @@ public class EdgeController extends Group {
      * @param editorSettings The current editor settings
      * @param selectedTool The object property specifying which tool is currently selected
      * @param syntaxFactory The associated syntax factory
+     * @param bufferKey The key of the buffer
      */
     public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelGraph parentGraph, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
 	this.edgeKey = edgeKey;
