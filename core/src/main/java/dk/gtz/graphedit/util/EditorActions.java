@@ -588,6 +588,10 @@ public class EditorActions {
         return new ModelProjectResource(exampleMetaData, exampleGraph);
     }
 
+    /**
+     * Get the primary directory where Graphedit looks for configurations
+     * @return Filepath as a string
+     */
     public static String getConfigDir() {
         if(PlatformUtils.isWindows())
             return String.join(File.separator, System.getenv("AppData"), "graphedit").toString();
