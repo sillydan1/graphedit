@@ -7,14 +7,10 @@ import java.util.Stack;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.exceptions.UncomparableException;
 import dk.gtz.graphedit.util.MetadataUtils;
 
 public class ViewModelDiff {
-    private static Logger logger = LoggerFactory.getLogger(ViewModelDiff.class);
     private final String syntaxStyle;
     private final List<ViewModelVertex> vertexDeletions;
     private final List<ViewModelEdge> edgeDeletions;

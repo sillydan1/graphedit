@@ -21,11 +21,13 @@ import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.Toolbox;
-import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 public class PNSyntaxFactory implements ISyntaxFactory {
     private final IToolbox toolbox;
@@ -54,35 +56,35 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
         if(vertexValue instanceof ViewModelPlace placeVertex)
             return new PlaceController(vertexKey, placeVertex,
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
         if(vertexValue instanceof ViewModelTransition transitionVertex)
             return new TransitionController(vertexKey, transitionVertex,
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
 
         if(this.toolbox.getSelectedTool().get() instanceof PlaceTool)
             return new PlaceController(vertexKey, new ViewModelPlace(vertexKey, vertexValue),
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
         if(this.toolbox.getSelectedTool().get() instanceof TransitionTool)
             return new TransitionController(vertexKey, new ViewModelTransition(vertexKey, vertexValue.toModel()),
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
 
@@ -105,15 +107,15 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
         var arc = new ViewModelArc(edgeKey, edgeValue.toModel());
         if(edgeValue instanceof ViewModelArc tarc)
             arc = tarc;
         return new ArcController(edgeKey, arc,
-                creatorController.getProjectResource(),
-                creatorController.getViewportTransform(),
-                creatorController.getEditorSettings(),
+                graph,
+                viewportTransform,
+                DI.get(ViewModelEditorSettings.class),
                 toolbox.getSelectedTool(),
                 this, bufferKey);
     }

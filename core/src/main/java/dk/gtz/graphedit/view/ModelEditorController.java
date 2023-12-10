@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
@@ -38,7 +35,6 @@ import javafx.scene.transform.Affine;
  * View controller for the main model editor viewport.
  */
 public class ModelEditorController extends BorderPane implements IFocusable {
-    private static Logger logger = (Logger)LoggerFactory.getLogger(ModelEditorController.class);
     private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
@@ -153,7 +149,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private Map<UUID,Node> initializeVertices() {
 	var nodes = new HashMap<UUID,Node>();
 	for(var vertex : resource.syntax().vertices().entrySet()) {
-	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(bufferKey, vertex.getKey(), vertex.getValue(), this));
+	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(bufferKey, vertex.getKey(), vertex.getValue(), resource.syntax(), getViewportTransform()));
 	    vertex.getValue().addFocusListener(() -> {
 		var halfWidth = getWidth() * 0.5;
 		var halfHeight = getHeight() * 0.5;
@@ -179,7 +175,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		this.drawGroupTransform.setTy(halfHeight - center.getY());
 		this.focus();
 	    });
-	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(bufferKey, edge.getKey(), edge.getValue(), this));
+	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(bufferKey, edge.getKey(), edge.getValue(), resource.syntax(), getViewportTransform()));
 	}
 	return nodes;
     }
@@ -224,7 +220,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
     private void initializeVertexCollectionChangeHandlers() {
 	resource.syntax().vertices().addListener((MapChangeListener<UUID,ViewModelVertex>)c -> {
 	    if(c.wasAdded()) {
-		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(bufferKey, c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(bufferKey, c.getKey(), c.getValueAdded(), resource.syntax(), getViewportTransform()));
 		c.getValueAdded().addFocusListener(() -> {
 		    var halfWidth = getWidth() * 0.5;
 		    var halfHeight = getHeight() * 0.5;
@@ -252,7 +248,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 		    this.drawGroupTransform.setTy(halfHeight - center.getY());
 		    this.focus();
 		});
-		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(bufferKey, c.getKey(), c.getValueAdded(), this));
+		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(bufferKey, c.getKey(), c.getValueAdded(), resource.syntax(), getViewportTransform()));
 		drawGroup.getChild(c.getKey()).toBack();
 	    }
 	    if(c.wasRemoved())

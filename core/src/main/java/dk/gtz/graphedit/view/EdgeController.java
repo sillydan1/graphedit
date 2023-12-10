@@ -2,18 +2,15 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.events.EdgeMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.util.BindingsUtil;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
-import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
@@ -36,7 +33,6 @@ import javafx.scene.transform.Rotate;
  */
 public class EdgeController extends Group {
     private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
-    private static Logger logger = LoggerFactory.getLogger(EdgeController.class);
     /**
      * A construct that tracks the mouse position. Useful when the edge is being edited
      */
@@ -50,9 +46,9 @@ public class EdgeController extends Group {
      */
     protected final ViewModelEdge edgeValue;
     /**
-     * The project resource containing the parent graph
+     * The parent graph
      */
-    protected final ViewModelProjectResource resource;
+    protected final ViewModelGraph parentGraph;
     /**
      * The affine matrix relating to this edge
      */
@@ -82,18 +78,18 @@ public class EdgeController extends Group {
      * Constructs a new edgecontroller view component
      * @param edgeKey The id of the edge
      * @param edge The viewmodel data of the edge
-     * @param resource The project resource containing the edge
+     * @param parentGraph The parent graph containing the edge
      * @param viewportAffine The affine matrix relating to the edge
      * @param editorSettings The current editor settings
      * @param selectedTool The object property specifying which tool is currently selected
      * @param syntaxFactory The associated syntax factory
      */
-    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelProjectResource resource, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+    public EdgeController(UUID edgeKey, ViewModelEdge edge, ViewModelGraph parentGraph, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
 	this.edgeKey = edgeKey;
 	this.edgeValue = edge;
 	this.viewportAffine = viewportAffine;
 	this.tracker = DI.get(MouseTracker.class);
-	this.resource = resource;
+	this.parentGraph = parentGraph;
 	this.syntaxFactory = syntaxFactory;
 	this.line = initialize(selectedTool, editorSettings, bufferKey);
 	this.lineArrowLeft = initializeLeftArrow(line);
@@ -133,7 +129,7 @@ public class EdgeController extends Group {
 			BindingsUtil.createAffineOffsetXBinding(tracker.getXProperty(), viewportAffine),
 			BindingsUtil.createAffineOffsetYBinding(tracker.getYProperty(), viewportAffine)),
 		    new ViewModelVertexShape(1,1,10,10,ViewModelShapeType.OVAL));
-	var sourceVertex = resource.syntax().vertices().getValue().get(lookupId);
+	var sourceVertex = parentGraph.vertices().getValue().get(lookupId);
 	return new PointShape(sourceVertex.position(), sourceVertex.shape());
     }
 
@@ -181,7 +177,7 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings, String bufferKey) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, resource.syntax(), bufferKey, editorSettings)));
+	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, parentGraph, bufferKey, editorSettings)));
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n) {
 		line.getStyleClass().add("stroke-selected");
