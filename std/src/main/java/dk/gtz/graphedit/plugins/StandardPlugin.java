@@ -53,7 +53,7 @@ public class StandardPlugin implements IPlugin {
                 new ProjectFilesViewPanel(),
                 new InspectorPanel(),
                 new LintPanel(),
-                new PluginPanel());
+                new PluginManagementPanel());
     }
 
     @Override

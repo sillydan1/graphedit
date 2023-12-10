@@ -21,13 +21,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow.AnchorLocation;
 
-public class PluginPanelController extends VBox {
+public class PluginManagementPanelController extends VBox {
     private final VBox container;
     private final ScrollPane scrollPane;
     private final ViewModelEditorSettings settings;
     private final IPluginsContainer plugins;
 
-    public PluginPanelController() {
+    public PluginManagementPanelController() {
         settings = DI.get(ViewModelEditorSettings.class);
         plugins = DI.get(IPluginsContainer.class);
 	container = new VBox();
