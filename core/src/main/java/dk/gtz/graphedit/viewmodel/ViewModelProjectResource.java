@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.view.IProjectResourceView;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;
@@ -14,7 +15,6 @@ import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.scene.control.Tab;
 
 /**
  * View model representation of {@link ModelProjectResource}.
@@ -24,7 +24,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
     private MapProperty<String,String> metadata;
     private ViewModelGraph syntax;
     private List<Runnable> onFocusHandlers;
-    private List<Tab> views;
+    private List<IProjectResourceView> views;
 
     /**
      * Constructs a new view model project resource based on the provided model project resource
@@ -94,7 +94,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
      * Add a new view that displays this project resource.
      * @param viewer the tab that is currently viewing this project resource
      */
-    public void addView(Tab viewer) { // TODO: This shouldn't be a concrete javafx Tab! - it should be an interface
+    public void addView(IProjectResourceView viewer) {
 	views.add(viewer);
     }
 
@@ -103,7 +103,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
      * If the provided view is not present, the list remains unchanged.
      * @param viewer the tab that is currently viewing this project resource
      */
-    public void removeView(Tab viewer) {
+    public void removeView(IProjectResourceView viewer) {
 	views.remove(viewer);
     }
 
@@ -111,7 +111,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
      * Get the full list of tabs that are viewing this project resource
      * @return a list of tabs. NOTE: scheduled for a refactor
      */
-    public List<Tab> getViews() {
+    public List<IProjectResourceView> getViews() {
 	return views;
     }
 

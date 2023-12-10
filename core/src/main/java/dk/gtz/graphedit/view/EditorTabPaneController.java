@@ -90,7 +90,7 @@ public class EditorTabPaneController {
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
 		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
-		tab.setContent(editorController);
+		tab.addEditor(editorController);
 		tabpane.getTabs().add(tab);
 		tabControllerMapping.put(tab, editorController);
 		editorController.addFocusListener(() -> {
@@ -103,7 +103,7 @@ public class EditorTabPaneController {
 		});
 	    }
 	    if(c.wasRemoved())
-		c.getValueRemoved().getViews().forEach(v -> tabpane.getTabs().remove(v));
+		c.getValueRemoved().getViews().forEach(v -> tabpane.getTabs().remove((Object)v));
 	});
     }
 
