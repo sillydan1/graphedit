@@ -42,6 +42,8 @@ public interface ISyntaxFactory {
      * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The viewmodel value of the new vertex representation
+     * @param graph The parent syntax graph
+     * @param viewportTransform The translational, rotational and scale transform of the related viewport
      * @return The new vertex javafx representation
      */
     Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform);
@@ -59,6 +61,8 @@ public interface ISyntaxFactory {
      * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param edgeKey The primary key of the new edge representation
      * @param edgeValue The viewmodel value of the new edge representation
+     * @param graph The parent syntax graph
+     * @param viewportTransform The translational, rotational and scale transform of the related viewport
      * @return The new edge javafx representation
      */
     Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform);
