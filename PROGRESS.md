@@ -117,7 +117,7 @@
    - [x] Simple Text
    - [x] LTS
    - [x] P/N
- - [ ] Plugin Manager
+ - [x] Plugin Manager
  - [ ] Fix TODOs
  - [ ] Polish
  - [ ] Release `v1.2.0
