@@ -77,7 +77,6 @@ public class ViewModelDiff {
     }
 
     private static ViewModelDiff compare(String syntaxStyle, ViewModelGraph a, ViewModelGraph b) throws UncomparableException {
-        // TODO: This scales terribly. Implement the faster way of doing this.
         var result = new ViewModelDiff(syntaxStyle);
         var sortedA = Stream.concat(a.vertices().keySet().stream().sorted(), a.edges().keySet().stream().sorted()).toList();
         var sortedB = Stream.concat(b.vertices().keySet().stream().sorted(), b.edges().keySet().stream().sorted()).toList();
@@ -127,7 +126,6 @@ public class ViewModelDiff {
     }
 
     private static ViewModelDiff getEditScript(List<UUID> a, List<UUID> b, int k, int offset, Stack<List<Optional<Integer>>> v, ViewModelDiff acc, ViewModelGraph ga, ViewModelGraph gb) throws UncomparableException {
-        // TODO: This scales terribly. Implement the faster way of doing this.
         var vd = v.pop();
         if(v.empty())
             return acc;
