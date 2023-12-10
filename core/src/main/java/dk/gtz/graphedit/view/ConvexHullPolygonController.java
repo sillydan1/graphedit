@@ -45,6 +45,18 @@ public class ConvexHullPolygonController extends Group {
 	this.fill = fillColor;
     }
 
+    public ViewModelPoint getCenter() {
+	var points = polygon.getPoints();
+	var result = new ViewModelPoint(0,0);
+	for(var i = 0; i < points.size(); i += 2) {
+	    result.getXProperty().set(result.getX() + points.get(i));
+	    result.getYProperty().set(result.getY() + points.get(i+1));
+	}
+	result.getXProperty().set(result.getX() / points.size());
+	result.getYProperty().set(result.getY() / points.size());
+	return result;
+    }
+
     private void updateOnChangedEvent(ObservableValue<? extends ViewModelPoint> e, ViewModelPoint o, ViewModelPoint n) {
 	update();
     }

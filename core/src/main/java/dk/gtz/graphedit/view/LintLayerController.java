@@ -67,17 +67,18 @@ public class LintLayerController extends Pane {
 	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
     }
 
-    private void setFocusHandler(ViewModelLint lintToFocusOn, Node representingPolygon) {
+    private void setFocusHandler(ViewModelLint lintToFocusOn, ConvexHullPolygonController representingPolygon) {
 	var pulseTimeline = createPulseTimeline(representingPolygon, 1.1, Duration.millis(300));
 	lintToFocusOn.addFocusListener(() -> {
 	    pulseTimeline.playFromStart();
-	    // TODO: move transform.Tx/Ty to polygon center
-	    // TODO: Scale transform to fit polygon (plus 10% viewport buffer)
+	    var polyCenter = representingPolygon.getCenter();
+	    transform.setTx(polyCenter.getX());
+	    transform.setTy(polyCenter.getY());
 	    resource.focus();
 	});
     }
 
-    private Node createConvexHullPolygon(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
+    private ConvexHullPolygonController createConvexHullPolygon(Collection<ViewModelVertex> vertices, ViewModelLint lint) {
 	var points = vertices.stream().flatMap(v -> {
 	    var buffer = 5;
 	    var sizeX = v.shape().widthProperty().add(buffer);
