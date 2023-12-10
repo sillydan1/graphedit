@@ -108,8 +108,8 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
     }
 
     /**
-     * Get the full list of tabs that are viewing this project resource
-     * @return a list of tabs. NOTE: scheduled for a refactor
+     * Get the full list of views that are viewing this project resource
+     * @return a list of tabs.
      */
     public List<IProjectResourceView> getViews() {
 	return views;
