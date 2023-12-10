@@ -49,6 +49,9 @@ public class ClipboardTool extends AbstractBaseTool {
     private final IUndoSystem undoSystem;
     private final MassDeleteTool deleteTool;
 
+    /**
+     * Create a new instance of {@link ClipboardTool}
+     */
     public ClipboardTool() {
         selectedElements = DI.get("selectedElements");
         serializer = DI.get(IModelSerializer.class);
@@ -93,6 +96,10 @@ public class ClipboardTool extends AbstractBaseTool {
             cutSelection(e);
     }
 
+    /**
+     * Copy the currently selected elements into the system's clipboard.
+     * @param e The key event
+     */
     public void copySelection(ViewportKeyEvent e) {
         try {
             if(selectedElements.isEmpty())
@@ -126,6 +133,10 @@ public class ClipboardTool extends AbstractBaseTool {
         }
     }
 
+    /**
+     * Paste the current content of the system clipboard. If the content is not a valid serialized model an error is logged and nothing will happen
+     * @param e The key event
+     */
     public void pasteModel(ViewportKeyEvent e) {
         try {
             if(!clipboard.hasString()) {
@@ -174,6 +185,10 @@ public class ClipboardTool extends AbstractBaseTool {
         }
     }
 
+    /**
+     * Copy the currently selected elements into the system's clipboard and delete the elements.
+     * @param e The key event
+     */
     public void cutSelection(ViewportKeyEvent e) {
         try {
             if(selectedElements.isEmpty())
