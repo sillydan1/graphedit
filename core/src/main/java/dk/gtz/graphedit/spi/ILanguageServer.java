@@ -9,6 +9,12 @@ import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.yalibs.yafunc.IRunnable1;
 
+/**
+ * Interface and specification of a language server.
+ *
+ * Language servers provide the language smarts that help developers create better, safer and valid models.
+ * A server provides diagnostics, lints, optimizations, suggestions and notifications.
+ */
 public interface ILanguageServer {
     /**
      * Get the name of the language that the server supports.
@@ -44,8 +50,29 @@ public interface ILanguageServer {
      * This means that this function should be a blocking call
      */
     void start();
+
+    /**
+     * Get all the diagnostics that are currently known to the server.
+     * @return A collection of lints.
+     */
     Collection<ModelLint> getDiagnostics();
+
+    /**
+     * Add a callback function to call when diagnostics are updated.
+     * Note that the callback expects a complete collection of lints.
+     * @param callback The function to call when the diagnostics collections change.
+     */
     void addDiagnosticsCallback(IRunnable1<Collection<ModelLint>> callback);
+
+    /**
+     * Add a callback function to call when a notification is presented.
+     * @param callback The function to call when a notification should be shown.
+     */
     void addNotificationCallback(IRunnable1<ModelNotification> callback);
+
+    /**
+     * Add a callback function to call when language server progress notification happens.
+     * @param callback The function to call when a progress notification should be shown.
+     */
     void addProgressCallback(IRunnable1<ModelLanguageServerProgress> callback);
 }
