@@ -68,7 +68,6 @@ public class LintPanelController extends StackPane {
     }
 
     private void addLint(VBox container, ViewModelLint lint) {
-	// TODO: Consider using Notification styles instead? - That way, the style is uniform
 	var card = new Card();
 	card.getStyleClass().add(Styles.INTERACTIVE);
 	var icon = IconUtils.getLintTypeIcon(lint.severity().get());
