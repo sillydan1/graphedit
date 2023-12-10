@@ -199,7 +199,6 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 
     @Override
     public void addListener(InvalidationListener listener) {
-	// TODO: This doesn't work
 	x.addListener(listener);
 	y.addListener(listener);
     }

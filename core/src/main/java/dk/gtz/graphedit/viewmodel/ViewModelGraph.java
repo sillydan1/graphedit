@@ -145,7 +145,6 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
 
     @Override
     public void removeListener(ChangeListener<? super ViewModelGraph> listener) {
-        // TODO: This is very unlikely to work
         declarations.removeListener((e,o,n) -> listener.changed(this,this,this));
         vertices.forEach((k,v) -> v.removeListener((e,o,n) -> listener.changed(this,this,this)));
         vertices.removeListener((MapChangeListener<UUID,ViewModelVertex>)event -> {
