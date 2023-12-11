@@ -59,6 +59,11 @@ public interface IPlugin {
         return List.of();
     }
 
+    /**
+     * Get a collection of plugin language servers provided by this plugin. Will return an empty list by default.
+     * @return A collection of language servers
+     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     */
     default Collection<ILanguageServer> getLanguageServers() throws Exception {
         return List.of();
     }
