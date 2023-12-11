@@ -67,6 +67,7 @@ public class VertexController extends StackPane {
      * @param editorSettings The current editor settings
      * @param selectedTool The object property specifying which tool is currently selected
      * @param syntaxFactory The associated syntax factory
+     * @param bufferKey The key of the buffer that contains the vertex
      */
     public VertexController(UUID vertexKey, ViewModelVertex vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
 	this.vertexKey = vertexKey;
@@ -90,6 +91,7 @@ public class VertexController extends StackPane {
      * @param selectedTool The object property specifying which tool is currently selected
      * @param graph The parent graph containing the represented viewmodel vertex
      * @param editorSettings The current editor settings
+     * @param bufferKey The key of the buffer that contains the vertex
      */
     protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
 	this.graphic = initializeVertexRepresentation();

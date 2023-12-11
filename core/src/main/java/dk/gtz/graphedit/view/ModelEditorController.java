@@ -51,6 +51,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     /**
      * Creates a new instance with a provided resource and syntax
+     * @param bufferKey The key of the related buffer
      * @param resource The viewmodel project resource to edit
      * @param syntaxFactory The syntax factory of the resource
      */
@@ -60,6 +61,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 
     /**
      * Creates a new instance with a provided resource, settings object and syntax
+     * @param bufferKey The key of the related buffer
      * @param resource The viewmodel project resource to edit
      * @param settings The viewmodel editor settings object to use
      * @param syntaxFactory The syntax factory of the resource
@@ -198,6 +200,10 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	viewport.addEventHandler(MouseEvent.ANY, this::onMouseEvent);
     }
 
+    /**
+     * Propogate the provided mouse event to the appropriate tool.
+     * @param e The mouse event to handle.
+     */
     public void onMouseEvent(MouseEvent e) {
 	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
 	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), bufferKey, settings);
@@ -207,6 +213,10 @@ public class ModelEditorController extends BorderPane implements IFocusable {
 	    syntaxToolbox.get().getSelectedTool().get().onViewportMouseEvent(mouseEvent);
     }
 
+    /**
+     * Propogate the provided key event to the appropriate tool.
+     * @param e The key event to handle.
+     */
     public void onKeyEvent(KeyEvent e) {
 	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
 	var isTargetDrawpane = e.getTarget() == getParent().getParent();

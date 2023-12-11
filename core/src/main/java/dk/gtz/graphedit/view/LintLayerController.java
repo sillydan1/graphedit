@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
@@ -23,11 +20,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
+/**
+ * View layer showing the lints contained in the {@link LintContainer}.
+ */
 public class LintLayerController extends Pane {
-    private Logger logger = LoggerFactory.getLogger(LintLayerController.class);
     private final Affine transform;
     private final ViewModelProjectResource resource;
 
+    /**
+     * Constructs a new lint layer view controller.
+     * @param bufferKey The buffer to use.
+     * @param resource The related resource.
+     * @param viewportAffine The position, rotation and scale transform of the related viewport.
+     */
     public LintLayerController(String bufferKey, ViewModelProjectResource resource, Affine viewportAffine) {
 	this.transform = viewportAffine;
 	this.resource = resource;

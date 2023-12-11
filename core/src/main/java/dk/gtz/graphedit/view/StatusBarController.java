@@ -12,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
+/**
+ * View controller for the status indicator at the bottom of the editor.
+ */
 public class StatusBarController extends StackPane {
     private final HBox container;
     private Label spinnerLabel;
@@ -33,6 +36,9 @@ public class StatusBarController extends StackPane {
 	    "\u2807",
 	    "\u280F"); // Shamelessly stolen from cli-spinners, see https://github.com/sindresorhus/cli-spinners/blob/main/spinners.json
 
+    /**
+     * Construct a new status bar view controller.
+     */
     public StatusBarController() {
 	frameIndex = 0;
 	spinnerThread = new Thread(this::setSpinnerLabel);
@@ -75,6 +81,11 @@ public class StatusBarController extends StackPane {
 			if(spinnerThread.isAlive())
 			    spinnerThread.interrupt();
 			Platform.runLater(() -> spinnerString.set("\u2714")); // checkmark unicode character
+			break;
+		    case END_FAIL:
+			if(spinnerThread.isAlive())
+			    spinnerThread.interrupt();
+			Platform.runLater(() -> spinnerString.set("\u2717")); // x mark unicode character
 			break;
 		    default:
 			if(spinnerThread.isAlive())
