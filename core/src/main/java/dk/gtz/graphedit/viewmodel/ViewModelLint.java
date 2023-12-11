@@ -14,6 +14,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
+/**
+ * Viewmodel representation of {@link ModelLint}.
+ * A Lint is a special kind of diagnostic annotation that can provide smart meta-insights about sections of a graph.
+ */
 public class ViewModelLint implements IFocusable {
     private final StringProperty lintIdentifier;
     private final ObjectProperty<ModelLintSeverity> severity;
@@ -23,6 +27,10 @@ public class ViewModelLint implements IFocusable {
     private final ListProperty<ListProperty<ViewModelPoint>> affectedRegions;
     private final List<Runnable> focustHandlers;
 
+    /**
+     * Construct a new viewmodel lint.
+     * @param lint The model lint to base on
+     */
     public ViewModelLint(ModelLint lint) {
         this.lintIdentifier = new SimpleStringProperty(lint.lintIdentifier());
         this.severity = new SimpleObjectProperty<>(lint.severity());
@@ -37,26 +45,50 @@ public class ViewModelLint implements IFocusable {
         }
     }
 
+    /**
+     * Get the unique identifier of the lint.
+     * @return A string property with the lint's unique identifier.
+     */
     public StringProperty lintIdentifier() {
         return lintIdentifier;
     }
 
+    /**
+     * Get the severity level of the lint
+     * @return An object property with the severity level enumeration.
+     */
     public ObjectProperty<ModelLintSeverity> severity() {
         return severity;
     }
 
+    /**
+     * Get the brief headline describing the lint.
+     * @return A string property with the lint's title.
+     */
     public StringProperty title() {
         return title;
     }
 
+    /**
+     * Get the lint's display message.
+     * @return A string property with the lint's display message.
+     */
     public StringProperty message() {
         return message;
     }
 
+    /**
+     * Get the list of affected vertices or edges.
+     * @return A list property with the uuids of the affected syntactic elements.
+     */
     public ListProperty<UUID> affectedElements() {
         return affectedElements;
     }
 
+    /**
+     * Get the list of affected regions.
+     * @return A list property of lists of clock-wise sorted points, each representing a polygon region.
+     */
     public ListProperty<ListProperty<ViewModelPoint>> affectedRegions() {
         return affectedRegions;
     }

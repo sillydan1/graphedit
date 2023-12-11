@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
@@ -24,7 +21,6 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph implements Property<ViewModelGraph> {
-    private Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     private StringProperty declarations;
     private MapProperty<UUID,ViewModelVertex> vertices;
     private MapProperty<UUID,ViewModelEdge> edges;
@@ -54,6 +50,10 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
         return edges;
     }
 
+    /**
+     * Checks that all the edges' sources and edges are present in the vertices collection.
+     * @return True if the graph is valid, otherwise false.
+     */
     public boolean isValid() {
         for(var edge : edges().entrySet()) {
             var containsSourceAndTargetVertex = vertices().containsKey(edge.getValue().source().get()) && vertices().containsKey(edge.getValue().target().get());

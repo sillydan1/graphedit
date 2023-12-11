@@ -27,6 +27,7 @@ import javafx.collections.FXCollections;
  * @param showTraceToasts When true, will display toasts on logger.trace calls
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
+ * @param disabledPlugins List of plugin names that are loaded, but not initialized
  */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
@@ -83,6 +84,7 @@ public record ViewModelEditorSettings(
          * @param showTraceToasts When true, will display toasts on logger.trace calls
          * @param lastOpenedProject Filepath to the last opened graphedit project file
          * @param recentProjects List of filepaths that have been recently opened
+         * @param disabledPlugins List of plugin names that are loaded, but not initialized
          */
         public ViewModelEditorSettings(
                         double gridSizeX, 

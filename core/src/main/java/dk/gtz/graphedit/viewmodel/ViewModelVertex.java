@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.InvalidationListener;
@@ -20,11 +17,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
- * View model representation of a {@link ModelVertex}.
+ * Viewmodel representation of a {@link ModelVertex}.
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
 public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, IFocusable, Property<ViewModelVertex> {
-    private Logger logger = LoggerFactory.getLogger(ViewModelVertex.class);
     private final UUID uuid;
     private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
@@ -34,8 +30,9 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Constructs a new view model vertex based on a position and a shape
-     * @param position the point at which the vertex is located
-     * @param shape the shape at which edges should follow
+     * @param uuid The id of the vertex
+     * @param position The point at which the vertex is located
+     * @param shape The shape at which edges should follow
      */
     public ViewModelVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
 	this.uuid = uuid;
@@ -48,8 +45,9 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Constructs a new view model vertex based on a model vertex and a shape
-     * @param vertex the model vertex to base on
-     * @param shape the shape at which edges should follow
+     * @param uuid The id of the vertex
+     * @param vertex The model vertex to base on
+     * @param shape The shape at which edges should follow
      */
     public ViewModelVertex(UUID uuid, ModelVertex vertex, ViewModelVertexShape shape) {
 	this(uuid, new ViewModelPoint(vertex.position), shape);
@@ -57,7 +55,8 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Constructs a new view model vertex based on a model vertex
-     * @param vertex the model vertex to base on
+     * @param uuid The id of the vertex
+     * @param vertex The model vertex to base on
      */
     public ViewModelVertex(UUID uuid, ModelVertex vertex) {
 	this(uuid, vertex, new ViewModelVertexShape());
@@ -65,7 +64,7 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Constructs a new model vertex instance based on the current view model values
-     * @return a new model vertex instance
+     * @return A new model vertex instance
      */
     public ModelVertex toModel() {
 	return new ModelVertex(position.toModel());
@@ -73,7 +72,7 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Get the position of the vertex
-     * @return a view model point
+     * @return A view model point
      */
     public ViewModelPoint position() {
 	return position;
@@ -81,7 +80,7 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Get the shape of the vertex
-     * @return a view model shape
+     * @return A view model shape
      */
     public ViewModelVertexShape shape() {
 	return shape;
@@ -89,7 +88,7 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
 
     /**
      * Get the id of the vertex
-     * @return the unique identifier of the vertex
+     * @return The unique identifier of the vertex
      */
     public UUID id() {
 	return uuid;

@@ -37,6 +37,7 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
 
     /**
      * Constructs a new view model edge instance
+     * @param uuid The id of the edge
      * @param source the syntactic element where the edge originates from
      * @param target the syntactic element where the edge targets
      */
@@ -51,6 +52,7 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
 
     /**
      * Constructs a new view model edge instance based on a model edge instance
+     * @param uuid The id of the edge
      * @param edge the model edge to convert
      */
     public ViewModelEdge(UUID uuid, ModelEdge edge) {
@@ -59,6 +61,7 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
 
     /**
      * Constructs a new view model edge instance
+     * @param uuid The id of the edge
      * @param source the syntactic element where the edge originates from
      * @param target the syntactic element where the edge targets
      */

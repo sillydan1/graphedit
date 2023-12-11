@@ -5,7 +5,17 @@ import java.util.HashMap;
 
 import dk.gtz.graphedit.spi.ILanguageServer;
 
+/**
+ * A container that holds {@link ILanguageServer} instances.
+ */
 public class LanguageServerCollection extends HashMap<String,ILanguageServer> {
+    /**
+     * Constructs a new language server collection instance.
+     */
+    public LanguageServerCollection() {
+        super();
+    }
+
     /**
      * Add a new language server to the collection
      * @param server The server instance to add
