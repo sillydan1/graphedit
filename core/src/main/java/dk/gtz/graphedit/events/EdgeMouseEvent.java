@@ -17,6 +17,7 @@ import javafx.scene.transform.Affine;
  * @param viewportAffine The {@link Affine} that controls where the viewport is looking
  * @param syntax The syntax factory associated with the current model
  * @param graph The current model graph
+ * @param bufferId The related buffer key
  * @param editorSettings The current editor settings
  */
 public record EdgeMouseEvent(
