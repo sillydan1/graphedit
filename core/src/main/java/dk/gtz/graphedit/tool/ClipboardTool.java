@@ -174,7 +174,7 @@ public class ClipboardTool extends AbstractBaseTool {
             var diff = ViewModelDiff.compare(buffer, resource);
             ViewModelDiff.applyAdditiveOnly(buffer, diff);
             undoSystem.push(new Undoable("paste content",
-                        () -> ViewModelDiff.revertAdditiveOnly(buffer, diff),
+                        () -> ViewModelDiff.revertSubtractiveOnly(buffer, diff),
                         () -> ViewModelDiff.applyAdditiveOnly(buffer, diff)));
         } catch (SerializationException exc) {
             logger.trace("clipboard value not deserializable {}", exc.getMessage());

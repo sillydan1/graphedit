@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.events.EdgeMouseEvent;
@@ -23,10 +21,18 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * Tool to inspect lints of vertices.
+ *
+ * When selected, simply hover over a vertex, and all the lints that are affecting
+ * that vertex will be displayed in a context menu
+ */
 public class LintInspectorTool extends AbstractBaseTool {
-    private static Logger logger = LoggerFactory.getLogger(LintInspectorTool.class);
     private final LintContainer lints;
 
+    /**
+     * Constructs a new lint inspector tool instance.
+     */
     public LintInspectorTool() {
         this.lints = DI.get(LintContainer.class);
     }

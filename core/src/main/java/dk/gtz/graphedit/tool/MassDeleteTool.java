@@ -29,6 +29,9 @@ public class MassDeleteTool extends AbstractBaseTool {
     private final IUndoSystem undoSystem;
     private final IBufferContainer buffers;
 
+    /**
+     * Constructs a new mass delete tool instance.
+     */
     public MassDeleteTool() {
 	selectedElements = DI.get("selectedElements");
 	undoSystem = DI.get(IUndoSystem.class);
@@ -68,6 +71,10 @@ public class MassDeleteTool extends AbstractBaseTool {
         return delete || shortcutShiftBackspace;
     }
 
+    /**
+     * Delete the currently selected elements.
+     * @param event The key event.
+     */
     public void deleteSelectedElements(ViewportKeyEvent event) {
 	try {
 	    var buffer = buffers.get(event.bufferId());
