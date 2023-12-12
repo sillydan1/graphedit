@@ -118,8 +118,8 @@
    - [x] LTS
    - [x] P/N
  - [x] Plugin Manager
- - [ ] Fix TODOs
- - [ ] Polish
+ - [x] Fix TODOs
+ - [x] Polish
  - [ ] Release `v1.2.0
  - [ ] Third party language plugins
    - [ ] TIOA 
