@@ -74,3 +74,5 @@ Includes all the core functionality for Graphedit. This includes all the views, 
 ### Graphedit
 The primary entrypoint for the default application. Doesn't do much other than start.
 
+### std
+The standard plugin that provides some additional language syntaxes and example language server implementations.
