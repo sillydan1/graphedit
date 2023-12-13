@@ -126,9 +126,9 @@ public class LTSLanguageServer implements ILanguageServer {
     private void broadcastAllBufferDiagnostics() {
 	for(var buffer : bufferContainer.getBuffers().entrySet()) {
 	    if(buffer.getValue().getSyntaxName().isEmpty())
-		return;
+		continue;
 	    if(!buffer.getValue().getSyntaxName().get().equals(getLanguageName()))
-		return;
+		continue;
 	    broadcastDiagnostics(buffer.getKey(), getSccs(buffer.getKey(), buffer.getValue()));
 	}
     }
