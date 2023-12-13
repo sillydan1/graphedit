@@ -21,8 +21,8 @@ public class TransitionController extends VertexController {
     private final ViewModelTransition vertex;
     private final Rectangle rectangleGraphic;
 
-    public TransitionController(UUID vertexKey, ViewModelTransition vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory) {
-	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory);
+    public TransitionController(UUID vertexKey, ViewModelTransition vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
 	this.vertex = vertex;
         this.rectangleGraphic = createRectangleGraphic();
         initializeEventHandlers();

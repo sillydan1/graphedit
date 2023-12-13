@@ -10,7 +10,7 @@ public interface IBufferContainer {
      * Get an instance with a lookup key
      * @param key the key that the project resource was loaded / inserted with
      * @return the associated project resource instance
-     * @throws Exception ultimately up to the implementation, but this could be that there is no instance associated with the porovided key
+     * @throws Exception ultimately up to the implementation, but this could be that there is no instance associated with the provided key
      */
     ViewModelProjectResource get(String key) throws Exception;
 

@@ -16,7 +16,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -39,11 +38,11 @@ public class EditorController {
     @FXML
     private BorderPane primaryBorderPane;
     @FXML
+    private BorderPane bottomBorderPane;
+    @FXML
     private Menu runTargetsMenu;
     @FXML
     private MenuItem runTargetMenuItem;
-    @FXML
-    private Label statusBar;
     @FXML
     private SidePanelController sidePanelController;
     private Thread runTargetThread;
@@ -65,13 +64,13 @@ public class EditorController {
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
+	bottomBorderPane.setBottom(new StatusBarController());
     }
 
     private void initProjectMenu() {
 	var project = DI.get(ViewModelProject.class);
 	updateRunTargets();
 	project.runTargets().addListener((e,o,n) -> updateRunTargets());
-	statusBar.textProperty().bind(project.rootDirectory());
     }
 
     private void updateRunTargets() {

@@ -34,7 +34,7 @@ import javafx.stage.StageStyle;
  * @author Michael Berry
  * @author Asger Gitz-Johansen
  */
-public class DraggableTabController extends Tab {
+public class DraggableTabController extends Tab implements IProjectResourceView {
     private static final Logger logger = LoggerFactory.getLogger(DraggableTabController.class);
     private record InsertData(int index, TabPane insertPane) {}
     private static final Set<TabPane> tabPanes = new HashSet<>();
@@ -239,5 +239,10 @@ public class DraggableTabController extends Tab {
 	var lowerBound = r1.getMinX() + r1.getWidth() / 2;
 	var upperBound = r2.getMaxX() - r2.getWidth() / 2;
 	return xPoint >= lowerBound && xPoint <= upperBound;
+    }
+
+    @Override
+    public void addEditor(ModelEditorController editor) {
+	setContent(editor);
     }
 }

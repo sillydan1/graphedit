@@ -8,10 +8,11 @@ import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.tool.ITool;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 /**
  * Interface class for graph-syntax factories
@@ -38,35 +39,41 @@ public interface ISyntaxFactory {
 
     /**
      * Create a new javafx vertex representation
+     * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The viewmodel value of the new vertex representation
-     * @param creatorController The model editor to attach the vertex to. TODO: Consider removing, or interfacing this
+     * @param graph The parent syntax graph
+     * @param viewportTransform The translational, rotational and scale transform of the related viewport
      * @return The new vertex javafx representation
      */
-    Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController);
+    Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform);
 
     /**
      * Create a new viewmodel vertex representation
+     * @param vertexKey The primary key of the new vertex representation
      * @param vertexValue The model vertex to base on
      * @return A new instance of a viewmodel vertex representation specific to this syntax.
      */
-    ViewModelVertex createVertexViewModel(ModelVertex vertexValue);
+    ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue);
 
     /**
      * Create a new javafx edge representation
+     * @param bufferKey The key of the buffer that contains the graph that contains this view
      * @param edgeKey The primary key of the new edge representation
      * @param edgeValue The viewmodel value of the new edge representation
-     * @param creatorController The model editor to attach the edge to. TODO: Consider removing, or interfacing this
+     * @param graph The parent syntax graph
+     * @param viewportTransform The translational, rotational and scale transform of the related viewport
      * @return The new edge javafx representation
      */
-    Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController);
+    Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform);
 
     /**
      * Create a new viewmodel edge representation
+     * @param edgeKey The primary key of the new edge representation
      * @param edgeValue The model edge to base on
      * @return A new instance of a viewmodel edge representation specific to this syntax.
      */
-    ViewModelEdge createEdgeViewModel(ModelEdge edgeValue);
+    ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue);
 
     /**
      * Get the associated syntax version migrater.

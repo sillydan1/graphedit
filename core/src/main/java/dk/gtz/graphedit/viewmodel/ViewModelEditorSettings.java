@@ -27,6 +27,7 @@ import javafx.collections.FXCollections;
  * @param showTraceToasts When true, will display toasts on logger.trace calls
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
+ * @param disabledPlugins List of plugin names that are loaded, but not initialized
  */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
@@ -40,7 +41,8 @@ public record ViewModelEditorSettings(
                 BooleanProperty showErrorToasts,
                 BooleanProperty showTraceToasts,
                 StringProperty lastOpenedProject,
-                ListProperty<String> recentProjects) {
+                ListProperty<String> recentProjects,
+                ListProperty<String> disabledPlugins) {
 
         /**
          * Construct a new instance
@@ -59,9 +61,13 @@ public record ViewModelEditorSettings(
                         settings.showErrorToasts(),
                         settings.showTraceToasts(),
                         settings.lastOpenedProject(),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
-                this.recentProjects.addAll(settings.recentProjects());
+                if(settings.recentProjects() != null)
+                        this.recentProjects.addAll(settings.recentProjects());
+                if(settings.disabledPlugins() != null)
+                        this.disabledPlugins.addAll(settings.disabledPlugins());
         }
 
         /**
@@ -78,6 +84,7 @@ public record ViewModelEditorSettings(
          * @param showTraceToasts When true, will display toasts on logger.trace calls
          * @param lastOpenedProject Filepath to the last opened graphedit project file
          * @param recentProjects List of filepaths that have been recently opened
+         * @param disabledPlugins List of plugin names that are loaded, but not initialized
          */
         public ViewModelEditorSettings(
                         double gridSizeX, 
@@ -91,7 +98,8 @@ public record ViewModelEditorSettings(
                         boolean showErrorToasts,
                         boolean showTraceToasts,
                         String lastOpenedProject,
-                        List<String> recentProjects) {
+                        List<String> recentProjects,
+                        List<String> disabledPlugins) {
                 this(
                         new SimpleDoubleProperty(gridSizeX),
                         new SimpleDoubleProperty(gridSizeY),
@@ -104,8 +112,10 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(showErrorToasts),
                         new SimpleBooleanProperty(showTraceToasts),
                         new SimpleStringProperty(lastOpenedProject),
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
                         new SimpleListProperty<String>(FXCollections.observableArrayList())
                     );
                 this.recentProjects.addAll(recentProjects);
+                this.disabledPlugins.addAll(disabledPlugins);
         }
 }

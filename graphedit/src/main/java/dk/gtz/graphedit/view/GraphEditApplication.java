@@ -1,6 +1,9 @@
 package dk.gtz.graphedit.view;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
@@ -13,13 +16,17 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
+import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
 import dk.gtz.graphedit.tool.IToolbox;
+import dk.gtz.graphedit.tool.LintInspectorTool;
+import dk.gtz.graphedit.tool.MassDeleteTool;
 import dk.gtz.graphedit.tool.SelectTool;
 import dk.gtz.graphedit.tool.Toolbox;
 import dk.gtz.graphedit.tool.UnifiedModellingTool;
@@ -27,13 +34,14 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
-import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
+import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
+import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -56,6 +64,7 @@ import javafx.stage.Window;
 public class GraphEditApplication extends Application implements IRestartableApplication {
     private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
     private Stage primaryStage;
+    private List<Thread> lspThreads;
 
     public static void launchApp(final String[] args) {
 	launch(args);
@@ -106,9 +115,54 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
-	DI.add(ViewModelEditorSettings.class, EditorActions.loadEditorSettings());
+    }
+
+    private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {
+	if(lspThreads == null)
+	    lspThreads = new ArrayList<>();
+	for(var lspThread : lspThreads) {
+	    logger.trace("interrupting lsp thread {}", lspThread.getName());
+	    lspThread.interrupt();
+	}
+	for(var server : servers.entrySet()) {
+	    var serverVal = server.getValue();
+	    logger.trace("initializing language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
+	    serverVal.initialize(projectFile, buffers);
+	    serverVal.addNotificationCallback(this::logNotification);
+	    serverVal.addDiagnosticsCallback(lints::replaceAll);
+	    logger.trace("starting thread for language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
+	    var t = new Thread(serverVal::start);
+	    t.setName(serverVal.getServerName());
+	    lspThreads.add(t);
+	    t.start();
+	    lints.replaceAll(server.getValue().getDiagnostics());
+	}
+    }
+
+    private void logNotification(ModelNotification n) {
+	switch(Level.toLevel(n.level().toLowerCase()).toInt()) {
+	    case Level.ERROR_INT:
+		logger.error(n.message());
+		break;
+	    case Level.WARN_INT:
+		logger.warn(n.message());
+		break;
+	    case Level.INFO_INT:
+		logger.info(n.message());
+		break;
+	    case Level.DEBUG_INT:
+		logger.debug(n.message());
+		break;
+	    case Level.TRACE_INT:
+		logger.trace(n.message());
+		break;
+	    default:
+		logger.trace(n.level() + ": " + n.message());
+		break;
+	}
     }
 
     private void loadProject() throws Exception {
@@ -116,9 +170,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    var settings = DI.get(ViewModelEditorSettings.class);
 	    var projectFilePath = Path.of(settings.lastOpenedProject().get());
 	    if(!projectFilePath.toFile().exists())
-		throw new Exception("not a valid project file path, will load temp project " + projectFilePath.toString());
+		throw new Exception("project file path does not exist '" + projectFilePath.toString() + "', loading tmp project instead");
 	    var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	    DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
+	    setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
 	} catch(Exception e) {
 	    logger.error(e.getMessage(), e);
 	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
@@ -132,7 +187,10 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		new EdgeDeleteTool(),
 		new VertexCreateTool(),
 		new VertexDeleteTool(),
-		new SelectTool());
+		new SelectTool(),
+		new LintInspectorTool(),
+		new ClipboardTool(),
+		new MassDeleteTool());
 	toolbox.add("inspect", new ViewTool());
 	DI.add(IToolbox.class, toolbox);
 	toolbox.selectTool(toolbox.getDefaultTool());
@@ -175,6 +233,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
     @Override
     public void stop() {
 	logger.trace("shutting down...");
+	if(lspThreads == null)
+	    return;
+	for(var lspThread : lspThreads) {
+	    logger.trace("interrupting lsp thread {}", lspThread.getName());
+	    lspThread.interrupt();
+	}
     }
 
     private Scene loadMainScene() throws Exception {

@@ -2,6 +2,7 @@ package dk.gtz.graphedit.plugins.syntaxes.petrinet.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelPlace;
@@ -24,15 +25,15 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 		return initialTokenCount;
 	}
 
-	public ViewModelPlace(ModelVertex vertex) {
-		super(vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+	public ViewModelPlace(UUID uuid, ModelVertex vertex) {
+		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
 		initialTokenCount = new SimpleIntegerProperty(0);
 		if(vertex instanceof ModelPlace tvertex)
 			initialTokenCount.set(tvertex.initialTokenCount());
 	}
 
-	public ViewModelPlace(ViewModelVertex vertex) {
-		this(vertex.toModel());
+	public ViewModelPlace(UUID uuid, ViewModelVertex vertex) {
+		this(uuid, vertex.toModel());
 	}
 
 	@Override
@@ -118,5 +119,18 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 		if(other.getValue() instanceof ViewModelPlace tother)
 			initialTokenCount.unbindBidirectional(tother.initialTokenCount());
 	}
-}
 
+	@Override
+	public boolean equals(Object other) {
+		if(!super.equals(other))
+			return false;
+		if(!(other instanceof ViewModelPlace vother))
+			return false;
+		return initialTokenCount.get() == vother.initialTokenCount.get();
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ initialTokenCount.getValue().hashCode();
+	}
+}

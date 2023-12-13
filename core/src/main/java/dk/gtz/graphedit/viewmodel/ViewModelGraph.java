@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.InvalidationListener;
@@ -24,7 +21,6 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph implements Property<ViewModelGraph> {
-    private Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     private StringProperty declarations;
     private MapProperty<UUID,ViewModelVertex> vertices;
     private MapProperty<UUID,ViewModelEdge> edges;
@@ -55,6 +51,19 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     }
 
     /**
+     * Checks that all the edges' sources and edges are present in the vertices collection.
+     * @return True if the graph is valid, otherwise false.
+     */
+    public boolean isValid() {
+        for(var edge : edges().entrySet()) {
+            var containsSourceAndTargetVertex = vertices().containsKey(edge.getValue().source().get()) && vertices().containsKey(edge.getValue().target().get());
+            if(!containsSourceAndTargetVertex)
+                return false;
+        }
+        return true;
+    }
+
+    /**
      * Construct a new instance
      * @param declarations A string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
      * @param vertices A mapping of vertex ids to model vertex-values
@@ -74,9 +83,9 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     public ViewModelGraph(ModelGraph graph, ISyntaxFactory syntaxFactory) {
         this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
         for(var v : graph.vertices().entrySet())
-            vertices.put(v.getKey(), syntaxFactory.createVertexViewModel(v.getValue()));
+            vertices.put(v.getKey(), syntaxFactory.createVertexViewModel(v.getKey(), v.getValue()));
         for(var e : graph.edges().entrySet())
-            edges.put(e.getKey(), syntaxFactory.createEdgeViewModel(e.getValue()));
+            edges.put(e.getKey(), syntaxFactory.createEdgeViewModel(e.getKey(), e.getValue()));
     }
 
     /**
@@ -114,27 +123,28 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     @Override
     public void addListener(ChangeListener<? super ViewModelGraph> listener) {
         declarations.addListener((e,o,n) -> listener.changed(this,this,this));
-        vertices.forEach((k,v) -> v.addListener((e,o,n) -> listener.changed(this,this,this)));
+        ChangeListener<? super ViewModelVertex> vertexChangeListener = (e,o,n) -> listener.changed(this,this,this);
+        vertices.forEach((k,v) -> v.addListener(vertexChangeListener));
         vertices.addListener((MapChangeListener<UUID,ViewModelVertex>)event -> {
             if(event.wasAdded())
-                event.getValueAdded().addListener((e,o,n) -> listener.changed(this,this,this));
+                event.getValueAdded().addListener(vertexChangeListener);
             if(event.wasRemoved())
-                event.getValueRemoved().removeListener((e,o,n) -> listener.changed(this,this,this));
+                event.getValueRemoved().removeListener(vertexChangeListener);
             listener.changed(this,this,this);
         });
+        ChangeListener<? super ViewModelEdge> edgeChangeListener = (e,o,n) -> listener.changed(this,this,this);
         edges.forEach((k,v) -> v.addListener((e,o,n) -> listener.changed(this,this,this)));
         edges.addListener((MapChangeListener<UUID,ViewModelEdge>)event -> {
             if(event.wasAdded())
-                event.getValueAdded().addListener((e,o,n) -> listener.changed(this,this,this));
+                event.getValueAdded().addListener(edgeChangeListener);
             if(event.wasRemoved())
-                event.getValueRemoved().removeListener((e,o,n) -> listener.changed(this,this,this));
+                event.getValueRemoved().removeListener(edgeChangeListener);
             listener.changed(this,this,this);
         });
     }
 
     @Override
     public void removeListener(ChangeListener<? super ViewModelGraph> listener) {
-        // TODO: This is very unlikely to work
         declarations.removeListener((e,o,n) -> listener.changed(this,this,this));
         vertices.forEach((k,v) -> v.removeListener((e,o,n) -> listener.changed(this,this,this)));
         vertices.removeListener((MapChangeListener<UUID,ViewModelVertex>)event -> {

@@ -105,32 +105,38 @@
  - [x] Release format (ship plugins)
  - [x] TODOs round
  - [x] update readme (screenshots etc)
- - [ ] Release `v1.1.0
- - [ ] Custom keybinds
- - [ ] Cut / Copy / Paste support
- - [ ] Release core as a library on ossrch
- - [ ] Additional Syntaxes
+ - [x] Release `v1.1.0
+ - [x] GraphDiff algorithm (look at https://stackoverflow.com/questions/16553343/diff-for-directed-acyclic-graphs)
+   - [x] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
+   - [x] Cut / Copy / Paste support
+ - [x] Lint layer
+   - [ ] Lint protobuf specification
+   - [x] Implement `ILint` / `ILinter` interfaces
+ - [x] Release core as a library on ossrh
+ - [x] Additional Syntaxes
    - [x] Simple Text
    - [x] LTS
+   - [x] P/N
+ - [x] Plugin Manager
+ - [x] Fix TODOs
+ - [x] Polish
+ - [ ] Release `v1.2.0
+ - [ ] Third party language plugins
+   - [ ] TIOA 
    - [ ] NTTA
    - [ ] HAWK
-   - [x] P/N
-   - [ ] TIOA 
- - [ ] Fix TODOs
- - [ ] Polish
- - [ ] Release `v1.2.0
+     - [ ] expr richtextfx.CodeArea implementation
  - [ ] Trace-traverser & specification
- - [ ] LSP like specification (use docusaurus, or github wiki)
+ - [ ] Plan for git integration
+ - [ ] Diff view?
+ - [x] Add plugin API and 
+ - [x] LSP like specification (use docusaurus, or github wiki)
    - [ ] Protobuf specification (that way, you are language agnostic)
-   - [ ] Implement `ILsp` / `ILspEngine` interfaces
-   - [ ] Lint protobuf specification
-   - [ ] Implement `ILint` / `ILinter` interfaces
- - [ ] Release `v1.2.0`
+   - [x] Implement `ILsp` / `ILspEngine` interfaces
+ - [ ] Release `v1.3.0`
  - [ ] DAP like specification
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `IDap` / `IDapEngine` interfaces
- - [ ] Release `v1.3.0`
- - [ ] Add plugin API and [LuaJava](https://github.com/gudzpoz/luajava/tree/main)
-   - [ ] Rewrite the default "plugins" as a lua plugin. This will simplify the codebase tremendously
+ - [ ] Release `v1.4.0`
+ - [ ] Example lua plugin [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
  - [ ] Release `v2.0.0`
-

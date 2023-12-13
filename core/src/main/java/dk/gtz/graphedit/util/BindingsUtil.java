@@ -30,12 +30,11 @@ public class BindingsUtil {
      * @see createOvalXBinding
      * @param sourcePosition The source position
      * @param targetPosition The target position. This will be the binding position
-     * @param shape The type of shape to bind as
+     * @param shape The shape dimensions to use
      * @return The new binding
      * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
      */
     public static DoubleBinding createShapedXBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
-	// TODO: refactor to reuse some of this duplicated code
 	return Bindings.createDoubleBinding(() -> {
 	    if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE)) {
 		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();
@@ -109,7 +108,6 @@ public class BindingsUtil {
      * @throws RuntimeException if the provided {@code ViewModelVertexShape} value is not supported
      */
     public static DoubleBinding createShapedYBinding(ViewModelPoint sourcePosition, ViewModelPoint targetPosition, ViewModelVertexShape shape) {
-	// TODO: refactor to reuse some of this duplicated code
 	return Bindings.createDoubleBinding(() -> {
 	    if(shape.shapeType().get().equals(ViewModelShapeType.RECTANGLE)) {
 		var diffX = targetPosition.getXProperty().get() - sourcePosition.getXProperty().get();

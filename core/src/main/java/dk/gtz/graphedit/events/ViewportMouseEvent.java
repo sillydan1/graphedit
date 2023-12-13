@@ -13,6 +13,7 @@ import javafx.scene.transform.Affine;
  * @param isTargetDrawPane If true, then this event is targeting the drawpane. Useful for filtering unwanted events
  * @param syntax The syntax factory associated with the current model
  * @param graph The current model graph
+ * @param bufferId The related buffer key
  * @param editorSettings The current editor settings
  */
 public record ViewportMouseEvent(
@@ -21,5 +22,6 @@ public record ViewportMouseEvent(
 		boolean isTargetDrawPane,
 		ISyntaxFactory syntax,
 		ViewModelGraph graph,
+		String bufferId,
 		ViewModelEditorSettings editorSettings) {}
 

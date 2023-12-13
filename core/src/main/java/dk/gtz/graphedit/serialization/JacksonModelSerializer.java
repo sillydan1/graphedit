@@ -35,7 +35,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     private ObjectMapper getMapper() {
-	var om = new ObjectMapper(); // TODO: https://www.baeldung.com/jackson-yaml is better for git-managed projects
+	var om = new ObjectMapper();
 	om.registerModule(new Jdk8Module());
 	var ptv = BasicPolymorphicTypeValidator.builder()
 	    // allow collection types

@@ -101,31 +101,6 @@ public class GridPaneController extends Pane {
 	return linePool.get(index);
     }
 
-    @Deprecated
-    private void refreshLines() {
-	getChildren().clear();
-	var width = getWidth();
-	var height = getHeight();
-	var adjustedGridsizeX = gridsizeX.get() * gridscaleX;
-	var adjustedGridsizeY = gridsizeY.get() * gridscaleY;
-
-	// column lines
-	for (var x = -adjustedGridsizeX; x < width + adjustedGridsizeX; x += adjustedGridsizeX) {
-	    var xx = x + offsetX;
-	    var line = new Line(xx, 0, xx, height);
-	    line.styleProperty().set("-fx-stroke: -color-bg-subtle");
-	    getChildren().add(line);
-	}
-
-	// row lines
-	for (var y = -adjustedGridsizeY; y < height + adjustedGridsizeY; y += adjustedGridsizeY) {
-	    var yy = y + offsetY;
-	    var line = new Line(0, yy, width, yy);
-	    line.styleProperty().set("-fx-stroke: -color-bg-subtle");
-	    getChildren().add(line);
-	}
-    }
-
     /**
      * Change the grid size to some new value
      * @param gridsizeX the new width of the grid

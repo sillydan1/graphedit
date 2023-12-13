@@ -10,14 +10,16 @@ import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.view.EdgeController;
-import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.view.VertexController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelShapeType;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.gtz.graphedit.viewmodel.ViewModelVertexShape;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 /**
  * Syntax factory implementation for the default basic demonstration syntax
@@ -50,35 +52,35 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
 	var toolbox = DI.get(IToolbox.class);
 	return new VertexController(vertexKey, vertexValue, 
-		creatorController.getViewportTransform(),
-		creatorController.getProjectResource().syntax(),
-		creatorController.getEditorSettings(),
+		viewportTransform,
+		graph,
+		DI.get(ViewModelEditorSettings.class),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
 	var toolbox = DI.get(IToolbox.class);
 	return new EdgeController(edgeKey, edgeValue,
-		creatorController.getProjectResource(),
-		creatorController.getViewportTransform(),
-		creatorController.getEditorSettings(),
+		graph,
+		viewportTransform,
+		DI.get(ViewModelEditorSettings.class),
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
-	return new ViewModelVertex(vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+	return new ViewModelVertex(vertexKey, vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
-	return new ViewModelEdge(edgeValue);
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+	return new ViewModelEdge(edgeKey, edgeValue);
     }
 
     @Override
@@ -91,4 +93,3 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
 	return Optional.empty();
     }
 }
-

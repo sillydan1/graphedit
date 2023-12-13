@@ -21,11 +21,13 @@ import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
 import dk.gtz.graphedit.tool.Toolbox;
-import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 public class PNSyntaxFactory implements ISyntaxFactory {
     private final IToolbox toolbox;
@@ -54,75 +56,75 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
         if(vertexValue instanceof ViewModelPlace placeVertex)
             return new PlaceController(vertexKey, placeVertex,
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
         if(vertexValue instanceof ViewModelTransition transitionVertex)
             return new TransitionController(vertexKey, transitionVertex,
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
 
         if(this.toolbox.getSelectedTool().get() instanceof PlaceTool)
-            return new PlaceController(vertexKey, new ViewModelPlace(vertexValue),
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+            return new PlaceController(vertexKey, new ViewModelPlace(vertexKey, vertexValue),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
         if(this.toolbox.getSelectedTool().get() instanceof TransitionTool)
-            return new TransitionController(vertexKey, new ViewModelTransition(vertexValue.toModel()),
-                    creatorController.getViewportTransform(),
-                    creatorController.getProjectResource().syntax(),
-                    creatorController.getEditorSettings(),
+            return new TransitionController(vertexKey, new ViewModelTransition(vertexKey, vertexValue.toModel()),
+                    viewportTransform,
+                    graph,
+                    DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
-                    this);
+                    this, bufferKey);
 
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
         if(vertexValue instanceof ModelPlace place)
-            return new ViewModelPlace(place);
+            return new ViewModelPlace(vertexKey, place);
         if(vertexValue instanceof ModelTransition transition)
-            return new ViewModelTransition(transition);
+            return new ViewModelTransition(vertexKey, transition);
 
         if(toolbox.getSelectedTool().get() instanceof PlaceTool)
-            return new ViewModelPlace(vertexValue);
+            return new ViewModelPlace(vertexKey, vertexValue);
         if(toolbox.getSelectedTool().get() instanceof TransitionTool)
-            return new ViewModelTransition(vertexValue);
+            return new ViewModelTransition(vertexKey, vertexValue);
 
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
-        var arc = new ViewModelArc(edgeValue.toModel());
+        var arc = new ViewModelArc(edgeKey, edgeValue.toModel());
         if(edgeValue instanceof ViewModelArc tarc)
             arc = tarc;
         return new ArcController(edgeKey, arc,
-                creatorController.getProjectResource(),
-                creatorController.getViewportTransform(),
-                creatorController.getEditorSettings(),
+                graph,
+                viewportTransform,
+                DI.get(ViewModelEditorSettings.class),
                 toolbox.getSelectedTool(),
-                this);
+                this, bufferKey);
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
         if(edgeValue instanceof ModelArc arc)
-            return new ViewModelArc(arc);
-        return new ViewModelArc(edgeValue);
+            return new ViewModelArc(edgeKey, arc);
+        return new ViewModelArc(edgeKey, edgeValue);
     }
 
     @Override
@@ -135,4 +137,3 @@ public class PNSyntaxFactory implements ISyntaxFactory {
         return Optional.of(toolbox);
     }
 }
-

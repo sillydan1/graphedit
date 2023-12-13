@@ -13,11 +13,13 @@ import dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel.ViewModelTransition;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.spi.ISyntaxMigrater;
 import dk.gtz.graphedit.tool.IToolbox;
-import dk.gtz.graphedit.view.ModelEditorController;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 public class LTSSyntaxFactory implements ISyntaxFactory {
     @Override
@@ -40,41 +42,43 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
     }
 
     @Override
-    public Node createVertexView(UUID vertexKey, ViewModelVertex vertexValue, ModelEditorController creatorController) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
+	var settings = DI.get(ViewModelEditorSettings.class);
 	var toolbox = DI.get(IToolbox.class);
-	var vertex = new ViewModelState(vertexValue);
+	var vertex = new ViewModelState(vertexKey, vertexValue);
 	if(vertexValue instanceof ViewModelState tvertex)
 	    vertex = tvertex;
 	return new StateController(vertexKey, vertex, 
-		creatorController.getViewportTransform(),
-		creatorController.getProjectResource().syntax(),
-		creatorController.getEditorSettings(),
+		viewportTransform,
+		graph,
+		settings,
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public ViewModelVertex createVertexViewModel(ModelVertex vertexValue) {
-	return new ViewModelState(vertexValue);
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+	return new ViewModelState(vertexKey, vertexValue);
     }
 
     @Override
-    public Node createEdgeView(UUID edgeKey, ViewModelEdge edgeValue, ModelEditorController creatorController) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
+	var settings = DI.get(ViewModelEditorSettings.class);
 	var toolbox = DI.get(IToolbox.class);
-	var edge = new ViewModelTransition(edgeValue);
+	var edge = new ViewModelTransition(edgeKey, edgeValue);
 	if(edgeValue instanceof ViewModelTransition tedge)
 	    edge = tedge;
 	return new TransitionController(edgeKey, edge,
-		creatorController.getProjectResource(),
-		creatorController.getViewportTransform(),
-		creatorController.getEditorSettings(),
+		graph,
+		viewportTransform,
+		settings,
 		toolbox.getSelectedTool(),
-		this);
+		this, bufferKey);
     }
 
     @Override
-    public ViewModelEdge createEdgeViewModel(ModelEdge edgeValue) {
-	return new ViewModelTransition(edgeValue);
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+	return new ViewModelTransition(edgeKey, edgeValue);
     }
 
     @Override
@@ -87,4 +91,3 @@ public class LTSSyntaxFactory implements ISyntaxFactory {
 	return Optional.empty();
     }
 }
-

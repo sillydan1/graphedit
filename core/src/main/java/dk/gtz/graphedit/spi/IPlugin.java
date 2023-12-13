@@ -18,6 +18,14 @@ public interface IPlugin {
     String getName();
 
     /**
+     * Get a general description of this plugin
+     * @return A description of what kinds of utilities this plugin provides
+     */
+    default String getDescription() {
+        return "";
+    }
+
+    /**
      * Event called when the plugin is initialized.
      * At this point, most things are registered in {@link DI}.
      */
@@ -48,6 +56,15 @@ public interface IPlugin {
      * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
      */
     default Collection<IPluginPanel> getPanels() throws Exception {
+        return List.of();
+    }
+
+    /**
+     * Get a collection of plugin language servers provided by this plugin. Will return an empty list by default.
+     * @return A collection of language servers
+     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     */
+    default Collection<ILanguageServer> getLanguageServers() throws Exception {
         return List.of();
     }
 }
