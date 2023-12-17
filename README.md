@@ -30,7 +30,7 @@ If you open the project in an editor and the class `BuildConfig` doesn't exist, 
 
 ## Extend 🔌
 Graphedit supports third party plugins. Take a look at the official [template repository](https://github.com/sillydan1/graphedit-plugin-template) as a starting point on creating your own plugin.
-Also make sure to take a look at the [javadocs](javadoc.graphedit.gtz.dk) page for reference as well. If you want more of an example, take a look at how the [`std` library](std/) is structured.
+Also make sure to take a look at the [javadocs](https://javadoc.graphedit.gtz.dk) page for reference as well. If you want more of an example, take a look at how the [`std`](std/) plugin is structured.
 
 ## Install
 ### Linux 🐧
