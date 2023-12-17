@@ -67,7 +67,7 @@ public class PluginManagementPanelController extends VBox {
     }
 
     private Node getPluginEntry(IPlugin plugin) {
-	var result = new Tile(plugin.getName(), "");
+	var result = new Tile(plugin.getName(), null);
 	var enabledThingy = new ToggleSwitch();
 	enabledThingy.setSelected(!settings.disabledPlugins().contains(plugin.getName()));
 	enabledThingy.selectedProperty().addListener((e,o,n) -> {
@@ -78,7 +78,9 @@ public class PluginManagementPanelController extends VBox {
 	});
 	result.setAction(enabledThingy);
 	result.setActionHandler(enabledThingy::fire);
-	result.setTooltip(new Tooltip(plugin.getDescription()));
+	var description = plugin.getDescription();
+	if(!description.isBlank())
+	    result.setTooltip(new Tooltip(description));
 	return result;
     }
 }
