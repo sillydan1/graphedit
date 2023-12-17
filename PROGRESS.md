@@ -120,7 +120,7 @@
  - [x] Plugin Manager
  - [x] Fix TODOs
  - [x] Polish
- - [ ] Release `v1.2.0
+ - [x] Release `v1.2.0
  - [ ] Third party language plugins
    - [ ] TIOA 
    - [ ] NTTA
@@ -134,6 +134,7 @@
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.3.0`
+ - [ ] Planarity Embedding
  - [ ] DAP like specification
    - [ ] Protobuf specification (that way, you are language agnostic)
    - [ ] Implement `IDap` / `IDapEngine` interfaces
