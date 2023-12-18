@@ -12,7 +12,13 @@
 
 ------
 
-## Build
+## Showcase 👀
+<div style="display: flex;" align="center">
+  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-light.png" alt="Image 1" width="48%" />
+  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-dark.png" alt="Image 2" width="48%" />
+</div>
+
+## Build 💾
 The project is compiled using `gradle`:
 ```shell
 # Just build the app
@@ -22,8 +28,12 @@ gradle run
 ```
 If you open the project in an editor and the class `BuildConfig` doesn't exist, simply running `gradle build` should autogenerate the class.
 
+## Extend 🔌
+Graphedit supports third party plugins. Take a look at the official [template repository](https://github.com/sillydan1/graphedit-plugin-template) as a starting point on creating your own plugin.
+Also make sure to take a look at the [javadocs](https://javadoc.graphedit.gtz.dk) page for reference as well. If you want more of an example, take a look at how the [`std`](std/) plugin is structured.
+
 ## Install
-### Linux
+### Linux 🐧
 We provide `.deb` and `.rpm` packaging formats directly from the github releases
 
 <!-- #### Flatpak -->
@@ -45,23 +55,17 @@ wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.r
 rpg -i graphedit.rpm
 ```
 
-### OSX
+### OSX 🍎
 After installing you may need to go into system settings > privacy settings and allow the app to be run. Alternatively, you can follow [this](https://support.apple.com/en-lk/guide/mac-help/mchleab3a043/mac) guide.
 ```shell
 brew install sillydan1/graphedit/graphedit
 ```
 or [download the .dmg](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.dmg) directly from the latest github release.
 
-### Windows
+### Windows 🪟
 Simply [Download the .msi](https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.msi) installer from the latest github release and run it.
 
-## Showcase
-<div style="display: flex;" align="center">
-  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-light.png" alt="Image 1" width="48%" />
-  <img src="https://raw.githubusercontent.com/sillydan1/graphedit/main/.github/resources/screenshots/Screenshot-dark.png" alt="Image 2" width="48%" />
-</div>
-
-## Architecture
+## Architecture 🏛️
 Graphedit is designed from the ground up to be easy to extend with an opinionated, but easy to understand and efficient architecture.
 Note that at the time of writing a plugin-system is planned, but not implemented yet. So extensions must be done via PRs at the moment.
 

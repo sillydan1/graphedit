@@ -50,7 +50,7 @@ flatpak:
 
 # NOTE: if you wish to run with arguments, use gradlew run --args="arg1 arg2" instead of this makefile
 run: ${WRP}
-	${WRP} run --args="-v TRACE -P ../std/build/libs"
+	${WRP} run --args="-v TRACE"
 
 clean: ${WRP}
 	${WRP} clean

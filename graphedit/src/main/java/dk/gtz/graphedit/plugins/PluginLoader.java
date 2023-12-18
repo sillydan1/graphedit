@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ public class PluginLoader {
 	private static Logger logger = LoggerFactory.getLogger(PluginLoader.class);
 	private final IPluginsContainer loadedPlugins;
 	private final List<File> pluginsDirs;
-	private final AtomicBoolean loading = new AtomicBoolean();
 	private final IModelSerializer serializer;
 
 	public PluginLoader(List<String> pluginsDirs, IModelSerializer serializer) {
@@ -42,8 +40,7 @@ public class PluginLoader {
 	}
 
 	public PluginLoader loadPlugins() {
-		if(loading.compareAndSet(false, true))
-			loadPlugin();
+		loadPlugin();
 		for(var pluginsDir : pluginsDirs) {
 			logger.trace("looking for plugins in {}", pluginsDir.getAbsolutePath());
 			if(!pluginsDir.exists() || !pluginsDir.isDirectory()) {
@@ -51,11 +48,9 @@ public class PluginLoader {
 				continue;
 			}
 
-			if(loading.compareAndSet(false, true)) {
-				var files = requireNonNull(pluginsDir.listFiles());
-				for (var pluginDir : files)
-					loadPlugin(pluginDir);
-			}
+			var files = requireNonNull(pluginsDir.listFiles());
+			for(var pluginDir : files)
+				loadPlugin(pluginDir);
 		}
 		return this;
 	}

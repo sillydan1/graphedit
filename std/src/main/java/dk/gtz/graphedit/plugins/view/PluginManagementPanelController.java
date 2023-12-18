@@ -78,7 +78,9 @@ public class PluginManagementPanelController extends VBox {
 	});
 	result.setAction(enabledThingy);
 	result.setActionHandler(enabledThingy::fire);
-	result.setTooltip(new Tooltip(plugin.getDescription()));
+	var description = plugin.getDescription();
+	if(!description.isBlank())
+	    result.setTooltip(new Tooltip(description));
 	return result;
     }
 }
