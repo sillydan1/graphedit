@@ -67,7 +67,7 @@ public class PluginManagementPanelController extends VBox {
     }
 
     private Node getPluginEntry(IPlugin plugin) {
-	var result = new Tile(plugin.getName(), null);
+	var result = new Tile(plugin.getName(), "");
 	var enabledThingy = new ToggleSwitch();
 	enabledThingy.setSelected(!settings.disabledPlugins().contains(plugin.getName()));
 	enabledThingy.selectedProperty().addListener((e,o,n) -> {

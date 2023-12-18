@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +72,7 @@ public class PluginLoader {
 			Thread.currentThread().setContextClassLoader(pluginClassLoader);
 			for(var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
 				loadPlugin(plugin, pluginClassLoader);
-		} catch(Exception e) {
+		} catch(ServiceConfigurationError e) {
 			logger.warn("failed to load plugin: {}", e.getMessage());
 		} finally {
 			Thread.currentThread().setContextClassLoader(currentClassLoader);
