@@ -178,7 +178,13 @@ public class EdgeController extends Group {
     }
 
     private void initializeEdgeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelEditorSettings editorSettings, String bufferKey) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onEdgeMouseEvent(new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, parentGraph, bufferKey, editorSettings)));
+	addEventHandler(MouseEvent.ANY, e -> {
+	    var event = new EdgeMouseEvent(e, edgeKey, edgeValue, viewportAffine, syntaxFactory, parentGraph, bufferKey, editorSettings);
+	    var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	    if(syntaxToolbox.isPresent())
+		syntaxToolbox.get().getSelectedTool().get().onEdgeMouseEvent(event);
+	    selectedTool.get().onEdgeMouseEvent(event);
+	});
 	edgeValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n) {
 		line.getStyleClass().add("stroke-selected");

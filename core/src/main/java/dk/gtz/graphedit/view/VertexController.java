@@ -193,7 +193,13 @@ public class VertexController extends StackPane {
     }
 
     private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, bufferKey, editorSettings)));
+	addEventHandler(MouseEvent.ANY, e -> {
+	    var event = new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, bufferKey, editorSettings);
+	    var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	    if(syntaxToolbox.isPresent())
+		syntaxToolbox.get().getSelectedTool().get().onVertexMouseEvent(event);
+	    selectedTool.get().onVertexMouseEvent(event);
+	});
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
 		graphic.getStyleClass().add("stroke-selected");
