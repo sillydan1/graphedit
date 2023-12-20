@@ -2,6 +2,7 @@ package dk.gtz.graphedit.serialization;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,12 +26,14 @@ import dk.gtz.graphedit.util.MetadataUtils;
  */
 public class JacksonModelSerializer implements IModelSerializer {
     private final Logger logger = LoggerFactory.getLogger(JacksonModelSerializer.class);
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+    private List<String> pluginPackages;
 
     /**
      * Construct a new instance
      */
     public JacksonModelSerializer() {
+	pluginPackages = new ArrayList<>();
 	this.objectMapper = getMapper();
     }
 
@@ -45,9 +48,10 @@ public class JacksonModelSerializer implements IModelSerializer {
 	    .allowIfSubType("com.baeldung.jackson.inheritance")
 	    .allowIfSubType("java.awt")
 	    // allow graphedit 
-	    .allowIfSubType("dk.gtz.graphedit")
-	    .build();
-	om.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+	    .allowIfSubType("dk.gtz.graphedit");
+	for(var p : pluginPackages)
+	    ptv.allowIfSubType(p);
+	om.activateDefaultTyping(ptv.build(), ObjectMapper.DefaultTyping.NON_FINAL);
 	om.enable(SerializationFeature.INDENT_OUTPUT);
 	om.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
 	return om;
@@ -55,7 +59,13 @@ public class JacksonModelSerializer implements IModelSerializer {
 
     @Override
     public void addClassLoader(ClassLoader loader) {
-	this.objectMapper.setTypeFactory(this.objectMapper.getTypeFactory().withClassLoader(loader));
+	for(var p : loader.getDefinedPackages()) {
+	    logger.info("adding '{}' to allowed namespaces", p.getName());
+	    pluginPackages.add(p.getName());
+	}
+	var tf = this.objectMapper.getTypeFactory().withClassLoader(loader);
+	this.objectMapper = getMapper();
+	this.objectMapper.setTypeFactory(tf);
     }
 
     @Override
