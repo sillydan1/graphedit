@@ -17,19 +17,24 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 /**
  * General utilities for manipulating and creating {@link Property} inspectors / editors.
  */
 public class InspectorUtils {
+    // TODO: accordion group of inspectors
     private InspectorUtils() {
 
     }
@@ -39,7 +44,7 @@ public class InspectorUtils {
      * @param o the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link Observable}.
      * @throws RuntimeException if the provided {@link Observable} is not supported
-     * @throws ClassCastException if the provided {@link Observable} is a collection type of non-observables
+     * @throws ClassCastException if the provided {@link Observable} is a collection type of non-observables or if it's a confusing ObjectProperty
      */
     public static Node getObservableInspector(Observable o) {
 	if(o instanceof BooleanProperty p) return getPropertyInspector(p);
@@ -48,7 +53,7 @@ public class InspectorUtils {
 	if(o instanceof IntegerProperty p) return getPropertyInspector(p);
 	if(o instanceof LongProperty p) return getPropertyInspector(p);
 	if(o instanceof StringProperty p) return getPropertyInspector(p);
-	if(o instanceof ObjectProperty<?> p) return getPropertyInspector(p);
+	if(o instanceof ObjectProperty p) return getPropertyInspector(p);
 	// NOTE: Intentional classcast exception here. We cannot safely cast to generic types because java is stupid
 	if(o instanceof ListProperty p) return getPropertyInspector(p);
 	if(o instanceof MapProperty p) return getPropertyInspector(p);
@@ -71,17 +76,45 @@ public class InspectorUtils {
 
     /**
      * Get an inspector for a generic object.
-     *
-     * Note that at the time of writing, the resulting inspector cannot change anything about the object.
+     * <br/>
+     * Note that this function contains intentional unsafe type casts and may throw class cast exceptions
      * @param property the thing that the inspector modifies
      * @return a javafx component that can modify the value of the provided {@link ObjectProperty}.
+     * @throws ClassCastException if the contained type is confusing
      */
-    public static Node getPropertyInspector(ObjectProperty<?> property) {
+    public static Node getPropertyInspector(ObjectProperty property) {
 	if(property.get() == null)
 	    return new Label("null object");
+
+	// Check if the property type is an enum type
+	if(property.get().getClass().isEnum())
+	    return createEnumComboBox(property);
+
+	// Fallback
 	return new Label(property.get().getClass().getSimpleName());
     }
 
+    private static <T extends Enum<T>> ComboBox<T> createEnumComboBox(ObjectProperty<T> property) {
+        var cmb = new ComboBox<T>(FXCollections.observableArrayList(property.get().getDeclaringClass().getEnumConstants()));
+        cmb.valueProperty().bindBidirectional(property);
+        cmb.setConverter(createEnumStringConverter(property.get().getDeclaringClass()));
+        return cmb;
+    }
+
+    private static <E extends Enum<E>> StringConverter<E> createEnumStringConverter(Class<E> enumClass) {
+	return new StringConverter<E>() {
+	    @Override
+	    public String toString(E object) {
+		return object != null ? object.toString() : "";
+	    }
+
+	    @Override
+	    public E fromString(String string) {
+		return Enum.valueOf(enumClass, string);
+	    }
+	};
+    }
+    
     /**
      * Get an inspector for a map of observales
      *
