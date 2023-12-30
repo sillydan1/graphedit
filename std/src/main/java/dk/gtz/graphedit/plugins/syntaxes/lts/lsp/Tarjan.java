@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Tarjans Strongly connected components algorithm implementation.
  * See https://sites.cs.ucsb.edu/~gilbert/cs240a/Old/cs240aSpr2011/slides/TarjanDFS.pdf for more info

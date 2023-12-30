@@ -2,9 +2,6 @@ package dk.gtz.graphedit.plugins.syntaxes.lts.view;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.plugins.syntaxes.lts.viewmodel.ViewModelState;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.tool.ITool;
@@ -21,7 +18,6 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 
 public class StateController extends VertexController {
-    private final Logger logger = LoggerFactory.getLogger(StateController.class);
     private ViewModelState vertex;
     private StackPane graphicsStack;
     private Label label;

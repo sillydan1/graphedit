@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
@@ -28,7 +25,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 
 public class LTSLanguageServer implements ILanguageServer {
-    private static Logger logger = LoggerFactory.getLogger(LTSLanguageServer.class);
     private List<IRunnable1<Collection<ModelLint>>> diagnosticsHandlers;
     private List<IRunnable1<ModelNotification>> notificationHandlers;
     private List<IRunnable1<ModelLanguageServerProgress>> progressHandlers;
