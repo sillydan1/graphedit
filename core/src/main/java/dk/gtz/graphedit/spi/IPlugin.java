@@ -26,10 +26,18 @@ public interface IPlugin {
     }
 
     /**
-     * Event called when the plugin is initialized.
-     * At this point, most things are registered in {@link DI}.
+     * Event called when the plugin is initialized (before any syntax factories or panels are requested)
+     * At this point, only some things are registered in {@link DI}.
      */
     default void onInitialize() {
+
+    }
+
+    /**
+     * Event called when the application has loaded.
+     * At this point, most things are registered in {@link DI}.
+     */
+    default void onStart() {
 
     }
 
