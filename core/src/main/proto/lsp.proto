@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_package = "dk.gtz.graphedit";
+option java_multiple_files = true;
+option java_outer_classname = "LspProto";
+
+service LanguageServer {
+    // rpc GetFeature(FeatureLookup) returns (Feature) {}
+    // TODO: Model diff interaction
+    rpc GetLanguageName() returns (string) {}
+    rpc GetServerName() returns (string) {}
+    rpc GetServerVersion() returns (string) {}
+    rpc GetDiagnostics() returns (repeated Diagnostic) {}
+    // TODO: streams for diagnostics, notifications and progress reports
+}
+
+message Diagnostic {
+    Severity severity = 1;
+    string modelkey = 2;
+    string lintIdentifier = 3;
+    string title = 4;
+    string message = 5;
+    string description = 6;
+    repeated string affectedElements = 7;
+    repeated Polygon affectedRegions = 8;
+}
+
+enum Severity {
+    HINT = 0;
+    INFO = 1;
+    WARNING = 2;
+    ERROR = 3;
+}
+
+message Polygon {
+    repeated Point points = 1;
+}
+
+message Point {
+    int32 x = 1;
+    int32 y = 2;
+}
