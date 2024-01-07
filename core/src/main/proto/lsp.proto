@@ -13,7 +13,7 @@ service LanguageServer {
 
     rpc GetServerInfo(Empty) returns (ServerInfo) {}
 
-    rpc GetDiagnostics(Empty) returns (stream Diagnostic) {}
+    rpc GetDiagnostics(Empty) returns (stream DiagnosticsList) {}
     rpc GetNotifications(Empty) returns (stream Notification) {}
     rpc GetProgress(Empty) returns (stream ProgressReport) {}
 }
@@ -42,6 +42,10 @@ message ServerInfo {
     string name = 1;
     string language = 2;
     string semanticVersion = 3;
+}
+
+message DiagnosticsList {
+    repeated Diagnostic diagnostics = 1;
 }
 
 message Diagnostic {
