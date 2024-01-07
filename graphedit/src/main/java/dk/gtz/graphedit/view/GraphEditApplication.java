@@ -17,6 +17,7 @@ import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
+import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
@@ -146,21 +147,21 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void logNotification(ModelNotification n) {
-	switch(Level.toLevel(n.level().toLowerCase()).toInt()) {
-	    case Level.ERROR_INT:
-		logger.error(n.message());
-		break;
-	    case Level.WARN_INT:
-		logger.warn(n.message());
-		break;
-	    case Level.INFO_INT:
-		logger.info(n.message());
-		break;
-	    case Level.DEBUG_INT:
+	switch (n.level()) {
+	    case DEBUG:
 		logger.debug(n.message());
 		break;
-	    case Level.TRACE_INT:
+	    case ERROR:
+		logger.error(n.message());
+		break;
+	    case INFO:
+		logger.info(n.message());
+		break;
+	    case TRACE:
 		logger.trace(n.message());
+		break;
+	    case WARNING:
+		logger.warn(n.message());
 		break;
 	    default:
 		logger.trace(n.level() + ": " + n.message());
