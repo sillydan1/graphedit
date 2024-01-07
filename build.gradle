@@ -1,6 +1,7 @@
 plugins {
     id 'java';
     id 'com.github.gmazzo.buildconfig' version '4.2.0';
+    id 'com.google.protobuf' version '0.9.4';
 }
 
 def gitCommitSha = { ->
@@ -68,6 +69,32 @@ def getVersion = { ->
     if(headName.equals('main'))
         return version;
     return version + '+' + gitCommitSha() + '-SNAPSHOT';
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.0";
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.60.0';
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+// Inform IDEs about the generated code
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc';
+            srcDirs 'build/generated/source/proto/main/java';
+        }
+    }
 }
 
 allprojects {
