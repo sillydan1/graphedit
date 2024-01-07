@@ -71,20 +71,9 @@ def getVersion = { ->
     return version + '+' + gitCommitSha() + '-SNAPSHOT';
 }
 
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.24.0";
-    }
-    plugins {
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.60.0';
-        }
-    }
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
-    }
+allprojects {
+    group = 'dk.gtz.graphedit';
+    version = getVersion();
 }
 
 // Inform IDEs about the generated code
@@ -97,14 +86,11 @@ sourceSets {
     }
 }
 
-allprojects {
-    group = 'dk.gtz.graphedit';
-    version = getVersion();
-}
 
 subprojects {
     apply plugin: 'java';
-    apply plugin: 'com.github.gmazzo.buildconfig'
+    apply plugin: 'com.github.gmazzo.buildconfig';
+    apply plugin: 'com.google.protobuf';
 
     ext.gitCommitSha = gitCommitSha;
     ext.gitCommitShaLong = gitCommitShaLong;

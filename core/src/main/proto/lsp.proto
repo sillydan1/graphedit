@@ -1,17 +1,37 @@
 syntax = "proto3";
 
+option go_package = "dk.gtz.graphedit/protobuf/types/lsp";
 option java_package = "dk.gtz.graphedit";
 option java_multiple_files = true;
 option java_outer_classname = "LspProto";
+// option objc_class_prefix = "Graphedit";
+option csharp_namespace = "Graphedit.Protobuf.Lsp";
+option cc_enable_arenas = true;
 
 service LanguageServer {
-    // rpc GetFeature(FeatureLookup) returns (Feature) {}
-    // TODO: Model diff interaction
+    rpc OpenDiffStream(stream Diff) returns (Empty) {}
+
     rpc GetServerInfo(Empty) returns (ServerInfo) {}
 
     rpc GetDiagnostics(Empty) returns (stream Diagnostic) {}
     rpc GetNotifications(Empty) returns (stream Notification) {}
     rpc GetProgress(Empty) returns (stream ProgressReport) {}
+}
+
+message Vertex {
+    string jsonEncoding = 1;
+}
+
+message Edge {
+    string jsonEncoding = 1;
+}
+
+message Diff {
+    string syntaxStyle = 1;
+    repeated Vertex vertexDeletions = 2;
+    repeated Edge edgeDeletions = 3;
+    repeated Vertex vertexAdditions = 4;
+    repeated Edge edgeAdditions = 5;
 }
 
 message Empty {
@@ -33,6 +53,7 @@ message Diagnostic {
     string description = 6;
     repeated string affectedElements = 7;
     repeated Polygon affectedRegions = 8;
+    optional Diff suggestion = 9;
 }
 
 enum Severity {

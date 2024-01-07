@@ -7,6 +7,7 @@ import dk.gtz.graphedit.plugins.syntaxes.lts.LTSSyntaxFactory;
 import dk.gtz.graphedit.plugins.syntaxes.lts.lsp.LTSLanguageServer;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.PNSyntaxFactory;
 import dk.gtz.graphedit.plugins.syntaxes.text.TextSyntaxFactory;
+import dk.gtz.graphedit.plugins.syntaxes.text.lsp.TextGrpcLsp;
 import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginPanel;
@@ -59,6 +60,7 @@ public class StandardPlugin implements IPlugin {
     @Override
     public Collection<ILanguageServer> getLanguageServers() throws Exception {
         return List.of(
-                new LTSLanguageServer());
+                new LTSLanguageServer()
+                );
     }
 }
