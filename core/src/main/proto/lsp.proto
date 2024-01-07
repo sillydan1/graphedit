@@ -7,11 +7,21 @@ option java_outer_classname = "LspProto";
 service LanguageServer {
     // rpc GetFeature(FeatureLookup) returns (Feature) {}
     // TODO: Model diff interaction
-    rpc GetLanguageName() returns (string) {}
-    rpc GetServerName() returns (string) {}
-    rpc GetServerVersion() returns (string) {}
-    rpc GetDiagnostics() returns (repeated Diagnostic) {}
-    // TODO: streams for diagnostics, notifications and progress reports
+    rpc GetServerInfo(Empty) returns (ServerInfo) {}
+
+    rpc GetDiagnostics(Empty) returns (stream Diagnostic) {}
+    rpc GetNotifications(Empty) returns (stream Notification) {}
+    rpc GetProgress(Empty) returns (stream ProgressReport) {}
+}
+
+message Empty {
+
+}
+
+message ServerInfo {
+    string name = 1;
+    string language = 2;
+    string semanticVersion = 3;
 }
 
 message Diagnostic {
@@ -26,10 +36,18 @@ message Diagnostic {
 }
 
 enum Severity {
-    HINT = 0;
-    INFO = 1;
-    WARNING = 2;
-    ERROR = 3;
+    SEVERITY_HINT = 0;
+    SEVERITY_INFO = 1;
+    SEVERITY_WARNING = 2;
+    SEVERITY_ERROR = 3;
+}
+
+enum NotificationLevel {
+    NOTIFICATION_ERROR = 0;
+    NOTIFICATION_WARNING = 1;
+    NOTIFICATION_INFO = 2;
+    NOTIFICATION_DEBUG = 3;
+    NOTIFICATION_TRACE = 4;
 }
 
 message Polygon {
@@ -39,4 +57,23 @@ message Polygon {
 message Point {
     int32 x = 1;
     int32 y = 2;
+}
+
+message Notification {
+    NotificationLevel level = 1;
+    string message = 2;
+}
+
+message ProgressReport {
+    string token = 1;
+    string title = 2;
+    string message = 3;
+    ProgressReportType type = 4;
+}
+
+enum ProgressReportType {
+    PROGRESS_BEGIN = 0;
+    PROGRESS_STATUS = 1;
+    PROGRESS_END = 2;
+    PROGRESS_END_FAIL = 3;
 }
