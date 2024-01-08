@@ -85,12 +85,8 @@ public class InspectorUtils {
     public static Node getPropertyInspector(ObjectProperty property) {
 	if(property.get() == null)
 	    return new Label("null object");
-
-	// Check if the property type is an enum type
 	if(property.get().getClass().isEnum())
 	    return createEnumComboBox(property);
-
-	// Fallback
 	return new Label(property.get().getClass().getSimpleName());
     }
 
