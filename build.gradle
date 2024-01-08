@@ -86,7 +86,6 @@ sourceSets {
     }
 }
 
-
 subprojects {
     apply plugin: 'java';
     apply plugin: 'com.github.gmazzo.buildconfig';
@@ -155,4 +154,3 @@ subprojects {
 test {
     useJUnitPlatform();
 }
-
