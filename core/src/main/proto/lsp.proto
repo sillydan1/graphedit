@@ -4,24 +4,34 @@ option go_package = "dk.gtz.graphedit/protobuf/types/lsp";
 option java_package = "dk.gtz.graphedit";
 option java_multiple_files = true;
 option java_outer_classname = "LspProto";
-// option objc_class_prefix = "Graphedit";
+option objc_class_prefix = "Graphedit";
 option csharp_namespace = "Graphedit.Protobuf.Lsp";
 option cc_enable_arenas = true;
 
+// Language server protobuf specification.
+// A language server can provide diagnostics, notifications and insights into the current progress of the server.
+// A server will be fed with diffs of models, whereas the first diff will add the entire model.
 service LanguageServer {
+    // Start asynchronously streaming model diffs to the server.
     rpc OpenDiffStream(stream Diff) returns (Empty) {}
 
+    // Get the information from the server.
     rpc GetServerInfo(Empty) returns (ServerInfo) {}
 
+    // Open a stream of diagnostics. The server should provide the full list of diagnostics every time it changes.
     rpc GetDiagnostics(Empty) returns (stream DiagnosticsList) {}
+    // Open a stream of notifications.
     rpc GetNotifications(Empty) returns (stream Notification) {}
+    // Open a stream of server progress reports.
     rpc GetProgress(Empty) returns (stream ProgressReport) {}
 }
 
+// Vertex json encoding.
 message Vertex {
     string jsonEncoding = 1;
 }
 
+// Edge json encoding.
 message Edge {
     string jsonEncoding = 1;
 }
