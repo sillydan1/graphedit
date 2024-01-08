@@ -53,6 +53,7 @@ public class StatusBarController extends StackPane {
 	initializeLabels();
 	container.getChildren().addAll(spinnerLabel, lspLabel, messageLabel);
 	initializeLSPs();
+	// NOTE: kept for future use
 	// debugMouseHover();
     }
 
