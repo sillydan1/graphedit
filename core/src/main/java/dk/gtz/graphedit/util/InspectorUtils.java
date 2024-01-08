@@ -18,7 +18,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -34,7 +33,6 @@ import javafx.util.StringConverter;
  * General utilities for manipulating and creating {@link Property} inspectors / editors.
  */
 public class InspectorUtils {
-    // TODO: accordion group of inspectors
     private InspectorUtils() {
 
     }
