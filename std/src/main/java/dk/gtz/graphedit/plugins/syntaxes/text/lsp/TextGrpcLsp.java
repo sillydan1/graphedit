@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.DiagnosticsList;
+import dk.gtz.graphedit.Diff;
+import dk.gtz.graphedit.Edge;
 import dk.gtz.graphedit.Empty;
 import dk.gtz.graphedit.LanguageServerGrpc;
 import dk.gtz.graphedit.LanguageServerGrpc.LanguageServerStub;
@@ -22,6 +24,7 @@ import dk.gtz.graphedit.ProgressReport;
 import dk.gtz.graphedit.ProgressReportType;
 import dk.gtz.graphedit.ServerInfo;
 import dk.gtz.graphedit.Severity;
+import dk.gtz.graphedit.Vertex;
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
 import dk.gtz.graphedit.model.ModelPoint;
@@ -29,17 +32,27 @@ import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
+import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.ILanguageServer;
+import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
+import dk.gtz.graphedit.viewmodel.ViewModelDiff;
+import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
+import dk.gtz.graphedit.viewmodel.ViewModelVertex;
+import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IRunnable1;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.MapChangeListener;
 
 public class TextGrpcLsp implements ILanguageServer {
-    private final Logger logger = LoggerFactory.getLogger(TextGrpcLsp.class);
+	private final Logger logger = LoggerFactory.getLogger(TextGrpcLsp.class);
 	private final LanguageServerStub stub;
 	private final Empty empty;
+	private IBufferContainer bufferContainer;
 	private final int port; // TODO: Launch the program
 
 	public TextGrpcLsp() {
@@ -92,9 +105,41 @@ public class TextGrpcLsp implements ILanguageServer {
 		}
 	}
 
+	private void handleDiff(Diff diff) {
+		try {
+			var so = new SingleResponseStreamObserver<Empty>();
+			stub.handleDiff(diff, so);
+			so.await(); // TODO: Consider if this should be asynchronous
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Override
 	public void initialize(File projectFile, IBufferContainer bufferContainer) {
-
+		final var ltsSyntax = MetadataUtils.getSyntaxFactory(getLanguageName());
+		this.bufferContainer = bufferContainer;
+		this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
+			if(c.wasAdded()) {
+				var changedVal = c.getValueAdded();
+				var old = new SimpleObjectProperty<>(changedVal.toModel());
+				changedVal.addListener((e,o,n) -> {
+					var syntaxName = n.getSyntaxName();
+					if(syntaxName.isEmpty())
+						return;
+					if(!syntaxName.get().equals(getLanguageName()))
+						return;
+					var a = new ViewModelProjectResource(old.get(), ltsSyntax);
+					if(!ViewModelDiff.areComparable(a, n))
+						return;
+					var diff = ViewModelDiff.compare(a, n);
+					old.set(n.toModel());
+					// TODO: only send if there are semantically significant changes(?) - could also be an extra function that you override
+					var gDiff = toDiff(diff);
+					handleDiff(gDiff);
+				});
+			}
+		});
 	}
 
 	@Override
@@ -150,6 +195,34 @@ public class TextGrpcLsp implements ILanguageServer {
 			case UNRECOGNIZED -> ModelNotificationLevel.TRACE;
 			default -> ModelNotificationLevel.TRACE;
 		};
+	}
+
+	private Vertex toVertex(ViewModelVertex vertex) {
+		var serializer = DI.get(IModelSerializer.class);
+		return Vertex.newBuilder()
+			.setJsonEncoding(serializer.serialize(vertex.toModel()))
+			.build();
+	}
+
+	private Edge toEdge(ViewModelEdge edge) {
+		var serializer = DI.get(IModelSerializer.class);
+		return Edge.newBuilder()
+			.setJsonEncoding(serializer.serialize(edge.toModel()))
+			.build();
+	}
+
+	private Diff toDiff(ViewModelDiff diff) {
+		var b = Diff.newBuilder()
+			.setSyntaxStyle(diff.getSyntaxStyle());
+		for(var v : diff.getVertexAdditions())
+			b.addVertexAdditions(toVertex(v));
+		for(var v : diff.getVertexDeletions())
+			b.addVertexDeletions(toVertex(v));
+		for(var e : diff.getEdgeAdditions())
+			b.addEdgeAdditions(toEdge(e));
+		for(var e : diff.getEdgeDeletions())
+			b.addEdgeDeletions(toEdge(e));
+		return b.build();
 	}
 
 	@Override

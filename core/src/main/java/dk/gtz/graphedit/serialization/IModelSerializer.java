@@ -5,14 +5,19 @@ import java.io.IOException;
 import java.util.List;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.model.ModelVertex;
 
 /**
  * Interface for model serializer implementations
  */
 public interface IModelSerializer {
+    String serialize(ModelVertex vertex) throws SerializationException;
+    String serialize(ModelEdge edge) throws SerializationException;
+
     /**
      * Serialize a model project object to a string value
      * @param model The model project to serialize

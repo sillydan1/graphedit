@@ -16,9 +16,11 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dk.gtz.graphedit.exceptions.SerializationException;
+import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.util.MetadataUtils;
 
 /**
@@ -66,6 +68,24 @@ public class JacksonModelSerializer implements IModelSerializer {
 	var tf = this.objectMapper.getTypeFactory().withClassLoader(loader);
 	this.objectMapper = getMapper();
 	this.objectMapper.setTypeFactory(tf);
+    }
+
+    @Override
+    public String serialize(ModelVertex vertex) throws SerializationException {
+	try {
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vertex);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
+    }
+
+    @Override
+    public String serialize(ModelEdge edge) throws SerializationException {
+	try {
+	    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(edge);
+	} catch (JsonProcessingException e) {
+	    throw new SerializationException(e);
+	}
     }
 
     @Override

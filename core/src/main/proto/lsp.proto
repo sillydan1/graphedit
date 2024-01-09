@@ -12,8 +12,8 @@ option cc_enable_arenas = true;
 // A language server can provide diagnostics, notifications and insights into the current progress of the server.
 // A server will be fed with diffs of models, whereas the first diff will add the entire model.
 service LanguageServer {
-    // Start asynchronously streaming model diffs to the server.
-    rpc OpenDiffStream(stream Diff) returns (Empty) {}
+    // Synchronously handle model diffs to the server.
+    rpc HandleDiff(Diff) returns (Empty) {}
 
     // Get the information from the server.
     rpc GetServerInfo(Empty) returns (ServerInfo) {}
@@ -27,11 +27,13 @@ service LanguageServer {
 }
 
 // Vertex json encoding.
+// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
 message Vertex {
     string jsonEncoding = 1;
 }
 
 // Edge json encoding.
+// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
 message Edge {
     string jsonEncoding = 1;
 }
