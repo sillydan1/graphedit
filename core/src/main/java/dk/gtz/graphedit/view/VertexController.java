@@ -2,9 +2,6 @@ package dk.gtz.graphedit.view;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.tool.ITool;
@@ -32,7 +29,6 @@ import javafx.util.Duration;
  * If you extend from this and dont want all the features, you should overwrite the unwanted initialize functions
  */
 public class VertexController extends StackPane {
-    private final Logger logger = LoggerFactory.getLogger(VertexController.class);
     /**
      * The id of the represented vertex
      */
@@ -74,6 +70,28 @@ public class VertexController extends StackPane {
 	this.vertexValue = vertex;
 	this.viewportAffine = viewportAffine;
 	this.syntaxFactory = syntaxFactory;
+	this.graphic = getVertexCircle();
+	initialize();
+	initializeEventHandlers(selectedTool, graph, editorSettings, bufferKey);
+    }
+
+    /**
+     * Initializer function, will be called during the constructor call
+     */
+    protected void initialize() {
+	addTooltipHoverListener();
+	addGraphic();
+	addLabel();
+	addFocusPulseEvent();
+	addCursorHoverEffect();
+	bindTranslatePropertiesToViewmodel();
+	bindSizePropertiesToViewmodel();
+    }
+
+    /**
+     * Initializer function that adds a tooltip hover effect when it is available.
+     */
+    protected void addTooltipHoverListener() {
 	var t = new Tooltip();
 	this.vertexValue.addHoverListener((e,o,n) -> {
 	    if(n == null)
@@ -82,27 +100,6 @@ public class VertexController extends StackPane {
 		t.setGraphic(n);
 		Tooltip.install(this, t);
 	    }
-	});
-	initialize(selectedTool, graph, editorSettings, bufferKey);
-    }
-
-    /**
-     * Initializer function, will be called during the constructor call
-     * @param selectedTool The object property specifying which tool is currently selected
-     * @param graph The parent graph containing the represented viewmodel vertex
-     * @param editorSettings The current editor settings
-     * @param bufferKey The key of the buffer that contains the vertex
-     */
-    protected void initialize(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
-	this.graphic = initializeVertexRepresentation();
-	addGraphic();
-	addLabel();
-	initializeStyle();
-	initializeVertexEventHandlers(selectedTool, graph, editorSettings, bufferKey);
-	var pulseTimeline = createPulseTimeline(1.1, Duration.millis(300));
-	this.vertexValue.addFocusListener(() -> {
-	    pulseTimeline.playFromStart();
-	    this.requestFocus();
 	});
     }
 
@@ -114,59 +111,45 @@ public class VertexController extends StackPane {
     }
 
     /**
-     * Initializer function that adds the label from {@link #initializeLabel} to the display stack. Called during {@link #initialize}
+     * Initializer function that adds a label to the display stack. Called during {@link #initialize}
      */
     protected void addLabel() {
-	getChildren().add(initializeLabel());
-    }
-
-    /**
-     * Initializer function that creates the {@link #graphic}. Called during {@link #initialize}
-     * @return A new default circle graphic
-     */
-    protected Circle initializeVertexRepresentation() {
-	var diameter = 20.0;
-	var circle = new Circle(diameter);
-	if(!vertexValue.shape().widthProperty().isBound())
-	    vertexValue.shape().widthProperty().set(diameter);
-	if(!vertexValue.shape().heightProperty().isBound())
-	    vertexValue.shape().heightProperty().set(diameter);
-	circle.strokeTypeProperty().set(StrokeType.INSIDE);
-	circle.getStyleClass().add("vertex-node");
-	return circle;
-    }
-
-    /**
-     * Initializer function that creates a styled {@link Label} with the {@link #vertexKey} as content
-     * @return A new label
-     */
-    protected Label initializeLabel() {
 	var label = new Label(vertexKey.toString());
 	label.getStyleClass().add("outline");
-	return label;
+	getChildren().add(label);
     }
 
-    private void initializeStyle() {
-	bindTranslatePropertiesToViewmodel();
-	bindSizePropertiesToViewmodel();
-	addCursorHoverEffect();
+    /**
+     * Initializer function that adds a pulse animation to the focus event. Called during {@link #initialize}
+     */
+    protected void addFocusPulseEvent() {
+	var pulseTimeline = createPulseTimeline(1.1, Duration.millis(300));
+	this.vertexValue.addFocusListener(() -> {
+	    pulseTimeline.playFromStart();
+	    this.requestFocus();
+	});
     }
 
-    private void bindTranslatePropertiesToViewmodel() {
-	var vertexXProperty = vertexValue.position().getXProperty();
-	var vertexYProperty = vertexValue.position().getYProperty();
-	translateXProperty().bind(vertexXProperty.subtract(widthProperty().divide(2)));
-	translateYProperty().bind(vertexYProperty.subtract(heightProperty().divide(2)));
+    private Timeline createPulseTimeline(double intensity, Duration timelineTime) {
+        var scale1x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2x = new KeyValue(vertexValue.shape().scaleXProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
+        var scale1y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var scale2y = new KeyValue(vertexValue.shape().scaleYProperty(), 1 * intensity, Interpolator.EASE_BOTH);
+        var scale3y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
+        var kx1 = new KeyFrame(Duration.millis(0), scale1x);
+        var kx2 = new KeyFrame(timelineTime.multiply(0.5), scale2x);
+        var kx3 = new KeyFrame(timelineTime, scale3x);
+        var ky1 = new KeyFrame(Duration.millis(0), scale1y);
+        var ky2 = new KeyFrame(timelineTime.multiply(0.5), scale2y);
+        var ky3 = new KeyFrame(timelineTime, scale3y);
+	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
     }
 
-    private void bindSizePropertiesToViewmodel() {
-	vertexValue.shape().scaleXProperty().set(scaleXProperty().get());
-	vertexValue.shape().scaleYProperty().set(scaleYProperty().get());
-	scaleXProperty().bind(vertexValue.shape().scaleXProperty());
-	scaleYProperty().bind(vertexValue.shape().scaleYProperty());
-    }
-    
-    private void addCursorHoverEffect() {
+    /**
+     * Initializer function that adds a scale animation and a stroke indication on mouse hover. Called during {@link #initialize}
+     */
+    protected void addCursorHoverEffect() {
 	setCursor(Cursor.HAND);
 	var hoverEnterAnimation = createScaleTimeline(1, 1.1, Duration.millis(100));
 	var hoverExitAnimation = createScaleTimeline(1.1, 1, Duration.millis(100));
@@ -192,29 +175,58 @@ public class VertexController extends StackPane {
 	return new Timeline(kx1, ky1, kx2, ky2);
     }
 
-    private void initializeVertexEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
-	addEventHandler(MouseEvent.ANY, e -> selectedTool.get().onVertexMouseEvent(new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, bufferKey, editorSettings)));
+    private Circle getVertexCircle() {
+	var diameter = 20.0;
+	var circle = new Circle(diameter);
+	if(!vertexValue.shape().widthProperty().isBound())
+	    vertexValue.shape().widthProperty().set(diameter);
+	if(!vertexValue.shape().heightProperty().isBound())
+	    vertexValue.shape().heightProperty().set(diameter);
+	circle.strokeTypeProperty().set(StrokeType.INSIDE);
+	circle.getStyleClass().add("vertex-node");
+	return circle;
+    }
+
+    /**
+     * Binds this' translate x and y properties to the associated vertex viewmodel position point.
+     */
+    protected void bindTranslatePropertiesToViewmodel() {
+	var vertexXProperty = vertexValue.position().getXProperty();
+	var vertexYProperty = vertexValue.position().getYProperty();
+	translateXProperty().bind(vertexXProperty.subtract(widthProperty().divide(2)));
+	translateYProperty().bind(vertexYProperty.subtract(heightProperty().divide(2)));
+    }
+
+    /**
+     * Binds this' scale x and y properties to the associated vertex viewmodel shape's scale.
+     */
+    protected void bindSizePropertiesToViewmodel() {
+	vertexValue.shape().scaleXProperty().set(scaleXProperty().get());
+	vertexValue.shape().scaleYProperty().set(scaleYProperty().get());
+	scaleXProperty().bind(vertexValue.shape().scaleXProperty());
+	scaleYProperty().bind(vertexValue.shape().scaleYProperty());
+    }
+
+    /**
+     * Set the standard vertex view controller event handlers
+     * @param selectedTool Object property pointing to the currently selected tool
+     * @param graph Graph that contains the representative vertex
+     * @param editorSettings Current settings object
+     * @param bufferKey Key of the associated buffer resource
+     */
+    protected void initializeEventHandlers(ObjectProperty<ITool> selectedTool, ViewModelGraph graph, ViewModelEditorSettings editorSettings, String bufferKey) {
+	addEventHandler(MouseEvent.ANY, e -> {
+	    var event = new VertexMouseEvent(e, vertexKey, vertexValue, viewportAffine, syntaxFactory, graph, bufferKey, editorSettings);
+	    var syntaxToolbox = syntaxFactory.getSyntaxTools();
+	    if(syntaxToolbox.isPresent())
+		syntaxToolbox.get().getSelectedTool().get().onVertexMouseEvent(event);
+	    selectedTool.get().onVertexMouseEvent(event);
+	});
 	vertexValue.getIsSelected().addListener((e,o,n) -> {
 	    if(n)
 		graphic.getStyleClass().add("stroke-selected");
 	    else
 		graphic.getStyleClass().remove("stroke-selected");
 	});
-    }
-
-    private Timeline createPulseTimeline(double intensity, Duration timelineTime) {
-        var scale1x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
-        var scale2x = new KeyValue(vertexValue.shape().scaleXProperty(), 1 * intensity, Interpolator.EASE_BOTH);
-        var scale3x = new KeyValue(vertexValue.shape().scaleXProperty(), 1, Interpolator.EASE_BOTH);
-        var scale1y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
-        var scale2y = new KeyValue(vertexValue.shape().scaleYProperty(), 1 * intensity, Interpolator.EASE_BOTH);
-        var scale3y = new KeyValue(vertexValue.shape().scaleYProperty(), 1, Interpolator.EASE_BOTH);
-        var kx1 = new KeyFrame(Duration.millis(0), scale1x);
-        var kx2 = new KeyFrame(timelineTime.multiply(0.5), scale2x);
-        var kx3 = new KeyFrame(timelineTime, scale3x);
-        var ky1 = new KeyFrame(Duration.millis(0), scale1y);
-        var ky2 = new KeyFrame(timelineTime.multiply(0.5), scale2y);
-        var ky3 = new KeyFrame(timelineTime, scale3y);
-	return new Timeline(kx1, ky1, kx2, ky2, kx3, ky3);
     }
 }

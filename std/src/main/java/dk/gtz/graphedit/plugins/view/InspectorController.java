@@ -14,9 +14,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,14 +26,13 @@ import javafx.scene.layout.VBox;
  * The javafx controller for the syntax property inspector panel
  */
 public class InspectorController extends StackPane {
-    private final VBox propertiesContainer;
+    private final Accordion propertiesContainer;
     private final ScrollPane scrollPane;
     private final ObservableList<ViewModelSelection> selectedElements;
 
     public InspectorController() {
 	selectedElements = DI.get("selectedElements");
-	propertiesContainer = new VBox();
-	propertiesContainer.setSpacing(5);
+	propertiesContainer = new Accordion();
 	propertiesContainer.setPadding(new Insets(10));
 	scrollPane = new ScrollPane(propertiesContainer);
 	scrollPane.setFitToWidth(true);
@@ -46,15 +46,14 @@ public class InspectorController extends StackPane {
     }
 
     private void addAllSelected() {
-	for(var element : selectedElements) {
+	for(var element : selectedElements)
 	    if(element.selectable() instanceof IInspectable inspectable)
 		addInspectable(inspectable);
-	}
     }
 
     private void initializeSelectionEventHandlers() {
 	selectedElements.addListener((ListChangeListener<ViewModelSelection>)(n) -> {
-	    propertiesContainer.getChildren().clear();
+	    propertiesContainer.getPanes().clear();
 	    addAllSelected();
 	});
     }
@@ -78,8 +77,10 @@ public class InspectorController extends StackPane {
 	    group.getChildren().addAll(inspector, label);
 	    inspectors.add(group);
 	}
-	inspectors.add(new Separator());
-	propertiesContainer.getChildren().addAll(inspectors);
+	var box = new VBox();
+	box.getChildren().addAll(inspectors);
+	var pane = new TitledPane(inspectable.getClass().getSimpleName(), box);
+	propertiesContainer.getPanes().add(pane);
     }
 }
 

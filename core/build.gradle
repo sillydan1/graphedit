@@ -30,6 +30,22 @@ ext {
     jdkCompileVersion = 17
 }
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.0";
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.60.0';
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
 java {
     withJavadocJar()
 }
@@ -95,4 +111,3 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign publishing.publications.mavenJava
 }
-

@@ -1,6 +1,7 @@
 plugins {
     id 'java';
     id 'com.github.gmazzo.buildconfig' version '4.2.0';
+    id 'com.google.protobuf' version '0.9.4';
 }
 
 def gitCommitSha = { ->
@@ -61,7 +62,7 @@ def gitHeadName = { ->
 }
 
 def getVersion = { ->
-    def version = '1.2.1';
+    def version = '1.3.0';
     def headName = gitHeadName();
     if(headName.equals('v'+version))
         return version;
@@ -75,9 +76,20 @@ allprojects {
     version = getVersion();
 }
 
+// Inform IDEs about the generated code
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc';
+            srcDirs 'build/generated/source/proto/main/java';
+        }
+    }
+}
+
 subprojects {
     apply plugin: 'java';
-    apply plugin: 'com.github.gmazzo.buildconfig'
+    apply plugin: 'com.github.gmazzo.buildconfig';
+    apply plugin: 'com.google.protobuf';
 
     ext.gitCommitSha = gitCommitSha;
     ext.gitCommitShaLong = gitCommitShaLong;
@@ -111,6 +123,7 @@ subprojects {
         implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yalazy', version: '1.0.0';
         implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '2.0.1';
         implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.0'
         implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.11.0'
@@ -121,6 +134,11 @@ subprojects {
         implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
         implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
+
+        runtimeOnly group: 'io.grpc', name: 'grpc-netty-shaded', version: '1.60.0';
+        implementation group: 'io.grpc', name: 'grpc-protobuf', version: '1.60.0';
+        implementation group: 'io.grpc', name: 'grpc-stub', version: '1.60.0';
+        compileOnly group: 'org.apache.tomcat', name: 'annotations-api', version: '6.0.53'; // necessary for Java 9+
     }
 
     repositories {
@@ -137,4 +155,3 @@ subprojects {
 test {
     useJUnitPlatform();
 }
-

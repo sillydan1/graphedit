@@ -21,6 +21,7 @@ import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
+import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
 import dk.gtz.graphedit.tool.EdgeDeleteTool;
@@ -48,6 +49,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -91,6 +93,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	setupLogging();
 	setupStage(primaryStage);
 	DI.add(Window.class, primaryStage.getScene().getWindow());
+        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
     }
 
     @Override
@@ -143,21 +146,21 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void logNotification(ModelNotification n) {
-	switch(Level.toLevel(n.level().toLowerCase()).toInt()) {
-	    case Level.ERROR_INT:
-		logger.error(n.message());
-		break;
-	    case Level.WARN_INT:
-		logger.warn(n.message());
-		break;
-	    case Level.INFO_INT:
-		logger.info(n.message());
-		break;
-	    case Level.DEBUG_INT:
+	switch (n.level()) {
+	    case DEBUG:
 		logger.debug(n.message());
 		break;
-	    case Level.TRACE_INT:
+	    case ERROR:
+		logger.error(n.message());
+		break;
+	    case INFO:
+		logger.info(n.message());
+		break;
+	    case TRACE:
 		logger.trace(n.message());
+		break;
+	    case WARNING:
+		logger.warn(n.message());
 		break;
 	    default:
 		logger.trace(n.level() + ": " + n.message());

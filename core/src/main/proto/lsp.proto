@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+option go_package = "dk.gtz.graphedit/protobuf/types/lsp";
+option java_package = "dk.gtz.graphedit.proto";
+option java_multiple_files = true;
+option java_outer_classname = "LspProto";
+option objc_class_prefix = "Graphedit";
+option csharp_namespace = "Graphedit.Protobuf.Lsp";
+option cc_enable_arenas = true;
+
+// Language server protobuf specification.
+// A language server can provide diagnostics, notifications and insights into the current progress of the server.
+// A server will be fed with diffs of models, whereas the first diff will add the entire model.
+service LanguageServer {
+    // Handle model diffs to the server.
+    rpc HandleDiff(Diff) returns (Empty) {}
+
+    // Get the information from the server.
+    rpc GetServerInfo(Empty) returns (ServerInfo) {}
+
+    // Open a stream of diagnostics. The server should provide the full list of diagnostics every time it changes.
+    rpc GetDiagnostics(Empty) returns (stream DiagnosticsList) {}
+    // Open a stream of notifications.
+    rpc GetNotifications(Empty) returns (stream Notification) {}
+    // Open a stream of server progress reports.
+    rpc GetProgress(Empty) returns (stream ProgressReport) {}
+}
+
+// Vertex json encoding.
+// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
+message Vertex {
+    string jsonEncoding = 1;
+}
+
+// Edge json encoding.
+// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
+message Edge {
+    string jsonEncoding = 1;
+}
+
+message Diff {
+    string syntaxStyle = 1;
+    repeated Vertex vertexDeletions = 2;
+    repeated Edge edgeDeletions = 3;
+    repeated Vertex vertexAdditions = 4;
+    repeated Edge edgeAdditions = 5;
+}
+
+message Empty {
+
+}
+
+message ServerInfo {
+    string name = 1;
+    string language = 2;
+    string semanticVersion = 3;
+}
+
+message DiagnosticsList {
+    repeated Diagnostic diagnostics = 1;
+}
+
+message Diagnostic {
+    Severity severity = 1;
+    string modelkey = 2;
+    string lintIdentifier = 3;
+    string title = 4;
+    string message = 5;
+    string description = 6;
+    repeated string affectedElements = 7;
+    repeated Polygon affectedRegions = 8;
+    optional Diff suggestion = 9;
+}
+
+enum Severity {
+    SEVERITY_HINT = 0;
+    SEVERITY_INFO = 1;
+    SEVERITY_WARNING = 2;
+    SEVERITY_ERROR = 3;
+}
+
+enum NotificationLevel {
+    NOTIFICATION_ERROR = 0;
+    NOTIFICATION_WARNING = 1;
+    NOTIFICATION_INFO = 2;
+    NOTIFICATION_DEBUG = 3;
+    NOTIFICATION_TRACE = 4;
+}
+
+message Polygon {
+    repeated Point points = 1;
+}
+
+message Point {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message Notification {
+    NotificationLevel level = 1;
+    string message = 2;
+}
+
+message ProgressReport {
+    string token = 1;
+    string title = 2;
+    string message = 3;
+    ProgressReportType type = 4;
+}
+
+enum ProgressReportType {
+    PROGRESS_BEGIN = 0;
+    PROGRESS_STATUS = 1;
+    PROGRESS_END = 2;
+    PROGRESS_END_FAIL = 3;
+}

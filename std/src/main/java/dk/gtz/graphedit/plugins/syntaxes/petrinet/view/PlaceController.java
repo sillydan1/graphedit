@@ -41,4 +41,3 @@ public class PlaceController extends VertexController {
             label.textProperty().set("#"+val.toString());
     }
 }
-

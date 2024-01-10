@@ -20,6 +20,7 @@ import javafx.collections.FXCollections;
  * @param currentWorkingDirectory Where to execute the command from
  * @param runAsShell When true, will run the command in a shell
  * @param saveBeforeRun When true, will save the project before running the runtarget
+ * @param restartAfterRun When true, will restart the application after the runtarget has been run
  * @param arguments List of command arguments
  * @param environment List of environment variable assignments
  */
@@ -29,6 +30,7 @@ public record ViewModelRunTarget(
         SimpleStringProperty currentWorkingDirectory,
         SimpleBooleanProperty runAsShell,
         SimpleBooleanProperty saveBeforeRun,
+        SimpleBooleanProperty restartAfterRun,
         SimpleListProperty<StringProperty> arguments,
         SimpleListProperty<ViewModelEnvironmentVariable> environment) {
 
@@ -39,6 +41,7 @@ public record ViewModelRunTarget(
      * @param currentWorkingDirectory Where to execute the command from
      * @param runAsShell When true, will run the command in a shell
      * @param saveBeforeRun When true, will save the project before running the runtarget
+     * @param restartAfterRun When true, will restart the application after the runtarget has been run
      * @param arguments List of command arguments
      * @param environment List of environment variable assignments
      */
@@ -46,8 +49,9 @@ public record ViewModelRunTarget(
             String name,
             String command,
             String currentWorkingDirectory,
-            boolean runAsShell,
-            boolean saveBeforeRun,
+            Boolean runAsShell,
+            Boolean saveBeforeRun,
+            Boolean restartAfterRun,
             List<String> arguments,
             Map<String,String> environment) {
         this(new SimpleStringProperty(name),
@@ -55,6 +59,7 @@ public record ViewModelRunTarget(
             new SimpleStringProperty(currentWorkingDirectory),
             new SimpleBooleanProperty(runAsShell),
             new SimpleBooleanProperty(saveBeforeRun),
+            new SimpleBooleanProperty(restartAfterRun == null ? false : restartAfterRun),
             new SimpleListProperty<>(FXCollections.observableArrayList()),
             new SimpleListProperty<>(FXCollections.observableArrayList()));
         for(var argument : arguments)
@@ -73,6 +78,7 @@ public record ViewModelRunTarget(
                 runTarget.cwd(),
                 runTarget.runAsShell(),
                 runTarget.saveBeforeRun(),
+                runTarget.restartAfterRun(),
                 new SimpleListProperty<>(FXCollections.observableArrayList()), 
                 new SimpleMapProperty<>(FXCollections.observableHashMap()));
         for(var argument : runTarget.arguments())
@@ -99,6 +105,7 @@ public record ViewModelRunTarget(
                 currentWorkingDirectory().get(),
                 runAsShell().get(),
                 saveBeforeRun().get(),
+                restartAfterRun().get(),
                 envs);
     }
 }

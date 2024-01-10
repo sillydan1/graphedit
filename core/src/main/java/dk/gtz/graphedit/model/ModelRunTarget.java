@@ -11,6 +11,7 @@ import java.util.Map;
  * @param cwd Where to execute the command from
  * @param runAsShell When true, will run the command in a shell
  * @param saveBeforeRun When true, will save the project before running the runtarget
+ * @param restartAfterRun When true, will restart the application after the runtarget has been run
  * @param environment Mapping of environment variable assignments
  */
 public record ModelRunTarget(
@@ -20,5 +21,6 @@ public record ModelRunTarget(
     String cwd,
     Boolean runAsShell,
     Boolean saveBeforeRun,
+    Boolean restartAfterRun,
     Map<String, String> environment) {}
 

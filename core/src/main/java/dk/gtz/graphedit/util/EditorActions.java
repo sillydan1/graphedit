@@ -220,6 +220,15 @@ public class EditorActions {
     }
 
     /**
+     * Restart the application.
+     *
+     * Note. Will not prompt to save unsaved changes.
+     */
+    public static void restart() {
+        DI.get(IRestartableApplication.class).restart();
+    }
+
+    /**
      * Save a model project to a specific file
      * @param project The model project to save
      * @param projectFilePath The file to attempt to save to
@@ -432,6 +441,10 @@ public class EditorActions {
             var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
             new Thread(outputGobbler).start();
             p.waitFor();
+            if(p.exitValue() == 0) {
+                if(selectedRunTarget.restartAfterRun().get())
+                    restart();
+            }
         } catch(InterruptedException e) {
             logger.warn("runtarget was interrupted", e);
         } catch(Exception e) {

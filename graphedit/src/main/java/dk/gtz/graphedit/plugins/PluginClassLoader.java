@@ -29,6 +29,9 @@ public class PluginClassLoader extends URLClassLoader {
 			"javafx",
 			"org.kordamp",
 			"org.slf4j",
+			"org.fxmisc.richtext",
+			"io.grpc",
+			"com.google.protobuf",
 			"com.fasterxml.jackson"
 	);
 

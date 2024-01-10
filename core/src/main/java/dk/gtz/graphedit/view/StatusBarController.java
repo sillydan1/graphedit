@@ -9,8 +9,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Window;
 
 /**
  * View controller for the status indicator at the bottom of the editor.
@@ -51,6 +53,17 @@ public class StatusBarController extends StackPane {
 	initializeLabels();
 	container.getChildren().addAll(spinnerLabel, lspLabel, messageLabel);
 	initializeLSPs();
+	// NOTE: kept for future use
+	// debugMouseHover();
+    }
+
+    private void debugMouseHover() {
+	Platform.runLater(() -> {
+	    var w = DI.get(Window.class);
+	    w.addEventFilter(MouseEvent.ANY, e -> {
+		Platform.runLater(() -> messageLabel.setText(e.getTarget().toString()));
+	    });
+	});
     }
 
     private void initializeLabels() {

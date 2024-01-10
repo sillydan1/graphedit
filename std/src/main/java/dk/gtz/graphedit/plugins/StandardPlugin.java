@@ -59,6 +59,7 @@ public class StandardPlugin implements IPlugin {
     @Override
     public Collection<ILanguageServer> getLanguageServers() throws Exception {
         return List.of(
-                new LTSLanguageServer());
+                new LTSLanguageServer()
+                );
     }
 }

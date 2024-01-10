@@ -83,7 +83,7 @@ public class RunTargetsEditorController {
 
     private void initAddButton() {
 	addButton.setGraphic(new FontIcon(BootstrapIcons.PLUS_CIRCLE));
-	addButton.setOnAction(e -> project.runTargets().add(new ViewModelRunTarget("default", "ls", ".", true, true, new ArrayList<String>(), new HashMap<String,String>())));
+	addButton.setOnAction(e -> project.runTargets().add(new ViewModelRunTarget("default", "ls", ".", true, true, false, new ArrayList<String>(), new HashMap<String,String>())));
     }
 
     private void initRemoveButton() {
@@ -160,6 +160,13 @@ public class RunTargetsEditorController {
 	if(runBeforeInspector instanceof ToggleSwitch ts)
 	    runBeforeTile.setActionHandler(ts::fire);
 	inspectorPane.getChildren().add(runBeforeTile);
+
+	var restartAfterTile = new Tile("Restart after run", "Whether to restart the editor after running this command (successfully)");
+	var restartAfterInspector = InspectorUtils.getObservableInspector(runTarget.restartAfterRun());
+	restartAfterTile.setAction(restartAfterInspector);
+	if(restartAfterInspector instanceof ToggleSwitch ts)
+	    restartAfterTile.setActionHandler(ts::fire);
+	inspectorPane.getChildren().add(restartAfterTile);
 
 	var argAddButton = new Button("Add", new FontIcon(BootstrapIcons.PLUS_CIRCLE));
 	argAddButton.getStyleClass().add(Styles.SUCCESS);
@@ -240,4 +247,3 @@ public class RunTargetsEditorController {
 	}
     }
 }
-
