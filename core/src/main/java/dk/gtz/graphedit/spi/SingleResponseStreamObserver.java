@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.plugins.syntaxes.text.lsp;
+package dk.gtz.graphedit.spi;
 
 import java.util.concurrent.CountDownLatch;
 

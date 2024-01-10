@@ -1,4 +1,4 @@
-package dk.gtz.graphedit.plugins.syntaxes.text.lsp;
+package dk.gtz.graphedit.spi;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +33,6 @@ import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.serialization.IModelSerializer;
-import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelDiff;
@@ -48,8 +47,8 @@ import io.grpc.stub.StreamObserver;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 
-public class TextGrpcLsp implements ILanguageServer {
-	private final Logger logger = LoggerFactory.getLogger(TextGrpcLsp.class);
+public class GrpcLanguageServer implements ILanguageServer {
+	private final Logger logger = LoggerFactory.getLogger(GrpcLanguageServer.class);
 	private final Lazy<LanguageServerStub> stub;
 	private final Lazy<ServerInfo> serverInfo;
 	private final Empty empty;
@@ -57,11 +56,11 @@ public class TextGrpcLsp implements ILanguageServer {
 	private final String host;
 	private final int port;
 
-	public TextGrpcLsp() {
+	public GrpcLanguageServer() {
 		this("0.0.0.0", new Random().nextInt(5000, 6000));
 	}
 
-	public TextGrpcLsp(String host, int port) {
+	public GrpcLanguageServer(String host, int port) {
 		this.host = host;
 		this.port = port;
 		this.stub = new Lazy<>(this::connect);
