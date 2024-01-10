@@ -15,7 +15,20 @@ import dk.gtz.graphedit.model.ModelVertex;
  * Interface for model serializer implementations
  */
 public interface IModelSerializer {
+    /**
+     * Serialize a model vertex to a string value
+     * @param vertex The model vertex to serialize
+     * @return A serialized string representing the provided vertex
+     * @throws SerializationException if something went wrong during serialization
+     */
     String serialize(ModelVertex vertex) throws SerializationException;
+
+    /**
+     * Serialize a model edge to a string value
+     * @param edge The model edge to serialize
+     * @return A serialized string representing the provided edge
+     * @throws SerializationException if something went wrong during serialization
+     */
     String serialize(ModelEdge edge) throws SerializationException;
 
     /**
