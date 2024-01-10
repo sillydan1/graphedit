@@ -17,7 +17,6 @@ import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
-import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;

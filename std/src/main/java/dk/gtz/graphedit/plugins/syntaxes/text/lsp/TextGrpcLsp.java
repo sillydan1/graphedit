@@ -42,7 +42,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IRunnable1;
-import io.grpc.Channel;
+import dk.yalibs.yalazy.Lazy;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import javafx.beans.property.SimpleObjectProperty;
@@ -50,65 +50,61 @@ import javafx.collections.MapChangeListener;
 
 public class TextGrpcLsp implements ILanguageServer {
 	private final Logger logger = LoggerFactory.getLogger(TextGrpcLsp.class);
-	private final LanguageServerStub stub;
+	private final Lazy<LanguageServerStub> stub;
+	private final Lazy<ServerInfo> serverInfo;
 	private final Empty empty;
 	private IBufferContainer bufferContainer;
-	private final int port; // TODO: Launch the program
+	private final String host;
+	private final int port;
 
 	public TextGrpcLsp() {
 		this("0.0.0.0", new Random().nextInt(5000, 6000));
 	}
 
 	public TextGrpcLsp(String host, int port) {
-		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(), port);
+		this.host = host;
+		this.port = port;
+		this.stub = new Lazy<>(this::connect);
+		this.empty = Empty.newBuilder().build();
+		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
 
-	public TextGrpcLsp(Channel channel, int port) {
-		stub = LanguageServerGrpc.newStub(channel);
-		empty = Empty.newBuilder().build();
-		this.port = port;
+	private LanguageServerStub connect() {
+		// TODO: Launch the program if it isn't already launched
+		var channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+		return LanguageServerGrpc.newStub(channel);
+	}
+
+	private ServerInfo getServerInfo() {
+		try {
+			var so = new SingleResponseStreamObserver<ServerInfo>();
+			stub.get().getServerInfo(empty, so);
+			so.await();
+			return so.get();
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public String getLanguageName() {
-		try {
-			var so = new SingleResponseStreamObserver<ServerInfo>();
-			stub.getServerInfo(empty, so);
-			so.await();
-			return so.get().getLanguage();
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		return serverInfo.get().getLanguage();
 	}
 
 	@Override
 	public String getServerName() {
-		try {
-			var so = new SingleResponseStreamObserver<ServerInfo>();
-			stub.getServerInfo(empty, so);
-			so.await();
-			return so.get().getName();
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		return serverInfo.get().getName();
 	}
 
 	@Override
 	public String getServerVersion() {
-		try {
-			var so = new SingleResponseStreamObserver<ServerInfo>();
-			stub.getServerInfo(empty, so);
-			so.await();
-			return so.get().getSemanticVersion();
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		return serverInfo.get().getSemanticVersion();
 	}
 
 	private void handleDiff(Diff diff) {
 		try {
 			var so = new SingleResponseStreamObserver<Empty>();
-			stub.handleDiff(diff, so);
+			stub.get().handleDiff(diff, so);
 			so.await(); // TODO: Consider if this should be asynchronous
 		} catch(InterruptedException e) {
 			throw new RuntimeException(e);
@@ -149,6 +145,7 @@ public class TextGrpcLsp implements ILanguageServer {
 
 	@Override
 	public Collection<ModelLint> getDiagnostics() {
+		logger.trace("diagnostics for this language server are gRPC stream only. Returning [] instead");
 		return List.of();
 	}
 
@@ -227,7 +224,7 @@ public class TextGrpcLsp implements ILanguageServer {
 
 	@Override
 	public void addDiagnosticsCallback(IRunnable1<Collection<ModelLint>> callback) {
-		stub.getDiagnostics(empty, new StreamObserver<>() {
+		stub.get().getDiagnostics(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(DiagnosticsList value) {
 				var converted = new ArrayList<ModelLint>();
@@ -258,7 +255,7 @@ public class TextGrpcLsp implements ILanguageServer {
 
 	@Override
 	public void addNotificationCallback(IRunnable1<ModelNotification> callback) {
-		stub.getNotifications(empty, new StreamObserver<>() {
+		stub.get().getNotifications(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(Notification value) {
 				callback.run(new ModelNotification(toNotificationLevel(value.getLevel()), value.getMessage()));
@@ -278,7 +275,7 @@ public class TextGrpcLsp implements ILanguageServer {
 
 	@Override
 	public void addProgressCallback(IRunnable1<ModelLanguageServerProgress> callback) {
-		stub.getProgress(empty, new StreamObserver<>() {
+		stub.get().getProgress(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(ProgressReport value) {
 				callback.run(new ModelLanguageServerProgress(
