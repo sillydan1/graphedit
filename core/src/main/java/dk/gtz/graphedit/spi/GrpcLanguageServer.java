@@ -42,12 +42,13 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IRunnable1;
 import dk.yalibs.yalazy.Lazy;
+import dk.yalibs.yastreamgobbler.StreamGobbler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 
-public class GrpcLanguageServer implements ILanguageServer {
+public abstract class GrpcLanguageServer implements ILanguageServer {
 	private final Logger logger = LoggerFactory.getLogger(GrpcLanguageServer.class);
 	private final Lazy<LanguageServerStub> stub;
 	private final Lazy<ServerInfo> serverInfo;
@@ -55,26 +56,50 @@ public class GrpcLanguageServer implements ILanguageServer {
 	private IBufferContainer bufferContainer;
 	private final String host;
 	private final int port;
+	private Thread programThread;
 
-	public GrpcLanguageServer() {
-		this("0.0.0.0", new Random().nextInt(5000, 6000));
+	public GrpcLanguageServer(String command, List<String> arguments) {
+		this("0.0.0.0", new Random().nextInt(5000, 6000), command, arguments);
 	}
 
-	public GrpcLanguageServer(String host, int port) {
+	public GrpcLanguageServer(String host, int port, String command, List<String> arguments) {
 		this.host = host;
 		this.port = port;
+		this.programThread = new Thread(() -> launchProgram(command, arguments));
 		this.stub = new Lazy<>(this::connect);
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
 
-	private LanguageServerStub connect() {
-		// TODO: Launch the program if it isn't already launched
+	protected void launchProgram(String command, List<String> arguments) {
+        try {
+            var pb = new ProcessBuilder();
+			pb.command(command);
+			for(var argument : arguments)
+				pb.command().add(argument);
+            pb.redirectErrorStream(true);
+            var p = pb.start();
+            var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
+            new Thread(outputGobbler).start();
+            p.waitFor();
+			var exitCode = p.exitValue();
+            if(exitCode != 0)
+				logger.warn("language server process exited with code: {}", exitCode);
+        } catch(InterruptedException e) {
+            logger.warn("language server process was interrupted", e);
+        } catch(Exception e) {
+            logger.error(e.getMessage(), e);
+		}
+	}
+
+	protected LanguageServerStub connect() {
+		if(!programThread.isAlive())
+			programThread.start(); // TODO: Consider waiting "a bit" for the server to be ready
 		var channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 		return LanguageServerGrpc.newStub(channel);
 	}
 
-	private ServerInfo getServerInfo() {
+	protected ServerInfo getServerInfo() {
 		try {
 			var so = new SingleResponseStreamObserver<ServerInfo>();
 			stub.get().getServerInfo(empty, so);
@@ -100,7 +125,7 @@ public class GrpcLanguageServer implements ILanguageServer {
 		return serverInfo.get().getSemanticVersion();
 	}
 
-	private void handleDiff(Diff diff) {
+	protected void handleDiff(Diff diff) {
 		try {
 			var so = new SingleResponseStreamObserver<Empty>();
 			stub.get().handleDiff(diff, so);
@@ -135,11 +160,6 @@ public class GrpcLanguageServer implements ILanguageServer {
 				});
 			}
 		});
-	}
-
-	@Override
-	public void start() {
-		// TODO: Start the language server in a thread
 	}
 
 	@Override
