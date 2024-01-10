@@ -50,13 +50,13 @@ import javafx.collections.MapChangeListener;
 
 public abstract class GrpcLanguageServer implements ILanguageServer {
 	private final Logger logger = LoggerFactory.getLogger(GrpcLanguageServer.class);
-	private final Lazy<LanguageServerStub> stub;
-	private final Lazy<ServerInfo> serverInfo;
-	private final Empty empty;
-	private IBufferContainer bufferContainer;
-	private final String host;
-	private final int port;
-	private Thread programThread;
+	protected final Lazy<LanguageServerStub> stub;
+	protected final Lazy<ServerInfo> serverInfo;
+	protected final Empty empty;
+	protected IBufferContainer bufferContainer;
+	protected final String host;
+	protected final int port;
+	protected Thread programThread;
 
 	public GrpcLanguageServer(String command, List<String> arguments) {
 		this("0.0.0.0", new Random().nextInt(5000, 6000), command, arguments);
@@ -72,23 +72,23 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	}
 
 	protected void launchProgram(String command, List<String> arguments) {
-        try {
-            var pb = new ProcessBuilder();
+		try {
+			var pb = new ProcessBuilder();
 			pb.command(command);
 			for(var argument : arguments)
 				pb.command().add(argument);
-            pb.redirectErrorStream(true);
-            var p = pb.start();
-            var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
-            new Thread(outputGobbler).start();
-            p.waitFor();
+			pb.redirectErrorStream(true);
+			var p = pb.start();
+			var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
+			new Thread(outputGobbler).start();
+			p.waitFor();
 			var exitCode = p.exitValue();
-            if(exitCode != 0)
+			if(exitCode != 0)
 				logger.warn("language server process exited with code: {}", exitCode);
-        } catch(InterruptedException e) {
-            logger.warn("language server process was interrupted", e);
-        } catch(Exception e) {
-            logger.error(e.getMessage(), e);
+		} catch(InterruptedException e) {
+			logger.warn("language server process was interrupted", e);
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 	}
 
