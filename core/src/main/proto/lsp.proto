@@ -12,7 +12,7 @@ option cc_enable_arenas = true;
 // A language server can provide diagnostics, notifications and insights into the current progress of the server.
 // A server will be fed with diffs of models, whereas the first diff will add the entire model.
 service LanguageServer {
-    // Synchronously handle model diffs to the server.
+    // Handle model diffs to the server.
     rpc HandleDiff(Diff) returns (Empty) {}
 
     // Get the information from the server.

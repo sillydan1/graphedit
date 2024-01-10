@@ -5,11 +5,11 @@ import java.util.concurrent.CountDownLatch;
 import io.grpc.stub.StreamObserver;
 
 public class SingleResponseStreamObserver<T> implements StreamObserver<T> {
-	private final SyncSingleResponseContainer<T> container;
+	private final ResponseContainer<T> container;
 	private final CountDownLatch latch;
 
 	public SingleResponseStreamObserver() {
-		container = new SyncSingleResponseContainer<>();
+		container = new ResponseContainer<>();
 		latch = new CountDownLatch(1);
 	}
 

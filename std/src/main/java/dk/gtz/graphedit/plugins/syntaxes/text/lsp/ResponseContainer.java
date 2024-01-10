@@ -2,11 +2,11 @@ package dk.gtz.graphedit.plugins.syntaxes.text.lsp;
 
 import java.util.Optional;
 
-public class SyncSingleResponseContainer<T> {
+public class ResponseContainer<T> {
 	private Optional<T> result;
 	private Optional<Throwable> error;
 
-	public SyncSingleResponseContainer() {
+	public ResponseContainer() {
 		result = Optional.empty();
 		error = Optional.empty();
 	}
@@ -27,4 +27,3 @@ public class SyncSingleResponseContainer<T> {
 		return result.get();
 	}
 }
-
