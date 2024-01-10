@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option go_package = "dk.gtz.graphedit/protobuf/types/lsp";
-option java_package = "dk.gtz.graphedit";
+option java_package = "dk.gtz.graphedit.proto";
 option java_multiple_files = true;
 option java_outer_classname = "LspProto";
 option objc_class_prefix = "Graphedit";
