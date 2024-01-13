@@ -1,16 +1,25 @@
 package dk.gtz.graphedit.spi;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.model.ModelLint;
+import dk.gtz.graphedit.model.ModelLintSeverity;
+import dk.gtz.graphedit.model.ModelPoint;
+import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
+import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
+import dk.gtz.graphedit.model.lsp.ModelNotification;
+import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.proto.DiagnosticsList;
 import dk.gtz.graphedit.proto.Diff;
 import dk.gtz.graphedit.proto.Edge;
@@ -25,13 +34,6 @@ import dk.gtz.graphedit.proto.ProgressReportType;
 import dk.gtz.graphedit.proto.ServerInfo;
 import dk.gtz.graphedit.proto.Severity;
 import dk.gtz.graphedit.proto.Vertex;
-import dk.gtz.graphedit.model.ModelLint;
-import dk.gtz.graphedit.model.ModelLintSeverity;
-import dk.gtz.graphedit.model.ModelPoint;
-import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
-import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
-import dk.gtz.graphedit.model.lsp.ModelNotification;
-import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -66,7 +68,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.host = host;
 		this.port = port;
 		this.programThread = new Thread(() -> launchProgram(command, arguments));
-		this.stub = new Lazy<>(this::connect);
+		this.stub = new Lazy<>(() -> tryTimes(10, 1000, this::connect));
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
@@ -75,6 +77,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		try {
 			var pb = new ProcessBuilder();
 			pb.command(command);
+			pb.directory(Path.of(command).getParent().toFile());
 			for(var argument : arguments)
 				pb.command().add(argument);
 			pb.redirectErrorStream(true);
@@ -90,6 +93,22 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+	}
+
+	private <T> T tryTimes(int maxAttempts, int sleepMillis, Supplier<T> f) {
+		for(var attempts = 0; attempts < maxAttempts; attempts++) {
+			try {
+				return f.get();
+			} catch(Exception e) {
+				logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts, maxAttempts);
+				try {
+					Thread.sleep(sleepMillis);
+				} catch(InterruptedException e2) {
+					// ignored
+				}
+			}
+		}
+		throw new RuntimeException("too many attempts");
 	}
 
 	protected LanguageServerStub connect() {
