@@ -68,12 +68,13 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.host = host;
 		this.port = port;
 		this.programThread = new Thread(() -> launchProgram(command, arguments));
-		this.stub = new Lazy<>(() -> tryTimes(10, 1000, this::connect));
+		this.stub = new Lazy<>(() -> tryTimes(10, 1000, () -> connect(250)));
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
 
 	protected void launchProgram(String command, List<String> arguments) {
+		Process p = null;
 		try {
 			var pb = new ProcessBuilder();
 			pb.command(command);
@@ -81,7 +82,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			for(var argument : arguments)
 				pb.command().add(argument);
 			pb.redirectErrorStream(true);
-			var p = pb.start();
+			p = pb.start();
 			var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
 			new Thread(outputGobbler).start();
 			p.waitFor();
@@ -89,9 +90,21 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			if(exitCode != 0)
 				logger.warn("language server process exited with code: {}", exitCode);
 		} catch(InterruptedException e) {
-			logger.warn("language server process was interrupted", e);
+			logger.warn("<{}> language server process was interrupted", serverInfo.isPresent() ? serverInfo.get().getName() : "?");
+			if(p != null)
+				p.destroy();
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
+			if(p != null)
+				p.destroy();
+		}
+	}
+
+	private void sleep(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch(InterruptedException e2) {
+			// ignored
 		}
 	}
 
@@ -101,19 +114,17 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 				return f.get();
 			} catch(Exception e) {
 				logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts, maxAttempts);
-				try {
-					Thread.sleep(sleepMillis);
-				} catch(InterruptedException e2) {
-					// ignored
-				}
+				sleep(sleepMillis);
 			}
 		}
 		throw new RuntimeException("too many attempts");
 	}
 
-	protected LanguageServerStub connect() {
+	protected LanguageServerStub connect(int threadWaitMillis) {
 		if(!programThread.isAlive())
-			programThread.start(); // TODO: Consider waiting "a bit" for the server to be ready
+			programThread.start();
+		if(threadWaitMillis > 0)
+			sleep(threadWaitMillis);
 		var channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 		return LanguageServerGrpc.newStub(channel);
 	}
