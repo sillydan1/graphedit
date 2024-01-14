@@ -83,8 +83,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 				pb.command().add(argument);
 			pb.redirectErrorStream(true);
 			p = pb.start();
-			var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
-			new Thread(outputGobbler).start();
+			new Thread(new StreamGobbler(p.getInputStream(), logger::trace)).start();
+			new Thread(new StreamGobbler(p.getErrorStream(), logger::error)).start();
+			Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
 			p.waitFor();
 			var exitCode = p.exitValue();
 			if(exitCode != 0)
