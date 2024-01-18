@@ -13,9 +13,11 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.joran.sanity.Pair;
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
 import dk.gtz.graphedit.model.ModelPoint;
+import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
@@ -47,6 +49,7 @@ import dk.yalibs.yalazy.Lazy;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 
@@ -166,6 +169,34 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		}
 	}
 
+	private void onChanged(ISyntaxFactory factory, String bufferName, ObjectProperty<ModelProjectResource> oldVal, ViewModelProjectResource newVal) {
+		var syntaxName = newVal.getSyntaxName();
+		if(syntaxName.isEmpty())
+			return;
+		if(!syntaxName.get().equals(getLanguageName()))
+			return;
+		var a = new ViewModelProjectResource(oldVal.get(), factory);
+		if(!ViewModelDiff.areComparable(a, newVal))
+			return;
+		var diff = ViewModelDiff.compare(a, newVal);
+		oldVal.set(newVal.toModel());
+		var gDiff = toDiff(diff, bufferName);
+		handleDiff(gDiff);
+	}
+
+	private void onOpened(String bufferName, ViewModelProjectResource resource) {
+		var syntaxName = resource.getSyntaxName();
+		if(syntaxName.isEmpty())
+			return;
+		if(!syntaxName.get().equals(getLanguageName()))
+			return;
+		var diff = ViewModelDiff.empty(syntaxName.get());
+		diff.getVertexAdditions().addAll(resource.syntax().vertices().values());
+		diff.getEdgeAdditions().addAll(resource.syntax().edges().values());
+		var gDiff = toDiff(diff, bufferName);
+		handleDiff(gDiff);
+	}
+
 	@Override
 	public void initialize(File projectFile, IBufferContainer bufferContainer) {
 		final var ltsSyntax = MetadataUtils.getSyntaxFactory(getLanguageName());
@@ -173,22 +204,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
 			if(c.wasAdded()) {
 				var changedVal = c.getValueAdded();
+				onOpened(c.getKey(), changedVal);
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
-				changedVal.addListener((e,o,n) -> {
-					var syntaxName = n.getSyntaxName();
-					if(syntaxName.isEmpty())
-						return;
-					if(!syntaxName.get().equals(getLanguageName()))
-						return;
-					var a = new ViewModelProjectResource(old.get(), ltsSyntax);
-					if(!ViewModelDiff.areComparable(a, n))
-						return;
-					var diff = ViewModelDiff.compare(a, n);
-					old.set(n.toModel());
-					// TODO: only send if there are semantically significant changes(?) - could also be an extra function that you override
-					var gDiff = toDiff(diff);
-					handleDiff(gDiff);
-				});
+				changedVal.addListener((e,o,n) -> onChanged(ltsSyntax, c.getKey(), old, n));
 			}
 		});
 	}
@@ -258,8 +276,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			.build();
 	}
 
-	private Diff toDiff(ViewModelDiff diff) {
+	private Diff toDiff(ViewModelDiff diff, String bufferName) {
 		var b = Diff.newBuilder()
+			.setBufferName(bufferName)
 			.setSyntaxStyle(diff.getSyntaxStyle());
 		for(var v : diff.getVertexAdditions())
 			b.addVertexAdditions(toVertex(v));

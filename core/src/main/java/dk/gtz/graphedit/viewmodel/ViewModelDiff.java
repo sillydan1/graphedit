@@ -30,6 +30,10 @@ public class ViewModelDiff {
         edgeAdditions = new ArrayList<>();
     }
 
+    public static ViewModelDiff empty(String syntaxStyle) {
+        return new ViewModelDiff(syntaxStyle);
+    }
+
     /**
      * Get the vertices that should be deleted.
      * @return A list of viewmodel vertices.

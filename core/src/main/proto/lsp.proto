@@ -39,11 +39,12 @@ message Edge {
 }
 
 message Diff {
-    string syntaxStyle = 1;
-    repeated Vertex vertexDeletions = 2;
-    repeated Edge edgeDeletions = 3;
-    repeated Vertex vertexAdditions = 4;
-    repeated Edge edgeAdditions = 5;
+    string bufferName = 1;
+    string syntaxStyle = 2;
+    repeated Vertex vertexDeletions = 3;
+    repeated Edge edgeDeletions = 4;
+    repeated Vertex vertexAdditions = 5;
+    repeated Edge edgeAdditions = 6;
 }
 
 message Empty {
