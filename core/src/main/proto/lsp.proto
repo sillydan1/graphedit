@@ -27,15 +27,17 @@ service LanguageServer {
 }
 
 // Vertex json encoding.
-// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
+// NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
 message Vertex {
-    string jsonEncoding = 1;
+    string id = 1;
+    string jsonEncoding = 2;
 }
 
 // Edge json encoding.
-// Note that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
+// NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
 message Edge {
-    string jsonEncoding = 1;
+    string id = 1;
+    string jsonEncoding = 2;
 }
 
 message Diff {

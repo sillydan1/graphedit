@@ -262,6 +262,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	private Vertex toVertex(ViewModelVertex vertex) {
 		var serializer = DI.get(IModelSerializer.class);
 		return Vertex.newBuilder()
+			.setId(vertex.id().toString())
 			.setJsonEncoding(serializer.serialize(vertex.toModel()))
 			.build();
 	}
@@ -269,6 +270,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	private Edge toEdge(ViewModelEdge edge) {
 		var serializer = DI.get(IModelSerializer.class);
 		return Edge.newBuilder()
+			.setId(edge.id().toString())
 			.setJsonEncoding(serializer.serialize(edge.toModel()))
 			.build();
 	}
