@@ -67,7 +67,7 @@ Simply [Download the .msi](https://github.com/sillydan1/graphedit/releases/lates
 
 ## Architecture 🏛️
 Graphedit is designed from the ground up to be easy to extend with an opinionated, but easy to understand and efficient architecture.
-Note that at the time of writing a plugin-system is planned, but not implemented yet. So extensions must be done via PRs at the moment.
+You can extend the editor using plugins. Take a look at the [plugin github template](https://github.com/sillydan1/graphedit-plugin-template) to get started on writing your own plugin.
 
 ### Model View Viewmodel
 This project is strongly influenced by the [MVVM (Model View ViewModel)](https://en.wikipedia.org/wiki/Model–view–viewmodel) design pattern and the classes and packages are named appropriately so.
