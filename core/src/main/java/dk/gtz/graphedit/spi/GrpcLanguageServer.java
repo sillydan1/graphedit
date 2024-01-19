@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.joran.sanity.Pair;
 import dk.gtz.graphedit.model.ModelLint;
 import dk.gtz.graphedit.model.ModelLintSeverity;
 import dk.gtz.graphedit.model.ModelPoint;
@@ -61,7 +60,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	protected IBufferContainer bufferContainer;
 	protected final String host;
 	protected final int port;
-	protected Thread programThread;
+	protected final Thread programThread;
+	protected int maxConnectionAttempts = 60;
+	protected int connectionAttemptWaitMilliseconds = 1000;
 
 	public GrpcLanguageServer(String command, List<String> arguments) {
 		this("0.0.0.0", new Random().nextInt(5000, 6000), command, arguments);
@@ -71,7 +72,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.host = host;
 		this.port = port;
 		this.programThread = new Thread(() -> launchProgram(command, arguments));
-		this.stub = new Lazy<>(() -> tryTimes(10, 1000, () -> connect(250)));
+		this.stub = new Lazy<>(() -> tryTimes(maxConnectionAttempts, connectionAttemptWaitMilliseconds, this::connect));
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
@@ -91,14 +92,12 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
 			p.waitFor();
 			var exitCode = p.exitValue();
-			if(exitCode != 0)
-				logger.warn("language server process exited with code: {}", exitCode);
+			logger.info("language server process exited with code: {}", exitCode);
 		} catch(InterruptedException e) {
 			logger.warn("<{}> language server process was interrupted", serverInfo.isPresent() ? serverInfo.get().getName() : "?");
-			if(p != null)
-				p.destroy();
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
+		} finally {
 			if(p != null)
 				p.destroy();
 		}
@@ -117,18 +116,16 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			try {
 				return f.get();
 			} catch(Exception e) {
-				logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts, maxAttempts);
+				logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts+1, maxAttempts);
 				sleep(sleepMillis);
 			}
 		}
 		throw new RuntimeException("too many attempts");
 	}
 
-	protected LanguageServerStub connect(int threadWaitMillis) {
+	protected LanguageServerStub connect() {
 		if(!programThread.isAlive())
 			programThread.start();
-		if(threadWaitMillis > 0)
-			sleep(threadWaitMillis);
 		var channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 		return LanguageServerGrpc.newStub(channel);
 	}
