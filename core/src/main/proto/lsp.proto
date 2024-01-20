@@ -12,11 +12,17 @@ option cc_enable_arenas = true;
 // A language server can provide diagnostics, notifications and insights into the current progress of the server.
 // A server will be fed with diffs of models, whereas the first diff will add the entire model.
 service LanguageServer {
-    // Handle model diffs to the server.
-    rpc HandleDiff(Diff) returns (Empty) {}
-
     // Get the information from the server.
     rpc GetServerInfo(Empty) returns (ServerInfo) {}
+
+    // When a project is opened
+    rpc ProjectOpened(Project) returns (Empty) {}
+    // When a new model file is created (of the correct syntax)
+    rpc BufferCreated(Buffer) returns (Empty) {}
+    // When a file (of the associated syntax) is deleted
+    rpc BufferDeleted(Buffer) returns (Empty) {}
+    // Handle model diffs to the server.
+    rpc HandleDiff(Diff) returns (Empty) {}
 
     // Open a stream of diagnostics. The server should provide the full list of diagnostics every time it changes.
     rpc GetDiagnostics(Empty) returns (stream DiagnosticsList) {}
@@ -26,17 +32,35 @@ service LanguageServer {
     rpc GetProgress(Empty) returns (stream ProgressReport) {}
 }
 
-// Vertex json encoding.
-// NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
+message Project {
+    string id = 1;
+    string path = 2;
+    string name = 3;
+    map<string,string> metadata = 4;
+    repeated string excludeFiles = 5;
+}
+
+message Buffer {
+    string path = 1;
+    map<string,string> metadata = 2;
+    Graph graph = 3;
+}
+
+message Graph {
+    string declarations = 1;
+    repeated Vertex vertices = 2;
+    repeated Edge edges = 3;
+}
+
 message Vertex {
     string id = 1;
+    // NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
     string jsonEncoding = 2;
 }
 
-// Edge json encoding.
-// NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
 message Edge {
     string id = 1;
+    // NOTE: that this has to be an encoding, since we can't actually know what concrete edge it is at protobuf specification time.
     string jsonEncoding = 2;
 }
 
@@ -55,8 +79,19 @@ message Empty {
 
 message ServerInfo {
     string name = 1;
-    string language = 2;
-    string semanticVersion = 3;
+    string semanticVersion = 2;
+    string language = 3;
+    repeated Capability capabilities = 4;
+}
+
+enum Capability {
+    CAPABILITY_DIFFS = 0;
+    CAPABILITY_DIAGNOSTICS = 1;
+    CAPABILITY_NOTIFICATIONS = 2;
+    CAPABILITY_PROGRESS = 3;
+    CAPABILITY_RECONNECT = 4;
+    CAPABILITY_ACTIONS = 5;
+    CAPABILITY_DEBUGGING = 6;
 }
 
 message DiagnosticsList {
