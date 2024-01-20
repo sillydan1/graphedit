@@ -1,14 +1,12 @@
 package dk.gtz.graphedit.spi;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,7 @@ import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
+import dk.gtz.graphedit.proto.Capability;
 import dk.gtz.graphedit.proto.DiagnosticsList;
 import dk.gtz.graphedit.proto.Diff;
 import dk.gtz.graphedit.proto.Edge;
@@ -32,20 +31,23 @@ import dk.gtz.graphedit.proto.NotificationLevel;
 import dk.gtz.graphedit.proto.Polygon;
 import dk.gtz.graphedit.proto.ProgressReport;
 import dk.gtz.graphedit.proto.ProgressReportType;
+import dk.gtz.graphedit.proto.Project;
 import dk.gtz.graphedit.proto.ServerInfo;
 import dk.gtz.graphedit.proto.Severity;
 import dk.gtz.graphedit.proto.Vertex;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.util.MetadataUtils;
+import dk.gtz.graphedit.util.PlatformUtils;
+import dk.gtz.graphedit.util.RetryUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IRunnable1;
 import dk.yalibs.yalazy.Lazy;
-import dk.yalibs.yastreamgobbler.StreamGobbler;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import javafx.beans.property.ObjectProperty;
@@ -63,6 +65,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	protected final Thread programThread;
 	protected int maxConnectionAttempts = 60;
 	protected int connectionAttemptWaitMilliseconds = 1000;
+	private final Converter converter;
 
 	public GrpcLanguageServer(String command, List<String> arguments) {
 		this("0.0.0.0", new Random().nextInt(5000, 6000), command, arguments);
@@ -71,56 +74,11 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	public GrpcLanguageServer(String host, int port, String command, List<String> arguments) {
 		this.host = host;
 		this.port = port;
-		this.programThread = new Thread(() -> launchProgram(command, arguments));
-		this.stub = new Lazy<>(() -> tryTimes(maxConnectionAttempts, connectionAttemptWaitMilliseconds, this::connect));
+		this.converter = new Converter();
+		this.programThread = new Thread(() -> PlatformUtils.launchProgram(command, arguments));
+		this.stub = new Lazy<>(() -> RetryUtils.tryTimes(maxConnectionAttempts, connectionAttemptWaitMilliseconds, this::connect));
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
-	}
-
-	protected void launchProgram(String command, List<String> arguments) {
-		Process p = null;
-		try {
-			var pb = new ProcessBuilder();
-			pb.command(command);
-			pb.directory(Path.of(command).getParent().toFile());
-			for(var argument : arguments)
-				pb.command().add(argument);
-			pb.redirectErrorStream(true);
-			p = pb.start();
-			new Thread(new StreamGobbler(p.getInputStream(), logger::trace)).start();
-			new Thread(new StreamGobbler(p.getErrorStream(), logger::error)).start();
-			Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
-			p.waitFor();
-			var exitCode = p.exitValue();
-			logger.info("language server process exited with code: {}", exitCode);
-		} catch(InterruptedException e) {
-			logger.warn("<{}> language server process was interrupted", serverInfo.isPresent() ? serverInfo.get().getName() : "?");
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-		} finally {
-			if(p != null)
-				p.destroy();
-		}
-	}
-
-	private void sleep(int milliseconds) {
-		try {
-			Thread.sleep(milliseconds);
-		} catch(InterruptedException e2) {
-			// ignored
-		}
-	}
-
-	private <T> T tryTimes(int maxAttempts, int sleepMillis, Supplier<T> f) {
-		for(var attempts = 0; attempts < maxAttempts; attempts++) {
-			try {
-				return f.get();
-			} catch(Exception e) {
-				logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts+1, maxAttempts);
-				sleep(sleepMillis);
-			}
-		}
-		throw new RuntimeException("too many attempts");
 	}
 
 	protected LanguageServerStub connect() {
@@ -141,6 +99,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		}
 	}
 
+	protected boolean isServerCapable(Capability capability) {
+		return serverInfo.get().getCapabilitiesList().contains(capability);
+	}
+
 	@Override
 	public String getLanguageName() {
 		return serverInfo.get().getLanguage();
@@ -157,16 +119,13 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	}
 
 	protected void handleDiff(Diff diff) {
-		try {
-			var so = new SingleResponseStreamObserver<Empty>();
-			stub.get().handleDiff(diff, so);
-			so.await(); // TODO: Consider if this should be asynchronous
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		if(!isServerCapable(Capability.CAPABILITY_DIFFS))
+			return;
+		var so = new SingleResponseStreamObserver<Empty>();
+		stub.get().handleDiff(diff, so);
 	}
 
-	private void onChanged(ISyntaxFactory factory, String bufferName, ObjectProperty<ModelProjectResource> oldVal, ViewModelProjectResource newVal) {
+	private void bufferChanged(ISyntaxFactory factory, String bufferName, ObjectProperty<ModelProjectResource> oldVal, ViewModelProjectResource newVal) {
 		var syntaxName = newVal.getSyntaxName();
 		if(syntaxName.isEmpty())
 			return;
@@ -177,121 +136,51 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			return;
 		var diff = ViewModelDiff.compare(a, newVal);
 		oldVal.set(newVal.toModel());
-		var gDiff = toDiff(diff, bufferName);
+		var gDiff = converter.toDiff(diff, bufferName);
 		handleDiff(gDiff);
 	}
 
-	private void onOpened(String bufferName, ViewModelProjectResource resource) {
-		var syntaxName = resource.getSyntaxName();
-		if(syntaxName.isEmpty())
+	private void projectOpened() {
+		if(!isServerCapable(Capability.CAPABILITY_PROJECT))
 			return;
-		if(!syntaxName.get().equals(getLanguageName()))
-			return;
-		var diff = ViewModelDiff.empty(syntaxName.get());
-		diff.getVertexAdditions().addAll(resource.syntax().vertices().values());
-		diff.getEdgeAdditions().addAll(resource.syntax().edges().values());
-		var gDiff = toDiff(diff, bufferName);
-		handleDiff(gDiff);
+	    var project = DI.get(ViewModelProject.class);
+		var builder = Project.newBuilder()
+			.setPath(project.rootDirectory().get())
+			.setName(project.name().get());
+		for(var excludeFile : project.excludeFiles())
+			builder.addExcludeFiles(excludeFile.get());
+		for(var metadata : project.metadata())
+			builder.putMetadata(metadata.getKey().get(), metadata.getValue().getValue());
+		var so = new SingleResponseStreamObserver<Empty>();
+		stub.get().projectOpened(builder.build(), so);
 	}
 
 	@Override
 	public void initialize(File projectFile, IBufferContainer bufferContainer) {
+		projectOpened();
 		final var ltsSyntax = MetadataUtils.getSyntaxFactory(getLanguageName());
 		this.bufferContainer = bufferContainer;
 		this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
+			if(!isServerCapable(Capability.CAPABILITY_DIFFS))
+				return;
 			if(c.wasAdded()) {
 				var changedVal = c.getValueAdded();
-				onOpened(c.getKey(), changedVal);
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
-				changedVal.addListener((e,o,n) -> onChanged(ltsSyntax, c.getKey(), old, n));
+				changedVal.addListener((e,o,n) -> bufferChanged(ltsSyntax, c.getKey(), old, n));
 			}
 		});
 	}
 
 	@Override
 	public Collection<ModelLint> getDiagnostics() {
-		logger.trace("diagnostics for this language server are gRPC stream only. Returning [] instead");
+		logger.debug("diagnostics for this language server are gRPC stream only");
 		return List.of();
-	}
-
-	private List<UUID> toUUIDList(List<String> ids) {
-		return ids.stream().map(UUID::fromString).toList();
-	}
-
-	private List<List<ModelPoint>> toPolygonList(List<Polygon> polys) {
-		return polys.stream().map(this::toPolygon).toList();
-	}
-
-	private List<ModelPoint> toPolygon(Polygon poly) {
-		return poly.getPointsList().stream().map(p -> new ModelPoint(p.getX(), p.getY())).toList();
-	}
-
-	private ModelLintSeverity toSeverity(Severity severity) {
-		return switch(severity) {
-			case SEVERITY_ERROR -> ModelLintSeverity.ERROR;
-			case SEVERITY_HINT -> ModelLintSeverity.HINT;
-			case SEVERITY_INFO -> ModelLintSeverity.INFO;
-			case SEVERITY_WARNING -> ModelLintSeverity.WARNING;
-			default -> ModelLintSeverity.ERROR; // NOTE: deliberately annoying
-		};
-	}
-
-	private ModelLanguageServerProgressType toProgressType(ProgressReportType type) {
-		return switch (type) {
-			case PROGRESS_BEGIN -> ModelLanguageServerProgressType.BEGIN;
-			case PROGRESS_END -> ModelLanguageServerProgressType.END;
-			case PROGRESS_END_FAIL -> ModelLanguageServerProgressType.END_FAIL;
-			case PROGRESS_STATUS -> ModelLanguageServerProgressType.PROGRESS;
-			case UNRECOGNIZED -> ModelLanguageServerProgressType.END_FAIL;
-			default -> ModelLanguageServerProgressType.END_FAIL;
-		};
-	}
-
-	private ModelNotificationLevel toNotificationLevel(NotificationLevel level) {
-		return switch (level) {
-			case NOTIFICATION_ERROR -> ModelNotificationLevel.ERROR;
-			case NOTIFICATION_WARNING -> ModelNotificationLevel.WARNING;
-			case NOTIFICATION_DEBUG -> ModelNotificationLevel.DEBUG;
-			case NOTIFICATION_INFO -> ModelNotificationLevel.INFO;
-			case NOTIFICATION_TRACE -> ModelNotificationLevel.TRACE;
-			case UNRECOGNIZED -> ModelNotificationLevel.TRACE;
-			default -> ModelNotificationLevel.TRACE;
-		};
-	}
-
-	private Vertex toVertex(ViewModelVertex vertex) {
-		var serializer = DI.get(IModelSerializer.class);
-		return Vertex.newBuilder()
-			.setId(vertex.id().toString())
-			.setJsonEncoding(serializer.serialize(vertex.toModel()))
-			.build();
-	}
-
-	private Edge toEdge(ViewModelEdge edge) {
-		var serializer = DI.get(IModelSerializer.class);
-		return Edge.newBuilder()
-			.setId(edge.id().toString())
-			.setJsonEncoding(serializer.serialize(edge.toModel()))
-			.build();
-	}
-
-	private Diff toDiff(ViewModelDiff diff, String bufferName) {
-		var b = Diff.newBuilder()
-			.setBufferName(bufferName)
-			.setSyntaxStyle(diff.getSyntaxStyle());
-		for(var v : diff.getVertexAdditions())
-			b.addVertexAdditions(toVertex(v));
-		for(var v : diff.getVertexDeletions())
-			b.addVertexDeletions(toVertex(v));
-		for(var e : diff.getEdgeAdditions())
-			b.addEdgeAdditions(toEdge(e));
-		for(var e : diff.getEdgeDeletions())
-			b.addEdgeDeletions(toEdge(e));
-		return b.build();
 	}
 
 	@Override
 	public void addDiagnosticsCallback(IRunnable1<Collection<ModelLint>> callback) {
+		if(!isServerCapable(Capability.CAPABILITY_DIAGNOSTICS))
+			return;
 		stub.get().getDiagnostics(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(DiagnosticsList value) {
@@ -300,18 +189,18 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 					converted.add(new ModelLint(
 								protoDiagnostic.getModelkey(),
 								protoDiagnostic.getLintIdentifier(),
-								toSeverity(protoDiagnostic.getSeverity()),
+								converter.toSeverity(protoDiagnostic.getSeverity()),
 								protoDiagnostic.getTitle(),
 								protoDiagnostic.getMessage(),
 								Optional.of(protoDiagnostic.getDescription()),
-								toUUIDList(protoDiagnostic.getAffectedElementsList()),
-								toPolygonList(protoDiagnostic.getAffectedRegionsList())));
+								converter.toUUIDList(protoDiagnostic.getAffectedElementsList()),
+								converter.toPolygonList(protoDiagnostic.getAffectedRegionsList())));
 				callback.run(converted);
 			}
 
 			@Override
 			public void onError(Throwable t) {
-				logger.error("{}", t.getMessage()); // TODO: Consider doing a server progress call
+				logger.error("{}", t.getMessage());
 			}
 
 			@Override
@@ -323,15 +212,17 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 
 	@Override
 	public void addNotificationCallback(IRunnable1<ModelNotification> callback) {
+		if(!isServerCapable(Capability.CAPABILITY_NOTIFICATIONS))
+			return;
 		stub.get().getNotifications(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(Notification value) {
-				callback.run(new ModelNotification(toNotificationLevel(value.getLevel()), value.getMessage()));
+				callback.run(new ModelNotification(converter.toNotificationLevel(value.getLevel()), value.getMessage()));
 			}
 
 			@Override
 			public void onError(Throwable t) {
-				logger.error("{}", t.getMessage()); // TODO: Consider doing a server progress call
+				logger.error("{}", t.getMessage());
 			}
 
 			@Override
@@ -343,19 +234,21 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 
 	@Override
 	public void addProgressCallback(IRunnable1<ModelLanguageServerProgress> callback) {
+		if(!isServerCapable(Capability.CAPABILITY_PROGRESS))
+			return;
 		stub.get().getProgress(empty, new StreamObserver<>() {
 			@Override
 			public void onNext(ProgressReport value) {
 				callback.run(new ModelLanguageServerProgress(
 							value.getToken(),
-							toProgressType(value.getType()),
+							converter.toProgressType(value.getType()),
 							value.getTitle(),
 							value.getMessage()));
 			}
 
 			@Override
 			public void onError(Throwable t) {
-				logger.error("{}", t.getMessage()); // TODO: Consider doing a server progress call
+				logger.error("{}", t.getMessage());
 			}
 
 			@Override
@@ -363,5 +256,83 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 				logger.info("notifications completed");
 			}
 		});
+	}
+
+	private static class Converter {
+		public List<UUID> toUUIDList(List<String> ids) {
+			return ids.stream().map(UUID::fromString).toList();
+		}
+
+		public List<List<ModelPoint>> toPolygonList(List<Polygon> polys) {
+			return polys.stream().map(this::toPolygon).toList();
+		}
+
+		public List<ModelPoint> toPolygon(Polygon poly) {
+			return poly.getPointsList().stream().map(p -> new ModelPoint(p.getX(), p.getY())).toList();
+		}
+
+		public ModelLintSeverity toSeverity(Severity severity) {
+			return switch(severity) {
+				case SEVERITY_ERROR -> ModelLintSeverity.ERROR;
+				case SEVERITY_HINT -> ModelLintSeverity.HINT;
+				case SEVERITY_INFO -> ModelLintSeverity.INFO;
+				case SEVERITY_WARNING -> ModelLintSeverity.WARNING;
+				default -> ModelLintSeverity.ERROR; // NOTE: deliberately annoying
+			};
+		}
+
+		public ModelLanguageServerProgressType toProgressType(ProgressReportType type) {
+			return switch (type) {
+				case PROGRESS_BEGIN -> ModelLanguageServerProgressType.BEGIN;
+				case PROGRESS_END -> ModelLanguageServerProgressType.END;
+				case PROGRESS_END_FAIL -> ModelLanguageServerProgressType.END_FAIL;
+				case PROGRESS_STATUS -> ModelLanguageServerProgressType.PROGRESS;
+				case UNRECOGNIZED -> ModelLanguageServerProgressType.END_FAIL;
+				default -> ModelLanguageServerProgressType.END_FAIL;
+			};
+		}
+
+		public ModelNotificationLevel toNotificationLevel(NotificationLevel level) {
+			return switch (level) {
+				case NOTIFICATION_ERROR -> ModelNotificationLevel.ERROR;
+				case NOTIFICATION_WARNING -> ModelNotificationLevel.WARNING;
+				case NOTIFICATION_DEBUG -> ModelNotificationLevel.DEBUG;
+				case NOTIFICATION_INFO -> ModelNotificationLevel.INFO;
+				case NOTIFICATION_TRACE -> ModelNotificationLevel.TRACE;
+				case UNRECOGNIZED -> ModelNotificationLevel.TRACE;
+				default -> ModelNotificationLevel.TRACE;
+			};
+		}
+
+		public Vertex toVertex(ViewModelVertex vertex) {
+			var serializer = DI.get(IModelSerializer.class);
+			return Vertex.newBuilder()
+				.setId(vertex.id().toString())
+				.setJsonEncoding(serializer.serialize(vertex.toModel()))
+				.build();
+		}
+
+		public Edge toEdge(ViewModelEdge edge) {
+			var serializer = DI.get(IModelSerializer.class);
+			return Edge.newBuilder()
+				.setId(edge.id().toString())
+				.setJsonEncoding(serializer.serialize(edge.toModel()))
+				.build();
+		}
+
+		public Diff toDiff(ViewModelDiff diff, String bufferName) {
+			var b = Diff.newBuilder()
+				.setBufferName(bufferName)
+				.setSyntaxStyle(diff.getSyntaxStyle());
+			for(var v : diff.getVertexAdditions())
+				b.addVertexAdditions(toVertex(v));
+			for(var v : diff.getVertexDeletions())
+				b.addVertexDeletions(toVertex(v));
+			for(var e : diff.getEdgeAdditions())
+				b.addEdgeAdditions(toEdge(e));
+			for(var e : diff.getEdgeDeletions())
+				b.addEdgeDeletions(toEdge(e));
+			return b.build();
+		}
 	}
 }
