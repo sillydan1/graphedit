@@ -110,7 +110,7 @@
    - [x] Additions (new syntactic elements), Deletions (B does not have some syntactic element), Edits (Some syntactic element's properties has been changed)
    - [x] Cut / Copy / Paste support
  - [x] Lint layer
-   - [ ] Lint protobuf specification
+   - [x] Lint protobuf specification
    - [x] Implement `ILint` / `ILinter` interfaces
  - [x] Release core as a library on ossrh
  - [x] Additional Syntaxes
@@ -121,17 +121,18 @@
  - [x] Fix TODOs
  - [x] Polish
  - [x] Release `v1.2.0
- - [ ] Third party language plugins
+ - [x] Third party language plugins
    - [ ] TIOA 
-   - [ ] NTTA
-   - [ ] HAWK
-     - [ ] expr richtextfx.CodeArea implementation
+   - [x] NTTA
+   - [x] HAWK
+ - [ ] Model metadata editor
+ - [ ] CodeArea tree highlighter implementation
  - [ ] Trace-traverser & specification
  - [ ] Plan for git integration
  - [ ] Diff view?
  - [x] Add plugin API and 
  - [x] LSP like specification (use docusaurus, or github wiki)
-   - [ ] Protobuf specification (that way, you are language agnostic)
+   - [x] Protobuf specification (that way, you are language agnostic)
    - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.3.0`
  - [ ] Planarity Embedding
