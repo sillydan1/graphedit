@@ -76,6 +76,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.port = port;
 		this.converter = new Converter();
 		this.programThread = new Thread(() -> PlatformUtils.launchProgram(command, arguments));
+		this.programThread.start();
 		this.stub = new Lazy<>(() -> RetryUtils.tryTimes(maxConnectionAttempts, connectionAttemptWaitMilliseconds, this::connect));
 		this.empty = Empty.newBuilder().build();
 		this.serverInfo = new Lazy<>(this::getServerInfo);
