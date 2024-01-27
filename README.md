@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-   Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes
+   Graphedit is an application for visualising, creating, editing and debugging graph-based languages
 </p>
 
 ------
