@@ -125,9 +125,7 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
      * */
     @Override
     public List<InspectableProperty> getInspectableObjects() {
-	return List.of(
-		new InspectableProperty("Position X", position.getXProperty()),
-		new InspectableProperty("Position Y", position.getYProperty()));
+	return List.of();
     }
 
     @Override
