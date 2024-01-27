@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.util.InspectorUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -17,6 +14,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -24,26 +22,21 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 /**
  * The javafx controller for the syntax property inspector panel
  */
 public class InspectorController extends StackPane {
-    private final Logger logger = LoggerFactory.getLogger(InspectorController.class);
     private final VBox bufferPropertiesContainer;
     private final VBox propertiesContainer;
     private final ScrollPane scrollPane;
@@ -53,15 +46,18 @@ public class InspectorController extends StackPane {
     public InspectorController() {
 	openBuffers = DI.get(IBufferContainer.class);
 	selectedElements = DI.get("selectedElements");
+	var padding = new Insets(10);
 	bufferPropertiesContainer = new VBox();
 	bufferPropertiesContainer.setSpacing(5);
-	bufferPropertiesContainer.setPadding(new Insets(10));
+	bufferPropertiesContainer.setPadding(padding);
 	propertiesContainer = new VBox();
 	propertiesContainer.setSpacing(5);
-	propertiesContainer.setPadding(new Insets(10));
+	propertiesContainer.setPadding(padding);
+	var seperator = new Separator(Orientation.HORIZONTAL);
+	seperator.setPadding(padding);
 	scrollPane = new ScrollPane(new VBox(
 		    bufferPropertiesContainer,
-		    new Separator(Orientation.HORIZONTAL),
+		    seperator,
 		    propertiesContainer));
 	scrollPane.setFitToWidth(true);
 	initialize();
@@ -77,15 +73,25 @@ public class InspectorController extends StackPane {
     private void addAllOpenBuffers() {
 	for(var buffer : openBuffers.getBuffers().entrySet()) {
 	    var inspectors = new ArrayList<Node>();
-	    inspectors.add(InspectorUtils.getPropertyInspector(buffer.getValue().syntax().declarations()));
+	    inspectors.add(declarationsEditor(buffer.getValue().syntax().declarations()));
 	    inspectors.add(metadataEditor(buffer.getValue().metadata()));
 	    var box = new VBox();
 	    box.getChildren().addAll(inspectors);
 	    var pane = new TitledPane(buffer.getKey(), box);
 	    pane.setExpanded(false);
-	    pane.getStyleClass().add("border-primary");
 	    bufferPropertiesContainer.getChildren().add(pane);
 	}
+    }
+
+    private Node declarationsEditor(StringProperty declarations) {
+	var label = new Label("Declarations");
+	var inspector = InspectorUtils.getPropertyInspector(declarations);
+	var pane = new BorderPane();
+	BorderPane.setAlignment(label, Pos.CENTER);
+	BorderPane.setAlignment(inspector, Pos.CENTER);
+	pane.setCenter(inspector);
+	pane.setTop(label);
+	return pane;
     }
 
     private Node metadataEditor(MapProperty<String,String> metadata) {
