@@ -85,8 +85,6 @@
    - [x] flatpak
    - [x] GNOME store?
    - [x] javadoc
- - [ ] CD (needs a pre-release for prototyping purposes)
-   - [ ] flathub (needs an actual binary release)
  - [x] gitignored Project cache, such as what files did you have open last etc.
  - [x] windows menubar not showing
  - [x] Migraters
@@ -120,25 +118,39 @@
  - [x] Plugin Manager
  - [x] Fix TODOs
  - [x] Polish
- - [x] Release `v1.2.0
- - [x] Third party language plugins
-   - [ ] TIOA 
-   - [x] NTTA
-   - [x] HAWK
- - [ ] Model metadata editor
- - [ ] CodeArea tree highlighter implementation
- - [ ] Trace-traverser & specification
- - [ ] Plan for git integration
- - [ ] Diff view?
- - [x] Add plugin API and 
- - [x] LSP like specification (use docusaurus, or github wiki)
-   - [x] Protobuf specification (that way, you are language agnostic)
-   - [x] Implement `ILsp` / `ILspEngine` interfaces
- - [ ] Release `v1.3.0`
- - [ ] Planarity Embedding
- - [ ] DAP like specification
-   - [ ] Protobuf specification (that way, you are language agnostic)
-   - [ ] Implement `IDap` / `IDapEngine` interfaces
+ - [x] Release `v1.3.0
+   - [x] Third party language plugins
+     - [x] NTTA
+     - [x] HAWK
+   - [x] Model metadata editor
+   - [x] Add plugin API and 
+   - [x] LSP like specification (use docusaurus, or github wiki)
+     - [x] Protobuf specification (that way, you are language agnostic)
+     - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.4.0`
- - [ ] Example lua plugin [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
- - [ ] Release `v2.0.0`
+   - [ ] HAWK / nttals usability exploration fixes
+   - [ ] Importer / Exporter interfaces
+   - [ ] Fix TODOs
+   - [ ] Javadocs
+ - [ ] Release `v1.5.0`
+   - [ ] Purge github issues
+   - [ ] CodeArea tree highlighter implementation
+   - [ ] Trace-traverser & specification
+ - [ ] Release `v1.6.0`
+   - [ ] Plan for git integration
+   - [ ] Diff view?
+ - [ ] Release `v1.7.0`
+   - [ ] Planarity Embedding
+ - [ ] Release `v1.8.0`
+   - [ ] DAP like specification
+     - [ ] Protobuf specification
+     - [ ] Implement `IDap` / `IDapEngine` interfaces
+ - [ ] Release `v1.9.0`
+   - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
+ - [ ] Release `v1.11.0`
+
+## Not abandoned, but not planned
+ - [ ] TIOA syntax
+ - [ ] TA syntax
+ - [ ] CD (needs a pre-release for prototyping purposes)
+   - [ ] flathub
