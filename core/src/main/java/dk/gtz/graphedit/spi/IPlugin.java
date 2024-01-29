@@ -59,7 +59,7 @@ public interface IPlugin {
     }
 
     /**
-     * Get a collection of plugin panels provided by this plugin. Will return an empty list by default.
+     * Get a collection of panels provided by this plugin. Will return an empty list by default.
      * @return A collection of plugin panels
      * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
      */
@@ -68,11 +68,19 @@ public interface IPlugin {
     }
 
     /**
-     * Get a collection of plugin language servers provided by this plugin. Will return an empty list by default.
+     * Get a collection of language servers provided by this plugin. Will return an empty list by default.
      * @return A collection of language servers
      * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
      */
     default Collection<ILanguageServer> getLanguageServers() throws Exception {
+        return List.of();
+    }
+
+    /**
+     * Get a collection of importers provided by this plugin. Will return an empty list by default.
+     * @return A collection of importers
+     */
+    default Collection<IImporter> getImporters() {
         return List.of();
     }
 }

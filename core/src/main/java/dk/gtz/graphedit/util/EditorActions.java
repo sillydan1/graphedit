@@ -507,7 +507,7 @@ public class EditorActions {
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
     public static Optional<File> openFile() {
-        return openFile(new ExtensionFilter("json files", "*.json"));
+        return openFile("JSON Files", List.of("*.json"));
     }
 
     /**
@@ -516,7 +516,7 @@ public class EditorActions {
      * @param filterTypes The accepted filename extensions
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
-    public static Optional<File> openFileType(String description, String... filterTypes) {
+    public static Optional<File> openFile(String description, List<String> filterTypes) {
         return openFile(new ExtensionFilter(description, filterTypes));
     }
 
@@ -536,7 +536,7 @@ public class EditorActions {
      * Prompt the user to pick a folder
      * @return Possibly a folder reference. Will be empty if the user cancelled the action
      */
-    public static Optional<File> openFolder(ExtensionFilter filter) {
+    public static Optional<File> openFolder() {
         var fileChooser = new DirectoryChooser();
         fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
         fileChooser.setTitle("Open directory");

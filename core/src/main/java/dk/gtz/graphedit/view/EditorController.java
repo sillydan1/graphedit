@@ -1,5 +1,6 @@
 package dk.gtz.graphedit.view;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelProject;
+import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.HeightDragResizer;
 import dk.gtz.graphedit.util.PlatformUtils;
@@ -42,6 +44,10 @@ public class EditorController {
     @FXML
     private Menu runTargetsMenu;
     @FXML
+    private Menu importFileMenu;
+    @FXML
+    private Menu importProjectMenu;
+    @FXML
     private MenuItem runTargetMenuItem;
     @FXML
     private SidePanelController sidePanelController;
@@ -62,6 +68,7 @@ public class EditorController {
 	WidthDragResizer.makeResizableRight((Region)primaryBorderPane.getLeft());
 	((Region)primaryBorderPane.getLeft()).setPrefWidth(400);
 	HeightDragResizer.makeResizableUp((Region)primaryBorderPane.getBottom());
+	updateImporters();
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
 	bottomBorderPane.setBottom(new StatusBarController());
@@ -86,6 +93,43 @@ public class EditorController {
 	    if(selectedRunTarget.isPresent() && selectedRunTarget.get() == runTarget)
 		toggleGroup.selectToggle(toggleItem);
 	    runTargetsMenu.getItems().add(toggleItem);
+	}
+    }
+
+    private void updateImporters() {
+	importFileMenu.getItems().clear();
+	importProjectMenu.getItems().clear();
+	var plugins = DI.get(IPluginsContainer.class);
+	for(var plugin : plugins.getEnabledPlugins()) {
+	    for(var importer : plugin.getImporters()) {
+		// TODO: Test this by writing a simple importer in std plugin!
+		var fileImporter = new MenuItem(importer.getName());
+		fileImporter.setOnAction(e -> {
+		    try {
+			var filetypes = importer.getFiletypesFilter();
+			var file = EditorActions.openFile(filetypes.description(), filetypes.extensions());
+			if(file.isEmpty())
+			    return;
+			var result = importer.importFile(file.get().toPath());
+			EditorActions.saveModelToFile(result.newFileLocation(), result.newModel());
+			EditorActions.openModel(result.newFileLocation());
+		    } catch(IOException exc) {
+			throw new RuntimeException(exc);
+		    }
+		});
+		importFileMenu.getItems().add(fileImporter);
+
+		var projectImporter = new MenuItem(importer.getName());
+		projectImporter.setOnAction(e -> {
+		    var file = EditorActions.openFolder();
+		    if(file.isEmpty())
+			return;
+		    var result = importer.importProject(file.get().toPath());
+		    EditorActions.saveProject(result.newProject(), result.newFileLocation());
+		    EditorActions.openProject(result.newFileLocation().toFile());
+		});
+		importProjectMenu.getItems().add(projectImporter);
+	    }
 	}
     }
 
