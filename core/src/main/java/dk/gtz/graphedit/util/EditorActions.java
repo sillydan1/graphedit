@@ -54,6 +54,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -502,15 +503,44 @@ public class EditorActions {
     }
 
     /**
-     * Prompt the user to pick a file to open
+     * Prompt the user to pick a json file
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
     public static Optional<File> openFile() {
+        return openFile(new ExtensionFilter("json files", "*.json"));
+    }
+
+    /**
+     * Prompt the user to pick a file of some provided type
+     * @param description Description of the allowed type
+     * @param filterTypes The accepted filename extensions
+     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFileType(String description, String... filterTypes) {
+        return openFile(new ExtensionFilter(description, filterTypes));
+    }
+
+    /**
+     * Prompt the user to pick a file
+     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFile(ExtensionFilter filter) {
         var fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("json files", "*.json"));
+        fileChooser.getExtensionFilters().addAll();
         fileChooser.setTitle("Open file");
         return Optional.ofNullable(fileChooser.showOpenDialog(DI.get(Window.class)));
+    }
+
+    /**
+     * Prompt the user to pick a folder
+     * @return Possibly a folder reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFolder(ExtensionFilter filter) {
+        var fileChooser = new DirectoryChooser();
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.setTitle("Open directory");
+        return Optional.ofNullable(fileChooser.showDialog(DI.get(Window.class)));
     }
 
     /**
