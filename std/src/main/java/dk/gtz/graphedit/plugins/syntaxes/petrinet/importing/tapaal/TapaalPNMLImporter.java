@@ -1,0 +1,86 @@
+package dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
+import dk.gtz.graphedit.exceptions.ImportException;
+import dk.gtz.graphedit.model.ModelGraph;
+import dk.gtz.graphedit.model.ModelPoint;
+import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.model.ModelVertex;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelArc;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelPlace;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelTransition;
+import dk.gtz.graphedit.spi.IImporter;
+import dk.gtz.graphedit.viewmodel.ViewModelProject;
+import dk.yalibs.yadi.DI;
+
+public class TapaalPNMLImporter implements IImporter {
+	private final XmlMapper xmlMapper;
+	private final String syntaxName;
+
+	public TapaalPNMLImporter(String syntaxName) {
+		this.syntaxName = syntaxName;
+		this.xmlMapper = new XmlMapper();
+		this.xmlMapper.registerModule(new Jdk8Module());
+	}
+
+	@Override
+	public String getName() {
+		return "tapaal";
+	}
+
+	@Override
+	public ImportProjectResult importProject(Path importPath) throws ImportException {
+		throw new RuntimeException("Not implemented");
+	}
+
+	@Override
+	public ImportResult importFile(Path importPath) throws ImportException {
+		try {
+			var pnml = xmlMapper.readValue(importPath.toFile(), PNML.class);
+			var vertexIdMapping = new HashMap<String,UUID>();
+			var vertices = new HashMap<UUID,ModelVertex>();
+			for(var place : pnml.getNet().getPlaces()) {
+				var placeLocation = new ModelPoint(place.getPositionX(), place.getPositionY());
+				var modelPlace = new ModelPlace(placeLocation, place.getInitialMarking());
+				var newUUID = UUID.randomUUID();
+				vertices.put(newUUID, modelPlace);
+				vertexIdMapping.put(place.getId(), newUUID);
+			}
+			for(var transition : pnml.getNet().getTransitions()) {
+				var transitionLocation = new ModelPoint(transition.getPositionX(), transition.getPositionY());
+				var modelTransition = new ModelTransition(transitionLocation);
+				var newUUID = UUID.randomUUID();
+				vertices.put(newUUID, modelTransition);
+				vertexIdMapping.put(transition.getId(), newUUID);
+			}
+			var edges = new HashMap<UUID,dk.gtz.graphedit.model.ModelEdge>();
+			for(var arc : pnml.getNet().getArcs()) {
+				var sourceUUID = vertexIdMapping.get(arc.getSource());
+				var targetUUID = vertexIdMapping.get(arc.getTarget());
+				var modelEdge = new ModelArc(sourceUUID, targetUUID);
+				edges.put(UUID.randomUUID(), modelEdge);
+			}
+			var metadata = new HashMap<String,String>();
+			metadata.put("graphedit_syntax", syntaxName);
+			var modelProjectResource = new ModelProjectResource(metadata, new ModelGraph("", vertices, edges));
+			var projectPath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
+			var filename = importPath.getFileName().toString();
+			return new ImportResult(Path.of(projectPath, filename), modelProjectResource);
+		} catch (IOException e) {
+			throw new ImportException(e);
+		}
+	}
+
+	@Override
+	public FiletypesFilter getFiletypesFilter() {
+		return new FiletypesFilter("TAPN Files", List.of("*.tapn"));
+	}
+}

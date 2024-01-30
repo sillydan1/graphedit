@@ -13,6 +13,8 @@ javafx {
 
 dependencies {
     implementation project(':core');
+    // NOTE: Tapaal petrinets are stored in xml format
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.15.0';
 }
 
 jar {
