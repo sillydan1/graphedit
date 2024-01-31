@@ -176,6 +176,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 		throw new Exception("project file path does not exist '" + projectFilePath.toString() + "', loading tmp project instead");
 	    var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
 	    DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
+	    // TODO: also call setupLSP when an exception occurs
 	    setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
 	} catch(Exception e) {
 	    logger.error(e.getMessage(), e);

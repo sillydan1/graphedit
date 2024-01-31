@@ -18,9 +18,7 @@
                         <MenuItem onAction="#openProject" text="Open Project..." accelerator="Shortcut+Shift+O"/>
                         <MenuItem onAction="#save" text="Save" accelerator="Shortcut+S"/>
                         <MenuItem onAction="#saveAs" text="Save As..." accelerator="Shortcut+Shift+S"/>
-                        <SeparatorMenuItem/>
-                        <Menu fx:id="importFileMenu" text="Import File"/>
-                        <Menu fx:id="importProjectMenu" text="Import Project"/>
+                        <Menu fx:id="importFileMenu" text="Import File(s)"/>
                         <SeparatorMenuItem/>
                         <MenuItem onAction="#quit" text="Quit" accelerator="Shortcut+Q"/>
                     </Menu>

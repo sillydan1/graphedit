@@ -35,6 +35,15 @@ public record ViewModelProject(
         SimpleListProperty<ViewModelRunTarget> runTargets) {
 
     /**
+     * Constructs a new temporary viewmodel project based on a model instance
+     * @param modelProject The model project datastructure to base on
+     * @throws IOException when temporary directory creation failed
+     */
+    public ViewModelProject(ModelProject modelProject) throws IOException {
+        this(modelProject, Optional.empty());
+    }
+
+    /**
      * Constructs a new viewmodel project based on a model instance and an optional rootdirectory
      * @param modelProject The model project datastructure to base on
      * @param rootDirectory When provided, a valid file path containing the associated model project file, else will create a new temp directory for you

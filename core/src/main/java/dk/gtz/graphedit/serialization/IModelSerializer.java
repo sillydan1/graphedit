@@ -119,4 +119,10 @@ public interface IModelSerializer {
      * @param loader The additional loader to use when resolving classes
      */
     void addClassLoader(ClassLoader loader);
+
+    /**
+     * Get the preferred file extension for this serializer. e.g. ".json"
+     * @return A string representing the preferred file extension
+     */
+    String getPreferedFileExtension();
 }

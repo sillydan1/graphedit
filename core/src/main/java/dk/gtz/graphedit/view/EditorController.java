@@ -46,8 +46,6 @@ public class EditorController {
     @FXML
     private Menu importFileMenu;
     @FXML
-    private Menu importProjectMenu;
-    @FXML
     private MenuItem runTargetMenuItem;
     @FXML
     private SidePanelController sidePanelController;
@@ -98,37 +96,26 @@ public class EditorController {
 
     private void updateImporters() {
 	importFileMenu.getItems().clear();
-	importProjectMenu.getItems().clear();
 	var plugins = DI.get(IPluginsContainer.class);
 	for(var plugin : plugins.getEnabledPlugins()) {
 	    for(var importer : plugin.getImporters()) {
-		// TODO: Test this by writing a simple importer in std plugin!
 		var fileImporter = new MenuItem(importer.getName());
 		fileImporter.setOnAction(e -> {
 		    try {
 			var filetypes = importer.getFiletypesFilter();
-			var file = EditorActions.openFile(filetypes.description(), filetypes.extensions());
-			if(file.isEmpty())
+			var files = EditorActions.openFiles(filetypes.description(), filetypes.extensions());
+			if(files.isEmpty())
 			    return;
-			var result = importer.importFile(file.get().toPath());
-			EditorActions.saveModelToFile(result.newFileLocation(), result.newModel());
-			EditorActions.openModel(result.newFileLocation());
+			var result = importer.importFiles(files);
+			for(var importResult : result) {
+			    EditorActions.saveModelToFile(importResult.newFileLocation(), importResult.newModel());
+			    EditorActions.openModel(importResult.newFileLocation());
+			}
 		    } catch(IOException exc) {
 			throw new RuntimeException(exc);
 		    }
 		});
 		importFileMenu.getItems().add(fileImporter);
-
-		var projectImporter = new MenuItem(importer.getName());
-		projectImporter.setOnAction(e -> {
-		    var file = EditorActions.openFolder();
-		    if(file.isEmpty())
-			return;
-		    var result = importer.importProject(file.get().toPath());
-		    EditorActions.saveProject(result.newProject(), result.newFileLocation());
-		    EditorActions.openProject(result.newFileLocation().toFile());
-		});
-		importProjectMenu.getItems().add(projectImporter);
 	    }
 	}
     }

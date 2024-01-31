@@ -533,6 +533,36 @@ public class EditorActions {
     }
 
     /**
+     * Prompt the user to pick one or more json files
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openFiles() {
+        return openFiles("JSON Files", List.of("*.json"));
+    }
+
+    /**
+     * Prompt the user to pick one or more files of some provided type
+     * @param description Description of the allowed type
+     * @param filterTypes The accepted filename extensions
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openFiles(String description, List<String> filterTypes) {
+        return openFiles(new ExtensionFilter(description, filterTypes));
+    }
+
+    /**
+     * Prompt the user to pick one or more files
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openFiles(ExtensionFilter filter) {
+        var fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.getExtensionFilters().addAll();
+        fileChooser.setTitle("Open file(s)");
+        return fileChooser.showOpenMultipleDialog(DI.get(Window.class));
+    }
+
+    /**
      * Prompt the user to pick a folder
      * @return Possibly a folder reference. Will be empty if the user cancelled the action
      */
