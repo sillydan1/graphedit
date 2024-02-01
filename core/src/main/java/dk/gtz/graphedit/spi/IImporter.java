@@ -13,7 +13,19 @@ import dk.gtz.graphedit.model.ModelProjectResource;
  * Note that none of the functions should actually save to disk.
  */
 public interface IImporter {
+	/**
+	 * A filter object for representing supported filetypes.
+	 * @param description A description of the filetypes
+	 * @param extensions A list of file extensions of the format "*.ext"
+	 */
 	public record FiletypesFilter(String description, List<String> extensions) {}
+
+
+	/**
+	 * A result object for representing the result of an import.
+	 * @param newFileLocation The path to the new file Location
+	 * @param newModel The new model resource
+	 */
 	public record ImportResult(Path newFileLocation, ModelProjectResource newModel) {}
 
 	/**
@@ -26,6 +38,7 @@ public interface IImporter {
 
 	/**
 	 * Get the target project type that the importer can import.
+	 * This will be used in the importer drop-down UI.
 	 * @return A string name of the type of project that this importer can import.
 	 */
 	String getName();
