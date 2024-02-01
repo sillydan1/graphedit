@@ -129,7 +129,9 @@
      - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.4.0`
    - [ ] HAWK / nttals usability exploration fixes
-   - [ ] Importer / Exporter interfaces
+     - [ ] Importer / Exporter interfaces
+       - [x] importer interface & tapaal example
+       - [ ] exporter interface & tapaal example
    - [ ] Fix TODOs
    - [ ] Javadocs
  - [ ] Release `v1.5.0`
