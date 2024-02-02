@@ -62,4 +62,3 @@ nvimclean: # useful when adding new subprojects, or when the java plugin gets co
 	rm -rf ${WRP}
 	rm -rf .project
 	rm -rf .classpath
-
