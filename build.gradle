@@ -4,6 +4,9 @@ plugins {
     id 'com.google.protobuf' version '0.9.4';
 }
 
+if (!gradle.gradleVersion.startsWith('8')) // TODO: this breaks as soon as gradle 9 is released, also, I think gradle 7 and 6 works as well.
+    throw new GradleException('This project requires gradle version 8 or higher');
+
 def gitCommitSha = { ->
     try {
         def stdout = new ByteArrayOutputStream();
