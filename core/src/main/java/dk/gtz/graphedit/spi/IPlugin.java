@@ -83,4 +83,12 @@ public interface IPlugin {
     default Collection<IImporter> getImporters() {
         return List.of();
     }
+
+    /**
+     * Get a collection of exporters provided by this plugin. Will return an empty list by default.
+     * @return A collection of exporters
+     */
+    default Collection<IExporter> getExporters() {
+        return List.of();
+    }
 }

@@ -13,11 +13,11 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dk.gtz.graphedit.exceptions.ExportException;
-import dk.gtz.graphedit.plugins.syntaxes.petrinet.viewmodel.ViewModelArc;
-import dk.gtz.graphedit.plugins.syntaxes.petrinet.viewmodel.ViewModelPlace;
-import dk.gtz.graphedit.plugins.syntaxes.petrinet.viewmodel.ViewModelTransition;
+import dk.gtz.graphedit.model.ModelProjectResource;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelArc;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelPlace;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.model.ModelTransition;
 import dk.gtz.graphedit.spi.IExporter;
-import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 
 public class TapaalPNMLExporter implements IExporter {
     private final static Logger logger = LoggerFactory.getLogger(TapaalPNMLExporter.class);
@@ -36,11 +36,12 @@ public class TapaalPNMLExporter implements IExporter {
     }
 
     @Override
-    public void exportFile(ViewModelProjectResource resource, Path newFilePath) throws ExportException {
-	if(!resource.getSyntaxName().isPresent())
-	    throw new ExportException("No syntax specified for exported resource");
-	if(!resource.getSyntaxName().get().equals(syntaxName))
-	    throw new ExportException("Invalid syntax for TapaalPNMLExporter '%s' (expected '%s')".formatted(resource.getSyntaxName().get(), syntaxName));
+    public void exportFile(ModelProjectResource resource, Path newFilePath) throws ExportException {
+	var syntaxName = Optional.ofNullable(resource.metadata().get("graphedit_syntax"));
+	if(!syntaxName.isPresent())
+	    throw new ExportException("No syntax specified for resource");
+	if(!syntaxName.get().equals(this.syntaxName))
+	    throw new ExportException("Invalid syntax for TapaalPNMLExporter '%s' (expected '%s')".formatted(syntaxName.get(), syntaxName));
 	var pnml = fromResource(resource);
 	try {
 	    xmlMapper.writeValue(newFilePath.toFile(), pnml);
@@ -49,7 +50,7 @@ public class TapaalPNMLExporter implements IExporter {
 	}
     }
 
-    private PNML fromResource(ViewModelProjectResource resource) throws ExportException {
+    private PNML fromResource(ModelProjectResource resource) throws ExportException {
 	var name = Optional.ofNullable(resource.metadata().get("name"));
 	if(name.isEmpty())
 	    throw new ExportException("No name metadata specified for exported resource");
@@ -64,7 +65,7 @@ public class TapaalPNMLExporter implements IExporter {
 	var places = new ArrayList<Place>();
 	var transitions = new ArrayList<Transition>();
 	for(var vertex : resource.syntax().vertices().entrySet()) {
-	    if(vertex.getValue() instanceof ViewModelPlace modelPlace) {
+	    if(vertex.getValue() instanceof ModelPlace modelPlace) {
 		places.add(new Place()
 			.setId(vertex.getKey().toString())
 			.setDisplayName(false)
@@ -72,12 +73,12 @@ public class TapaalPNMLExporter implements IExporter {
 			.setName("")
 			.setNameOffsetX(0)
 			.setNameOffsetY(0)
-			.setPositionX(vertex.getValue().position().getX())
-			.setPositionY(vertex.getValue().position().getY())
-			.setInitialMarking(modelPlace.initialTokenCount().get()));
+			.setPositionX(vertex.getValue().position.x())
+			.setPositionY(vertex.getValue().position.y())
+			.setInitialMarking(modelPlace.initialTokenCount()));
 		continue;
 	    }
-	    if(vertex.getValue() instanceof ViewModelTransition) {
+	    if(vertex.getValue() instanceof ModelTransition) {
 		transitions.add(new Transition()
 			.setId(vertex.getKey().toString())
 			.setAngle(0)
@@ -87,8 +88,8 @@ public class TapaalPNMLExporter implements IExporter {
 			.setNameOffsetX(0)
 			.setNameOffsetY(0)
 			.setPlayer(0) // TODO: what is this? and is it required for regular P/N nets?
-			.setPositionX(vertex.getValue().position().getX())
-			.setPositionY(vertex.getValue().position().getY())
+			.setPositionX(vertex.getValue().position.x())
+			.setPositionY(vertex.getValue().position.y())
 			.setPriority(0)
 			.setUrgent(false));
 		continue;
@@ -98,16 +99,16 @@ public class TapaalPNMLExporter implements IExporter {
 
 	var arcs = new ArrayList<Arc>();
 	for(var edge : resource.syntax().edges().entrySet()) {
-	    if(edge.getValue() instanceof ViewModelArc modelArc) {
+	    if(edge.getValue() instanceof ModelArc modelArc) {
 		arcs.add(new Arc()
 			.setId(edge.getKey().toString())
 			.setInscription("") // TODO: what is this? and is it required for regular P/N nets?
 			.setNameOffsetX(0)
 			.setNameOffsetY(0)
-			.setSource(modelArc.source().toString())
-			.setTarget(modelArc.target().toString())
+			.setSource(modelArc.source.toString())
+			.setTarget(modelArc.target.toString())
 			.setType("normal") // TODO: what is this? and is it required for regular P/N nets?
-			.setWeight(modelArc.weight().get())
+			.setWeight(modelArc.weight)
 			.setArcpaths(new ArrayList<Arcpath>()));
 		continue;
 	    }

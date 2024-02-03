@@ -6,8 +6,10 @@ import java.util.List;
 import dk.gtz.graphedit.plugins.syntaxes.lts.LTSSyntaxFactory;
 import dk.gtz.graphedit.plugins.syntaxes.lts.lsp.LTSLanguageServer;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.PNSyntaxFactory;
+import dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal.TapaalPNMLExporter;
 import dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal.TapaalPNMLImporter;
 import dk.gtz.graphedit.plugins.syntaxes.text.TextSyntaxFactory;
+import dk.gtz.graphedit.spi.IExporter;
 import dk.gtz.graphedit.spi.IImporter;
 import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.spi.IPlugin;
@@ -76,5 +78,10 @@ public class StandardPlugin implements IPlugin {
     @Override
     public Collection<IImporter> getImporters() {
         return List.of(new TapaalPNMLImporter(pn.getSyntaxName()));
+    }
+
+    @Override
+    public Collection<IExporter> getExporters() {
+        return List.of(new TapaalPNMLExporter(pn.getSyntaxName()));
     }
 }

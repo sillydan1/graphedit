@@ -3,7 +3,7 @@ package dk.gtz.graphedit.spi;
 import java.nio.file.Path;
 
 import dk.gtz.graphedit.exceptions.ExportException;
-import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
+import dk.gtz.graphedit.model.ModelProjectResource;
 
 /**
  * Interface for exporting a project resource to a non-graphedit file format.
@@ -17,7 +17,7 @@ public interface IExporter {
 	 * @param newFilePath The file path to export to.
 	 * @throws ExportException If the export fails.
 	 */
-	void exportFile(ViewModelProjectResource resource, Path newFilePath) throws ExportException;
+	void exportFile(ModelProjectResource resource, Path newFilePath) throws ExportException;
 
 	/**
 	 * Returns the name of the exporter.
