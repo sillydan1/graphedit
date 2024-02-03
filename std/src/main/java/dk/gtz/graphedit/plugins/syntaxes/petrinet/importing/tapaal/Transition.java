@@ -32,95 +32,107 @@ public class Transition {
 	return angle;
     }
 
-    public void setAngle(double angle) {
+    public Transition setAngle(double angle) {
 	this.angle = angle;
+	return this;
     }
 
     public boolean isDisplayName() {
 	return displayName;
     }
 
-    public void setDisplayName(boolean displayName) {
+    public Transition setDisplayName(boolean displayName) {
 	this.displayName = displayName;
+	return this;
     }
 
     public String getId() {
 	return id;
     }
 
-    public void setId(String id) {
+    public Transition setId(String id) {
 	this.id = id;
+	return this;
     }
 
     public boolean isInfiniteServer() {
 	return infiniteServer;
     }
 
-    public void setInfiniteServer(boolean infiniteServer) {
+    public Transition setInfiniteServer(boolean infiniteServer) {
 	this.infiniteServer = infiniteServer;
+	return this;
     }
 
     public String getName() {
 	return name;
     }
 
-    public void setName(String name) {
+    public Transition setName(String name) {
 	this.name = name;
+	return this;
     }
 
     public double getNameOffsetX() {
 	return nameOffsetX;
     }
 
-    public void setNameOffsetX(double nameOffsetX) {
+    public Transition setNameOffsetX(double nameOffsetX) {
 	this.nameOffsetX = nameOffsetX;
+	return this;
     }
 
     public double getNameOffsetY() {
 	return nameOffsetY;
     }
 
-    public void setNameOffsetY(double nameOffsetY) {
+    public Transition setNameOffsetY(double nameOffsetY) {
 	this.nameOffsetY = nameOffsetY;
+	return this;
     }
 
     public int getPlayer() {
 	return player;
     }
 
-    public void setPlayer(int player) {
+    public Transition setPlayer(int player) {
 	this.player = player;
+	return this;
     }
 
     public double getPositionX() {
 	return positionX;
     }
 
-    public void setPositionX(double positionX) {
+    public Transition setPositionX(double positionX) {
 	this.positionX = positionX;
+	return this;
     }
 
     public double getPositionY() {
 	return positionY;
     }
 
-    public void setPositionY(double positionY) {
+    public Transition setPositionY(double positionY) {
 	this.positionY = positionY;
+	return this;
     }
 
     public int getPriority() {
 	return priority;
     }
 
-    public void setPriority(int priority) {
+    public Transition setPriority(int priority) {
 	this.priority = priority;
+	return this;
     }
 
     public boolean isUrgent() {
 	return urgent;
     }
 
-    public void setUrgent(boolean urgent) {
+    public Transition setUrgent(boolean urgent) {
 	this.urgent = urgent;
+	return this;
     }
 }

@@ -11,7 +11,8 @@ public class KBound {
 	return bound;
     }
 
-    public void setBound(int bound) {
+    public KBound setBound(int bound) {
 	this.bound = bound;
+	return this;
     }
 }

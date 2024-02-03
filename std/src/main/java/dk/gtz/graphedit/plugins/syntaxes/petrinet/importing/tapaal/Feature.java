@@ -13,15 +13,17 @@ public class Feature {
 	return isGame;
     }
 
-    public void setGame(boolean isGame) {
+    public Feature setGame(boolean isGame) {
 	this.isGame = isGame;
+	return this;
     }
 
     public boolean isTimed() {
 	return isTimed;
     }
 
-    public void setTimed(boolean isTimed) {
+    public Feature setTimed(boolean isTimed) {
 	this.isTimed = isTimed;
+	return this;
     }
 }

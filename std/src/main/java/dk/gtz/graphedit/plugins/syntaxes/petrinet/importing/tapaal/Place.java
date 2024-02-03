@@ -26,71 +26,80 @@ public class Place {
 	return displayName;
     }
 
-    public void setDisplayName(boolean displayName) {
+    public Place setDisplayName(boolean displayName) {
 	this.displayName = displayName;
+	return this;
     }
 
     public String getId() {
 	return id;
     }
 
-    public void setId(String id) {
+    public Place setId(String id) {
 	this.id = id;
+	return this;
     }
 
     public int getInitialMarking() {
 	return initialMarking;
     }
 
-    public void setInitialMarking(int initialMarking) {
+    public Place setInitialMarking(int initialMarking) {
 	this.initialMarking = initialMarking;
+	return this;
     }
 
     public String getInvariant() {
 	return invariant;
     }
 
-    public void setInvariant(String invariant) {
+    public Place setInvariant(String invariant) {
 	this.invariant = invariant;
+	return this;
     }
 
     public String getName() {
 	return name;
     }
 
-    public void setName(String name) {
+    public Place setName(String name) {
 	this.name = name;
+	return this;
     }
 
     public double getNameOffsetX() {
 	return nameOffsetX;
     }
 
-    public void setNameOffsetX(double nameOffsetX) {
+    public Place setNameOffsetX(double nameOffsetX) {
 	this.nameOffsetX = nameOffsetX;
+	return this;
     }
 
     public double getNameOffsetY() {
 	return nameOffsetY;
     }
 
-    public void setNameOffsetY(double nameOffsetY) {
+    public Place setNameOffsetY(double nameOffsetY) {
 	this.nameOffsetY = nameOffsetY;
+	return this;
     }
 
     public double getPositionX() {
 	return positionX;
     }
 
-    public void setPositionX(double positionX) {
+    public Place setPositionX(double positionX) {
 	this.positionX = positionX;
+	return this;
     }
 
     public double getPositionY() {
 	return positionY;
     }
 
-    public void setPositionY(double positionY) {
+    public Place setPositionY(double positionY) {
 	this.positionY = positionY;
+	return this;
     }
 }

@@ -22,23 +22,26 @@ public class PNML {
 		return nets;
 	}
 
-	public void setNets(List<Net> net) {
+	public PNML setNets(List<Net> net) {
 		this.nets = net;
+		return this;
 	}
 
 	public KBound getkBound() {
 		return kBound;
 	}
 	
-	public void setkBound(KBound kBound) {
+	public PNML setkBound(KBound kBound) {
 		this.kBound = kBound;
+		return this;
 	}
 
 	public Feature getFeature() {
 		return feature;
 	}
 
-	public void setFeature(Feature feature) {
+	public PNML setFeature(Feature feature) {
 		this.feature = feature;
+		return this;
 	}
 }

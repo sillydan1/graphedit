@@ -30,71 +30,80 @@ public class Arc {
 	return id;
     }
 
-    public void setId(String id) {
+    public Arc setId(String id) {
 	this.id = id;
+	return this;
     }
 
     public String getInscription() {
 	return inscription;
     }
 
-    public void setInscription(String inscription) {
+    public Arc setInscription(String inscription) {
 	this.inscription = inscription;
+	return this;
     }
 
     public double getNameOffsetX() {
 	return nameOffsetX;
     }
 
-    public void setNameOffsetX(double nameOffsetX) {
+    public Arc setNameOffsetX(double nameOffsetX) {
 	this.nameOffsetX = nameOffsetX;
+	return this;
     }
 
     public double getNameOffsetY() {
 	return nameOffsetY;
     }
 
-    public void setNameOffsetY(double nameOffsetY) {
+    public Arc setNameOffsetY(double nameOffsetY) {
 	this.nameOffsetY = nameOffsetY;
+	return this;
     }
 
     public String getSource() {
 	return source;
     }
 
-    public void setSource(String source) {
+    public Arc setSource(String source) {
 	this.source = source;
+	return this;
     }
 
     public String getTarget() {
 	return target;
     }
 
-    public void setTarget(String target) {
+    public Arc setTarget(String target) {
 	this.target = target;
+	return this;
     }
 
     public String getType() {
 	return type;
     }
 
-    public void setType(String type) {
+    public Arc setType(String type) {
 	this.type = type;
+	return this;
     }
 
     public int getWeight() {
 	return weight;
     }
 
-    public void setWeight(int weight) {
+    public Arc setWeight(int weight) {
 	this.weight = weight;
+	return this;
     }
 
     public List<Arcpath> getArcpaths() {
 	return arcpaths;
     }
 
-    public void setArcpaths(List<Arcpath> argpaths) {
+    public Arc setArcpaths(List<Arcpath> argpaths) {
 	this.arcpaths = argpaths;
+	return this;
     }
 }

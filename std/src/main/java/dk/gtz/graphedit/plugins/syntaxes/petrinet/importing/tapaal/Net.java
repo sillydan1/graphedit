@@ -26,47 +26,53 @@ public class Net {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public Net setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public Net setId(String id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public Net setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public List<Place> getPlaces() {
 		return places;
 	}
 
-	public void setPlaces(List<Place> places) {
+	public Net setPlaces(List<Place> places) {
 		this.places = places;
+		return this;
 	}
 
 	public List<Transition> getTransitions() {
 		return transitions;
 	}
 
-	public void setTransitions(List<Transition> transitions) {
+	public Net setTransitions(List<Transition> transitions) {
 		this.transitions = transitions;
+		return this;
 	}
 
 	public List<Arc> getArcs() {
 		return arcs;
 	}
 
-	public void setArcs(List<Arc> arcs) {
+	public Net setArcs(List<Arc> arcs) {
 		this.arcs = arcs;
+		return this;
 	}
 }
