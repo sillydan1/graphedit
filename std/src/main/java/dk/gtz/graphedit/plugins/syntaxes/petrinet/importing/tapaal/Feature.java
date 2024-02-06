@@ -1,8 +1,9 @@
 package dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Feature {
     @JacksonXmlProperty(isAttribute = true)
     private boolean isGame;
@@ -13,7 +14,7 @@ public class Feature {
 	return isGame;
     }
 
-    public Feature setGame(boolean isGame) {
+    public Feature setIsGame(boolean isGame) {
 	this.isGame = isGame;
 	return this;
     }
@@ -22,7 +23,7 @@ public class Feature {
 	return isTimed;
     }
 
-    public Feature setTimed(boolean isTimed) {
+    public Feature setIsTimed(boolean isTimed) {
 	this.isTimed = isTimed;
 	return this;
     }

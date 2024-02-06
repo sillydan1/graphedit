@@ -63,20 +63,30 @@ public class TapaalPNMLImporter implements IImporter {
 		return result;
 	}
 
+	private UUID getUUIDFromPnmlId(String id) {
+		if(!id.startsWith("_"))
+			return UUID.randomUUID();
+		try {
+			return UUID.fromString(id.substring(1).replace('_','-'));
+		} catch(IllegalArgumentException e) {
+			return UUID.randomUUID();
+		}
+	}
+
 	private ModelProjectResource fromNet(Net net) {
 		var vertexIdMapping = new HashMap<String,UUID>();
 		var vertices = new HashMap<UUID,ModelVertex>();
 		for(var place : net.getPlaces()) {
 			var placeLocation = new ModelPoint(place.getPositionX(), place.getPositionY());
 			var modelPlace = new ModelPlace(placeLocation, place.getInitialMarking());
-			var newUUID = UUID.randomUUID();
+			var newUUID = getUUIDFromPnmlId(place.getId());
 			vertices.put(newUUID, modelPlace);
 			vertexIdMapping.put(place.getId(), newUUID);
 		}
 		for(var transition : net.getTransitions()) {
 			var transitionLocation = new ModelPoint(transition.getPositionX(), transition.getPositionY());
 			var modelTransition = new ModelTransition(transitionLocation);
-			var newUUID = UUID.randomUUID();
+			var newUUID = getUUIDFromPnmlId(transition.getId());
 			vertices.put(newUUID, modelTransition);
 			vertexIdMapping.put(transition.getId(), newUUID);
 		}
@@ -84,11 +94,13 @@ public class TapaalPNMLImporter implements IImporter {
 		for(var arc : net.getArcs()) {
 			var sourceUUID = vertexIdMapping.get(arc.getSource());
 			var targetUUID = vertexIdMapping.get(arc.getTarget());
-			var modelEdge = new ModelArc(sourceUUID, targetUUID);
-			edges.put(UUID.randomUUID(), modelEdge);
+			var modelEdge = new ModelArc(sourceUUID, targetUUID, arc.getWeight());
+			var newUUID = getUUIDFromPnmlId(arc.getId());
+			edges.put(newUUID, modelEdge);
 		}
 		var metadata = new HashMap<String,String>();
 		metadata.put("graphedit_syntax", syntaxName);
+		metadata.put("name", net.getId());
 		return new ModelProjectResource(metadata, new ModelGraph("", vertices, edges));
 	}
 

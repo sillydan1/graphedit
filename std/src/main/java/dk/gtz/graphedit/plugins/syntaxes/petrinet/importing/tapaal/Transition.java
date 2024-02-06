@@ -1,10 +1,12 @@
 package dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Transition {
     @JacksonXmlProperty(isAttribute = true)
-    private double angle;
+    private int angle;
     @JacksonXmlProperty(isAttribute = true)
     private boolean displayName;
     @JacksonXmlProperty(isAttribute = true)
@@ -28,11 +30,11 @@ public class Transition {
     @JacksonXmlProperty(isAttribute = true)
     private boolean urgent;
 
-    public double getAngle() {
+    public int getAngle() {
 	return angle;
     }
 
-    public Transition setAngle(double angle) {
+    public Transition setAngle(int angle) {
 	this.angle = angle;
 	return this;
     }

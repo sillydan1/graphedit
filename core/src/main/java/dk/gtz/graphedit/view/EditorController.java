@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.exceptions.ExportException;
+import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
@@ -142,15 +143,20 @@ public class EditorController {
 			return;
 		    }
 		    var projectDir = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValue());
+		    var exportedFilesCount = 0;
 		    for(var file : projectDir.toFile().listFiles()) {
 			try {
+			    var fileName = PlatformUtils.removeFileExtension(file.getName());
 			    var resource = DI.get(IModelSerializer.class).deserializeProjectResource(file);
-			    var newFilePath = newFolderPath.get().toPath().resolve(file.getName());
+			    var newFilePath = newFolderPath.get().toPath().resolve(fileName + exporter.getFileExtension());
 			    exporter.exportFile(resource, newFilePath);
-			} catch(ExportException | IOException exc) {
-			    logger.info("failed to export file: '{}', reason: {}", exc.getMessage(), file.getName());
+			    logger.info("successfully exported '{}'", newFilePath.getFileName().toString());
+			    exportedFilesCount++;
+			} catch(Exception exc) {
+			    logger.warn("unable to export file: '{}', reason: {}", file.getName(), exc.getMessage());
 			}
 		    }
+		    logger.info("exported {} models", exportedFilesCount);
 		});
 		exportFileMenu.getItems().add(fileExporter);
 	    }

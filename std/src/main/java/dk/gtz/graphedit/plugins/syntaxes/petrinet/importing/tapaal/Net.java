@@ -2,9 +2,11 @@ package dk.gtz.graphedit.plugins.syntaxes.petrinet.importing.tapaal;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Net {
 	@JacksonXmlProperty(isAttribute = true)
 	private boolean active;

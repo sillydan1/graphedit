@@ -24,4 +24,6 @@ public interface IExporter {
 	 * @return The name of the exporter
 	 */
 	String getName();
+
+	String getFileExtension();
 }
