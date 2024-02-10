@@ -2,13 +2,12 @@ package dk.gtz.graphedit.view;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.exceptions.ExportException;
-import dk.gtz.graphedit.exceptions.SerializationException;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
@@ -16,9 +15,7 @@ import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.HeightDragResizer;
 import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.util.WidthDragResizer;
-import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
-import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
@@ -135,28 +132,8 @@ public class EditorController {
 	    for(var exporter : plugin.getExporters()) {
 		var fileExporter = new MenuItem(exporter.getName());
 		fileExporter.setOnAction(e -> {
-		    var newFolderPath = EditorActions.openFolder();
-		    if(newFolderPath.isEmpty())
-			return;
-		    if(newFolderPath.get().list().length > 0) {
-			logger.warn("export folder must be empty"); // TODO: This shouldn't be a problem, but this a temporary fix
-			return;
-		    }
 		    var projectDir = Path.of(DI.get(ViewModelProject.class).rootDirectory().getValue());
-		    var exportedFilesCount = 0;
-		    for(var file : projectDir.toFile().listFiles()) {
-			try {
-			    var fileName = PlatformUtils.removeFileExtension(file.getName());
-			    var resource = DI.get(IModelSerializer.class).deserializeProjectResource(file);
-			    var newFilePath = newFolderPath.get().toPath().resolve(fileName + exporter.getFileExtension());
-			    exporter.exportFile(resource, newFilePath);
-			    logger.info("successfully exported '{}'", newFilePath.getFileName().toString());
-			    exportedFilesCount++;
-			} catch(Exception exc) {
-			    logger.warn("unable to export file: '{}', reason: {}", file.getName(), exc.getMessage());
-			}
-		    }
-		    logger.info("exported {} models", exportedFilesCount);
+		    EditorActions.exportFiles(exporter, List.of(projectDir.toFile().listFiles()));
 		});
 		exportFileMenu.getItems().add(fileExporter);
 	    }

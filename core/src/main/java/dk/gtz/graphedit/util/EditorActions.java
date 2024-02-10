@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.spi.IExporter;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -478,6 +480,21 @@ public class EditorActions {
         return Optional.of(true);
     }
 
+    public static Optional<ButtonData> showConfirmAllDialog(String questionTitle, String question, Window window) {
+        var alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle(questionTitle);
+        alert.setHeaderText(question);
+        var yesBtn = new ButtonType("Confirm", ButtonData.YES);
+        var yesAllBtn = new ButtonType("Confirm All", ButtonData.OTHER); // TODO: This doesnt feel right
+        var noBtn = new ButtonType("Cancel", ButtonData.NO);
+        alert.getButtonTypes().setAll(yesBtn, yesAllBtn, noBtn);
+        alert.initOwner(window);
+        var result = alert.showAndWait();
+        if(result.isEmpty())
+            return Optional.empty();
+        return Optional.of(result.get().getButtonData());
+    }
+
     /**
      * Prompt the user to create a new file and save the provided model
      * If the file already exists, nothing will be saved
@@ -571,6 +588,56 @@ public class EditorActions {
         fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
         fileChooser.setTitle("Open directory");
         return Optional.ofNullable(fileChooser.showDialog(DI.get(Window.class)));
+    }
+
+    /**
+     * Export the provided files using the provided exporter
+     * This will prompt the user to pick a folder to export to
+     * @param exporter The exporter to use
+     * @param files The files to export
+     */
+    public static void exportFiles(IExporter exporter, Collection<File> files) {
+        var newFolderPath = EditorActions.openFolder();
+        if(newFolderPath.isEmpty())
+            return;
+        EditorActions.exportFiles(exporter, files, newFolderPath.get().toPath());
+    }
+
+    /**
+     * Export the provided files using the provided exporter to the provided folder
+     * @param exporter The exporter to use
+     * @param files The files to export
+     * @param exportFolder The folder to export to
+     */
+    public static void exportFiles(IExporter exporter, Collection<File> files, Path exportFolder) {
+        var serializer = DI.get(IModelSerializer.class);
+        var overwrite = false;
+        var exportedFilesCount = 0;
+        for(var file : files) {
+            try {
+                var fileName = PlatformUtils.removeFileExtension(file.getName());
+                var resource = serializer.deserializeProjectResource(file);
+                var newFilePath = exportFolder.resolve(fileName + exporter.getFileExtension());
+                if(Files.exists(newFilePath) && !overwrite) {
+                    var result = EditorActions.showConfirmAllDialog(
+                            "Overwrite file?",
+                            "file already exists in export folder, overwrite?\n'%s'".formatted(newFilePath.getFileName().toString()),
+                            DI.get(Window.class));
+                    if(result.isEmpty())
+                        return;
+                    if(result.get().equals(ButtonData.NO))
+                        continue;
+                    if(result.get().equals(ButtonData.OTHER))
+                        overwrite = true;
+                }
+                exporter.exportFile(resource, newFilePath);
+                logger.info("successfully exported '{}'", newFilePath.getFileName().toString());
+                exportedFilesCount++;
+            } catch(Exception exc) {
+                logger.warn("unable to export file: '{}', reason: {}", file.getName(), exc.getMessage());
+            }
+        }
+        logger.info("exported {} models", exportedFilesCount);
     }
 
     /**
