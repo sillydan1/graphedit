@@ -523,7 +523,7 @@ public class EditorActions {
      * Prompt the user to pick a json file
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
-    public static Optional<File> openFile() {
+    public static Optional<File> openJsonFile() {
         return openFile("JSON Files", List.of("*.json"));
     }
 
@@ -553,7 +553,7 @@ public class EditorActions {
      * Prompt the user to pick one or more json files
      * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
      */
-    public static List<File> openFiles() {
+    public static List<File> openJsonFiles() {
         return openFiles("JSON Files", List.of("*.json"));
     }
 
@@ -645,7 +645,7 @@ public class EditorActions {
      * Will prompt the user to pick a file
      */
     public static void openModel() {
-        var file = openFile();
+        var file = openJsonFile();
         if(file.isPresent())
             openModel(file.get().toPath());
     }
