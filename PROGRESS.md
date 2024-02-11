@@ -148,6 +148,8 @@
      - [ ] Protobuf specification
      - [ ] Implement `IDap` / `IDapEngine` interfaces
  - [ ] Release `v1.9.0`
+   - [ ] Clean up `DI` usage
+        Create some analysis tools, maybe a dependency graph from where things are added and where they are retrived again.
    - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
  - [ ] Release `v1.11.0`
 
