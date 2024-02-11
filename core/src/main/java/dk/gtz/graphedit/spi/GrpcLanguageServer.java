@@ -144,7 +144,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	private void projectOpened() {
 		if(!isServerCapable(Capability.CAPABILITY_PROJECT))
 			return;
-	    var project = DI.get(ViewModelProject.class);
+		var project = DI.get(ViewModelProject.class);
 		var builder = Project.newBuilder()
 			.setPath(project.rootDirectory().get())
 			.setName(project.name().get());
