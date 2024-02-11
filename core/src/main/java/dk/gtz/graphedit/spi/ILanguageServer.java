@@ -39,7 +39,7 @@ public interface ILanguageServer {
     /**
      * Function to initialize (not start) the language server
      * This will be called right before any callback functions are added
-     * @param projectFile The Graphedit project file.
+     * @param projectFile The Graphedit project file. Note that this can also just be a temporary directory
      * @param bufferContainer The collection of buffers, likely (but not guaranteed) to be empty at initialization
      */
     void initialize(File projectFile, IBufferContainer bufferContainer);
