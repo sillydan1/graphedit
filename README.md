@@ -19,7 +19,7 @@
 </div>
 
 ## Build 💾
-The project is compiled using `gradle` (version 8+):
+The project is compiled using `gradle` (version 7+):
 ```shell
 # Just build the app
 gradle build
