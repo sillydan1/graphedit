@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
@@ -28,7 +25,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
 
 public class TapaalPNMLImporter implements IImporter {
-	private static final Logger logger = LoggerFactory.getLogger(TapaalPNMLImporter.class);
 	private final XmlMapper xmlMapper;
 	private final String syntaxName;
 

@@ -72,7 +72,7 @@ public class TapaalPNMLExporter implements IExporter {
 	// NOTE: ids and names MUST BE THE SAME for some moronic reason
 	for(var vertex : resource.syntax().vertices().entrySet()) {
 	    if(vertex.getValue() instanceof ModelPlace modelPlace) {
-		var vname = "_" + vertex.getKey().toString().replace('-','_'); // TODO: also fix importer
+		var vname = "_" + vertex.getKey().toString().replace('-','_');
 		places.add(new Place()
 			.setId(vname)
 			.setDisplayName(false)
