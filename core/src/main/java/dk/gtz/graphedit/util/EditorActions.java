@@ -480,12 +480,19 @@ public class EditorActions {
         return Optional.of(true);
     }
 
+    /**
+     * Will prompt the user for a Confirm / Confirm All / Cancel action.
+     * @param questionTitle prompt title
+     * @param question the question to ask the user
+     * @param window the parent window
+     * @return {@code ButtonData.YES} if the user selected the Confirm action, {@code ButtonData.NO} if user selected cancel, {@code ButtonData.OTHER} if user selected confirm-all action or empty if the prompt was closed with no action selected
+     */
     public static Optional<ButtonData> showConfirmAllDialog(String questionTitle, String question, Window window) {
         var alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle(questionTitle);
         alert.setHeaderText(question);
         var yesBtn = new ButtonType("Confirm", ButtonData.YES);
-        var yesAllBtn = new ButtonType("Confirm All", ButtonData.OTHER); // TODO: This doesnt feel right
+        var yesAllBtn = new ButtonType("Confirm All", ButtonData.OTHER);
         var noBtn = new ButtonType("Cancel", ButtonData.NO);
         alert.getButtonTypes().setAll(yesBtn, yesAllBtn, noBtn);
         alert.initOwner(window);
