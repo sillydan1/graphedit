@@ -48,6 +48,10 @@
     -fx-stroke: -color-success-fg;
 }
 
+.bg-neutral-subtle {
+    -fx-background-color: -color-neutral-subtle;
+}
+
 .bg-error {
     -fx-background-color: -color-danger-subtle;
 }
@@ -72,4 +76,3 @@
 .modal-rounded {
     -fx-background-radius: 10 10 10 10;
 }
-

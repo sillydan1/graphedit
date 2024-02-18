@@ -21,6 +21,7 @@ import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yafunc.IRunnable1;
+import dk.yalibs.yatarjan.Tarjan;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
+import dk.gtz.graphedit.spi.IExporter;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -54,6 +56,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -478,6 +481,28 @@ public class EditorActions {
     }
 
     /**
+     * Will prompt the user for a Confirm / Confirm All / Cancel action.
+     * @param questionTitle prompt title
+     * @param question the question to ask the user
+     * @param window the parent window
+     * @return {@code ButtonData.YES} if the user selected the Confirm action, {@code ButtonData.NO} if user selected cancel, {@code ButtonData.OTHER} if user selected confirm-all action or empty if the prompt was closed with no action selected
+     */
+    public static Optional<ButtonData> showConfirmAllDialog(String questionTitle, String question, Window window) {
+        var alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle(questionTitle);
+        alert.setHeaderText(question);
+        var yesBtn = new ButtonType("Confirm", ButtonData.YES);
+        var yesAllBtn = new ButtonType("Confirm All", ButtonData.OTHER);
+        var noBtn = new ButtonType("Cancel", ButtonData.NO);
+        alert.getButtonTypes().setAll(yesBtn, yesAllBtn, noBtn);
+        alert.initOwner(window);
+        var result = alert.showAndWait();
+        if(result.isEmpty())
+            return Optional.empty();
+        return Optional.of(result.get().getButtonData());
+    }
+
+    /**
      * Prompt the user to create a new file and save the provided model
      * If the file already exists, nothing will be saved
      * @param newModel The model to serialize and save
@@ -502,15 +527,126 @@ public class EditorActions {
     }
 
     /**
-     * Prompt the user to pick a file to open
+     * Prompt the user to pick a json file
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
-    public static Optional<File> openFile() {
+    public static Optional<File> openJsonFile() {
+        return openFile("JSON Files", List.of("*.json"));
+    }
+
+    /**
+     * Prompt the user to pick a file of some provided type
+     * @param description Description of the allowed type
+     * @param filterTypes The accepted filename extensions
+     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFile(String description, List<String> filterTypes) {
+        return openFile(new ExtensionFilter(description, filterTypes));
+    }
+
+    /**
+     * Prompt the user to pick a file
+     * @param filter filter the types of files that can be picked
+     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFile(ExtensionFilter filter) {
         var fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("json files", "*.json"));
+        fileChooser.getExtensionFilters().addAll();
         fileChooser.setTitle("Open file");
         return Optional.ofNullable(fileChooser.showOpenDialog(DI.get(Window.class)));
+    }
+
+    /**
+     * Prompt the user to pick one or more json files
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openJsonFiles() {
+        return openFiles("JSON Files", List.of("*.json"));
+    }
+
+    /**
+     * Prompt the user to pick one or more files of some provided type
+     * @param description Description of the allowed type
+     * @param filterTypes The accepted filename extensions
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openFiles(String description, List<String> filterTypes) {
+        return openFiles(new ExtensionFilter(description, filterTypes));
+    }
+
+    /**
+     * Prompt the user to pick one or more files
+     * @param filter filter the types of files that can be picked
+     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     */
+    public static List<File> openFiles(ExtensionFilter filter) {
+        var fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.getExtensionFilters().addAll();
+        fileChooser.setTitle("Open file(s)");
+        return fileChooser.showOpenMultipleDialog(DI.get(Window.class));
+    }
+
+    /**
+     * Prompt the user to pick a folder
+     * @return Possibly a folder reference. Will be empty if the user cancelled the action
+     */
+    public static Optional<File> openFolder() {
+        var fileChooser = new DirectoryChooser();
+        fileChooser.setInitialDirectory(Path.of(DI.get(ViewModelProject.class).rootDirectory().get()).toFile());
+        fileChooser.setTitle("Open directory");
+        return Optional.ofNullable(fileChooser.showDialog(DI.get(Window.class)));
+    }
+
+    /**
+     * Export the provided files using the provided exporter
+     * This will prompt the user to pick a folder to export to
+     * @param exporter The exporter to use
+     * @param files The files to export
+     */
+    public static void exportFiles(IExporter exporter, Collection<File> files) {
+        var newFolderPath = EditorActions.openFolder();
+        if(newFolderPath.isEmpty())
+            return;
+        EditorActions.exportFiles(exporter, files, newFolderPath.get().toPath());
+    }
+
+    /**
+     * Export the provided files using the provided exporter to the provided folder
+     * @param exporter The exporter to use
+     * @param files The files to export
+     * @param exportFolder The folder to export to
+     */
+    public static void exportFiles(IExporter exporter, Collection<File> files, Path exportFolder) {
+        var serializer = DI.get(IModelSerializer.class);
+        var overwrite = false;
+        var exportedFilesCount = 0;
+        for(var file : files) {
+            try {
+                var fileName = PlatformUtils.removeFileExtension(file.getName());
+                var resource = serializer.deserializeProjectResource(file);
+                var newFilePath = exportFolder.resolve(fileName + exporter.getFileExtension());
+                if(Files.exists(newFilePath) && !overwrite) {
+                    var result = EditorActions.showConfirmAllDialog(
+                            "Overwrite file?",
+                            "file already exists in export folder, overwrite?\n'%s'".formatted(newFilePath.getFileName().toString()),
+                            DI.get(Window.class));
+                    if(result.isEmpty())
+                        return;
+                    if(result.get().equals(ButtonData.NO))
+                        continue;
+                    if(result.get().equals(ButtonData.OTHER))
+                        overwrite = true;
+                }
+                exporter.exportFile(resource, newFilePath);
+                logger.info("successfully exported '{}'", newFilePath.getFileName().toString());
+                exportedFilesCount++;
+            } catch(Exception exc) {
+                logger.warn("unable to export file: '{}', reason: {}", file.getName(), exc.getMessage());
+            }
+        }
+        logger.info("exported {} models", exportedFilesCount);
     }
 
     /**
@@ -518,7 +654,7 @@ public class EditorActions {
      * Will prompt the user to pick a file
      */
     public static void openModel() {
-        var file = openFile();
+        var file = openJsonFile();
         if(file.isPresent())
             openModel(file.get().toPath());
     }

@@ -11,8 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @FunctionalInterface
 public interface ISyntaxMigrater {
     /**
-     * Perform a migration on a serialized tree node structure
-     * TODO: This is 100% dependent on Jackson serialization... It's technically the best serializer for java, but it's still a hard coupling, which is bad.
+     * Perform a migration on a serialized tree node structure using the Jackson serialization library
      *
      * @param input The parsed tree node structure to migrate
      * @param objectMapper The associated jackson objectmapper

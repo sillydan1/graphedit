@@ -31,6 +31,15 @@ public class ViewModelDiff {
     }
 
     /**
+     * Create a new empty diff
+     * @param syntaxStyle The syntax style of the new diff
+     * @return A new empty diff
+     */
+    public static ViewModelDiff empty(String syntaxStyle) {
+        return new ViewModelDiff(syntaxStyle);
+    }
+
+    /**
      * Get the vertices that should be deleted.
      * @return A list of viewmodel vertices.
      */

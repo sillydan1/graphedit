@@ -18,6 +18,7 @@ import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
+import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -27,6 +28,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
@@ -153,12 +157,34 @@ public class ProjectFilesViewController extends VBox {
 	manualRefreshButton.setTooltip(refreshTip);
 	manualRefreshButton.setOnAction(e -> updateTreeView());
 
+	var exportButton = new MenuButton(null, new FontIcon(BootstrapIcons.BOX_ARROW_UP));
+	exportButton.getStyleClass().addAll(Styles.BUTTON_ICON, Tweaks.NO_ARROW);
+	for(var plugin : DI.get(IPluginsContainer.class).getEnabledPlugins()) {
+	    for(var exporter : plugin.getExporters()) {
+		var menuItem = new MenuItem(exporter.getName());
+		menuItem.setOnAction(e -> {
+		    var files = fileTree.getSelectionModel().getSelectedItems().stream().map(v -> v.getValue().path().toFile()).toList();
+		    if(files.isEmpty()) {
+			logger.info("No files selected");
+			return;
+		    }
+		    EditorActions.exportFiles(exporter, files);
+		});
+		exportButton.getItems().add(menuItem);
+	    }
+	}
+	var exportTip = new Tooltip("Export selected files");
+	exportTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
+	exportTip.setPrefWidth(200);
+	exportTip.setWrapText(true);
+	exportButton.setTooltip(exportTip);
+
 	var result = new ToolBar(
 		newFileButton,
 		new Separator(Orientation.VERTICAL),
 		grapheditIgnoreHideButton, showHiddenFilesButton, gitignoreHideButton,
 		new Separator(Orientation.VERTICAL),
-		manualRefreshButton);
+		manualRefreshButton, exportButton);
 	result.setOrientation(Orientation.HORIZONTAL);
 	return result;
     }
@@ -193,18 +219,21 @@ public class ProjectFilesViewController extends VBox {
 	var view = new TreeView<FileTreeEntry>();
 	view.setRoot(root);
 	view.setShowRoot(false);
+	view.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	view.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
 	    if(view.getSelectionModel().isEmpty())
 		return;
 	    if(e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
 		try {
-		    var pathToDelete = view.getSelectionModel().getSelectedItem().getValue().path();
-		    var result = EditorActions.showConfirmDialog("Are you sure?", "Delete path? %s".formatted(pathToDelete.toString()), view.getScene().getWindow());
-		    if(result.isPresent() && result.get()) {
-			Files.delete(pathToDelete);
-			updateTreeView();
-			Toast.success("deleted %s".formatted(pathToDelete.toString()));
-		    }
+		    var pathsToDelete = view.getSelectionModel().getSelectedItems();
+		    var pathsString = String.join(",",pathsToDelete.stream().map(v -> v.getValue().path().toString()).toList());
+		    var result = EditorActions.showConfirmDialog("Are you sure?", "Delete files? [%s]".formatted(pathsString), view.getScene().getWindow());
+		    if(result.isEmpty() || !result.get())
+			return;
+		    for(var pathToDelete : pathsToDelete)
+			Files.delete(pathToDelete.getValue().path());
+		    updateTreeView();
+		    Toast.success("deleted %s".formatted(pathsString.toString()));
 		} catch (IOException e1) {
 		    logger.error("{}: {}", e1.getClass().getSimpleName(), e1.getMessage(), e1);
 		}

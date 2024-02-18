@@ -1,11 +1,20 @@
 package dk.gtz.graphedit.util;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dk.yalibs.yastreamgobbler.StreamGobbler;
 
 /**
  * General utilities relating to the operating system
  */
 public class PlatformUtils {
+    private static final Logger logger = LoggerFactory.getLogger(PlatformUtils.class);
+
     private PlatformUtils() {}
 
     /**
@@ -90,5 +99,37 @@ public class PlatformUtils {
 	    return fname.substring(0, pos);
 	return fname;
     }
-}
 
+    /**
+     * Launch a new subprocess and wait for it to complete whilst logging the stout to TRACE-level and stderr to ERROR-level logging.
+     *
+     * Note that this will block the current thread of execution until the command is completed.
+     * @param command The command to launch the subprocess with
+     * @param arguments The command-line arguments to provide the subprocess with
+     */
+    public static void launchProgram(String command, List<String> arguments) {
+	Process p = null;
+	try {
+	    var pb = new ProcessBuilder();
+	    pb.command(command);
+	    pb.directory(Path.of(command).getParent().toFile());
+	    for(var argument : arguments)
+		pb.command().add(argument);
+	    pb.redirectErrorStream(true);
+	    p = pb.start();
+	    new Thread(new StreamGobbler(p.getInputStream(), logger::trace)).start();
+	    new Thread(new StreamGobbler(p.getErrorStream(), logger::error)).start();
+	    Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
+	    p.waitFor();
+	    var exitCode = p.exitValue();
+	    logger.info("process exited with code: {}", exitCode);
+	} catch(InterruptedException e) {
+	    logger.warn("<{}> process was interrupted", command);
+	} catch(Exception e) {
+	    logger.error(e.getMessage(), e);
+	} finally {
+	    if(p != null)
+		p.destroy();
+	}
+    }
+}
