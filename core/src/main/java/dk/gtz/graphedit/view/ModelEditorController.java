@@ -218,7 +218,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
      * @param e The key event to handle.
      */
     public void onKeyEvent(KeyEvent e) {
-	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed
+	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed, see https://github.com/sillydan1/graphedit/issues/17
 	var isTargetDrawpane = e.getTarget() == getParent().getParent();
 	var keyEvent = new ViewportKeyEvent(e, drawGroupTransform, isTargetDrawpane, syntaxFactory, resource.syntax(), bufferKey, settings);
 	DI.get(IToolbox.class).getSelectedTool().get().onKeyEvent(keyEvent);
