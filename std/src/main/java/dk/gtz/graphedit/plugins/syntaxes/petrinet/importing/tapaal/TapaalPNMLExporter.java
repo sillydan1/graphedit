@@ -91,11 +91,11 @@ public class TapaalPNMLExporter implements IExporter {
 			.setId(vname)
 			.setAngle(0)
 			.setDisplayName(false)
-			.setInfiniteServer(false) // TODO: what is this? and is it required for regular P/N nets?
+			.setInfiniteServer(false)
 			.setName(vname)
 			.setNameOffsetX(0)
 			.setNameOffsetY(0)
-			.setPlayer(0) // TODO: what is this? and is it required for regular P/N nets?
+			.setPlayer(0)
 			.setPositionX(vertex.getValue().position.x())
 			.setPositionY(vertex.getValue().position.y())
 			.setPriority(0)
