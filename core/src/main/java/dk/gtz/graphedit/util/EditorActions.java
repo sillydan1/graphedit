@@ -546,6 +546,7 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick a file
+     * @param filter filter the types of files that can be picked
      * @return Possibly a file reference. Will be empty if the user cancelled the action
      */
     public static Optional<File> openFile(ExtensionFilter filter) {
@@ -576,6 +577,7 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick one or more files
+     * @param filter filter the types of files that can be picked
      * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
      */
     public static List<File> openFiles(ExtensionFilter filter) {

@@ -54,24 +54,78 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.MapChangeListener;
 
+/**
+ * Language server base class for wiring a gRPC based language server with graphedit.
+ *
+ * Extend this clas and override the appropriate subprocess invocation parts to seamlessly integrate your MLSP implementation.
+ */
 public abstract class GrpcLanguageServer implements ILanguageServer {
 	private final Logger logger = LoggerFactory.getLogger(GrpcLanguageServer.class);
+
+	/**
+	 * Lazy loaded gRPC language server stub interface instance.
+	 * Use this to interact with the connected language server.
+	 */
 	protected final Lazy<LanguageServerStub> stub;
+
+	/**
+	 * Lazy loaded server info struct.
+	 */
 	protected final Lazy<ServerInfo> serverInfo;
+
+	/**
+	 * Utility instance of the gRPC Empty value.
+	 */
 	protected final Empty empty;
+
+	/**
+	 * Reference to the current editor buffercontainer
+	 */
 	protected IBufferContainer bufferContainer;
+
+	/**
+	 * Host string, pointing to the connected language server
+	 */
 	protected final String host;
+
+	/**
+	 * Host port, pointing to the connected language server
+	 */
 	protected final int port;
+
+	/**
+	 * The thread in which the language server process is running
+	 */
 	protected final Thread programThread;
+
+	/**
+	 * Maximum amount of attempts to connect to the language server
+	 */
 	protected int maxConnectionAttempts = 60;
+
+	/**
+	 * Time (in milliseconds) to wait between failed connection attempts
+	 */
 	protected int connectionAttemptWaitMilliseconds = 1000;
 	private final Converter converter;
 
-	public GrpcLanguageServer(String command, List<String> arguments) {
+	/**
+	 * Constructs a new GrpcLanguageServer instance
+	 * @param command The subprocess command to execute at startup
+	 * @param arguments The arguments to provide to the subprocess command
+	 */
+	protected GrpcLanguageServer(String command, List<String> arguments) {
 		this("0.0.0.0", new Random().nextInt(5000, 6000), command, arguments);
 	}
 
-	public GrpcLanguageServer(String host, int port, String command, List<String> arguments) {
+	/**
+	 * Constructs a new GrpcLanguageServer instance
+	 * @param host The gRPC host to connect to
+	 * @param port The gRPC port to connect to
+	 * @param command The subprocess command to execute at startup
+	 * @param arguments The arguments to provide to the subprocess command
+	 */
+	protected GrpcLanguageServer(String host, int port, String command, List<String> arguments) {
 		this.host = host;
 		this.port = port;
 		this.converter = new Converter();
@@ -82,6 +136,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		this.serverInfo = new Lazy<>(this::getServerInfo);
 	}
 
+	/**
+	 * Connect to the language server.
+	 * @return A new language server stub instance
+	 */
 	protected LanguageServerStub connect() {
 		if(!programThread.isAlive())
 			programThread.start();
@@ -89,6 +147,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		return LanguageServerGrpc.newStub(channel);
 	}
 
+	/**
+	 * Get the information about the language server.
+	 * @return A class of language server information
+	 */
 	protected ServerInfo getServerInfo() {
 		try {
 			var so = new SingleResponseStreamObserver<ServerInfo>();
@@ -100,6 +162,11 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		}
 	}
 
+	/**
+	 * Check if the language server reports that it is capable of some feature.
+	 * @param capability The feature capability
+	 * @return {@code true} if the server reports that it is capable of the provided feature, otherwise {@code false}
+	 */
 	protected boolean isServerCapable(Capability capability) {
 		return serverInfo.get().getCapabilitiesList().contains(capability);
 	}
@@ -119,6 +186,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		return serverInfo.get().getSemanticVersion();
 	}
 
+	/**
+	 * Tell the connected language server to handle the provided diff
+	 * @param diff The diff for the connected server to handle
+	 */
 	protected void handleDiff(Diff diff) {
 		if(!isServerCapable(Capability.CAPABILITY_DIFFS))
 			return;

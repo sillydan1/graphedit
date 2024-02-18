@@ -25,5 +25,9 @@ public interface IExporter {
 	 */
 	String getName();
 
+	/**
+	 * Returns the file extension that exported files will have.
+	 * @return A file extension e.g. ".json"
+	 */
 	String getFileExtension();
 }

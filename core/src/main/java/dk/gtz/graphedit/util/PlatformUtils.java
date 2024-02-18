@@ -100,6 +100,13 @@ public class PlatformUtils {
 	return fname;
     }
 
+    /**
+     * Launch a new subprocess and wait for it to complete whilst logging the stout to TRACE-level and stderr to ERROR-level logging.
+     *
+     * Note that this will block the current thread of execution until the command is completed.
+     * @param command The command to launch the subprocess with
+     * @param arguments The command-line arguments to provide the subprocess with
+     */
     public static void launchProgram(String command, List<String> arguments) {
 	Process p = null;
 	try {
