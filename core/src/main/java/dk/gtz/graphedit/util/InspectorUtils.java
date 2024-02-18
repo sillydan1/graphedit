@@ -242,6 +242,8 @@ public class InspectorUtils {
      */
     public static Node getPropertyInspector(StringProperty property) {
 	var result = new TextArea(property.get());
+	result.setPrefRowCount(3);
+	result.setPrefColumnCount(10);
 	result.textProperty().bindBidirectional(property);
 	return result;
     }

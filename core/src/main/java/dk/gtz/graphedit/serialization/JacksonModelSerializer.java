@@ -60,6 +60,11 @@ public class JacksonModelSerializer implements IModelSerializer {
     }
 
     @Override
+    public String getPreferedFileExtension() {
+	return ".json";
+    }
+
+    @Override
     public void addClassLoader(ClassLoader loader) {
 	for(var p : loader.getDefinedPackages()) {
 	    logger.info("adding '{}' to allowed namespaces", p.getName());

@@ -29,6 +29,7 @@ public class Main {
             .build();
         builder.parse(argv);
         ((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.toLevel(args.verbosity));
+        ((Logger)LoggerFactory.getLogger("io.grpc")).setLevel(Level.toLevel(args.grpcVerbosity));
         if(args.help) {
             builder.usage();
             return;

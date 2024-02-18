@@ -35,6 +35,7 @@ import dk.gtz.graphedit.tool.VertexCreateTool;
 import dk.gtz.graphedit.tool.VertexDeleteTool;
 import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
+import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableStackUndoSystem;
@@ -179,7 +180,12 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
 	} catch(Exception e) {
 	    logger.error(e.getMessage(), e);
-	    DI.add(ViewModelProject.class, new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty()));
+	    var newProject = new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty());
+	    DI.add(ViewModelProject.class, newProject);
+	    // Save the temp project and start the LSPs
+	    var tmpPath = Path.of(newProject.rootDirectory().get() + File.separator + "tmp.json");
+	    EditorActions.saveProject(newProject.toModel(), tmpPath); // NOTE: This does not set the project to the lastOpenedProject setting
+	    setupLSPs(DI.get(LanguageServerCollection.class), tmpPath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
 	}
     }
 

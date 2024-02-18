@@ -20,4 +20,3 @@ Generally, try to follow the style that is already present and try to reuse exis
 
 ### Documentation
 Ideally, any `public` thing should have a javadoc comment.
-
