@@ -14,9 +14,9 @@ jobs:
       contents: read
       packages: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: set up jdk 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -30,7 +30,7 @@ jobs:
     - name: jpackage
       run: gradle jpackage
     - name: upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dmg
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.dmg
@@ -42,9 +42,9 @@ jobs:
       contents: read
       packages: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: set up jdk 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -58,7 +58,7 @@ jobs:
     - name: jpackage
       run: gradle jpackage
     - name: upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: msi
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.msi
@@ -70,9 +70,9 @@ jobs:
       contents: read
       packages: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: set up jdk 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -106,13 +106,13 @@ jobs:
         mkdir -p ${{ github.workspace }}/dist
         fakeroot dpkg-deb --build "$REPACKAGE_DIR" "${{ github.workspace }}/dist/$(basename $DEB_NAME)"
     - name: upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deb
         path: ${{ github.workspace }}/dist/*.deb
         retention-days: 1
     - name: upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rpm
         path: ${{ github.workspace }}/graphedit/build/jpackage/*.rpm
@@ -120,7 +120,7 @@ jobs:
     - name: installDist
       run: gradle installDist
     - name: upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: graphedit-bin-x86_64
         path: ${{ github.workspace }}/graphedit/build/install/graphedit/
