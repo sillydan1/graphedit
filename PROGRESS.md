@@ -128,19 +128,19 @@
      - [x] Protobuf specification (that way, you are language agnostic)
      - [x] Implement `ILsp` / `ILspEngine` interfaces
  - [ ] Release `v1.4.0`
-   - [ ] HAWK / nttals usability exploration fixes
-     - [ ] Importer / Exporter interfaces
+   - [x] HAWK / nttals usability exploration fixes
+     - [x] Importer / Exporter interfaces
        - [x] importer interface & tapaal example
-       - [ ] exporter interface & tapaal example
-   - [ ] Fix TODOs
-   - [ ] Javadocs
+       - [x] exporter interface & tapaal example
+   - [x] Fix TODOs
+   - [x] Javadocs
  - [ ] Release `v1.5.0`
    - [ ] Purge github issues
    - [ ] CodeArea tree highlighter implementation
    - [ ] Trace-traverser & specification
  - [ ] Release `v1.6.0`
    - [ ] Plan for git integration
-   - [ ] Diff view?
+   - [ ] Diff view
  - [ ] Release `v1.7.0`
    - [ ] Planarity Embedding
  - [ ] Release `v1.8.0`
@@ -151,7 +151,7 @@
    - [ ] Clean up `DI` usage
         Create some analysis tools, maybe a dependency graph from where things are added and where they are retrived again.
    - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
- - [ ] Release `v1.11.0`
+ - [ ] Release `v1.10.0`
 
 ## Not abandoned, but not planned
  - [ ] TIOA syntax
