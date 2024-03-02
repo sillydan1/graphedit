@@ -1,4 +1,39 @@
 # Progress
+Current progress and future plans.
+There is also a [github project](https://github.com/users/sillydan1/projects/6) for this, and I am debating which solution I should use / prefer. For now, both exist
+
+## Planned / In Progress
+### Release `v1.5.0` (Plugin infrastructure)
+This milestone focuses on cleanup and plugin infrastructure. The goal is to make the plugin ecosystem more robust and easier to use and extend.
+ - [ ] Purge github issues
+  - [ ] Undo system overhaul (make it diff-based)
+  - [ ] Wrapper for the `addListener` / `removeListener` boilerplate pattern
+ - [ ] Language bindings
+   - [ ] Python bindings
+   - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
+ - [ ] Plugin Repository with some exploration / browsing built in
+  - [ ] `std` sidepanel for plugin browsing
+
+## Backlog
+These are the ideas that are not yet planned, but are on the radar.
+ - [ ] TIOA syntax
+ - [ ] Diff view
+ - [ ] TA syntax
+ - [ ] CD (needs a pre-release for prototyping purposes)
+   - [ ] flathub
+ - [ ] Web based view
+ - [ ] CodeArea tree highlighter implementation
+ - [ ] Trace-traverser & specification
+ - [ ] Plan for git integration
+ - [ ] Planarity Embedding / autoformatting
+ - [ ] DAP like specification
+   - [ ] Protobuf specification
+   - [ ] Implement `IDap` / `IDapEngine` interfaces
+ - [ ] Clean up `DI` usage
+   - [ ] Create some analysis tools, maybe a dependency graph from where things are added and where they are retrived again.
+
+## Legacy
+This is a list of things that have been done. Only here for sentimental reasons.
  - [x] Basic graph model implementation
  - [x] Serialization / deserialization of the graph model
  - [x] Create issue on [jdtls](https://github.com/eclipse/eclipse.jdt.ls) repo about not implementing the [progress](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#progress) feature - it's getting a bit annoying to use
@@ -127,34 +162,10 @@
    - [x] LSP like specification (use docusaurus, or github wiki)
      - [x] Protobuf specification (that way, you are language agnostic)
      - [x] Implement `ILsp` / `ILspEngine` interfaces
- - [ ] Release `v1.4.0`
+ - [x] Release `v1.4.0`
    - [x] HAWK / nttals usability exploration fixes
      - [x] Importer / Exporter interfaces
        - [x] importer interface & tapaal example
        - [x] exporter interface & tapaal example
    - [x] Fix TODOs
    - [x] Javadocs
- - [ ] Release `v1.5.0`
-   - [ ] Purge github issues
-   - [ ] CodeArea tree highlighter implementation
-   - [ ] Trace-traverser & specification
- - [ ] Release `v1.6.0`
-   - [ ] Plan for git integration
-   - [ ] Diff view
- - [ ] Release `v1.7.0`
-   - [ ] Planarity Embedding
- - [ ] Release `v1.8.0`
-   - [ ] DAP like specification
-     - [ ] Protobuf specification
-     - [ ] Implement `IDap` / `IDapEngine` interfaces
- - [ ] Release `v1.9.0`
-   - [ ] Clean up `DI` usage
-        Create some analysis tools, maybe a dependency graph from where things are added and where they are retrived again.
-   - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
- - [ ] Release `v1.10.0`
-
-## Not abandoned, but not planned
- - [ ] TIOA syntax
- - [ ] TA syntax
- - [ ] CD (needs a pre-release for prototyping purposes)
-   - [ ] flathub

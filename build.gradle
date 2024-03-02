@@ -1,7 +1,6 @@
 plugins {
     id 'java';
     id 'com.github.gmazzo.buildconfig' version '4.2.0';
-    id 'com.google.protobuf' version '0.9.4';
 }
 
 def gitCommitSha = { ->
@@ -89,7 +88,6 @@ sourceSets {
 subprojects {
     apply plugin: 'java';
     apply plugin: 'com.github.gmazzo.buildconfig';
-    apply plugin: 'com.google.protobuf';
 
     ext.gitCommitSha = gitCommitSha;
     ext.gitCommitShaLong = gitCommitShaLong;
@@ -117,6 +115,7 @@ subprojects {
         implementation group: 'com.beust', name: 'jcommander', version: '1.82';
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
         implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+        implementation group: 'dk.gtz.graphedit', name: 'graphedit-protobuf', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yadi', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
