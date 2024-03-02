@@ -145,7 +145,8 @@ subprojects {
     }
 
     javadoc {
-        exclude 'dk/gtz/graphedit/proto/**'
+        exclude 'dk/gtz/graphedit/proto/**';
+        exclude 'dk/gtz/graphedit/BuildConfig.java';
         if (JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
         }

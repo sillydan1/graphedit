@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class RetryUtils {
     private static final Logger logger = LoggerFactory.getLogger(RetryUtils.class);
+    private RetryUtils() {}
 
     /**
      * Try an action until it returns a value or until a set amount of attempts failed.
