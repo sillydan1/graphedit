@@ -6,27 +6,29 @@ import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
  * Viewmodel representation of a {@link ModelVertex}.
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
-public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, IFocusable, Property<ViewModelVertex> {
+public class ViewModelVertex extends AutoProperty<ViewModelVertex> implements IInspectable, IHoverable, ISelectable, IFocusable {
     private final UUID uuid;
-    private final ViewModelPoint position;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
     private final ObjectProperty<Node> hoverElement;
+
+    /**
+     * The position of the vertex
+     */
+    @Autolisten
+    public final ViewModelPoint position;
 
     /**
      * Constructs a new view model vertex based on a position and a shape
@@ -35,6 +37,8 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
      * @param shape The shape at which edges should follow
      */
     public ViewModelVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
+	super();
+	loadFields(getClass(), this);
 	this.uuid = uuid;
 	this.position = position;
 	this.shape = shape;
@@ -129,68 +133,13 @@ public class ViewModelVertex implements IInspectable, IHoverable, ISelectable, I
     }
 
     @Override
-    public Object getBean() {
-	return null;
-    }
-
-    @Override
     public String getName() {
 	return "";
     }
 
     @Override
-    public void addListener(ChangeListener<? super ViewModelVertex> listener) {
-	position.addListener((e,o,n) -> listener.changed(this,this,this));
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super ViewModelVertex> listener) {
-	position.removeListener((e,o,n) -> listener.changed(this,this,this));
-    }
-
-    @Override
     public ViewModelVertex getValue() {
 	return this;
-    }
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-	position.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-	position.removeListener(listener);
-    }
-
-    @Override
-    public void setValue(ViewModelVertex value) {
-	position.setValue(value.position);
-    }
-
-    @Override
-    public void bind(ObservableValue<? extends ViewModelVertex> observable) {
-	position.bind(observable.getValue().position());
-    }
-
-    @Override
-    public void unbind() {
-	position.unbind();
-    }
-
-    @Override
-    public boolean isBound() {
-	return position.isBound();
-    }
-
-    @Override
-    public void bindBidirectional(Property<ViewModelVertex> other) {
-	position.bindBidirectional(other.getValue().position());
-    }
-
-    @Override
-    public void unbindBidirectional(Property<ViewModelVertex> other) {
-	position.unbindBidirectional(other.getValue().position());
     }
 
     @Override
