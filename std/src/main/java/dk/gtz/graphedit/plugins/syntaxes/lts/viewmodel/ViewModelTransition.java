@@ -19,7 +19,7 @@ import javafx.beans.property.StringProperty;
 public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 	private final Logger logger = LoggerFactory.getLogger(ViewModelTransition.class);
 	@Autolisten
-	public StringProperty action;
+	public final StringProperty action;
 
 	public StringProperty action() {
 		return action;
