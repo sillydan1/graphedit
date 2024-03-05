@@ -70,7 +70,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 else // BUG: This probably doesnt work, but it doesn't hurt to try
                     observable.addListener((e,o,n) -> listener.changed(value, value, value));
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error removing listener '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
@@ -86,7 +86,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                     invalidationListeners.put(field, listener);
                 observable.addListener(invalidationListeners.get(field));
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error adding invalidation listener '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
@@ -104,7 +104,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 else // BUG: This probably doesnt work, but it doesn't hurt to try
                     observable.addListener(listener);
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error removing invalidation listener '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
@@ -149,7 +149,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 if(((Property<?>)field.get(value)).isBound())
                     return true;
             } catch (IllegalAccessException e) {
-                logger.error("error listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("isBound error '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
         return false;
@@ -167,7 +167,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 var thatObservable = (Property)field.get(other);
                 thisObservable.bindBidirectional(thatObservable);
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error binding bidirectionally '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
@@ -184,7 +184,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 var thatObservable = (Property)field.get(other);
                 thisObservable.unbindBidirectional(thatObservable);
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error unbinding bidirectionally '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
@@ -206,7 +206,7 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
                 var thatObservable = (WritableObjectValue)field.get(value);
                 thisObservable.set(thatObservable.get());
             } catch (IllegalAccessException e) {
-                logger.error("error adding listener '{}': {}", field.getName(), e.getMessage(), e);
+                logger.error("error setting value '{}': {}", field.getName(), e.getMessage(), e);
             }
         }
     }
