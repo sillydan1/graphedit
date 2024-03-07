@@ -21,6 +21,7 @@ import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
+import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
@@ -52,6 +53,7 @@ import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -95,6 +97,17 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	setupStage(primaryStage);
 	DI.add(Window.class, primaryStage.getScene().getWindow());
         DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> {
+	    var t = new Thread(() -> {
+		try {
+		    DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
+		} catch(Exception ex) {
+		    logger.error("could not load language servers for plugin '{}': {}", e.getName(), ex.getMessage(), ex);
+		}
+	    });
+	    t.setName("lsp-init-" + e.getName());
+	    t.start();
+	});
     }
 
     @Override
@@ -131,19 +144,25 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    logger.trace("interrupting lsp thread {}", lspThread.getName());
 	    lspThread.interrupt();
 	}
-	for(var server : servers.entrySet()) {
-	    var serverVal = server.getValue();
-	    logger.trace("initializing language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
-	    serverVal.initialize(projectFile, buffers);
-	    serverVal.addNotificationCallback(this::logNotification);
-	    serverVal.addDiagnosticsCallback(lints::replaceAll);
-	    logger.trace("starting thread for language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
-	    var t = new Thread(serverVal::start);
-	    t.setName(serverVal.getServerName());
-	    lspThreads.add(t);
-	    t.start();
-	    lints.replaceAll(server.getValue().getDiagnostics());
-	}
+	for(var server : servers.entrySet())
+	    setupServer(server.getValue(), projectFile, buffers, lints);
+	servers.addListener((MapChangeListener<String,ILanguageServer>)e -> {
+	    if(e.wasAdded())
+		setupServer(e.getValueAdded(), projectFile, buffers, lints);
+	});
+    }
+
+    private void setupServer(ILanguageServer server, File projectFile, IBufferContainer buffers, LintContainer lints) {
+	logger.trace("initializing language server {} {}", server.getServerName(), server.getServerVersion());
+	server.initialize(projectFile, buffers);
+	server.addNotificationCallback(this::logNotification);
+	server.addDiagnosticsCallback(lints::replaceAll);
+	logger.trace("starting thread for language server {} {}", server.getServerName(), server.getServerVersion());
+	var t = new Thread(server::start);
+	t.setName(server.getServerName());
+	lspThreads.add(t);
+	t.start();
+	lints.replaceAll(server.getDiagnostics());
     }
 
     private void logNotification(ModelNotification n) {

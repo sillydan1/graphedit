@@ -55,16 +55,7 @@ public class Main {
                 logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
             }
         }
-        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
-            try {
-                servers.add(plugin.getLanguageServers());
-            } catch (Exception e) {
-                logger.error("could not load language servers for plugin: {}", plugin.getName(), e);
-            }
-        }
 
-        if(servers.isEmpty())
-            logger.warn("No language servers loaded. Expect a very simple experience");
         if(factories.isEmpty())
             throw new Exception("Refusing to start the editor without any syntaxes. Please check your plugins directory");
 

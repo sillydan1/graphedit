@@ -26,7 +26,7 @@ public final class RetryUtils {
 	    try {
 		return f.get();
 	    } catch(Exception e) {
-		logger.warn("'{}' {}/{} attempts left", e.getMessage(), attempts+1, maxAttempts);
+		logger.trace("'{}' {}/{} attempts left", e.getMessage(), attempts+1, maxAttempts);
 		sleep(sleepMillis);
 	    }
 	}

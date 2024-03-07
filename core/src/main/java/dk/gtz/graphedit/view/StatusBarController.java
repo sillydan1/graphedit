@@ -2,11 +2,13 @@ package dk.gtz.graphedit.view;
 
 import java.util.List;
 
+import dk.gtz.graphedit.spi.ILanguageServer;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -57,6 +59,8 @@ public class StatusBarController extends StackPane {
 	// debugMouseHover();
     }
 
+    // NOTE: kept for future use
+    @SuppressWarnings("unused")
     private void debugMouseHover() {
 	Platform.runLater(() -> {
 	    var w = DI.get(Window.class);
@@ -78,37 +82,44 @@ public class StatusBarController extends StackPane {
 
     private void initializeLSPs() {
 	var lsps = DI.get(LanguageServerCollection.class);
-	for(var server : lsps.values()) {
-	    server.addProgressCallback(p -> {
-		Platform.runLater(() -> {
-		    lspLabel.setText(p.title()+":");
-		    messageLabel.setText(p.message());
-		});
-		switch(p.type()) {
-		    case PROGRESS:
-		    case BEGIN:
-			if(!spinnerThread.isAlive())
-			    startSpinnerThread();
-			break;
-		    case END:
-			if(spinnerThread.isAlive())
-			    spinnerThread.interrupt();
-			Platform.runLater(() -> spinnerString.set("\u2714")); // checkmark unicode character
-			break;
-		    case END_FAIL:
-			if(spinnerThread.isAlive())
-			    spinnerThread.interrupt();
-			Platform.runLater(() -> spinnerString.set("\u2717")); // x mark unicode character
-			break;
-		    default:
-			if(spinnerThread.isAlive())
-			    spinnerThread.interrupt();
-			Platform.runLater(() -> spinnerString.set("?"));
-			break;
-		
-		}
+	for(var lsp : lsps.values())
+	    addSpinner(lsp);
+	lsps.addListener((MapChangeListener<String,ILanguageServer>)e -> {
+	    if(e.wasAdded())
+		addSpinner(e.getValueAdded());
+	});
+    }
+
+    private void addSpinner(ILanguageServer server) {
+	server.addProgressCallback(p -> {
+	    Platform.runLater(() -> {
+		lspLabel.setText(p.title()+":");
+		messageLabel.setText(p.message());
 	    });
-	}
+	    switch(p.type()) {
+		case PROGRESS:
+		case BEGIN:
+		    if(!spinnerThread.isAlive())
+			startSpinnerThread();
+		    break;
+		case END:
+		    if(spinnerThread.isAlive())
+			spinnerThread.interrupt();
+		    Platform.runLater(() -> spinnerString.set("\u2714")); // checkmark unicode character
+		    break;
+		case END_FAIL:
+		    if(spinnerThread.isAlive())
+			spinnerThread.interrupt();
+		    Platform.runLater(() -> spinnerString.set("\u2717")); // x mark unicode character
+		    break;
+		default:
+		    if(spinnerThread.isAlive())
+			spinnerThread.interrupt();
+		    Platform.runLater(() -> spinnerString.set("?"));
+		    break;
+	    
+	    }
+	});
     }
 
     private void startSpinnerThread() {

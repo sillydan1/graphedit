@@ -6,23 +6,23 @@ import java.util.stream.Collectors;
 
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 
 /**
  * View model representation of a graphedit graph
  */
-public class ViewModelGraph implements Property<ViewModelGraph> {
+public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
+    @Autolisten
     private StringProperty declarations;
+    @Autolisten
     private MapProperty<UUID,ViewModelVertex> vertices;
+    @Autolisten
     private MapProperty<UUID,ViewModelEdge> edges;
 
     /**
@@ -70,6 +70,8 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
      * @param edges A mapping of edge ids to model edge-values
      */
     public ViewModelGraph(StringProperty declarations, MapProperty<UUID,ViewModelVertex> vertices, MapProperty<UUID,ViewModelEdge> edges) {
+        super();
+        loadFields(getClass(), this);
         this.declarations = declarations;
         this.vertices = vertices;
         this.edges = edges;
@@ -108,11 +110,6 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
      */
     public boolean isEmpty() {
         return declarations.getValueSafe().trim().isEmpty() && vertices.isEmpty() && edges.isEmpty();
-    }
-
-    @Override
-    public Object getBean() {
-        return null;
     }
 
     @Override
@@ -167,59 +164,5 @@ public class ViewModelGraph implements Property<ViewModelGraph> {
     @Override
     public ViewModelGraph getValue() {
         return this;
-    }
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        declarations.addListener(listener);
-        vertices.addListener(listener);
-        edges.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        declarations.removeListener(listener);
-        vertices.removeListener(listener);
-        edges.removeListener(listener);
-    }
-
-    @Override
-    public void setValue(ViewModelGraph value) {
-        declarations.setValue(value.declarations().getValue());
-        vertices.setValue(value.vertices().getValue());
-        edges.setValue(value.edges().getValue());
-    }
-
-    @Override
-    public void bind(ObservableValue<? extends ViewModelGraph> observable) {
-        declarations.bind(observable.getValue().declarations());
-        vertices.bind(observable.getValue().vertices());
-        edges.bind(observable.getValue().edges());
-    }
-
-    @Override
-    public void unbind() {
-        declarations.unbind();
-        vertices.unbind();
-        edges.unbind();
-    }
-
-    @Override
-    public boolean isBound() {
-        return declarations.isBound() || vertices.isBound() || edges.isBound();
-    }
-
-    @Override
-    public void bindBidirectional(Property<ViewModelGraph> other) {
-        declarations.bindBidirectional(other.getValue().declarations());
-        vertices.bindBidirectional(other.getValue().vertices());
-        edges.bindBidirectional(other.getValue().edges());
-    }
-
-    @Override
-    public void unbindBidirectional(Property<ViewModelGraph> other) {
-        declarations.unbindBidirectional(other.getValue().declarations());
-        vertices.unbindBidirectional(other.getValue().vertices());
-        edges.unbindBidirectional(other.getValue().edges());
     }
 }
