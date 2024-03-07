@@ -19,7 +19,7 @@ public class TextStyle {
     /**
      * A text style using white text color
      */
-    public static final TextStyle WHITE = new TextStyle().setTextColor(Color.WHITE);
+    public static final TextStyle WHITE = new TextStyle().setTextColor("white");
 
     /**
      * Create a new text style with a random text color
@@ -27,10 +27,11 @@ public class TextStyle {
      */
     public static TextStyle randomTextColor() {
         var r = new Random();
-        return EMPTY.setTextColor(Color.color(
+        var c = Color.color(
                 r.nextDouble(),
                 r.nextDouble(),
-                r.nextDouble()));
+                r.nextDouble());
+        return EMPTY.setTextColor(cssColor(c));
     }
 
     /**
@@ -51,8 +52,8 @@ public class TextStyle {
     final Optional<Boolean> strikethrough;
     final Optional<Integer> fontSize;
     final Optional<String> fontFamily;
-    final Optional<Color> textColor;
-    final Optional<Color> backgroundColor;
+    final Optional<String> textColor;
+    final Optional<String> backgroundColor;
 
     /**
      * Construct a new text style instance
@@ -76,8 +77,8 @@ public class TextStyle {
      * @param strikethrough Should the text be strikethrough
      * @param fontSize Text size of the text style
      * @param fontFamily The font to use
-     * @param textColor The color to use
-     * @param backgroundColor The background color
+     * @param textColor The css color to use
+     * @param backgroundColor The css background color to use
      */
     public TextStyle(Optional<Boolean> bold,
                      Optional<Boolean> italic,
@@ -85,8 +86,8 @@ public class TextStyle {
                      Optional<Boolean> strikethrough,
                      Optional<Integer> fontSize,
                      Optional<String> fontFamily,
-                     Optional<Color> textColor,
-                     Optional<Color> backgroundColor) {
+                     Optional<String> textColor,
+                     Optional<String> backgroundColor) {
         this.bold = bold;
         this.italic = italic;
         this.underline = underline;
@@ -143,8 +144,8 @@ public class TextStyle {
         strikethrough.ifPresent(b -> sb.append("-fx-strikethrough: ").append(b ? "true" : "false").append(";"));
         fontSize.ifPresent(integer -> sb.append("-fx-font-size: ").append(integer).append("pt;"));
         fontFamily.ifPresent(s -> sb.append("-fx-font-family: ").append(s).append(";"));
-        textColor.ifPresent(color -> sb.append("-fx-fill: ").append(cssColor(color)).append(";"));
-        backgroundColor.ifPresent(color -> sb.append("-rtfx-background-color: ").append(cssColor(color)).append(";"));
+        textColor.ifPresent(color -> sb.append("-fx-fill: ").append(color).append(";"));
+        backgroundColor.ifPresent(color -> sb.append("-rtfx-background-color: ").append(color).append(";"));
         return sb.toString();
     }
 
@@ -224,7 +225,7 @@ public class TextStyle {
      * @param textColor The new color of the text
      * @return a new text style
      */
-    public TextStyle setTextColor(Color textColor) {
+    public TextStyle setTextColor(String textColor) {
         return new TextStyle(bold, italic, underline, strikethrough, fontSize, fontFamily, Optional.of(textColor), backgroundColor);
     }
 
@@ -234,7 +235,7 @@ public class TextStyle {
      * @return a new text style
      */
     public TextStyle setTextColorWeb(String webColor) {
-        return setTextColor(Color.web(webColor));
+        return setTextColor(webColor);
     }
 
     /**
@@ -242,7 +243,7 @@ public class TextStyle {
      * @param backgroundColor The new background color of the text
      * @return a new text style
      */
-    public TextStyle setBackgroundColor(Color backgroundColor) {
+    public TextStyle setBackgroundColor(String backgroundColor) {
         return new TextStyle(bold, italic, underline, strikethrough, fontSize, fontFamily, textColor, Optional.of(backgroundColor));
     }
 }
