@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.model.ModelProject;
-import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.HeightDragResizer;
