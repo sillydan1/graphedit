@@ -10,7 +10,7 @@
     <BorderPane HBox.hgrow="ALWAYS" fx:id="primaryBorderPane">
         <top>
             <VBox fx:id="menubarTopBox">
-                <MenuBar useSystemMenuBar="true">
+                <MenuBar useSystemMenuBar="true" fx:id="menubar">
                     <Menu text="File">
                         <MenuItem onAction="#newModel" text="New Model File" accelerator="Shortcut+N"/>
                         <MenuItem onAction="#openModel" text="Open Model File" accelerator="Shortcut+O"/>

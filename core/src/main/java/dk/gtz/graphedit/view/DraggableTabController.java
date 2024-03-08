@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
+import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -14,8 +15,12 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -59,7 +64,7 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
      * normal tabs and DrragableTabs mixed will cause issues!
      * @param text the text to appear on the tag label.
      */
-    public DraggableTabController(String text) {
+    public DraggableTabController(String text, IEventHandler editor) {
 	nameLabel = new Label(text);
 	setGraphic(nameLabel);
 	detachable = true;
@@ -123,6 +128,7 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 		if(!detachable)
 		    return;
 		var newStage = new Stage();
+		var topPane = new BorderPane();
 		var pane = new TabPane();
 		pane.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 		tabPanes.add(pane);
@@ -133,8 +139,13 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 		    if(pane.getTabs().isEmpty())
 			newStage.hide();
 		});
-		var spawnScene = new Scene(pane);
+		topPane.setCenter(pane);
+		topPane.setTop(DI.get(MenuBar.class));
+		var spawnScene = new Scene(topPane);
 		spawnScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+		spawnScene.addEventHandler(KeyEvent.ANY, e -> editor.onKeyEvent(e));
+		spawnScene.addEventHandler(MouseEvent.ANY, e -> editor.onMouseEvent(e));
+		// TODO: add closed event, and actually close the buffer
 		newStage.setScene(spawnScene);
 		newStage.initStyle(StageStyle.UTILITY);
 		newStage.setX(t.getScreenX());

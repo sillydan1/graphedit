@@ -34,7 +34,7 @@ import javafx.scene.transform.Affine;
 /**
  * View controller for the main model editor viewport.
  */
-public class ModelEditorController extends BorderPane implements IFocusable {
+public class ModelEditorController extends BorderPane implements IFocusable, IEventHandler {
     private static float ZOOM_SPEED_SCALAR = 0.01f;
     private final ViewModelProjectResource resource;
     private final ViewModelEditorSettings settings;
@@ -204,6 +204,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
      * Propogate the provided mouse event to the appropriate tool.
      * @param e The mouse event to handle.
      */
+    @Override
     public void onMouseEvent(MouseEvent e) {
 	// TODO: detect if an event has been "handled" - and call the syntax event first for maximal extendability
 	var mouseEvent = new ViewportMouseEvent(e, drawGroupTransform, e.getTarget() == drawPane, syntaxFactory, resource.syntax(), bufferKey, settings);
@@ -217,6 +218,7 @@ public class ModelEditorController extends BorderPane implements IFocusable {
      * Propogate the provided key event to the appropriate tool.
      * @param e The key event to handle.
      */
+    @Override
     public void onKeyEvent(KeyEvent e) {
 	// TODO: the "isTargetDrawpane" field solution is hacky and doesnt work in detached tabs. It should be fixed, see https://github.com/sillydan1/graphedit/issues/17
 	var isTargetDrawpane = e.getTarget() == getParent().getParent();
