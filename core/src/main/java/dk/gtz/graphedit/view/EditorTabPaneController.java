@@ -63,7 +63,8 @@ public class EditorTabPaneController {
 		var tabTitle = changedKey;
 		if(changedVal.metadata().containsKey("name"))
 		    tabTitle = changedVal.metadata().get("name");
-		var tab = new DraggableTabController(tabTitle);
+		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
+		var tab = new DraggableTabController(tabTitle, editorController);
 		var lastSavedModel = new SimpleObjectProperty<>(changedVal.toModel());
 		var lastSavedModelSyntax = new SimpleObjectProperty<>(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		changedVal.addView(tab);
@@ -84,12 +85,16 @@ public class EditorTabPaneController {
 		    lastSavedModelSyntax.set(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		    tab.unsetHighlight();
 		});
-		tab.setOnClosed(e ->  {
+		tab.addOnClosedListener(e ->  {
 		    changedVal.removeView(tab);
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
 		});
-		var editorController = new ModelEditorController(changedKey, changedVal, MetadataUtils.getSyntaxFactory(changedVal.metadata()));
+		tab.setOnClosed(e -> {
+		    changedVal.removeView(tab);
+		    if(changedVal.getViews().isEmpty())
+			DI.get(IBufferContainer.class).close(changedKey);
+		});
 		tab.addEditor(editorController);
 		tabpane.getTabs().add(tab);
 		tabControllerMapping.put(tab, editorController);

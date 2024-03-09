@@ -20,8 +20,10 @@ import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -42,6 +44,8 @@ public class EditorController {
     private BorderPane primaryBorderPane;
     @FXML
     private BorderPane bottomBorderPane;
+    @FXML
+    private MenuBar menubar;
     @FXML
     private Menu runTargetsMenu;
     @FXML
@@ -80,6 +84,25 @@ public class EditorController {
 	var project = DI.get(ViewModelProject.class);
 	updateRunTargets();
 	project.runTargets().addListener((e,o,n) -> updateRunTargets());
+	DI.add(MenuBar.class, () -> {
+	    var newMenubar = new MenuBar();
+	    newMenubar.setUseSystemMenuBar(menubar.isUseSystemMenuBar());
+	    for(var menu : menubar.getMenus()) {
+		var newMenu = new Menu(menu.getText());
+		for(var item : menu.getItems()) {
+		    if(item instanceof MenuItem) {
+			var newItem = new MenuItem(item.getText());
+			newItem.setOnAction(item.getOnAction());
+			newItem.setAccelerator(item.getAccelerator());
+			newMenu.getItems().add(newItem);
+		    }
+		    if(item instanceof SeparatorMenuItem)
+			newMenu.getItems().add(new SeparatorMenuItem());
+		}
+		newMenubar.getMenus().add(newMenu);
+	    }
+	    return newMenubar;
+	});
     }
 
     private void updateRunTargets() {
