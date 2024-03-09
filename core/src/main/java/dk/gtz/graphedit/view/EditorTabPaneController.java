@@ -85,10 +85,15 @@ public class EditorTabPaneController {
 		    lastSavedModelSyntax.set(MetadataUtils.getSyntaxFactory(changedVal.getSyntaxName().get()));
 		    tab.unsetHighlight();
 		});
-		tab.setOnClosed(e ->  {
+		tab.addOnClosedListener(e ->  {
 		    changedVal.removeView(tab);
 		    if(changedVal.getViews().isEmpty())
 			DI.get(IBufferContainer.class).close(changedKey); 
+		});
+		tab.setOnClosed(e -> {
+		    changedVal.removeView(tab);
+		    if(changedVal.getViews().isEmpty())
+			DI.get(IBufferContainer.class).close(changedKey);
 		});
 		tab.addEditor(editorController);
 		tabpane.getTabs().add(tab);
