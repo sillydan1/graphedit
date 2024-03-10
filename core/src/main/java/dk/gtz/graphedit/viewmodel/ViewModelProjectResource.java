@@ -189,5 +189,9 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
 	metadata.unbindBidirectional(other.getValue().metadata());
 	syntax.unbindBidirectional(other.getValue().syntax());
     }
+
+    public ViewModelProjectResourceSnapshot startSnapshot() {
+	return new ViewModelProjectResourceSnapshot(this);
+    }
 }
 
