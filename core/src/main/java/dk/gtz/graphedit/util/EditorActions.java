@@ -40,7 +40,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IFunction2;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;

@@ -1,8 +1,7 @@
 package dk.gtz.graphedit.util;
 
 import dk.gtz.graphedit.viewmodel.ViewModelPoint;
-import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yaundo.Undoable;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,10 +26,10 @@ public class DragUtil {
      * @param node The node that will catch the related mouse events
      * @param point View model point values that will be modified
      * @param viewportAffine Affine of the viewport
+     * @param buffer The buffer to push undoable actions to
      */
-    public static void makeDraggable(Node node, ViewModelPoint point, Affine viewportAffine) {
+    public static void makeDraggable(Node node, ViewModelPoint point, Affine viewportAffine, ViewModelProjectResource buffer) {
         // NOTE: Must be properties due to java's final/effectively final lambda restriction
-        var undoSystem = DI.get(IUndoSystem.class);
         var oldX = new SimpleDoubleProperty();
         var oldY = new SimpleDoubleProperty();
         var oldPointX = new SimpleDoubleProperty();
@@ -72,12 +71,13 @@ public class DragUtil {
 
         node.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if(undoAction.get() != null && redoAction.get() != null)
-                undoSystem.push(new Undoable("move action", undoAction.get(), redoAction.get()));
+                buffer.getUndoSystem().push(new Undoable("move action", undoAction.get(), redoAction.get()));
         });
     }
 
     /**
      * Add event handlers to the provided node such that the provided {@link Affine} will be inversely translated on mouse dragging
+     * Note that the drag events will not be registered as undoable actions
      *
      * NB: The provided affine only gets changes on mouse secondary button presses
      * @param node The node that will catch the related mouse events

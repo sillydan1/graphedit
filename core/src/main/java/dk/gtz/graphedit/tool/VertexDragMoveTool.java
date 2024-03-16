@@ -8,7 +8,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;

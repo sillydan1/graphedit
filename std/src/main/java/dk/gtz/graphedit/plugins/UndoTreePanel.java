@@ -11,21 +11,21 @@ public class UndoTreePanel implements IPluginPanel {
     private final Node panel;
 
     public UndoTreePanel() {
-        panel = new UndoTreePanelController();
+	panel = new UndoTreePanelController();
     }
 
-	@Override
-	public String getTooltip() {
-        return "Undo Tree";
-	}
+    @Override
+    public String getTooltip() {
+	return "Undo Tree";
+    }
 
-	@Override
-	public Node getIcon() {
-        return new FontIcon(BootstrapIcons.ARROW_CLOCKWISE);
-	}
+    @Override
+    public Node getIcon() {
+	return new FontIcon(BootstrapIcons.ARROW_CLOCKWISE);
+    }
 
-	@Override
-	public Node getPanel() {
-        return panel;
-	}
+    @Override
+    public Node getPanel() {
+	return panel;
+    }
 }

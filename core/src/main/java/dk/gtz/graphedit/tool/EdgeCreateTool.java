@@ -19,7 +19,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;

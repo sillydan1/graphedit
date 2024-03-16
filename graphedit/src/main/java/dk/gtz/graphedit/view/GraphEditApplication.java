@@ -49,7 +49,6 @@ import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -126,7 +125,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	DI.add(IUndoSystem.class, () -> new ObservableStackUndoSystem());
+	DI.add(IObservableUndoSystem.class, () -> new ObservableStackUndoSystem());
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));

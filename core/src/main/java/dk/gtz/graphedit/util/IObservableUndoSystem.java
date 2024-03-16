@@ -2,6 +2,7 @@ package dk.gtz.graphedit.util;
 
 import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -13,4 +14,8 @@ public interface IObservableUndoSystem extends IUndoSystem {
      * @return The current undoable
      */
     ObservableValue<Undoable> getCurrentUndoableProperty();
+
+    void addListener(ChangeListener<Undoable> listener);
+
+    void removeListener(ChangeListener<Undoable> listener);
 }
