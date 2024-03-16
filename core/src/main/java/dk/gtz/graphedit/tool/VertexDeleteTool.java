@@ -10,10 +10,11 @@ import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -24,13 +25,10 @@ import javafx.scene.input.MouseEvent;
  * When selected, click an vertex to delete it.
  */
 public class VertexDeleteTool extends AbstractBaseTool {
-    private final IUndoSystem undoSystem;
-
     /**
      * Construct a new instance
      */
     public VertexDeleteTool() {
-        this.undoSystem = DI.get(IUndoSystem.class);
     }
 
     @Override
@@ -60,7 +58,7 @@ public class VertexDeleteTool extends AbstractBaseTool {
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
-            delete(e.vertexId(), e.vertex(), e.graph());
+            delete(DI.get(IBufferContainer.class).get(e.bufferId()), e.vertexId(), e.vertex(), e.graph());
     }
 
     /**
@@ -69,7 +67,7 @@ public class VertexDeleteTool extends AbstractBaseTool {
      * @param vertex The viewmodel object of the vertex to delete
      * @param graph The graph that contains the vertex
      */
-    public void delete(UUID vertexId, ViewModelVertex vertex, ViewModelGraph graph) {
+    public void delete(ViewModelProjectResource buffer, UUID vertexId, ViewModelVertex vertex, ViewModelGraph graph) {
         var linkedEdges = graph.edges()
             .entrySet()
             .stream()
@@ -80,7 +78,7 @@ public class VertexDeleteTool extends AbstractBaseTool {
             return;
         for(var edge : linkedEdges.entrySet()) 
             graph.edges().remove(edge.getKey());
-        undoSystem.push(new Undoable("edge delete action",
+        buffer.getUndoSystem().push(new Undoable("edge delete action",
                     () -> {
                         graph.vertices().put(vertexId, vertex);
                         graph.edges().putAll(linkedEdges);

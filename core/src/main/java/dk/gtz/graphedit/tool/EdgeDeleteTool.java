@@ -9,10 +9,11 @@ import org.kordamp.ikonli.javafx.StackedFontIcon;
 
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.events.EdgeMouseEvent;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -23,13 +24,10 @@ import javafx.scene.input.MouseEvent;
  * When selected, click an edge to delete it.
  */
 public class EdgeDeleteTool extends AbstractBaseTool {
-    private final IUndoSystem undoSystem;
-
     /**
      * Create a new instance of the edge delete tool
      */
     public EdgeDeleteTool() {
-        this.undoSystem = DI.get(IUndoSystem.class);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class EdgeDeleteTool extends AbstractBaseTool {
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
-            delete(e.edgeId(), e.edge(), e.graph());
+            delete(DI.get(IBufferContainer.class).get(e.bufferId()), e.edgeId(), e.edge(), e.graph());
     }
 
     /**
@@ -68,11 +66,11 @@ public class EdgeDeleteTool extends AbstractBaseTool {
      * @param edge The edge to delete
      * @param graph The graph containing the edge to delete
      */
-    public void delete(UUID edgeId, ViewModelEdge edge, ViewModelGraph graph) {
+    public void delete(ViewModelProjectResource buffer, UUID edgeId, ViewModelEdge edge, ViewModelGraph graph) {
         var deletedEdge = graph.edges().remove(edgeId);
         if(deletedEdge == null)
             return;
-        undoSystem.push(new Undoable("edge delete action",
+        buffer.getUndoSystem().push(new Undoable("edge delete action",
                     () -> graph.edges().put(edgeId, edge),
                     () -> graph.edges().remove(edgeId)));
     }

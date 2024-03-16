@@ -29,13 +29,13 @@ public class VertexDragMoveTool extends AbstractBaseTool {
     private final DoubleProperty oldPointY = new SimpleDoubleProperty();
     private final ObjectProperty<Runnable> undoAction = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Runnable> redoAction = new SimpleObjectProperty<>(null);
-    private final IUndoSystem undoSystem;
+    private final IBufferContainer buffers;
 
     /**
      * Construct a new instance
      */
     public VertexDragMoveTool() {
-        undoSystem = DI.get(IUndoSystem.class);
+        buffers = DI.get(IBufferContainer.class);
     }
 
     @Override

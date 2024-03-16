@@ -46,7 +46,6 @@ public class ClipboardTool extends AbstractBaseTool {
     private final IModelSerializer serializer;
     private final IBufferContainer buffers;
     private final Clipboard clipboard;
-    private final IUndoSystem undoSystem;
     private final MassDeleteTool deleteTool;
 
     /**
@@ -56,7 +55,6 @@ public class ClipboardTool extends AbstractBaseTool {
         selectedElements = DI.get("selectedElements");
         serializer = DI.get(IModelSerializer.class);
         buffers = DI.get(IBufferContainer.class);
-        undoSystem = DI.get(IUndoSystem.class);
         clipboard = Clipboard.getSystemClipboard();
         deleteTool = new MassDeleteTool();
     }
@@ -173,7 +171,7 @@ public class ClipboardTool extends AbstractBaseTool {
             resource.syntax().edges().putAll(rerolledEdges);
             var diff = ViewModelDiff.compare(buffer, resource);
             ViewModelDiff.applyAdditiveOnly(buffer, diff);
-            undoSystem.push(new Undoable("paste content",
+            buffer.getUndoSystem().push(new Undoable("paste content",
                         () -> ViewModelDiff.revertSubtractiveOnly(buffer, diff),
                         () -> ViewModelDiff.applyAdditiveOnly(buffer, diff)));
         } catch (SerializationException exc) {
