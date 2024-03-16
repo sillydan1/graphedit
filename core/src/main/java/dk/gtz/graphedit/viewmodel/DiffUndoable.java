@@ -16,6 +16,7 @@ public class DiffUndoable extends Undoable {
         super(message,
                 () -> ViewModelDiff.revert(resource, diff),
                 () -> ViewModelDiff.apply(resource, diff));
-        logger.info("undoable: {} {}", message, diff.toString());
+        // TODO: Debug log here
+        logger.trace("undoable: {} {}", message, diff.toString());
     }
 }

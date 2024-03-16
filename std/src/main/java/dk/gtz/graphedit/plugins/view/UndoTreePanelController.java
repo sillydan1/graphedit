@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 // NOTE: BOOKMARK: You're working on an undo-tree visualizer. This seems to be good enough for now
 // NOTE: BOOKMARK: Plan is to make these lines monospace font and hoverable and selectable and highlight the current
 // NOTE: BOOKMARK: Undoable with something...
+// NOTE: BOOKMARK: We should really also make the undo tree a per-buffer thing and just deal with multiple undo trees somehow
 public class UndoTreePanelController extends StackPane {
     private final VBox container;
     private final ListView<String> list;

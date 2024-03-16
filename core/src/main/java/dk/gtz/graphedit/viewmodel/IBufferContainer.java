@@ -1,5 +1,9 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.Observable;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 
 /**
@@ -53,5 +57,6 @@ public interface IBufferContainer {
      * @return the underlying obserable map
      */
     ObservableMap<String,ViewModelProjectResource> getBuffers();
-}
 
+    ObjectProperty<ViewModelProjectResource> getCurrentlyFocusedBuffer();
+}

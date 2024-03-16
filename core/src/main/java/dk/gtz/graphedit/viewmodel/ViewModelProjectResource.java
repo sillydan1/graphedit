@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import dk.gtz.graphedit.view.IProjectResourceView;
@@ -23,6 +26,7 @@ import javafx.collections.FXCollections;
  * Full file-on-disk model. Will include everything a graphedit project file needs
  */
 public class ViewModelProjectResource implements IFocusable, Property<ViewModelProjectResource> {
+    private final Logger logger = LoggerFactory.getLogger(ViewModelProjectResource.class);
     private MapProperty<String,String> metadata;
     private ViewModelGraph syntax;
     private List<Runnable> onFocusHandlers;
@@ -38,6 +42,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
 	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax(), syntaxFactory));
 	metadata.putAll(projectResource.metadata());
 	undoSystem = DI.get(IUndoSystem.class);
+	addFocusListener(() -> DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().set(this));
     }
 
     /**
