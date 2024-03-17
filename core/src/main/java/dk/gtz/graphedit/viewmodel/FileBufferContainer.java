@@ -91,7 +91,6 @@ public class FileBufferContainer implements IBufferContainer {
 
     @Override
     public ObjectProperty<ViewModelProjectResource> getCurrentlyFocusedBuffer() {
-        logger.trace("getting focused buffer: {}", focusedBuffer.get());
         return focusedBuffer;
     }
 }

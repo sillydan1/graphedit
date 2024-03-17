@@ -51,7 +51,6 @@ public class UndoTreePanelController extends StackPane {
 
     private void setList(IObservableUndoSystem undosystem) {
         var history = getUndoHistory(undosystem);
-        Collections.reverse(history);
 	list.getItems().setAll(history);
     }
 
@@ -66,6 +65,7 @@ public class UndoTreePanelController extends StackPane {
         }
         if(result.isEmpty())
             result.add("<empty>");
+        Collections.reverse(result);
         return result;
     }
 }
