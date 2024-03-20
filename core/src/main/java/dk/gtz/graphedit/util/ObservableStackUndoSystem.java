@@ -87,4 +87,9 @@ public class ObservableStackUndoSystem implements IObservableUndoSystem {
     public void removeListener(ChangeListener<Undoable> listener) {
         listeners.remove(listener);
     }
+
+    @Override
+    public void gotoAction(Undoable action) {
+        throw new UnsupportedOperationException("Unimplemented method 'gotoAction'");
+    }
 }

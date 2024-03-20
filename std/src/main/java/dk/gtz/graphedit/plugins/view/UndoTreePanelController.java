@@ -1,35 +1,28 @@
 package dk.gtz.graphedit.plugins.view;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
+import dk.gtz.graphedit.util.ObservableUndoable;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaundo.Undoable;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public class UndoTreePanelController extends StackPane {
-    private final VBox container;
-    private final ListView<String> list;
+public class UndoTreePanelController extends VBox {
+    private ListView<ObservableUndoable> list;
     private ChangeListener<Undoable> undoListener;
 
     public UndoTreePanelController() {
-        list = new ListView<>();
-	container = new VBox(list);
-	list.getStyleClass().add(Styles.DENSE);
-	list.getStyleClass().add(Tweaks.EDGE_TO_EDGE);
-	list.getStyleClass().add("text-monospace");
-	getChildren().add(container);
-
         var bufferContainer = DI.get(IBufferContainer.class);
+        initialize(bufferContainer);
         bufferContainer.getCurrentlyFocusedBuffer().addListener((e,o,n) -> {
             if(o != null) {
                 o.getUndoSystem().getCurrentUndoableProperty().removeListener(undoListener);
@@ -37,6 +30,15 @@ public class UndoTreePanelController extends StackPane {
             }
             setList(n);
         });
+    }
+
+    private void initialize(IBufferContainer bufferContainer) {
+        list = new ListView<>();
+	list.getStyleClass().add(Styles.DENSE);
+	list.getStyleClass().add(Tweaks.EDGE_TO_EDGE);
+	list.getStyleClass().add("text-monospace");
+	VBox.setVgrow(list, Priority.ALWAYS);
+	getChildren().add(list);
         setList(bufferContainer.getCurrentlyFocusedBuffer().get());
     }
 
@@ -50,22 +52,14 @@ public class UndoTreePanelController extends StackPane {
     }
 
     private void setList(IObservableUndoSystem undosystem) {
-        var history = getUndoHistory(undosystem);
+        var history = undosystem.getStringRepresentation();
+        Collections.reverse(history);
 	list.getItems().setAll(history);
-    }
-
-    private List<String> getUndoHistory(IObservableUndoSystem undosystem) {
-        var result = new ArrayList<String>();
-        var current = undosystem.getCurrentAction();
-        for(var undoable : undosystem.getHistory()) {
-            if(current.isPresent() && undoable == current.get())
-                result.add(" * [" + undoable.getDescription() + "]");
-            else
-                result.add(" * " + undoable.getDescription());
-        }
-        if(result.isEmpty())
-            result.add("<empty>");
-        Collections.reverse(result);
-        return result;
+        list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            var index = list.getSelectionModel().getSelectedItem();
+            if(index == null)
+                return;
+            undosystem.gotoAction(index.undoable());
+        });
     }
 }

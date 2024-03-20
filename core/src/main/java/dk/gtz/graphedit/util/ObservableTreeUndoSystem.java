@@ -1,6 +1,7 @@
 package dk.gtz.graphedit.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,9 +51,36 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	    }
 	}
 
+	private static class NodeIterator implements Iterator<Node> {
+	    private final Queue<Node> queue;
+
+	    public NodeIterator(Node root) {
+		this.queue = new LinkedList<>();
+		if(!root.children.isEmpty())
+		    queue.addAll(root.children);
+	    }
+	    @Override
+	    public boolean hasNext() {
+		return !queue.isEmpty();
+	    }
+
+	    @Override
+	    public Node next() {
+		if(!hasNext())
+		    throw new NoSuchElementException();
+		var x = queue.poll();
+		x.children.forEach(queue::add);
+		return x;
+	    }
+	}
+
 	@Override
 	public Iterator<Undoable> iterator() {
 	    return new BfsIterator(this);
+	}
+
+	public Iterator<Node> nodeIterator() {
+	    return new NodeIterator(this);
 	}
     }
 
@@ -97,16 +125,20 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	currentNode.set(prev.parent.orElseThrow());
 	// NOTE: add prev to the beginning of the list of children
 	// NOTE: so we will redo the most recently undone branch
-	currentNode.get().children.remove(prev);
-	currentNode.get().children.add(0, prev);
+	// currentNode.get().children.remove(prev);
+	// currentNode.get().children.add(0, prev);
 	currentAction.set(currentNode.get().action);
     }
 
     @Override
     public void redo() {
+	redo(0); // TODO: keep a stack of indexes to redo
+    }
+
+    private void redo(int childIndex) {
 	if(currentNode.get().children.isEmpty())
 	    return;
-	var next = currentNode.get().children.get(0);
+	var next = currentNode.get().children.get(childIndex);
 	next.action.redo();
 	currentNode.set(next);
 	currentAction.set(currentNode.get().action);
@@ -125,5 +157,79 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
     @Override
     public void removeListener(ChangeListener<Undoable> listener) {
 	listeners.remove(listener);
+    }
+
+    @Override
+    public List<ObservableUndoable> getStringRepresentation() {
+	return helper(0, root);
+    }
+
+    private List<ObservableUndoable> helper(int indent, Node node) {
+	var result = new ArrayList<ObservableUndoable>();
+	result.add(getStringRepresentation(indent, node));
+	for(var i = node.children.size()-1; i >= 0; i--)
+	    result.addAll(helper(indent + i, node.children.get(i)));
+	return result;
+    }
+
+    private ObservableUndoable getStringRepresentation(int indent, Node node) {
+	var spaces = "| ".repeat(indent);
+	var currentPostfix = "";
+	if(node == currentNode.get())
+	    currentPostfix = " (current)";
+	if(node == root)
+	    return new ObservableUndoable(spaces + "* <root>" + currentPostfix, node.action);
+	return new ObservableUndoable(spaces + "* " + node.action.getDescription() + currentPostfix, node.action);
+    }
+
+    private Optional<Node> find(Undoable action) {
+	if(action == null)
+	    return Optional.of(root);
+	var it = root.nodeIterator();
+	for(var node = it.next(); it.hasNext(); node = it.next())
+	    if(node.action == action)
+		return Optional.of(node);
+	return Optional.empty();
+    }
+
+    @Override
+    public void gotoAction(Undoable action) {
+	var actionNode = find(action);
+	if(actionNode.isEmpty())
+	    return;
+
+	var pathA = getAncestors(currentNode.get());
+	var pathB = getAncestors(actionNode.get());
+	var lcaIndex = 0;
+	for(; lcaIndex < Math.min(pathA.size(), pathB.size()); lcaIndex++)
+	    if(pathA.get(lcaIndex) != pathB.get(lcaIndex))
+		break;
+
+	for(var x = 0; x < pathA.size() - lcaIndex; x++)
+	    undo();
+
+	for(var x = lcaIndex; x < pathB.size(); x++) {
+	    var index = getChildIndex(currentNode.get(), pathB.get(x));
+	    if(index.isEmpty())
+		throw new IllegalStateException("Action not found in the tree");
+	    redo(index.get());
+	}
+    }
+
+    private Optional<Integer> getChildIndex(Node node, Undoable action) {
+	for(var i = 0; i < node.children.size(); i++)
+	    if(node.children.get(i).action == action)
+		return Optional.of(i);
+	return Optional.empty();
+    }
+
+    private List<Undoable> getAncestors(Node node) {
+	var result = new ArrayList<Undoable>();
+	while(node != root) {
+	    result.add(node.action);
+	    node = node.parent.get();
+	}
+	Collections.reverse(result);
+	return result;
     }
 }
