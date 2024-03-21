@@ -9,6 +9,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.yalibs.yaundo.Undoable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,6 +19,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 public class ObservableTreeUndoSystem implements IObservableUndoSystem {
+    private static final Logger logger = LoggerFactory.getLogger(ObservableTreeUndoSystem.class);
+
     private static class Node implements Iterable<Undoable> {
 	private final Undoable action;
 	private final Optional<Node> parent;
@@ -46,7 +51,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 		if(!hasNext())
 		    throw new NoSuchElementException();
 		var x = queue.poll();
-		x.children.forEach(queue::add);
+		queue.addAll(x.children);
 		return x.action;
 	    }
 	}
@@ -59,6 +64,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 		if(!root.children.isEmpty())
 		    queue.addAll(root.children);
 	    }
+
 	    @Override
 	    public boolean hasNext() {
 		return !queue.isEmpty();
@@ -69,7 +75,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 		if(!hasNext())
 		    throw new NoSuchElementException();
 		var x = queue.poll();
-		x.children.forEach(queue::add);
+		queue.addAll(x.children);
 		return x;
 	    }
 	}
@@ -186,17 +192,21 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	if(action == null)
 	    return Optional.of(root);
 	var it = root.nodeIterator();
-	for(var node = it.next(); it.hasNext(); node = it.next())
+	while(it.hasNext()) {
+	    var node = it.next();
 	    if(node.action == action)
 		return Optional.of(node);
+	}
 	return Optional.empty();
     }
 
     @Override
     public void gotoAction(Undoable action) {
 	var actionNode = find(action);
-	if(actionNode.isEmpty())
+	if(actionNode.isEmpty()) {
+	    logger.error("Action not found in the tree");
 	    return;
+	}
 
 	var pathA = getAncestors(currentNode.get());
 	var pathB = getAncestors(actionNode.get());

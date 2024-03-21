@@ -55,6 +55,7 @@ public class UndoTreePanelController extends VBox {
         var history = undosystem.getStringRepresentation();
         Collections.reverse(history);
 	list.getItems().setAll(history);
+        // TODO: This fires way too often. Basically 4-5 times per click.
         list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             var index = list.getSelectionModel().getSelectedItem();
             if(index == null)
