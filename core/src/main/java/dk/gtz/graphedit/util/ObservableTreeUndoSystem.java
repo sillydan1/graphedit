@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,12 +95,14 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
     private final ObjectProperty<Undoable> currentAction;
     private final ObjectProperty<Node> currentNode;
     private final List<ChangeListener<Undoable>> listeners;
+    private Node currentLatest;
 
     public ObservableTreeUndoSystem() {
 	this.root = new Node(null, Optional.empty());
 	this.currentNode = new SimpleObjectProperty<>(root);
 	this.currentAction = new SimpleObjectProperty<>(root.action);
 	this.listeners = new ArrayList<>();
+	currentLatest = root;
     }
 
     @Override
@@ -117,6 +120,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	var newNode = new Node(action, Optional.of(currentNode.get()));
 	var oldNode = currentNode.get();
 	oldNode.children.add(newNode);
+	currentLatest = newNode;
 	currentNode.set(newNode);
 	currentAction.set(newNode.action);
 	listeners.forEach(l -> l.changed(currentAction, oldNode.action, currentAction.get()));
@@ -129,16 +133,21 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	var prev = currentNode.get();
 	prev.action.undo();
 	currentNode.set(prev.parent.orElseThrow());
-	// NOTE: add prev to the beginning of the list of children
-	// NOTE: so we will redo the most recently undone branch
-	// currentNode.get().children.remove(prev);
-	// currentNode.get().children.add(0, prev);
 	currentAction.set(currentNode.get().action);
     }
 
     @Override
     public void redo() {
-	redo(0); // TODO: keep a stack of indexes to redo
+	if(currentNode.get() == currentLatest)
+	    return;
+	var stack = getAncestors(currentLatest);
+	for(var i = 0; i < stack.size(); i++) {
+	    if(stack.get(i) == currentNode.get()) {
+		redo(currentNode.get().children.indexOf(stack.get(i+1)));
+		return;
+	    }
+	}
+	logger.error("Current node not found in the ancestors of the current latest node");
     }
 
     private void redo(int childIndex) {
@@ -167,25 +176,34 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 
     @Override
     public List<ObservableUndoable> getStringRepresentation() {
-	return helper(0, root);
+	return helper(0, 0, root);
     }
 
-    private List<ObservableUndoable> helper(int indent, Node node) {
+    private List<ObservableUndoable> helper(int indent, int index, Node node) {
 	var result = new ArrayList<ObservableUndoable>();
-	result.add(getStringRepresentation(indent, node));
+	result.add(getStringRepresentation(indent, index++, node));
+	for(var i = 1; i < node.children.size(); i++)
+	    result.add(getBranchRepresentation(indent + i, index, node));
 	for(var i = node.children.size()-1; i >= 0; i--)
-	    result.addAll(helper(indent + i, node.children.get(i)));
+	    result.addAll(helper(indent + i, index, node.children.get(i)));
 	return result;
     }
 
-    private ObservableUndoable getStringRepresentation(int indent, Node node) {
+    private ObservableUndoable getBranchRepresentation(int indent, int index, Node parentNode) {
+	var spaces = "| ".repeat(indent-1);
+	return new ObservableUndoable("%s|/".formatted(spaces), parentNode.action);
+    }
+
+    private ObservableUndoable getStringRepresentation(int indent, int index, Node node) {
 	var spaces = "| ".repeat(indent);
-	var currentPostfix = "";
+	var rep = " %d ".formatted(index);
+	if(node == currentLatest)
+	    rep = "{%d}".formatted(index);
 	if(node == currentNode.get())
-	    currentPostfix = " (current)";
+	    rep = ">%d<".formatted(index);
 	if(node == root)
-	    return new ObservableUndoable(spaces + "* <root>" + currentPostfix, node.action);
-	return new ObservableUndoable(spaces + "* " + node.action.getDescription() + currentPostfix, node.action);
+	    return new ObservableUndoable("%s* %s\t(%s)".formatted(spaces, rep, "original"), node.action);
+	return new ObservableUndoable("%s* %s\t(%s)".formatted(spaces, rep, node.action.getDescription()), node.action);
     }
 
     private Optional<Node> find(Undoable action) {
@@ -207,7 +225,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	    logger.error("Action not found in the tree");
 	    return;
 	}
-
+	currentLatest = getMostRecentChild(actionNode.get());
 	var pathA = getAncestors(currentNode.get());
 	var pathB = getAncestors(actionNode.get());
 	var lcaIndex = 0;
@@ -219,7 +237,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	    undo();
 
 	for(var x = lcaIndex; x < pathB.size(); x++) {
-	    var index = getChildIndex(currentNode.get(), pathB.get(x));
+	    var index = getChildIndex(currentNode.get(), pathB.get(x).action);
 	    if(index.isEmpty())
 		throw new IllegalStateException("Action not found in the tree");
 	    redo(index.get());
@@ -233,13 +251,20 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 	return Optional.empty();
     }
 
-    private List<Undoable> getAncestors(Node node) {
-	var result = new ArrayList<Undoable>();
+    private List<Node> getAncestors(Node node) {
+	var result = new ArrayList<Node>();
+	result.add(node);
 	while(node != root) {
-	    result.add(node.action);
 	    node = node.parent.get();
+	    result.add(node);
 	}
 	Collections.reverse(result);
 	return result;
+    }
+
+    private Node getMostRecentChild(Node node) {
+	if(node.children.isEmpty())
+	    return node;
+	return getMostRecentChild(node.children.get(0));
     }
 }

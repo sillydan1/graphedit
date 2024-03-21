@@ -15,6 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class UndoTreePanelController extends VBox {
     private ListView<ObservableUndoable> list;
@@ -34,11 +35,12 @@ public class UndoTreePanelController extends VBox {
 
     private void initialize(IBufferContainer bufferContainer) {
         list = new ListView<>();
-	list.getStyleClass().add(Styles.DENSE);
-	list.getStyleClass().add(Tweaks.EDGE_TO_EDGE);
-	list.getStyleClass().add("text-monospace");
-	VBox.setVgrow(list, Priority.ALWAYS);
-	getChildren().add(list);
+        list.getStyleClass().add(Styles.DENSE);
+        list.getStyleClass().add(Tweaks.EDGE_TO_EDGE);
+        list.getStyleClass().add("text-monospace");
+        list.setFixedCellSize(Font.font("monospace").getSize() + 4);
+        VBox.setVgrow(list, Priority.ALWAYS);
+        getChildren().add(list);
         setList(bufferContainer.getCurrentlyFocusedBuffer().get());
     }
 
@@ -54,7 +56,7 @@ public class UndoTreePanelController extends VBox {
     private void setList(IObservableUndoSystem undosystem) {
         var history = undosystem.getStringRepresentation();
         Collections.reverse(history);
-	list.getItems().setAll(history);
+        list.getItems().setAll(history);
         // TODO: This fires way too often. Basically 4-5 times per click.
         list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             var index = list.getSelectionModel().getSelectedItem();
