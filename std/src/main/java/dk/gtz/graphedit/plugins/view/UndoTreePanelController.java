@@ -2,6 +2,9 @@ package dk.gtz.graphedit.plugins.view;
 
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
@@ -18,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class UndoTreePanelController extends VBox {
+    private static final Logger logger = LoggerFactory.getLogger(UndoTreePanelController.class);
     private ListView<ObservableUndoable> list;
     private ChangeListener<Undoable> undoListener;
 
@@ -42,11 +46,22 @@ public class UndoTreePanelController extends VBox {
         VBox.setVgrow(list, Priority.ALWAYS);
         getChildren().add(list);
         setList(bufferContainer.getCurrentlyFocusedBuffer().get());
+        list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            var index = list.getSelectionModel().getSelectedItem();
+            if(index == null)
+                return;
+            var buffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
+            if(buffer == null)
+                return;
+            buffer.getUndoSystem().gotoAction(index.undoable());
+        });
     }
 
     private void setList(ViewModelProjectResource currentBuffer) {
-        if(currentBuffer == null)
+        if(currentBuffer == null) {
+            list.getItems().clear();
             return;
+        }
         setList(currentBuffer.getUndoSystem());
         undoListener = (e,o,n) -> setList(currentBuffer.getUndoSystem());
         currentBuffer.getUndoSystem().getCurrentUndoableProperty().addListener(undoListener);
@@ -57,12 +72,5 @@ public class UndoTreePanelController extends VBox {
         var history = undosystem.getStringRepresentation();
         Collections.reverse(history);
         list.getItems().setAll(history);
-        // TODO: This fires way too often. Basically 4-5 times per click.
-        list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            var index = list.getSelectionModel().getSelectedItem();
-            if(index == null)
-                return;
-            undosystem.gotoAction(index.undoable());
-        });
     }
 }
