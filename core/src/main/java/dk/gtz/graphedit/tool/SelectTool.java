@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.gtz.graphedit.events.EdgeMouseEvent;
 import dk.gtz.graphedit.events.VertexMouseEvent;
@@ -28,7 +26,6 @@ import javafx.scene.input.MouseEvent;
  * You can select more than one element at a time by holding down CTRL whilst clicking on a syntactic element.
  */
 public class SelectTool extends AbstractBaseTool {
-    private final Logger logger = LoggerFactory.getLogger(SelectTool.class);
     private final ObservableList<ViewModelSelection> selectedElements;
 
     /**

@@ -39,7 +39,7 @@ import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
-import dk.gtz.graphedit.util.ObservableStackUndoSystem;
+import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
@@ -49,7 +49,6 @@ import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -126,9 +125,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	var undoSystem = new ObservableStackUndoSystem();
-	DI.add(IUndoSystem.class, undoSystem);
-	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this - This relates to https://github.com/sillydan1/graphedit/issues/1
+	DI.add(IObservableUndoSystem.class, () -> new ObservableTreeUndoSystem());
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));

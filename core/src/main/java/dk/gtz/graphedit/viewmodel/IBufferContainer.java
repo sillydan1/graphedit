@@ -1,5 +1,9 @@
 package dk.gtz.graphedit.viewmodel;
 
+import java.util.Observable;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 
 /**
@@ -10,9 +14,9 @@ public interface IBufferContainer {
      * Get an instance with a lookup key
      * @param key the key that the project resource was loaded / inserted with
      * @return the associated project resource instance
-     * @throws Exception ultimately up to the implementation, but this could be that there is no instance associated with the provided key
+     * @throws RuntimeException ultimately up to the implementation, but this could be that there is no instance associated with the provided key
      */
-    ViewModelProjectResource get(String key) throws Exception;
+    ViewModelProjectResource get(String key) throws RuntimeException;
 
     /**
      * Close and remove a project resource instance from the collection.
@@ -36,9 +40,9 @@ public interface IBufferContainer {
      * This will fire an event to all event handlers.
      * @param key the key to open
      * @param model the project resource to insert
-     * @throws Exception ultimately up to the implementation, but this could be that the key already exists
+     * @throws RuntimeException ultimately up to the implementation, but this could be that the key already exists
      */
-    void open(String key, ViewModelProjectResource model) throws Exception;
+    void open(String key, ViewModelProjectResource model) throws RuntimeException;
 
     /**
      * Check if the collection contains a project resource instance with the provided key
@@ -53,5 +57,6 @@ public interface IBufferContainer {
      * @return the underlying obserable map
      */
     ObservableMap<String,ViewModelProjectResource> getBuffers();
-}
 
+    ObjectProperty<ViewModelProjectResource> getCurrentlyFocusedBuffer();
+}

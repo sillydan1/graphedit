@@ -120,7 +120,7 @@ subprojects {
         implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
-        implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yaundo', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yalazy', version: '1.1.0';
         implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '2.0.1';

@@ -106,6 +106,11 @@ public class EditorTabPaneController {
 		    tabpane.getSelectionModel().select(tab);
 		    tabpane.requestFocus();
 		});
+		c.getValueAdded().focus();
+		tab.setOnSelectionChanged(e -> {
+		    if(tab.isSelected())
+			DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().set(c.getValueAdded());
+		});
 	    }
 	    if(c.wasRemoved())
 		c.getValueRemoved().getViews().forEach(v -> tabpane.getTabs().remove((Object)v));
@@ -126,6 +131,8 @@ public class EditorTabPaneController {
 	    if(c.wasRemoved())
 		for(var removedTab : c.getRemoved())
 		    tabControllerMapping.remove(removedTab);
+	    if(tabpane.getTabs().isEmpty())
+		DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().set(null);
 	});
     }
 }

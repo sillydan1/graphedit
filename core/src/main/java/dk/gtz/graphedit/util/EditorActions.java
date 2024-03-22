@@ -40,7 +40,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IFunction2;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -396,14 +395,24 @@ public class EditorActions {
      * Perform an undo action
      */
     public static void undo() {
-        DI.get(IUndoSystem.class).undo();
+        var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
+        if(currentlySelectedBuffer == null) {
+            logger.warn("no buffer is currently selected");
+            return;
+        }
+        currentlySelectedBuffer.getUndoSystem().undo();
     }
 
     /**
      * Perform a redo action
      */
     public static void redo() {
-        DI.get(IUndoSystem.class).redo();
+        var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
+        if(currentlySelectedBuffer == null) {
+            logger.warn("no buffer is currently selected");
+            return;
+        }
+        currentlySelectedBuffer.getUndoSystem().redo();
     }
 
     /**

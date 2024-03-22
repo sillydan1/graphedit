@@ -13,6 +13,8 @@ import dk.gtz.graphedit.util.MetadataUtils;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yaerrors.NotFoundException;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
@@ -23,6 +25,7 @@ public class FileBufferContainer implements IBufferContainer {
     private final Logger logger = LoggerFactory.getLogger(FileBufferContainer.class);
     private final ObservableMap<String, ViewModelProjectResource> openBuffers;
     private final IModelSerializer serializer;
+    private final ObjectProperty<ViewModelProjectResource> focusedBuffer;
 
     /**
      * Constructs a new filepath keyed buffer container.
@@ -31,6 +34,7 @@ public class FileBufferContainer implements IBufferContainer {
     public FileBufferContainer(IModelSerializer serializer) {
         openBuffers = FXCollections.observableHashMap(); 
         this.serializer = serializer;
+        this.focusedBuffer = new SimpleObjectProperty<>();
     }
 
     @Override
@@ -83,5 +87,10 @@ public class FileBufferContainer implements IBufferContainer {
     @Override
     public void open(String filename, ViewModelProjectResource model) {
         Platform.runLater(() -> openBuffers.put(filename, model));
+    }
+
+    @Override
+    public ObjectProperty<ViewModelProjectResource> getCurrentlyFocusedBuffer() {
+        return focusedBuffer;
     }
 }

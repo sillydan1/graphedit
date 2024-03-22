@@ -12,7 +12,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -26,7 +25,6 @@ import javafx.scene.input.KeyEvent;
  */
 public class MassDeleteTool extends AbstractBaseTool {
     private final ObservableList<ViewModelSelection> selectedElements;
-    private final IUndoSystem undoSystem;
     private final IBufferContainer buffers;
 
     /**
@@ -34,7 +32,6 @@ public class MassDeleteTool extends AbstractBaseTool {
      */
     public MassDeleteTool() {
 	selectedElements = DI.get("selectedElements");
-	undoSystem = DI.get(IUndoSystem.class);
         buffers = DI.get(IBufferContainer.class);
     }
 
@@ -91,7 +88,7 @@ public class MassDeleteTool extends AbstractBaseTool {
 		buffer.syntax().edges().remove(elem.id());
 	    }
 	    var diff = ViewModelDiff.compare(prev, buffer);
-	    undoSystem.push(new Undoable("mass delete",
+	    buffer.getUndoSystem().push(new Undoable("mass delete",
 			() -> ViewModelDiff.revert(buffer, diff),
 			() -> ViewModelDiff.apply(buffer, diff)));
 	} catch(Exception exc) {
