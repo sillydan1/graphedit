@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +146,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
 		return;
 	    }
 	}
-	logger.error("Current node not found in the ancestors of the current latest node");
+	logger.error("current node not found in the ancestors of the current latest node");
     }
 
     private void redo(int childIndex) {
@@ -222,7 +221,7 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
     public void gotoAction(Undoable action) {
 	var actionNode = find(action);
 	if(actionNode.isEmpty()) {
-	    logger.error("Action not found in the tree");
+	    logger.error("action not found in the tree");
 	    return;
 	}
 	currentLatest = getMostRecentChild(actionNode.get());

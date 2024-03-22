@@ -63,5 +63,4 @@ public class Main {
         GraphEditApplication.launchApp(argv);
         logger.info("goodbye from {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
     }
-
 }

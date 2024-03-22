@@ -16,7 +16,7 @@ public class UndoTreePanel implements IPluginPanel {
 
     @Override
     public String getTooltip() {
-	return "Undo Tree";
+	return "Undo History";
     }
 
     @Override

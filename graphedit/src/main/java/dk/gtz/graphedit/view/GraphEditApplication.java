@@ -39,7 +39,6 @@ import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
-import dk.gtz.graphedit.util.ObservableStackUndoSystem;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -126,7 +125,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	// DI.add(IObservableUndoSystem.class, () -> new ObservableStackUndoSystem());
 	DI.add(IObservableUndoSystem.class, () -> new ObservableTreeUndoSystem());
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
