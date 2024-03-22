@@ -2,9 +2,6 @@ package dk.gtz.graphedit.plugins.view;
 
 import java.util.Collections;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
@@ -21,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class UndoTreePanelController extends VBox {
-    private static final Logger logger = LoggerFactory.getLogger(UndoTreePanelController.class);
     private ListView<ObservableUndoable> list;
     private ChangeListener<Undoable> undoListener;
 

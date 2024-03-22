@@ -16,6 +16,7 @@ import dk.gtz.graphedit.util.MetadataUtils;
 import dk.gtz.graphedit.viewmodel.IFocusable;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
+import dk.gtz.graphedit.viewmodel.ViewModelPoint;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 import dk.yalibs.yadi.DI;
@@ -153,10 +154,7 @@ public class ModelEditorController extends BorderPane implements IFocusable, IEv
 	for(var vertex : resource.syntax().vertices().entrySet()) {
 	    nodes.put(vertex.getKey(), syntaxFactory.createVertexView(bufferKey, vertex.getKey(), vertex.getValue(), resource.syntax(), getViewportTransform()));
 	    vertex.getValue().addFocusListener(() -> {
-		var halfWidth = getWidth() * 0.5;
-		var halfHeight = getHeight() * 0.5;
-		this.drawGroupTransform.setTx(halfWidth - vertex.getValue().position().getX());
-		this.drawGroupTransform.setTy(halfHeight - vertex.getValue().position().getY());
+		centerViewport(vertex.getValue().position());
 		this.focus();
 	    });
 	}
@@ -169,17 +167,21 @@ public class ModelEditorController extends BorderPane implements IFocusable, IEv
 	    edge.getValue().addFocusListener(() -> {
 		var sourcePos = resource.syntax().vertices().get(edge.getValue().source().get()).position();
 		var targetPos = resource.syntax().vertices().get(edge.getValue().target().get()).position();
-		var direction = targetPos.subtract(sourcePos).scale(0.5f);
-		var center = sourcePos.add(direction);
-		var halfWidth = getWidth() * 0.5;
-		var halfHeight = getHeight() * 0.5;
-		this.drawGroupTransform.setTx(halfWidth - center.getX());
-		this.drawGroupTransform.setTy(halfHeight - center.getY());
+		centerViewport(sourcePos.add(targetPos.subtract(sourcePos).scale(0.5f)));
 		this.focus();
 	    });
 	    nodes.put(edge.getKey(), syntaxFactory.createEdgeView(bufferKey, edge.getKey(), edge.getValue(), resource.syntax(), getViewportTransform()));
 	}
 	return nodes;
+    }
+
+    private void centerViewport(ViewModelPoint pointToCenterOn) {
+	var xx = drawGroupTransform.getMxx();
+	var yy = drawGroupTransform.getMyy();
+	var centerX = (getWidth() * 1-xx) * 0.5;
+	var centerY = (getHeight() * 1-yy) *  0.5;
+	this.drawGroupTransform.setTx(-((pointToCenterOn.getX() * xx) - centerX));
+	this.drawGroupTransform.setTy(-((pointToCenterOn.getY() * yy) - centerY));
     }
 
     private void initializeMetadataEventHandlers() {
@@ -234,10 +236,7 @@ public class ModelEditorController extends BorderPane implements IFocusable, IEv
 	    if(c.wasAdded()) {
 		drawGroup.addChild(c.getKey(), syntaxFactory.createVertexView(bufferKey, c.getKey(), c.getValueAdded(), resource.syntax(), getViewportTransform()));
 		c.getValueAdded().addFocusListener(() -> {
-		    var halfWidth = getWidth() * 0.5;
-		    var halfHeight = getHeight() * 0.5;
-		    this.drawGroupTransform.setTx(halfWidth - c.getValueAdded().position().getX());
-		    this.drawGroupTransform.setTy(halfHeight - c.getValueAdded().position().getY());
+		    centerViewport(c.getValueAdded().position());
 		    this.focus();
 		});
 	    }
@@ -252,12 +251,7 @@ public class ModelEditorController extends BorderPane implements IFocusable, IEv
 		c.getValueAdded().addFocusListener(() -> {
 		    var sourcePos = resource.syntax().vertices().get(c.getValueAdded().source().get()).position();
 		    var targetPos = resource.syntax().vertices().get(c.getValueAdded().target().get()).position();
-		    var direction = targetPos.subtract(sourcePos).scale(0.5f);
-		    var center = sourcePos.add(direction);
-		    var halfWidth = getWidth() * 0.5;
-		    var halfHeight = getHeight() * 0.5;
-		    this.drawGroupTransform.setTx(halfWidth - center.getX());
-		    this.drawGroupTransform.setTy(halfHeight - center.getY());
+		    centerViewport(sourcePos.add(targetPos.subtract(sourcePos).scale(0.5f)));
 		    this.focus();
 		});
 		drawGroup.addChild(c.getKey(), syntaxFactory.createEdgeView(bufferKey, c.getKey(), c.getValueAdded(), resource.syntax(), getViewportTransform()));
