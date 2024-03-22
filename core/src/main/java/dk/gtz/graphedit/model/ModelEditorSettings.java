@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
@@ -25,6 +24,8 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
  * @param disabledPlugins List of plugin filepaths that are disabled
+ * @param tipIndex Index of the current tip being shown
+ * @param showTips When true, will show a tip of the day on startup
  */
 public record ModelEditorSettings(
         double gridSizeX,
@@ -39,13 +40,15 @@ public record ModelEditorSettings(
         boolean showTraceToasts,
         String lastOpenedProject,
         List<String> recentProjects,
-        List<String> disabledPlugins) {
+        List<String> disabledPlugins,
+        int tipIndex,
+        boolean showTips) {
 
     /**
      * Constructs a ModelEditorSettings instance with default values.
      */
     public ModelEditorSettings() {
-        this(20.0d, 20.0d, true, false, true, false, true, true, true, false, "", new ArrayList<>(), new ArrayList<>());
+        this(20.0d, 20.0d, true, false, true, false, true, true, true, false, "", new ArrayList<>(), new ArrayList<>(), 0, true);
     }
 
     /**
@@ -65,7 +68,9 @@ public record ModelEditorSettings(
             viewmodel.showTraceToasts().get(),
             viewmodel.lastOpenedProject().get(),
             new ArrayList<String>(viewmodel.recentProjects().get()),
-            new ArrayList<String>(viewmodel.disabledPlugins().get())
+            new ArrayList<String>(viewmodel.disabledPlugins().get()),
+            viewmodel.tipIndex().get(),
+            viewmodel.showTips().get()
         );
     }
 

@@ -40,12 +40,15 @@ import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
+import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
+import dk.gtz.graphedit.viewmodel.Tip;
+import dk.gtz.graphedit.viewmodel.TipContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
@@ -107,6 +110,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    t.setName("lsp-init-" + e.getName());
 	    t.start();
 	});
+	if(DI.get(ViewModelEditorSettings.class).showTips().get())
+	    EditorActions.openTipOfTheDay();
     }
 
     @Override
@@ -132,6 +137,34 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
+	setupTipsOfTheDay();
+    }
+
+    private void setupTipsOfTheDay() {
+	var tips = new ArrayList<Tip>();
+	var shortcut = PlatformUtils.isMac() ? "Cmd" : "Ctrl";
+	tips.add(new Tip("Welcome",
+		    "Welcome to GraphEdit! This is a simple tool for creating and editing graphs."));
+	tips.add(new Tip("Projects",
+		    "New projects are openend as a temporary project until saved.\n"+
+		    "You can save by pressing <%s + S>".formatted(shortcut)));
+	tips.add(new Tip("Undo/Redo",
+		    "You can undo and redo changes by pressing "+
+		    "<%s + Z> and <%s + Shift + Z> respectively".formatted(shortcut, shortcut)));
+	tips.add(new Tip("Multi select",
+		    "You can use the <Ctrl> key to select multiple elements"));
+	tips.add(new Tip("Copy/Paste",
+		    "You can copy and paste elements by pressing "+
+		    "<%s + C> and <%s + V>\n\n".formatted(shortcut, shortcut)+
+		    "Copied elements are stored in the system clipboard and can be pasted into any other application as text"));
+	tips.add(new Tip("Delete",
+		    "You can delete elements by selecting them and pressing the <Delete> or <Shift + %s + Backspace> keys".formatted(shortcut)));
+	tips.add(new Tip("Plugins",
+		    "GraphEdit supports plugins that can provide additional functionality.\n"+
+		    "GraphEdit plugins can provide additional functionality such as new syntaxes as well as language servers for code completion and linting.\n"+
+		    "You can enable or disable plugins in the plugins panel.\n\n"+
+		    "Visit the GraphEdit github repository for more information on how to write your own plugin."));
+	DI.add(TipContainer.class, new TipContainer(tips));
     }
 
     private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {

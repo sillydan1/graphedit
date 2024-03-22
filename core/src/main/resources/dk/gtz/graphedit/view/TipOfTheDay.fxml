@@ -5,7 +5,7 @@
 <BorderPane fx:id="root"
     xmlns:fx="http://javafx.com/fxml"
     xmlns="http://javafx.com/javafx"
-    fx:controller="dk.gtz.graphedit.view.EditorSettingsController">
+    fx:controller="dk.gtz.graphedit.view.TipOfTheDayController">
     <center>
         <VBox fx:id="inspectorPane"/>
     </center>

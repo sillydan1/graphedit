@@ -304,6 +304,10 @@ public class EditorActions {
         openModal("EditorSettings.fxml", "Editor Settings");
     }
 
+    public static void openTipOfTheDay() {
+        openModal("TipOfTheDay.fxml", "Tip Of The Day");
+    }
+
     /**
      * Open the {@see ViewModelProject} editor modal pane
      */
