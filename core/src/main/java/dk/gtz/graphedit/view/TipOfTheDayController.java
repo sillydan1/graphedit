@@ -109,16 +109,13 @@ public class TipOfTheDayController {
 	var inspector = InspectorUtils.getObservableInspector(observable);
 	var tile = new Tile(labelName, description);
 	tile.setAction(inspector);
-	if(inspector instanceof ToggleSwitch ts)
-	    tile.setActionHandler(() -> {
+	tile.setActionHandler(() -> {
+	    if(inspector instanceof ToggleSwitch ts)
 		ts.fire();
-		EditorActions.saveEditorSettings(editorSettings);
-	    });
-	else
-	    tile.setActionHandler(() -> {
+	    else
 		inspector.requestFocus();
-		EditorActions.saveEditorSettings(editorSettings);
-	    });
+	    EditorActions.saveEditorSettings(editorSettings);
+	});
 	return tile;
     }
 }

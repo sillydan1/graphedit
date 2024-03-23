@@ -12,4 +12,3 @@ fx:controller="dk.gtz.graphedit.view.SidePanelController">
     <center>
     </center>
 </BorderPane>
-
