@@ -40,12 +40,14 @@ import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
+import dk.gtz.graphedit.util.TipLoader;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
+import dk.gtz.graphedit.viewmodel.TipContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
@@ -107,6 +109,8 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    t.setName("lsp-init-" + e.getName());
 	    t.start();
 	});
+	if(DI.get(ViewModelEditorSettings.class).showTips().get())
+	    EditorActions.openTipOfTheDay();
     }
 
     @Override
@@ -132,6 +136,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
+	DI.add(TipContainer.class, TipLoader.loadTips());
     }
 
     private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {

@@ -5,9 +5,11 @@ import java.util.List;
 import dk.gtz.graphedit.model.ModelEditorSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -28,6 +30,8 @@ import javafx.collections.FXCollections;
  * @param lastOpenedProject Filepath to the last opened graphedit project file
  * @param recentProjects List of filepaths that have been recently opened
  * @param disabledPlugins List of plugin names that are loaded, but not initialized
+ * @param tipIndex Index of the last shown tip
+ * @param showTips When true, will show tips on startup
  */
 public record ViewModelEditorSettings(
                 DoubleProperty gridSizeX,
@@ -42,7 +46,9 @@ public record ViewModelEditorSettings(
                 BooleanProperty showTraceToasts,
                 StringProperty lastOpenedProject,
                 ListProperty<String> recentProjects,
-                ListProperty<String> disabledPlugins) {
+                ListProperty<String> disabledPlugins,
+                IntegerProperty tipIndex,
+                BooleanProperty showTips) {
 
         /**
          * Construct a new instance
@@ -62,7 +68,9 @@ public record ViewModelEditorSettings(
                         settings.showTraceToasts(),
                         settings.lastOpenedProject(),
                         new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList())
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
+                        settings.tipIndex(),
+                        settings.showTips()
                     );
                 if(settings.recentProjects() != null)
                         this.recentProjects.addAll(settings.recentProjects());
@@ -99,7 +107,9 @@ public record ViewModelEditorSettings(
                         boolean showTraceToasts,
                         String lastOpenedProject,
                         List<String> recentProjects,
-                        List<String> disabledPlugins) {
+                        List<String> disabledPlugins,
+                        int tipIndex,
+                        boolean showTips) {
                 this(
                         new SimpleDoubleProperty(gridSizeX),
                         new SimpleDoubleProperty(gridSizeY),
@@ -113,7 +123,9 @@ public record ViewModelEditorSettings(
                         new SimpleBooleanProperty(showTraceToasts),
                         new SimpleStringProperty(lastOpenedProject),
                         new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList())
+                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
+                        new SimpleIntegerProperty(tipIndex),
+                        new SimpleBooleanProperty(showTips)
                     );
                 this.recentProjects.addAll(recentProjects);
                 this.disabledPlugins.addAll(disabledPlugins);

@@ -272,6 +272,11 @@ public class EditorController {
     }
 
     @FXML
+    private void openTipOfTheDay() {
+	EditorActions.openTipOfTheDay();
+    }
+
+    @FXML
     private void newProject() {
 	var file = EditorActions.newFile();
 	if(!file.isPresent())

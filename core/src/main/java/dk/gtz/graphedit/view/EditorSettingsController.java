@@ -41,6 +41,7 @@ public class EditorSettingsController {
 	addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
 	addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
 	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
+	addInspector("Show Tips", "Show tip of the day on startup", editorSettings.showTips());
 	inspectorPane.getChildren().add(new Separator());
 	addInspector("Info Popups", "Show toast popups when info level logs are added", editorSettings.showInfoToasts());
 	addInspector("Warn Popups", "Show toast popups when warning level logs are added", editorSettings.showWarnToasts());
