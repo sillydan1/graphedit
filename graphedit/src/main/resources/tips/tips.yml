@@ -1,0 +1,47 @@
+# Tips are shown to the user in the welcome screen
+# You can use BBCode Markup to format the text
+# If you have an image, you can add it with the 'image' key and a width (in pixels) with the 'imageWidth' key
+# Aspect ratio is preserved, so the height is calculated automatically
+# To refer to the shortcut key, use the '$shortcut' placeholder
+tips:
+  - category: "Welcome"
+    imageWidth: 200
+    image: icon/graphedit.png
+    description: |
+      Welcome to GraphEdit! This is a simple tool for creating and editing graphs.
+
+  - category: "Welcome"
+    description: |
+      New projects are openend as a temporary project until saved.
+      You can save by pressing [font=monospace]<$shortcut + S>[/font] or by clicking [font=monospace]File > Save[/font] button in the toolbar.
+
+  - category: "Basic Editing"
+    description: |
+      You can create new vertices by [font=monospace]Shift[/font] clicking on the canvas
+      You can create new edges by Shift clicking on a vertex and then click on another
+
+  - category: "Undo/Redo"
+    description: |
+      You can undo and redo changes by pressing [font=monospace]<$shortcut + Z>[/font] and [font=monospace]<$shortcut + Shift + Z>[/font] respectively
+
+  - category: "Multi select"
+    description: |
+      You can use the [font=monospace]<Ctrl>[/font] key to select multiple elements
+
+  - category: "Copy/Paste"
+    description: |
+      You can copy and paste elements by pressing [font=monospace]<$shortcut + C>[/font] and [font=monospace]<$shortcut + V>[/font] respectively
+
+      Copied elements are stored in the system clipboard and can be pasted into any other application as text
+
+  - category: "Delete"
+    description: |
+      You can delete elements by selecting them and pressing the [font=monospace]<Delete>[/font] or [font=monospace]<Shift + $shortcut + Backspace>[/font] keys
+
+  - category: "Plugins"
+    description: |
+      GraphEdit supports plugins that can provide additional functionality.
+      GraphEdit plugins can provide additional functionality such as new syntaxes as well as language servers for code completion and linting.
+      You can enable or disable plugins in the plugins panel.
+
+      Visit the GraphEdit [url=https://github.com/sillydan1/graphedit]github repository[/url] for more information on how to write your own plugin.

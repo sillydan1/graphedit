@@ -13,6 +13,7 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import dk.gtz.graphedit.internal.TipLoader;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
@@ -141,34 +142,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
     }
 
     private void setupTipsOfTheDay() {
-	var tips = new ArrayList<Tip>();
-	// TODO: These should be loaded from a file or something
-	var shortcut = PlatformUtils.isMac() ? "Cmd" : "Ctrl";
-	tips.add(new Tip("Welcome",
-		    "Welcome to GraphEdit! This is a simple tool for creating and editing graphs."));
-	tips.add(new Tip("Welcome",
-		    "New projects are openend as a temporary project until saved.\n"+
-		    "You can save by pressing <%s + S>".formatted(shortcut)));
-	tips.add(new Tip("Basic Editing",
-		    "You can create new vertices by Shift clicking on the canvas\n"+
-		    "You can create new edges by Shift clicking on a vertex and then click on another"));
-	tips.add(new Tip("Undo/Redo",
-		    "You can undo and redo changes by pressing "+
-		    "<%s + Z> and <%s + Shift + Z> respectively".formatted(shortcut, shortcut)));
-	tips.add(new Tip("Multi select",
-		    "You can use the <Ctrl> key to select multiple elements"));
-	tips.add(new Tip("Copy/Paste",
-		    "You can copy and paste elements by pressing "+
-		    "<%s + C> and <%s + V>\n\n".formatted(shortcut, shortcut)+
-		    "Copied elements are stored in the system clipboard and can be pasted into any other application as text"));
-	tips.add(new Tip("Delete",
-		    "You can delete elements by selecting them and pressing the <Delete> or <Shift + %s + Backspace> keys".formatted(shortcut)));
-	tips.add(new Tip("Plugins",
-		    "GraphEdit supports plugins that can provide additional functionality.\n"+
-		    "GraphEdit plugins can provide additional functionality such as new syntaxes as well as language servers for code completion and linting.\n"+
-		    "You can enable or disable plugins in the plugins panel.\n\n"+
-		    "Visit the GraphEdit github repository for more information on how to write your own plugin."));
-	DI.add(TipContainer.class, new TipContainer(tips));
+	DI.add(TipContainer.class, TipLoader.loadTips());
     }
 
     private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {
