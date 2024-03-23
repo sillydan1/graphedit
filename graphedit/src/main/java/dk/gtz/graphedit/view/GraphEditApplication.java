@@ -142,12 +142,16 @@ public class GraphEditApplication extends Application implements IRestartableApp
 
     private void setupTipsOfTheDay() {
 	var tips = new ArrayList<Tip>();
+	// TODO: These should be loaded from a file or something
 	var shortcut = PlatformUtils.isMac() ? "Cmd" : "Ctrl";
 	tips.add(new Tip("Welcome",
 		    "Welcome to GraphEdit! This is a simple tool for creating and editing graphs."));
-	tips.add(new Tip("Projects",
+	tips.add(new Tip("Welcome",
 		    "New projects are openend as a temporary project until saved.\n"+
 		    "You can save by pressing <%s + S>".formatted(shortcut)));
+	tips.add(new Tip("Basic Editing",
+		    "You can create new vertices by Shift clicking on the canvas\n"+
+		    "You can create new edges by Shift clicking on a vertex and then click on another"));
 	tips.add(new Tip("Undo/Redo",
 		    "You can undo and redo changes by pressing "+
 		    "<%s + Z> and <%s + Shift + Z> respectively".formatted(shortcut, shortcut)));
