@@ -19,6 +19,10 @@ public class TipContainer {
         tips.add(tip);
     }
 
+    public void merge(TipContainer container) {
+        tips.addAll(container.tips);
+    }
+
     public int size() {
         return tips.size();
     }

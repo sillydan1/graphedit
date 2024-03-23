@@ -13,7 +13,6 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import dk.gtz.graphedit.internal.TipLoader;
 import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
@@ -41,14 +40,13 @@ import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
-import dk.gtz.graphedit.util.PlatformUtils;
+import dk.gtz.graphedit.util.TipLoader;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
-import dk.gtz.graphedit.viewmodel.Tip;
 import dk.gtz.graphedit.viewmodel.TipContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -138,10 +136,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
-	setupTipsOfTheDay();
-    }
-
-    private void setupTipsOfTheDay() {
 	DI.add(TipContainer.class, TipLoader.loadTips());
     }
 
