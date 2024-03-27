@@ -690,7 +690,7 @@ public class EditorActions {
                 return;
             }
             var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
-	        var openBuffers = DI.get(IBufferContainer.class);
+            var openBuffers = DI.get(IBufferContainer.class);
             openBuffers.open(path.toString().replace(basePath, ""));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -720,7 +720,6 @@ public class EditorActions {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
     }
 
     /**

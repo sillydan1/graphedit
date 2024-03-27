@@ -1,9 +1,6 @@
 package dk.gtz.graphedit.viewmodel;
 
-import java.util.Observable;
-
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 
 /**

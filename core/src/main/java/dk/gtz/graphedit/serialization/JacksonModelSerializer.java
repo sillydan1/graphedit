@@ -67,7 +67,7 @@ public class JacksonModelSerializer implements IModelSerializer {
     @Override
     public void addClassLoader(ClassLoader loader) {
 	for(var p : loader.getDefinedPackages()) {
-	    logger.info("adding '{}' to allowed namespaces", p.getName());
+	    logger.trace("adding '{}' to allowed namespaces", p.getName());
 	    pluginPackages.add(p.getName());
 	}
 	var tf = this.objectMapper.getTypeFactory().withClassLoader(loader);

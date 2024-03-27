@@ -17,11 +17,13 @@ import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
+import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.spi.ILanguageServer;
+import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
@@ -95,10 +97,49 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	setupToolbox();
 	setupPreferences();
 	setupLogging();
+	loadAndStartPlugins();
 	setupStage(primaryStage);
 	DI.add(Window.class, primaryStage.getScene().getWindow());
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> {
+	if(DI.get(ViewModelEditorSettings.class).showTips().get())
+	    EditorActions.openTipOfTheDay();
+    }
+
+    @Override
+    public void restart() {
+	primaryStage.close();
+        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(IPlugin::onDestroy);
+        DI.get(IPluginsContainer.class).clear();
+	DI.get(LanguageServerCollection.class).clear();
+	try {
+	    var newStage = new Stage();
+	    kickoff(newStage);
+	    primaryStage = newStage;
+	} catch(Exception e) {
+	    primaryStage.show();
+	    logger.error(e.getMessage());
+	}
+    }
+
+    private void loadAndStartPlugins() {
+	var loader = DI.get(PluginLoader.class);
+	loader.loadPlugins();
+	var loadedPlugins = loader.getLoadedPlugins();
+	var factories = DI.get(SyntaxFactoryCollection.class);
+        DI.add(IPluginsContainer.class, loadedPlugins);
+	loadedPlugins.getEnabledPlugins().forEach(IPlugin::onInitialize);
+
+        for(var plugin : loadedPlugins.getEnabledPlugins()) {
+            try {
+                factories.add(plugin.getSyntaxFactories());
+            } catch (Exception e) {
+                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
+            }
+        }
+        if(factories.isEmpty())
+            throw new RuntimeException("Failed to load any syntax factories. Please check your plugins directory");
+
+	loadedPlugins.getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+	loadedPlugins.getEnabledPlugins().forEach(e -> {
 	    var t = new Thread(() -> {
 		try {
 		    DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
@@ -109,21 +150,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    t.setName("lsp-init-" + e.getName());
 	    t.start();
 	});
-	if(DI.get(ViewModelEditorSettings.class).showTips().get())
-	    EditorActions.openTipOfTheDay();
-    }
-
-    @Override
-    public void restart() {
-	primaryStage.close();
-	try {
-	    var newStage = new Stage();
-	    kickoff(newStage);
-	    primaryStage = newStage;
-	} catch(Exception e) {
-	    primaryStage.show();
-	    logger.error(e.getMessage());
-	}
     }
 
     private void setupApplication() {

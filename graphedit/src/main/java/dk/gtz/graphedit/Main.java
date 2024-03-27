@@ -9,7 +9,6 @@ import ch.qos.logback.classic.Logger;
 import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
-import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.view.GraphEditApplication;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
@@ -42,22 +41,8 @@ public class Main {
         DI.add(IModelSerializer.class, new JacksonModelSerializer());
         var editorSettings = EditorActions.loadEditorSettings();
         DI.add(ViewModelEditorSettings.class, editorSettings);
-
-        var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class)).loadPlugins();
-        DI.add(IPluginsContainer.class, loader.getLoadedPlugins());
-        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
-            plugin.onInitialize();
-        }
-        for(var plugin : loader.getLoadedPlugins().getEnabledPlugins()) {
-            try {
-                factories.add(plugin.getSyntaxFactories());
-            } catch (Exception e) {
-                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
-            }
-        }
-
-        if(factories.isEmpty())
-            throw new Exception("Refusing to start the editor without any syntaxes. Please check your plugins directory");
+        var loader = new PluginLoader(args.pluginDirs, DI.get(IModelSerializer.class));
+        DI.add(PluginLoader.class, loader);
 
         logger.info("welcome to {} {}", BuildConfig.APP_NAME, BuildConfig.APP_VERSION);
         GraphEditApplication.launchApp(argv);

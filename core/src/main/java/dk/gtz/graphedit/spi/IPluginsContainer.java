@@ -55,4 +55,6 @@ public interface IPluginsContainer {
      * @return A collection of the enabled plugins
      */
     Collection<IPlugin> getEnabledPlugins();
+
+    void clear();
 }
