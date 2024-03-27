@@ -134,7 +134,10 @@ subprojects {
         implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
         implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
+        implementation group: 'party.iroiro.luajava', name: 'luajava', version: '3.5.0';
+        implementation group: 'party.iroiro.luajava', name: 'luajit', version: '3.5.0';
 
+        runtimeOnly group: 'party.iroiro.luajava', name: 'luajit-platform', version: '3.5.0', classifier: 'natives-desktop';
         runtimeOnly group: 'io.grpc', name: 'grpc-netty-shaded', version: '1.60.0';
         implementation group: 'io.grpc', name: 'grpc-protobuf', version: '1.60.0';
         implementation group: 'io.grpc', name: 'grpc-stub', version: '1.60.0';
