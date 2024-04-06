@@ -3,15 +3,16 @@ package dk.gtz.graphedit.view;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.HeightDragResizer;
+import dk.gtz.graphedit.util.Keymap;
 import dk.gtz.graphedit.util.PlatformUtils;
 import dk.gtz.graphedit.util.WidthDragResizer;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
@@ -19,17 +20,18 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 
 /**
  * View controller for the main editor.
@@ -78,6 +80,34 @@ public class EditorController {
 	initProjectMenu();
 	hideTopbarOnSupportedPlatforms();
 	bottomBorderPane.setBottom(new StatusBarController());
+	DI.get(Keymap.class).onNewKeymap(this::setKeymap);
+	DI.get(Keymap.class).onKeymapOverridden(this::removeKeymap);
+    }
+
+    private void removeKeymap(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {
+	menubar.getMenus().stream()
+	    .forEach(menu ->
+		    menu.getItems().removeIf(i -> {
+			if(i.getUserData() == null)
+			    return false;
+			return i.getUserData().equals(keybind.getKey());
+		    }));
+    }
+
+    private void setKeymap(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {
+	if(keybind.getValue().category().isEmpty())
+	    return;
+	var menu = menubar.getMenus().stream()
+	    .filter(m -> m.getText().equals(keybind.getValue().category()))
+	    .findFirst().orElse(new Menu(keybind.getValue().category()));
+	if(!menubar.getMenus().contains(menu))
+	    menubar.getMenus().add(menu);
+	menu.getItems().add(new MenuItem(keybind.getValue().description()) {{
+	    setUserData(keybind.getKey());
+	    setOnAction(e -> keybind.getValue().action().run());
+	    setAccelerator(keybind.getKey());
+	}};
+	newMenu.getItems().add(newMenuItem);
     }
 
     private void initProjectMenu() {
@@ -211,12 +241,6 @@ public class EditorController {
 
     @FXML
     private void quit() {
-	var w = DI.get(Window.class);
-	var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
-	if(result.isEmpty())
-	    return;
-        if(result.get())
-	    EditorActions.save();
 	EditorActions.quit();
     }
 
@@ -278,19 +302,11 @@ public class EditorController {
 
     @FXML
     private void newProject() {
-	var file = EditorActions.newFile();
-	if(!file.isPresent())
-	    return;
-	var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
-	EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
-	EditorActions.openProject(file.get());
+	EditorActions.newProject();
     }
 
     @FXML
     private void openProject() {
-	var w = DI.get(Window.class);
-	var file = EditorActions.openProjectPicker(w);
-	if(file.isPresent())
-	    EditorActions.openProject(file.get());
+	EditorActions.openProject();
     }
 }

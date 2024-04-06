@@ -40,6 +40,7 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
+import dk.gtz.graphedit.util.Keymap;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
 import dk.gtz.graphedit.util.TipLoader;
@@ -102,6 +103,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	DI.add(Window.class, primaryStage.getScene().getWindow());
 	if(DI.get(ViewModelEditorSettings.class).showTips().get())
 	    EditorActions.openTipOfTheDay();
+	setupDefaultKeymaps();
     }
 
     @Override
@@ -272,9 +274,38 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
 	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
+	var keymap = new Keymap();
+	DI.add(Keymap.class, keymap);
 	setupModalPane();
-	primaryStage.setScene(loadMainScene());
+	var mainScene = loadMainScene();
+	keymap.onNewKeymap(e -> {
+	    // NOTE: only add the blank category keybinds to the main scene accelerators
+	    // the rest will be added to the menubar automatically (see EditorController.setKeymap)
+	    // (this is to avoid duplicate keybinds in the menubar and the main scene accelerators)
+	    // I personally dont like this setup, as the responsibility is now split between two classes,
+	    // so it may change in the future
+	    if(e.getValue().category().isBlank())
+		mainScene.getAccelerators().put(e.getKey(), e.getValue().action());
+	});
+	primaryStage.setScene(mainScene);
 	primaryStage.show();
+    }
+
+    private void setupDefaultKeymaps() {
+	var keymap = DI.get(Keymap.class);
+	keymap.set("Shortcut+N", EditorActions::createNewModelFile, "Create new model", "File");
+	keymap.set("Shortcut+O", EditorActions::openModel, "Open model", "File");
+	keymap.set("Shortcut+Shift+N", EditorActions::newProject, "Create new project", "File");
+	keymap.set("Shortcut+Shift+O", EditorActions::openProject, "Open project", "File");
+	keymap.set("Shortcut+S", EditorActions::save, "Save", "File");
+	keymap.set("Shortcut+Shift+S", EditorActions::saveAs, "Save As", "File");
+	keymap.set("Shortcut+Q", EditorActions::quit, "Quit", "File");
+
+	keymap.set("Shortcut+Z", EditorActions::undo, "Undo", "Edit");
+	keymap.set("Shortcut+Shift+Z", EditorActions::redo, "Redo", "Edit");
+
+	keymap.set("Shortcut+T", EditorActions::toggleTheme, "Toggle Theme", "View");
+	keymap.set("Shortcut+F", EditorActions::openSearchPane, "Open Search", "View");
     }
 
     private void setupLogging() {

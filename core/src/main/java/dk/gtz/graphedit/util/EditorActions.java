@@ -76,6 +76,13 @@ public class EditorActions {
      * Will immediately quit the application with no hesitation.
      */
     public static void quit() {
+        var w = DI.get(Window.class);
+        // TODO: Check if there are unsaved changes
+        var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
+        if(result.isEmpty())
+            return;
+            if(result.get())
+            EditorActions.save();
         Platform.exit();
     }
 
@@ -221,6 +228,22 @@ public class EditorActions {
         }
     }
 
+    public static void openProject() {
+        var w = DI.get(Window.class);
+        var file = EditorActions.openProjectPicker(w);
+        if(file.isPresent())
+            EditorActions.openProject(file.get());
+    }
+
+    public static void newProject() {
+        var file = EditorActions.newFile();
+        if(!file.isPresent())
+            return;
+        var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
+        EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
+        EditorActions.openProject(file.get());
+    }
+
     /**
      * Restart the application.
      *
@@ -304,6 +327,16 @@ public class EditorActions {
         openModal("EditorSettings.fxml", "Editor Settings");
     }
 
+    /**
+     * Open the {@see Keymap} viewer modal pane
+     */
+    public static void openKeybinds() {
+        openModal("Keybinds.fxml", "Keybinds");
+    }
+
+    /**
+     * Open the tip of the day modal pane
+     */
     public static void openTipOfTheDay() {
         openModal("TipOfTheDay.fxml", "Tip Of The Day");
     }
