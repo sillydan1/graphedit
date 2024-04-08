@@ -20,7 +20,7 @@ public class Keymap {
     }
 
     public void set(String keycombination, Runnable action, String description) {
-	set(keycombination, action, description, "keybinds");
+	set(keycombination, action, description, "");
     }
 
     public void set(String keycombination, Runnable action, String description, String category) {

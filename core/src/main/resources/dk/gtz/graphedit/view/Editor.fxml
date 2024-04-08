@@ -30,6 +30,7 @@
                     </Menu>
                     <Menu text="Help">
                         <MenuItem onAction="#openAboutPane" text="About"/>
+                        <MenuItem onAction="#openKeybinds" text="Open Keybinds"/>
                         <MenuItem onAction="#openTipOfTheDay" text="Show Tip Of The Day"/>
                     </Menu>
                 </MenuBar>

@@ -19,19 +19,11 @@ import dk.gtz.graphedit.util.Keymap;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import party.iroiro.luajava.Lua;
 import party.iroiro.luajava.Lua.LuaError;
 import party.iroiro.luajava.Lua.LuaType;
 import party.iroiro.luajava.luajit.LuaJit;
 
-// TODO: Keyboard events, so lua can do quick and cool ass fuck keybindings
-//       To do this, I think we might need a global keybind store, where each normal bind
-//       would have to check if it has been overridden... Or maybe they register themselves... or something
 public class LuaPlugin implements IPlugin {
 	private static final Logger logger = LoggerFactory.getLogger(LuaPlugin.class);
 	private static record SubPlugin(String name, String description, Runnable onStart, Runnable onDestroy) {}

@@ -20,7 +20,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -106,8 +105,7 @@ public class EditorController {
 	    setUserData(keybind.getKey());
 	    setOnAction(e -> keybind.getValue().action().run());
 	    setAccelerator(keybind.getKey());
-	}};
-	newMenu.getItems().add(newMenuItem);
+	}});
     }
 
     private void initProjectMenu() {
@@ -232,6 +230,11 @@ public class EditorController {
     @FXML
     private void saveAs() {
 	EditorActions.saveAs();
+    }
+
+    @FXML
+    private void openKeybinds() {
+	EditorActions.openKeybinds();
     }
 
     @FXML
