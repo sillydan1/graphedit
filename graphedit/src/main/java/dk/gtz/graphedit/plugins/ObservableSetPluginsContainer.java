@@ -61,4 +61,9 @@ public class ObservableSetPluginsContainer implements IPluginsContainer {
 	public List<IPlugin> getEnabledPlugins() {
 		return plugins.stream().filter(p -> !settings.disabledPlugins().contains(p.getName())).toList();
 	}
+
+	@Override
+	public void clear() {
+		plugins.clear();
+	}
 }

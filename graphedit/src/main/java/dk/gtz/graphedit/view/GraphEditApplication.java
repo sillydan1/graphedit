@@ -17,11 +17,13 @@ import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
+import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
 import dk.gtz.graphedit.spi.ILanguageServer;
+import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
@@ -38,6 +40,7 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
+import dk.gtz.graphedit.util.Keymap;
 import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
 import dk.gtz.graphedit.util.TipLoader;
@@ -95,10 +98,50 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	setupToolbox();
 	setupPreferences();
 	setupLogging();
+	loadAndStartPlugins();
 	setupStage(primaryStage);
 	DI.add(Window.class, primaryStage.getScene().getWindow());
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> {
+	if(DI.get(ViewModelEditorSettings.class).showTips().get())
+	    EditorActions.openTipOfTheDay();
+	setupDefaultKeymaps();
+    }
+
+    @Override
+    public void restart() {
+	primaryStage.close();
+        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(IPlugin::onDestroy);
+        DI.get(IPluginsContainer.class).clear();
+	DI.get(LanguageServerCollection.class).clear();
+	try {
+	    var newStage = new Stage();
+	    kickoff(newStage);
+	    primaryStage = newStage;
+	} catch(Exception e) {
+	    primaryStage.show();
+	    logger.error(e.getMessage());
+	}
+    }
+
+    private void loadAndStartPlugins() {
+	var loader = DI.get(PluginLoader.class);
+	loader.loadPlugins();
+	var loadedPlugins = loader.getLoadedPlugins();
+	var factories = DI.get(SyntaxFactoryCollection.class);
+        DI.add(IPluginsContainer.class, loadedPlugins);
+	loadedPlugins.getEnabledPlugins().forEach(IPlugin::onInitialize);
+
+        for(var plugin : loadedPlugins.getEnabledPlugins()) {
+            try {
+                factories.add(plugin.getSyntaxFactories());
+            } catch (Exception e) {
+                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
+            }
+        }
+        if(factories.isEmpty())
+            throw new RuntimeException("Failed to load any syntax factories. Please check your plugins directory");
+
+	loadedPlugins.getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+	loadedPlugins.getEnabledPlugins().forEach(e -> {
 	    var t = new Thread(() -> {
 		try {
 		    DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
@@ -109,21 +152,6 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    t.setName("lsp-init-" + e.getName());
 	    t.start();
 	});
-	if(DI.get(ViewModelEditorSettings.class).showTips().get())
-	    EditorActions.openTipOfTheDay();
-    }
-
-    @Override
-    public void restart() {
-	primaryStage.close();
-	try {
-	    var newStage = new Stage();
-	    kickoff(newStage);
-	    primaryStage = newStage;
-	} catch(Exception e) {
-	    primaryStage.show();
-	    logger.error(e.getMessage());
-	}
     }
 
     private void setupApplication() {
@@ -246,9 +274,38 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
 	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
+	var keymap = new Keymap();
+	DI.add(Keymap.class, keymap);
 	setupModalPane();
-	primaryStage.setScene(loadMainScene());
+	var mainScene = loadMainScene();
+	keymap.onNewKeymap(e -> {
+	    // NOTE: only add the blank category keybinds to the main scene accelerators
+	    // the rest will be added to the menubar automatically (see EditorController.setKeymap)
+	    // (this is to avoid duplicate keybinds in the menubar and the main scene accelerators)
+	    // I personally dont like this setup, as the responsibility is now split between two classes,
+	    // so it may change in the future
+	    if(e.getValue().category().isBlank())
+		mainScene.getAccelerators().put(e.getKey(), e.getValue().action());
+	});
+	primaryStage.setScene(mainScene);
 	primaryStage.show();
+    }
+
+    private void setupDefaultKeymaps() {
+	var keymap = DI.get(Keymap.class);
+	keymap.set("Shortcut+N", EditorActions::createNewModelFile, "Create new model", "File");
+	keymap.set("Shortcut+O", EditorActions::openModel, "Open model", "File");
+	keymap.set("Shortcut+Shift+N", EditorActions::newProject, "Create new project", "File");
+	keymap.set("Shortcut+Shift+O", EditorActions::openProject, "Open project", "File");
+	keymap.set("Shortcut+S", EditorActions::save, "Save", "File");
+	keymap.set("Shortcut+Shift+S", EditorActions::saveAs, "Save As", "File");
+	keymap.set("Shortcut+Q", EditorActions::quit, "Quit", "File");
+
+	keymap.set("Shortcut+Z", EditorActions::undo, "Undo", "Edit");
+	keymap.set("Shortcut+Shift+Z", EditorActions::redo, "Redo", "Edit");
+
+	keymap.set("Shortcut+T", EditorActions::toggleTheme, "Toggle Theme", "View");
+	keymap.set("Shortcut+F", EditorActions::openSearchPane, "Open Search", "View");
     }
 
     private void setupLogging() {
