@@ -55,5 +55,10 @@ public interface IBufferContainer {
      */
     ObservableMap<String,ViewModelProjectResource> getBuffers();
 
+    /**
+     * Get the currently focused buffer object property.
+     * This is useful if you want to react when the focused buffer changes.
+     * @return the currently focused buffer object property
+     */
     ObjectProperty<ViewModelProjectResource> getCurrentlyFocusedBuffer();
 }

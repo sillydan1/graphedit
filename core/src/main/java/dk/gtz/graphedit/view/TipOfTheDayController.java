@@ -27,6 +27,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * View controller for the Tip-of-the-day system.
+ */
 public class TipOfTheDayController {
     private static final Logger logger = LoggerFactory.getLogger(TipOfTheDayController.class);
     @FXML
@@ -38,6 +41,9 @@ public class TipOfTheDayController {
     private final TipContainer tips;
     private int currentTipIndex;
 
+    /**
+     * Construct a new instance of {@link TipOfTheDayController}.
+     */
     public TipOfTheDayController() {
 	this.editorSettings = DI.get(ViewModelEditorSettings.class);
 	this.tips = DI.get(TipContainer.class);

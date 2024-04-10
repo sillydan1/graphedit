@@ -228,6 +228,9 @@ public class EditorActions {
         }
     }
 
+    /**
+     * Open the project picker dialogue and load the selected project
+     */
     public static void openProject() {
         var w = DI.get(Window.class);
         var file = EditorActions.openProjectPicker(w);
@@ -235,6 +238,9 @@ public class EditorActions {
             EditorActions.openProject(file.get());
     }
 
+    /**
+     * Create a new project with a picker dialogue and open it
+     */
     public static void newProject() {
         var file = EditorActions.newFile();
         if(!file.isPresent())
