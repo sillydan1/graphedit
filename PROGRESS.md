@@ -5,12 +5,12 @@ There is also a [github project](https://github.com/users/sillydan1/projects/6) 
 ## Planned / In Progress
 ### Release `v1.5.0` (Plugin infrastructure)
 This milestone focuses on cleanup and plugin infrastructure. The goal is to make the plugin ecosystem more robust and easier to use and extend.
- - [ ] Purge github issues
-  - [ ] Undo system overhaul (make it diff-based)
-  - [ ] Wrapper for the `addListener` / `removeListener` boilerplate pattern
- - [ ] Language bindings
-   - [ ] Python bindings
-   - [ ] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
+ - [x] Purge github issues
+  - [x] Undo system overhaul (make it diff-based)
+  - [x] Wrapper for the `addListener` / `removeListener` boilerplate pattern
+ - [x] Language bindings
+   - [-] ~~Python bindings~~
+   - [x] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
  - [ ] Plugin Repository with some exploration / browsing built in
   - [ ] `std` sidepanel for plugin browsing
 
@@ -19,13 +19,14 @@ These are the ideas that are not yet planned, but are on the radar.
  - [ ] TIOA syntax
  - [ ] Diff view
  - [ ] TA syntax
- - [ ] CD (needs a pre-release for prototyping purposes)
+ - [ ] Continuous Deployment
    - [ ] flathub
  - [ ] Web based view
  - [ ] CodeArea tree highlighter implementation
  - [ ] Trace-traverser & specification
  - [ ] Plan for git integration
  - [ ] Planarity Embedding / autoformatting
+ - [ ] MonacoFX and TextBuffers
  - [ ] DAP like specification
    - [ ] Protobuf specification
    - [ ] Implement `IDap` / `IDapEngine` interfaces
