@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,7 +167,7 @@ public class PluginManagementPanelController extends VBox {
 			    button.setText("download paused");
 			    break;
 			case COMPLETE:
-			    var filepath = String.join(File.separator, EditorActions.getConfigDir(), "plugins", d.getFileName(url));
+			    var filepath = String.join(File.separator, EditorActions.getConfigDir(), "plugins", Download.getFileName(url));
 			    Files.copy(Path.of(d.downloadedFile().get()), Path.of(filepath), StandardCopyOption.REPLACE_EXISTING);
 			case CANCELLED:
 			default:
