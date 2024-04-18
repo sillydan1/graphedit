@@ -61,7 +61,7 @@ def gitHeadName = { ->
 }
 
 def getVersion = { ->
-    def version = '1.4.0';
+    def version = '1.5.0';
     def headName = gitHeadName();
     if(headName.equals('v'+version))
         return version;

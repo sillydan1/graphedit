@@ -11,8 +11,8 @@ This milestone focuses on cleanup and plugin infrastructure. The goal is to make
  - [x] Language bindings
    - [-] ~~Python bindings~~
    - [x] Lua bindings [LuaJava](https://github.com/gudzpoz/luajava/tree/main).
- - [ ] Plugin Repository with some exploration / browsing built in
-  - [ ] `std` sidepanel for plugin browsing
+ - [x] Plugin Repository with some exploration / browsing built in
+  - [x] `std` sidepanel for plugin browsing
 
 ## Backlog
 These are the ideas that are not yet planned, but are on the radar.
