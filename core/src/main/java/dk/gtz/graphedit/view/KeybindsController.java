@@ -12,6 +12,9 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Controller for the keybinds view.
+ */
 public class KeybindsController {
     @FXML
     private BorderPane root;
@@ -19,6 +22,9 @@ public class KeybindsController {
     private VBox inspectorPane;
     private Keymap keymap;
 
+    /**
+     * Construct a new keybinds controller instance.
+     */
     public KeybindsController() {
 	this.keymap = DI.get(Keymap.class);
     }

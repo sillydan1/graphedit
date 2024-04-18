@@ -56,5 +56,8 @@ public interface IPluginsContainer {
      */
     Collection<IPlugin> getEnabledPlugins();
 
+    /**
+     * Clear the container of all plugins
+     */
     void clear();
 }

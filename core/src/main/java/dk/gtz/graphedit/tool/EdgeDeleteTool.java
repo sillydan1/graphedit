@@ -62,6 +62,7 @@ public class EdgeDeleteTool extends AbstractBaseTool {
 
     /**
      * Deletes a specified edge
+     * @param buffer The buffer containing the edge to delete (used for undo/redo)
      * @param edgeId The id of the edge to delete
      * @param edge The edge to delete
      * @param graph The graph containing the edge to delete

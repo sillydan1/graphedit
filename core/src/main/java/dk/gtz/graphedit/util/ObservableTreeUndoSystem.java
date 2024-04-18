@@ -18,6 +18,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
+/**
+ * An implementation of the {@link IObservableUndoSystem} interface that uses a tree structure to store the undo history.
+ */
 public class ObservableTreeUndoSystem implements IObservableUndoSystem {
     private static final Logger logger = LoggerFactory.getLogger(ObservableTreeUndoSystem.class);
 
@@ -96,6 +99,9 @@ public class ObservableTreeUndoSystem implements IObservableUndoSystem {
     private final List<ChangeListener<Undoable>> listeners;
     private Node currentLatest;
 
+    /**
+     * Constructs a new {@link ObservableTreeUndoSystem} instance.
+     */
     public ObservableTreeUndoSystem() {
 	this.root = new Node(null, Optional.empty());
 	this.currentNode = new SimpleObjectProperty<>(root);

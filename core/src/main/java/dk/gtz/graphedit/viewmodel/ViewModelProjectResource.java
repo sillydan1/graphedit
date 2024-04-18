@@ -53,6 +53,10 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
 	this.views = new ArrayList<>();
     }
 
+    /**
+     * Get the associated undo system
+     * @return An undo system
+     */
     public IObservableUndoSystem getUndoSystem() {
 	return undoSystem;
     }

@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import atlantafx.base.theme.Styles;
 import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
@@ -44,7 +41,6 @@ import javafx.stage.WindowEvent;
  * @author Asger Gitz-Johansen
  */
 public class DraggableTabController extends Tab implements IProjectResourceView {
-    private static final Logger logger = LoggerFactory.getLogger(DraggableTabController.class);
     private record InsertData(int index, TabPane insertPane) {}
     private static final Set<TabPane> tabPanes = new HashSet<>();
     private Label nameLabel;
@@ -68,6 +64,7 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
      * however a TabPane with draggable tabs must *only* have DraggableTabs,
      * normal tabs and DrragableTabs mixed will cause issues!
      * @param text the text to appear on the tag label.
+     * @param editor the editor to use for handling events.
      */
     public DraggableTabController(String text, IEventHandler editor) {
 	eventHandlers = new ArrayList<>();
@@ -165,6 +162,10 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 	});
     }
 
+    /**
+     * Add a listener that will be invoked when a tab is closed.
+     * @param e the event handler to add.
+     */
     public void addOnClosedListener(EventHandler<WindowEvent> e) {
 	eventHandlers.add(e);
     }

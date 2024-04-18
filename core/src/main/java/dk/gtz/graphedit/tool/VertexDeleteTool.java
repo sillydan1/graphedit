@@ -63,6 +63,7 @@ public class VertexDeleteTool extends AbstractBaseTool {
 
     /**
      * Delete a specified vertex
+     * @param buffer The buffer that contains the vertex. This is used to push undo actions
      * @param vertexId The id of the vertex to delete
      * @param vertex The viewmodel object of the vertex to delete
      * @param graph The graph that contains the vertex

@@ -15,6 +15,23 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.WritableObjectValue;
 
+/**
+ * This class is a base class that automatically listen and fire events to changes in their fields marked with {@link Autolisten}.
+ * <br/>
+ * <br/>
+ * Usage Example:
+ * <pre>{@code
+ * public class ViewModelValue extends AutoProperty<ViewModelValue> {
+ *    @Autolisten
+ *    public IntegerProperty myValue;
+ *
+ *    public ViewModelValue() {
+ *        loadFields(ViewModelValue.class, this);
+ *    }
+ * }
+ * }</pre>
+ * @param <T> The type of the property
+ */
 public abstract class AutoProperty<T extends Property<T>> implements Property<T> {
     private static Logger logger = LoggerFactory.getLogger(AutoProperty.class);
     private T value;
@@ -22,11 +39,20 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
     private final Map<Field, ChangeListener<? super Object>> changeListeners;
     private final Map<Field, InvalidationListener> invalidationListeners;
 
+    /**
+     * Construct a new instance of AutoProperty
+     */
     protected AutoProperty() {
         this.changeListeners = new HashMap<>();
         this.invalidationListeners = new HashMap<>();
     }
 
+    /**
+     * Load the fields marked with {@link Autolisten} from the given class
+     * This must be called in the constructor of the subclass
+     * @param clazz The class type to load the fields from, typically the subclass
+     * @param value The class instance to listen to
+     */
     protected void loadFields(Class<?> clazz, T value) {
         this.value = value;
         fields = new ArrayList<>();

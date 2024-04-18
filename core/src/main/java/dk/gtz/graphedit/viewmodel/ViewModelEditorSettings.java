@@ -93,6 +93,8 @@ public record ViewModelEditorSettings(
          * @param lastOpenedProject Filepath to the last opened graphedit project file
          * @param recentProjects List of filepaths that have been recently opened
          * @param disabledPlugins List of plugin names that are loaded, but not initialized
+         * @param tipIndex Index of the last shown tip
+         * @param showTips When true, will show tips on startup
          */
         public ViewModelEditorSettings(
                         double gridSizeX, 

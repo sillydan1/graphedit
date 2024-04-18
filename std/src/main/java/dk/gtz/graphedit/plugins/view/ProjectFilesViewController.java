@@ -110,7 +110,6 @@ public class ProjectFilesViewController extends VBox {
 
     private Node createToolbar() {
 	var gitignoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.GITHUB));
-	gitignoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	gitignoreHideButton.selectedProperty().set(!useGitignoreMatcher.get());
 	useGitignoreMatcher.bind(gitignoreHideButton.selectedProperty().not());
 	var gitignoreTip = new Tooltip("Show gitignored files");
@@ -120,7 +119,6 @@ public class ProjectFilesViewController extends VBox {
 	gitignoreHideButton.setTooltip(gitignoreTip);
 
 	var grapheditIgnoreHideButton = new ToggleButton(null, new FontIcon(BootstrapIcons.SHARE));
-	grapheditIgnoreHideButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	grapheditIgnoreHideButton.selectedProperty().set(!useGrapheditIgnoreMatcher.get());
 	useGrapheditIgnoreMatcher.bind(grapheditIgnoreHideButton.selectedProperty().not());
 	var grapheditIgnoreTip = new Tooltip("Show graphedit ignored files");
@@ -130,7 +128,6 @@ public class ProjectFilesViewController extends VBox {
 	grapheditIgnoreHideButton.setTooltip(grapheditIgnoreTip);
 
 	var showHiddenFilesButton = new ToggleButton(null, new FontIcon(BootstrapIcons.EYE));
-	showHiddenFilesButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	showHiddenFilesButton.selectedProperty().set(showHiddenFiles.get());
 	showHiddenFiles.bind(showHiddenFilesButton.selectedProperty());
 	var showHiddenFilesTip = new Tooltip("Show hidden files");
@@ -140,7 +137,6 @@ public class ProjectFilesViewController extends VBox {
 	showHiddenFilesButton.setTooltip(showHiddenFilesTip);
 
 	var newFileButton = new Button(null, new FontIcon(BootstrapIcons.FILE_EARMARK_PLUS));
-	newFileButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	var newFileTip = new Tooltip("New model file");
 	newFileTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
 	newFileTip.setPrefWidth(200);
@@ -149,7 +145,6 @@ public class ProjectFilesViewController extends VBox {
 	newFileButton.setOnAction(e -> EditorActions.createNewModelFile());
 
 	var manualRefreshButton = new Button(null, new FontIcon(BootstrapIcons.ARROW_CLOCKWISE));
-	manualRefreshButton.getStyleClass().addAll(Styles.BUTTON_ICON);
 	var refreshTip = new Tooltip("Refresh");
 	refreshTip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
 	refreshTip.setPrefWidth(200);
@@ -158,7 +153,7 @@ public class ProjectFilesViewController extends VBox {
 	manualRefreshButton.setOnAction(e -> updateTreeView());
 
 	var exportButton = new MenuButton(null, new FontIcon(BootstrapIcons.BOX_ARROW_UP));
-	exportButton.getStyleClass().addAll(Styles.BUTTON_ICON, Tweaks.NO_ARROW);
+	exportButton.getStyleClass().addAll(Tweaks.NO_ARROW);
 	for(var plugin : DI.get(IPluginsContainer.class).getEnabledPlugins()) {
 	    for(var exporter : plugin.getExporters()) {
 		var menuItem = new MenuItem(exporter.getName());

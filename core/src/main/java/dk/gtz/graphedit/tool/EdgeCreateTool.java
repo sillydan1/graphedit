@@ -130,6 +130,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
     /**
      * Finishes the edge creation process.
      * Will fail with a warning if the provided graph is not the same one you started creating the edge in
+     * @param buffer The buffer where the undo action should be stored in
      * @param releaseTarget Id of the target vertex to finalize the edge to
      * @param graph The graph where the current temporary edge is located in
      */

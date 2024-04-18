@@ -130,10 +130,19 @@ public final class SyntaxFactoryCollection implements ObservableMap<String,ISynt
 	factories.removeListener(listener);
     }
 
+    /**
+     * Add a change listener to the collection.
+     * This will be invoked when the collection changes.
+     * @param listener The listener to add
+     */
     public void addChangeListener(MapChangeListener<? super String, ? super ISyntaxFactory> listener) {
 	factories.addListener(listener);
     }
 
+    /**
+     * Remove a change listener from the collection.
+     * @param listener The listener to remove
+     */
     public void removeChangeListener(MapChangeListener<? super String, ? super ISyntaxFactory> listener) {
 	factories.removeListener(listener);
     }
