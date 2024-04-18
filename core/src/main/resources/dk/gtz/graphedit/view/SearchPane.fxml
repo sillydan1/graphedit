@@ -14,4 +14,3 @@
         <Button fx:id="closeButton" text="close"/>
     </HBox>
 </VBox>
-

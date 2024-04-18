@@ -3,8 +3,6 @@ package dk.gtz.graphedit.view;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import ch.qos.logback.classic.Level;
@@ -19,7 +17,6 @@ import javafx.scene.layout.HBox;
  * View controll for the log tabpane containing all the logs
  */
 public class LogTabPaneController {
-    private static Logger logger = LoggerFactory.getLogger(LogTabPaneController.class);
     @FXML
     private TabPane tabpane;
 

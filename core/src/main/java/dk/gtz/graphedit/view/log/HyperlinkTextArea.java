@@ -34,7 +34,6 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
                     text -> createStyledTextNode(t -> {
                         t.setText(text);
                         t.getStyleClass().addAll(styleClasses);
-                        t.setStyle(e.getStyle().toCss());
                     }),
                     hyperlink -> createStyledTextNode(t -> {
                         if (!hyperlink.isEmpty()) {
@@ -72,7 +71,7 @@ public class HyperlinkTextArea extends GenericStyledArea<Void, Either<String, Hy
      * @param link The link value
      */
     public void appendWithLink(String displayedText, String link) {
-        appendWithLink(displayedText, link, TextStyle.randomTextColor());
+        appendWithLink(displayedText, link, TextStyle.EMPTY.setTextColor("-color-accent-fg"));
     }
 
     /**

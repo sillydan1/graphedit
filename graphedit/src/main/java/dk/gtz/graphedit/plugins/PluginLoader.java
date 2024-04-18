@@ -31,7 +31,7 @@ public class PluginLoader {
 		this.pluginsDirs = new ArrayList<>(pluginsDirs.size());
 		for(var pluginStr : pluginsDirs)
 			this.pluginsDirs.add(new File(pluginStr));
-		this.loadedPlugins = new ObservableSetPluginsContainer();
+		loadedPlugins = new ObservableSetPluginsContainer();
 		this.serializer = serializer;
 	}
 
@@ -40,14 +40,17 @@ public class PluginLoader {
 	}
 
 	public PluginLoader loadPlugins() {
+		loadedPlugins.clear();
 		loadPlugin();
 		for(var pluginsDir : pluginsDirs) {
-			logger.trace("looking for plugins in {}", pluginsDir.getAbsolutePath());
 			if(!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-				logger.error("skipping plugin dir, no such file or directory {}", pluginsDir);
+				if(pluginsDir.toString().equals("plugins")) // Dont warn if the default plugins directory is not found
+					continue;
+				logger.warn("cannot load plugins, no such directory: '{}'", pluginsDir);
 				continue;
 			}
 
+			logger.trace("looking for plugins in '{}'", pluginsDir.getAbsolutePath());
 			var files = requireNonNull(pluginsDir.listFiles());
 			for(var pluginDir : files)
 				loadPlugin(pluginDir);

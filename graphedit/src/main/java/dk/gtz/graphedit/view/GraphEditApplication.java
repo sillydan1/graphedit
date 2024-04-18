@@ -17,10 +17,13 @@ import dk.gtz.graphedit.logging.EditorLogAppender;
 import dk.gtz.graphedit.logging.Toast;
 import dk.gtz.graphedit.model.ModelProject;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
+import dk.gtz.graphedit.plugins.PluginLoader;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.serialization.JacksonModelSerializer;
 import dk.gtz.graphedit.serialization.TikaMimeTypeChecker;
+import dk.gtz.graphedit.spi.ILanguageServer;
+import dk.gtz.graphedit.spi.IPlugin;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.tool.ClipboardTool;
 import dk.gtz.graphedit.tool.EdgeCreateTool;
@@ -37,21 +40,24 @@ import dk.gtz.graphedit.tool.VertexDragMoveTool;
 import dk.gtz.graphedit.tool.ViewTool;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.IObservableUndoSystem;
+import dk.gtz.graphedit.util.Keymap;
 import dk.gtz.graphedit.util.MouseTracker;
-import dk.gtz.graphedit.util.ObservableStackUndoSystem;
+import dk.gtz.graphedit.util.ObservableTreeUndoSystem;
+import dk.gtz.graphedit.util.TipLoader;
 import dk.gtz.graphedit.viewmodel.FileBufferContainer;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ISelectable;
 import dk.gtz.graphedit.viewmodel.LanguageServerCollection;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.SyntaxFactoryCollection;
+import dk.gtz.graphedit.viewmodel.TipContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -92,14 +98,20 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	setupToolbox();
 	setupPreferences();
 	setupLogging();
+	loadAndStartPlugins();
 	setupStage(primaryStage);
 	DI.add(Window.class, primaryStage.getScene().getWindow());
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+	if(DI.get(ViewModelEditorSettings.class).showTips().get())
+	    EditorActions.openTipOfTheDay();
+	setupDefaultKeymaps();
     }
 
     @Override
     public void restart() {
 	primaryStage.close();
+        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(IPlugin::onDestroy);
+        DI.get(IPluginsContainer.class).clear();
+	DI.get(LanguageServerCollection.class).clear();
 	try {
 	    var newStage = new Stage();
 	    kickoff(newStage);
@@ -110,18 +122,49 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	}
     }
 
+    private void loadAndStartPlugins() {
+	var loader = DI.get(PluginLoader.class);
+	loader.loadPlugins();
+	var loadedPlugins = loader.getLoadedPlugins();
+	var factories = DI.get(SyntaxFactoryCollection.class);
+        DI.add(IPluginsContainer.class, loadedPlugins);
+	loadedPlugins.getEnabledPlugins().forEach(IPlugin::onInitialize);
+
+        for(var plugin : loadedPlugins.getEnabledPlugins()) {
+            try {
+                factories.add(plugin.getSyntaxFactories());
+            } catch (Exception e) {
+                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
+            }
+        }
+        if(factories.isEmpty())
+            throw new RuntimeException("Failed to load any syntax factories. Please check your plugins directory");
+
+	loadedPlugins.getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+	loadedPlugins.getEnabledPlugins().forEach(e -> {
+	    var t = new Thread(() -> {
+		try {
+		    DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
+		} catch(Exception ex) {
+		    logger.error("could not load language servers for plugin '{}': {}", e.getName(), ex.getMessage(), ex);
+		}
+	    });
+	    t.setName("lsp-init-" + e.getName());
+	    t.start();
+	});
+    }
+
     private void setupApplication() {
 	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
 	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	var undoSystem = new ObservableStackUndoSystem();
-	DI.add(IUndoSystem.class, undoSystem);
-	DI.add(IObservableUndoSystem.class, undoSystem); // TODO: Use this - This relates to https://github.com/sillydan1/graphedit/issues/1
+	DI.add(IObservableUndoSystem.class, () -> new ObservableTreeUndoSystem());
 	if(!DI.contains(IModelSerializer.class))
 	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
 	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
 	DI.add(LintContainer.class, new LintContainer());
 	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
 	DI.add("selectedElements", selectedElementsList);
+	DI.add(TipContainer.class, TipLoader.loadTips());
     }
 
     private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {
@@ -131,19 +174,25 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	    logger.trace("interrupting lsp thread {}", lspThread.getName());
 	    lspThread.interrupt();
 	}
-	for(var server : servers.entrySet()) {
-	    var serverVal = server.getValue();
-	    logger.trace("initializing language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
-	    serverVal.initialize(projectFile, buffers);
-	    serverVal.addNotificationCallback(this::logNotification);
-	    serverVal.addDiagnosticsCallback(lints::replaceAll);
-	    logger.trace("starting thread for language server {} {}", serverVal.getServerName(), serverVal.getServerVersion());
-	    var t = new Thread(serverVal::start);
-	    t.setName(serverVal.getServerName());
-	    lspThreads.add(t);
-	    t.start();
-	    lints.replaceAll(server.getValue().getDiagnostics());
-	}
+	for(var server : servers.entrySet())
+	    setupServer(server.getValue(), projectFile, buffers, lints);
+	servers.addListener((MapChangeListener<String,ILanguageServer>)e -> {
+	    if(e.wasAdded())
+		setupServer(e.getValueAdded(), projectFile, buffers, lints);
+	});
+    }
+
+    private void setupServer(ILanguageServer server, File projectFile, IBufferContainer buffers, LintContainer lints) {
+	logger.trace("initializing language server {} {}", server.getServerName(), server.getServerVersion());
+	server.initialize(projectFile, buffers);
+	server.addNotificationCallback(this::logNotification);
+	server.addDiagnosticsCallback(lints::replaceAll);
+	logger.trace("starting thread for language server {} {}", server.getServerName(), server.getServerVersion());
+	var t = new Thread(server::start);
+	t.setName(server.getServerName());
+	lspThreads.add(t);
+	t.start();
+	lints.replaceAll(server.getDiagnostics());
     }
 
     private void logNotification(ModelNotification n) {
@@ -225,9 +274,38 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	var project = DI.get(ViewModelProject.class);
 	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
 	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
+	var keymap = new Keymap();
+	DI.add(Keymap.class, keymap);
 	setupModalPane();
-	primaryStage.setScene(loadMainScene());
+	var mainScene = loadMainScene();
+	keymap.onNewKeymap(e -> {
+	    // NOTE: only add the blank category keybinds to the main scene accelerators
+	    // the rest will be added to the menubar automatically (see EditorController.setKeymap)
+	    // (this is to avoid duplicate keybinds in the menubar and the main scene accelerators)
+	    // I personally dont like this setup, as the responsibility is now split between two classes,
+	    // so it may change in the future
+	    if(e.getValue().category().isBlank())
+		mainScene.getAccelerators().put(e.getKey(), e.getValue().action());
+	});
+	primaryStage.setScene(mainScene);
 	primaryStage.show();
+    }
+
+    private void setupDefaultKeymaps() {
+	var keymap = DI.get(Keymap.class);
+	keymap.set("Shortcut+N", EditorActions::createNewModelFile, "Create new model", "File");
+	keymap.set("Shortcut+O", EditorActions::openModel, "Open model", "File");
+	keymap.set("Shortcut+Shift+N", EditorActions::newProject, "Create new project", "File");
+	keymap.set("Shortcut+Shift+O", EditorActions::openProject, "Open project", "File");
+	keymap.set("Shortcut+S", EditorActions::save, "Save", "File");
+	keymap.set("Shortcut+Shift+S", EditorActions::saveAs, "Save As", "File");
+	keymap.set("Shortcut+Q", EditorActions::quit, "Quit", "File");
+
+	keymap.set("Shortcut+Z", EditorActions::undo, "Undo", "Edit");
+	keymap.set("Shortcut+Shift+Z", EditorActions::redo, "Redo", "Edit");
+
+	keymap.set("Shortcut+T", EditorActions::toggleTheme, "Toggle Theme", "View");
+	keymap.set("Shortcut+F", EditorActions::openSearchPane, "Open Search", "View");
     }
 
     private void setupLogging() {

@@ -1,12 +1,15 @@
 package dk.gtz.graphedit.util;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.viewmodel.ViewModelProject;
+import dk.yalibs.yadi.DI;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
 
 /**
@@ -76,7 +79,7 @@ public class PlatformUtils {
 	var pathDirectories = pathVariable.split(File.pathSeparator);
 	for (var directory : pathDirectories) {
 	    var executableFile = new File(directory, executableName);
-	    if (executableFile.exists() && !executableFile.isDirectory())
+	    if (executableFile.exists() && !executableFile.isDirectory() && Files.isExecutable(executableFile.toPath()))
 		return true;
 	}
 	return false;
@@ -102,17 +105,40 @@ public class PlatformUtils {
 
     /**
      * Launch a new subprocess and wait for it to complete whilst logging the stout to TRACE-level and stderr to ERROR-level logging.
-     *
+     * cwd is the root directory of the currently open project
      * Note that this will block the current thread of execution until the command is completed.
      * @param command The command to launch the subprocess with
      * @param arguments The command-line arguments to provide the subprocess with
      */
     public static void launchProgram(String command, List<String> arguments) {
+	launchProgram(command, DI.get(ViewModelProject.class).rootDirectory().get(), arguments);
+    }
+
+    /**
+     * Launch a new subprocess and wait for it to complete whilst logging the stout to TRACE-level and stderr to ERROR-level logging.
+     * cwd is the root directory of the currently open project
+     * Note that this will block the current thread of execution until the command is completed.
+     * @param command The command to launch the subprocess with
+     * @param arguments The command-line arguments to provide the subprocess with
+     */
+    public static void launchProgram(String command, String... arguments) {
+	launchProgram(command, List.of(arguments));
+    }
+
+    /**
+     * Launch a new subprocess and wait for it to complete whilst logging the stout to TRACE-level and stderr to ERROR-level logging.
+     *
+     * Note that this will block the current thread of execution until the command is completed.
+     * @param command The command to launch the subprocess with
+     * @param workingDir The working directory to launch the subprocess in
+     * @param arguments The command-line arguments to provide the subprocess with
+     */
+    public static void launchProgram(String command, String workingDir, List<String> arguments) {
 	Process p = null;
 	try {
 	    var pb = new ProcessBuilder();
 	    pb.command(command);
-	    pb.directory(Path.of(command).getParent().toFile());
+	    pb.directory(Path.of(workingDir).toFile());
 	    for(var argument : arguments)
 		pb.command().add(argument);
 	    pb.redirectErrorStream(true);

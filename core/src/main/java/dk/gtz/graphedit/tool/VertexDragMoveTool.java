@@ -6,8 +6,8 @@ import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import dk.gtz.graphedit.events.VertexMouseEvent;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -29,13 +29,13 @@ public class VertexDragMoveTool extends AbstractBaseTool {
     private final DoubleProperty oldPointY = new SimpleDoubleProperty();
     private final ObjectProperty<Runnable> undoAction = new SimpleObjectProperty<>(null);
     private final ObjectProperty<Runnable> redoAction = new SimpleObjectProperty<>(null);
-    private final IUndoSystem undoSystem;
+    private final IBufferContainer buffers;
 
     /**
      * Construct a new instance
      */
     public VertexDragMoveTool() {
-        undoSystem = DI.get(IUndoSystem.class);
+        buffers = DI.get(IBufferContainer.class);
     }
 
     @Override
@@ -109,7 +109,10 @@ public class VertexDragMoveTool extends AbstractBaseTool {
 
     private void handleMouseReleasedEvent(VertexMouseEvent e) {
         if(undoAction.get() != null && redoAction.get() != null)
-            undoSystem.push(new Undoable("move action", undoAction.get(), redoAction.get()));
+            DI.get(IBufferContainer.class)
+                .get(e.bufferId())
+                .getUndoSystem()
+                .push(new Undoable("move action", undoAction.get(), redoAction.get()));
         undoAction.set(null);
         redoAction.set(null);
     }

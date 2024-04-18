@@ -6,21 +6,20 @@ import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.plugins.syntaxes.lts.model.ModelState;
+import dk.gtz.graphedit.viewmodel.Autolisten;
 import dk.gtz.graphedit.viewmodel.ISearchable;
 import dk.gtz.graphedit.viewmodel.InspectableProperty;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class ViewModelState extends ViewModelVertex implements ISearchable {
-	private final StringProperty name;
-	private final BooleanProperty initial;
+	@Autolisten
+	public final StringProperty name;
+	@Autolisten
+	public final BooleanProperty initial;
 
 	public StringProperty name() {
 		return name;
@@ -75,82 +74,6 @@ public class ViewModelState extends ViewModelVertex implements ISearchable {
 	@Override
 	public ModelVertex toModel() {
 		return new ModelState(position().toModel(), name.getValueSafe(), initial.get());
-	}
-
-	@Override
-	public void addListener(ChangeListener<? super ViewModelVertex> listener) {
-		super.addListener(listener);
-		name.addListener((e,o,n) -> listener.changed(this,this,this));
-		initial.removeListener((e,o,n) -> listener.changed(this,this,this));
-	}
-
-	@Override
-	public void removeListener(ChangeListener<? super ViewModelVertex> listener) {
-		super.addListener(listener);
-		name.removeListener((e,o,n) -> listener.changed(this,this,this));
-		initial.removeListener((e,o,n) -> listener.changed(this,this,this));
-	}
-
-	@Override
-	public void addListener(InvalidationListener listener) {
-		super.addListener(listener);
-		name.addListener(listener);
-		initial.addListener(listener);
-	}
-
-	@Override
-	public void removeListener(InvalidationListener listener) {
-		super.addListener(listener);
-		name.removeListener(listener);
-		initial.removeListener(listener);
-	}
-
-	@Override
-	public void setValue(ViewModelVertex value) {
-		super.setValue(value);
-		if(value instanceof ViewModelState tvalue) {
-			name.setValue(tvalue.name().get());
-			initial.setValue(tvalue.initial().get());
-		}
-	}
-
-	@Override
-	public void bind(ObservableValue<? extends ViewModelVertex> observable) {
-		super.bind(observable);
-		if(observable.getValue() instanceof ViewModelState tobs) {
-			name.bind(tobs.name());
-			initial.bind(tobs.initial());
-		}
-	}
-
-	@Override
-	public void unbind() {
-		super.unbind();
-		name.unbind();
-		initial.unbind();
-	}
-
-	@Override
-	public boolean isBound() {
-		return super.isBound() || name.isBound() || initial.isBound();
-	}
-
-	@Override
-	public void bindBidirectional(Property<ViewModelVertex> other) {
-		super.bindBidirectional(other);
-		if(other.getValue() instanceof ViewModelState tother) {
-			name.bindBidirectional(tother.name());
-			initial.bindBidirectional(tother.initial());
-		}
-	}
-
-	@Override
-	public void unbindBidirectional(Property<ViewModelVertex> other) {
-		super.unbindBidirectional(other);
-		if(other.getValue() instanceof ViewModelState tother) {
-			name.unbindBidirectional(tother.name());
-			initial.unbindBidirectional(tother.initial());
-		}
 	}
 
 	@Override

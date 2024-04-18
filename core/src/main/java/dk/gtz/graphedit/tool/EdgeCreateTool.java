@@ -14,10 +14,11 @@ import dk.gtz.graphedit.util.MouseTracker;
 import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.events.ViewportKeyEvent;
 import dk.gtz.graphedit.events.ViewportMouseEvent;
+import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
 import dk.gtz.graphedit.viewmodel.ViewModelGraph;
+import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.yalibs.yadi.DI;
-import dk.yalibs.yaundo.IUndoSystem;
 import dk.yalibs.yaundo.Undoable;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -35,7 +36,6 @@ public class EdgeCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(EdgeCreateTool.class);
     private Optional<UUID> currenEdgeId;
     private Optional<ViewModelEdge> currentEdge;
-    private final IUndoSystem undoSystem;
 
     /**
      * Create a new instance of {@link EdgeCreateTool}
@@ -43,7 +43,6 @@ public class EdgeCreateTool extends AbstractBaseTool {
     public EdgeCreateTool() {
         this.currenEdgeId = Optional.empty();
         this.currentEdge = Optional.empty();
-        this.undoSystem = DI.get(IUndoSystem.class);
     }
 
     @Override
@@ -70,6 +69,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
+        var buffer = DI.get(IBufferContainer.class).get(e.bufferId());
         if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
             if(!isCurrentlyCreatingEdge()) {
                 create(e.vertexId(), e.graph(), e.syntax());
@@ -79,7 +79,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
                 cancel(e.graph());
                 return;
             }
-            release(e.vertexId(), e.graph());
+            release(buffer, e.vertexId(), e.graph());
         }
 
         if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
@@ -87,7 +87,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
                 return;
             if(e.vertexId().equals(currentEdge.get().source().get()))
                 return;
-            release(e.vertexId(), e.graph());
+            release(buffer, e.vertexId(), e.graph());
         }
     }
 
@@ -130,10 +130,11 @@ public class EdgeCreateTool extends AbstractBaseTool {
     /**
      * Finishes the edge creation process.
      * Will fail with a warning if the provided graph is not the same one you started creating the edge in
+     * @param buffer The buffer where the undo action should be stored in
      * @param releaseTarget Id of the target vertex to finalize the edge to
      * @param graph The graph where the current temporary edge is located in
      */
-    public void release(UUID releaseTarget, ViewModelGraph graph) {
+    public void release(ViewModelProjectResource buffer, UUID releaseTarget, ViewModelGraph graph) {
         if(!isReleaseTargetAndSourceTargetInSameGraph(currentEdge.get().source().get(), releaseTarget, graph)) {
             logger.warn("edge release target is not in the same graph as the source target");
             return;
@@ -143,7 +144,7 @@ public class EdgeCreateTool extends AbstractBaseTool {
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
-        undoSystem.push(new Undoable("add edge action",
+        buffer.getUndoSystem().push(new Undoable("add edge action",
                     () -> graph.edges().remove(currentEdgeIdCopy),
                     () -> graph.edges().put(currentEdgeIdCopy, currentEdgeCopy)));
         clear();

@@ -28,6 +28,7 @@ public class ModelEditorToolbar extends ToolBar {
     private final IToolbox toolbox;
     private final ObjectProperty<ITool> selectedTool;
     private final ViewModelProjectResource resource;
+    private ComboBox<String> syntaxSelector;
 
     /**
      * Create a new instance
@@ -47,8 +48,15 @@ public class ModelEditorToolbar extends ToolBar {
      * @return Builder-pattern style reference to this
      */
     public ModelEditorToolbar withSyntaxSelector() {
-	if(resource.metadata().containsKey("graphedit_syntax"))
-	    addSyntaxSelector();
+	if(resource.metadata().containsKey("graphedit_syntax")) {
+	    var factories = DI.get(SyntaxFactoryCollection.class);
+	    syntaxSelector = addSyntaxSelector(factories);
+	    factories.addChangeListener(e -> {
+		getItems().remove(syntaxSelector);
+		syntaxSelector = addSyntaxSelector(factories);
+	    });
+	}
+
 	addSeparator();
 	return this;
     }
@@ -74,8 +82,7 @@ public class ModelEditorToolbar extends ToolBar {
 	}
     }
 
-    private void addSyntaxSelector() {
-	var factories = DI.get(SyntaxFactoryCollection.class);
+    private ComboBox<String> addSyntaxSelector(SyntaxFactoryCollection factories) {
 	ObservableList<String> list = FXCollections.observableArrayList();
 	for(var factory : factories.entrySet())
 	    list.add(factory.getKey());
@@ -98,6 +105,7 @@ public class ModelEditorToolbar extends ToolBar {
 	    }
 	};
 	cmb.getSelectionModel().selectedItemProperty().addListener(listener);
+	return cmb;
     }
 
     private void addButton(ITool tool) {

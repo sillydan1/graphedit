@@ -68,7 +68,7 @@ public class LogTabController extends StackPane {
 	// identifiers are uuid v4's
         // [<display>](<identifier>)
 	var uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-        var z = "\\[(?<display>[^]]+)]\\((?<identifier>"+uuidRegex+")\\)";
+        var z = "\\[(?<display>[^]]+)\\]\\((?<identifier>"+uuidRegex+")\\)";
         return Pattern.compile(z);
     }
 
@@ -86,13 +86,10 @@ public class LogTabController extends StackPane {
     }
 
     private void onLinkClick(Hyperlink link) {
-        try {
-            var lookupId = UUID.fromString(link.getLink());
-            var result = getFocusable(lookupId);
-            result.ifPresent(IFocusable::focus);
-        } catch(Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        var lookupId = UUID.fromString(link.getLink());
+        getFocusable(lookupId).ifPresentOrElse(
+                IFocusable::focus,
+                () -> logger.warn("Nothing found for link to: <{}>", lookupId));
     }
 
     private Optional<IFocusable> getFocusable(UUID lookupId) {

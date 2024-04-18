@@ -27,7 +27,7 @@ public class ViewModelTransition extends ViewModelVertex implements ISearchable 
     public boolean equals(Object other) {
 	if(!super.equals(other))
 	    return false;
-	if(!(other instanceof ViewModelTransition vother))
+	if(!(other instanceof ViewModelTransition))
 	    return false;
 	return true;
     }

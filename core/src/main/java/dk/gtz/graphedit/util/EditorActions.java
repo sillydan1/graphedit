@@ -40,7 +40,6 @@ import dk.gtz.graphedit.viewmodel.ViewModelRunTarget;
 import dk.yalibs.yadi.DI;
 import dk.yalibs.yafunc.IFunction2;
 import dk.yalibs.yastreamgobbler.StreamGobbler;
-import dk.yalibs.yaundo.IUndoSystem;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -77,6 +76,13 @@ public class EditorActions {
      * Will immediately quit the application with no hesitation.
      */
     public static void quit() {
+        var w = DI.get(Window.class);
+        // TODO: Check if there are unsaved changes
+        var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
+        if(result.isEmpty())
+            return;
+            if(result.get())
+            EditorActions.save();
         Platform.exit();
     }
 
@@ -223,6 +229,28 @@ public class EditorActions {
     }
 
     /**
+     * Open the project picker dialogue and load the selected project
+     */
+    public static void openProject() {
+        var w = DI.get(Window.class);
+        var file = EditorActions.openProjectPicker(w);
+        if(file.isPresent())
+            EditorActions.openProject(file.get());
+    }
+
+    /**
+     * Create a new project with a picker dialogue and open it
+     */
+    public static void newProject() {
+        var file = EditorActions.newFile();
+        if(!file.isPresent())
+            return;
+        var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
+        EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
+        EditorActions.openProject(file.get());
+    }
+
+    /**
      * Restart the application.
      *
      * Note. Will not prompt to save unsaved changes.
@@ -303,6 +331,20 @@ public class EditorActions {
      */
     public static void openEditorSettings() {
         openModal("EditorSettings.fxml", "Editor Settings");
+    }
+
+    /**
+     * Open the {@see Keymap} viewer modal pane
+     */
+    public static void openKeybinds() {
+        openModal("Keybinds.fxml", "Keybinds");
+    }
+
+    /**
+     * Open the tip of the day modal pane
+     */
+    public static void openTipOfTheDay() {
+        openModal("TipOfTheDay.fxml", "Tip Of The Day");
     }
 
     /**
@@ -396,14 +438,24 @@ public class EditorActions {
      * Perform an undo action
      */
     public static void undo() {
-        DI.get(IUndoSystem.class).undo();
+        var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
+        if(currentlySelectedBuffer == null) {
+            logger.warn("no buffer is currently selected");
+            return;
+        }
+        currentlySelectedBuffer.getUndoSystem().undo();
     }
 
     /**
      * Perform a redo action
      */
     public static void redo() {
-        DI.get(IUndoSystem.class).redo();
+        var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
+        if(currentlySelectedBuffer == null) {
+            logger.warn("no buffer is currently selected");
+            return;
+        }
+        currentlySelectedBuffer.getUndoSystem().redo();
     }
 
     /**
@@ -677,7 +729,7 @@ public class EditorActions {
                 return;
             }
             var basePath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
-	        var openBuffers = DI.get(IBufferContainer.class);
+            var openBuffers = DI.get(IBufferContainer.class);
             openBuffers.open(path.toString().replace(basePath, ""));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -707,7 +759,6 @@ public class EditorActions {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-
     }
 
     /**

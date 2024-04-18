@@ -11,4 +11,3 @@
 <Text fx:id="placeholder" text="no open models"/>
 <TabPane fx:id="tabpane" styleClass="floating" VBox.vgrow="ALWAYS"/>
 </VBox>
-

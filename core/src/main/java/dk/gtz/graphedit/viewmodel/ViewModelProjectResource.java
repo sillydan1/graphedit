@@ -7,7 +7,9 @@ import java.util.Optional;
 
 import dk.gtz.graphedit.model.ModelProjectResource;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
+import dk.gtz.graphedit.util.IObservableUndoSystem;
 import dk.gtz.graphedit.view.IProjectResourceView;
+import dk.yalibs.yadi.DI;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.Property;
@@ -25,6 +27,7 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
     private ViewModelGraph syntax;
     private List<Runnable> onFocusHandlers;
     private List<IProjectResourceView> views;
+    private IObservableUndoSystem undoSystem;
 
     /**
      * Constructs a new view model project resource based on the provided model project resource
@@ -34,6 +37,8 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
     public ViewModelProjectResource(ModelProjectResource projectResource, ISyntaxFactory syntaxFactory) {
 	this(new SimpleMapProperty<>(FXCollections.observableHashMap()), new ViewModelGraph(projectResource.syntax(), syntaxFactory));
 	metadata.putAll(projectResource.metadata());
+	undoSystem = DI.get(IObservableUndoSystem.class);
+	addFocusListener(() -> DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().set(this));
     }
 
     /**
@@ -46,6 +51,14 @@ public class ViewModelProjectResource implements IFocusable, Property<ViewModelP
 	this.syntax = syntax;
 	this.onFocusHandlers = new ArrayList<>();
 	this.views = new ArrayList<>();
+    }
+
+    /**
+     * Get the associated undo system
+     * @return An undo system
+     */
+    public IObservableUndoSystem getUndoSystem() {
+	return undoSystem;
     }
 
     /**

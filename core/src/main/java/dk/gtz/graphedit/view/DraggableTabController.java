@@ -1,27 +1,33 @@
 package dk.gtz.graphedit.view;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import atlantafx.base.theme.Styles;
+import dk.yalibs.yadi.DI;
 import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  * A draggable tab that can optionally be detached from its tab pane and shown
@@ -35,14 +41,14 @@ import javafx.stage.StageStyle;
  * @author Asger Gitz-Johansen
  */
 public class DraggableTabController extends Tab implements IProjectResourceView {
-    private static final Logger logger = LoggerFactory.getLogger(DraggableTabController.class);
     private record InsertData(int index, TabPane insertPane) {}
     private static final Set<TabPane> tabPanes = new HashSet<>();
     private Label nameLabel;
     private Text dragText;
     private static final Stage markerStage;
-    private Stage dragStage;
+    private Stage dragStage, newStage;
     private boolean detachable;
+    private final List<EventHandler<WindowEvent>> eventHandlers;
 
     static {
 	markerStage = new Stage();
@@ -58,8 +64,10 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
      * however a TabPane with draggable tabs must *only* have DraggableTabs,
      * normal tabs and DrragableTabs mixed will cause issues!
      * @param text the text to appear on the tag label.
+     * @param editor the editor to use for handling events.
      */
-    public DraggableTabController(String text) {
+    public DraggableTabController(String text, IEventHandler editor) {
+	eventHandlers = new ArrayList<>();
 	nameLabel = new Label(text);
 	setGraphic(nameLabel);
 	detachable = true;
@@ -122,7 +130,8 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 		}
 		if(!detachable)
 		    return;
-		var newStage = new Stage();
+		newStage = new Stage();
+		var topPane = new BorderPane();
 		var pane = new TabPane();
 		pane.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 		tabPanes.add(pane);
@@ -133,8 +142,15 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 		    if(pane.getTabs().isEmpty())
 			newStage.hide();
 		});
-		var spawnScene = new Scene(pane);
+		topPane.setCenter(pane);
+		topPane.setTop(DI.get(MenuBar.class));
+		var spawnScene = new Scene(topPane);
 		spawnScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+		spawnScene.addEventHandler(KeyEvent.ANY, e -> editor.onKeyEvent(e));
+		spawnScene.addEventHandler(MouseEvent.ANY, e -> editor.onMouseEvent(e));
+		newStage.setOnCloseRequest(e -> {
+		    eventHandlers.forEach(h -> h.handle(e));
+		});
 		newStage.setScene(spawnScene);
 		newStage.initStyle(StageStyle.UTILITY);
 		newStage.setX(t.getScreenX());
@@ -144,6 +160,14 @@ public class DraggableTabController extends Tab implements IProjectResourceView 
 		pane.requestFocus();
 	    }
 	});
+    }
+
+    /**
+     * Add a listener that will be invoked when a tab is closed.
+     * @param e the event handler to add.
+     */
+    public void addOnClosedListener(EventHandler<WindowEvent> e) {
+	eventHandlers.add(e);
     }
 
     /**

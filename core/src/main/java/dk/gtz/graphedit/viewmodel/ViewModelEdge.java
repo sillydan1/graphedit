@@ -5,21 +5,18 @@ import java.util.List;
 import java.util.UUID;
 
 import dk.gtz.graphedit.model.ModelEdge;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
  * The ViewModel representation of a graph edge.
  * Edges connects vertices with other vertices.
  */
-public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFocusable, Property<ViewModelEdge> {
+public class ViewModelEdge extends AutoProperty<ViewModelEdge> implements IInspectable, ISelectable, IHoverable, IFocusable {
     private final UUID uuid;
     private final BooleanProperty isSelected;
     private final List<Runnable> focusEventHandlers;
@@ -28,12 +25,14 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
     /**
      * Property pointing to the source vertex id
      */
-    protected final ObjectProperty<UUID> source;
+    @Autolisten
+    public final ObjectProperty<UUID> source;
 
     /**
      * Property pointing to the target vertex id
      */
-    protected final ObjectProperty<UUID> target;
+    @Autolisten
+    public final ObjectProperty<UUID> target;
 
     /**
      * Constructs a new view model edge instance
@@ -42,6 +41,8 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
      * @param target the syntactic element where the edge targets
      */
     public ViewModelEdge(UUID uuid, ObjectProperty<UUID> source, ObjectProperty<UUID> target) {
+	super();
+	loadFields(getClass(), this);
 	this.uuid = uuid;
 	this.source = source;
 	this.target = target;
@@ -158,78 +159,13 @@ public class ViewModelEdge implements IInspectable, ISelectable, IHoverable, IFo
     }
 
     @Override
-    public Object getBean() {
-	return null;
-    }
-
-    @Override
     public String getName() {
 	return "";
     }
 
     @Override
-    public void addListener(ChangeListener<? super ViewModelEdge> listener) {
-	source.addListener((e,o,n) -> listener.changed(this,this,this));
-	target.addListener((e,o,n) -> listener.changed(this,this,this));
-	// NOTE: isSelected changes does not constitute a "changed" event
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super ViewModelEdge> listener) {
-	source.removeListener((e,o,n) -> listener.changed(this,this,this));
-	target.removeListener((e,o,n) -> listener.changed(this,this,this));
-    }
-
-    @Override
     public ViewModelEdge getValue() {
 	return this;
-    }
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-	source.addListener(listener);
-	target.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-	source.removeListener(listener);
-	target.removeListener(listener);
-    }
-
-    @Override
-    public void setValue(ViewModelEdge value) {
-	source.set(value.source().get());
-	target.set(value.target().get());
-    }
-
-    @Override
-    public void bind(ObservableValue<? extends ViewModelEdge> observable) {
-	source.bind(observable.getValue().source());
-	target.bind(observable.getValue().target());
-    }
-
-    @Override
-    public void unbind() {
-	source.unbind();
-	target.unbind();
-    }
-
-    @Override
-    public boolean isBound() {
-	return source.isBound() || target.isBound();
-    }
-
-    @Override
-    public void bindBidirectional(Property<ViewModelEdge> other) {
-	source.bindBidirectional(other.getValue().source());
-	target.bindBidirectional(other.getValue().target());
-    }
-
-    @Override
-    public void unbindBidirectional(Property<ViewModelEdge> other) {
-	source.unbindBidirectional(other.getValue().source());
-	target.unbindBidirectional(other.getValue().target());
     }
 
     @Override

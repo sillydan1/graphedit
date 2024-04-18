@@ -61,7 +61,7 @@ def gitHeadName = { ->
 }
 
 def getVersion = { ->
-    def version = '1.4.0';
+    def version = '1.5.0';
     def headName = gitHeadName();
     if(headName.equals('v'+version))
         return version;
@@ -115,12 +115,13 @@ subprojects {
         implementation group: 'com.beust', name: 'jcommander', version: '1.82';
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
         implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
+        implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.15.0';
         implementation group: 'dk.gtz.graphedit', name: 'graphedit-protobuf', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yadi', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yastreamgobbler', version: '1.0.0';
-        implementation group: 'dk.yalibs', name: 'yaundo', version: '1.0.0';
+        implementation group: 'dk.yalibs', name: 'yaundo', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yalazy', version: '1.1.0';
         implementation group: 'io.github.mkpaz', name: 'atlantafx-base', version: '2.0.1';
@@ -133,7 +134,10 @@ subprojects {
         implementation group: 'org.openjfx', name: 'javafx-controls', version: '20.0.1';
         implementation group: 'org.openjfx', name: 'javafx-fxml', version: '20.0.1';
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7';
+        implementation group: 'party.iroiro.luajava', name: 'luajava', version: '3.5.0';
+        implementation group: 'party.iroiro.luajava', name: 'luajit', version: '3.5.0';
 
+        runtimeOnly group: 'party.iroiro.luajava', name: 'luajit-platform', version: '3.5.0', classifier: 'natives-desktop';
         runtimeOnly group: 'io.grpc', name: 'grpc-netty-shaded', version: '1.60.0';
         implementation group: 'io.grpc', name: 'grpc-protobuf', version: '1.60.0';
         implementation group: 'io.grpc', name: 'grpc-stub', version: '1.60.0';
@@ -145,7 +149,8 @@ subprojects {
     }
 
     javadoc {
-        exclude 'dk/gtz/graphedit/proto/**'
+        exclude 'dk/gtz/graphedit/proto/**';
+        exclude 'dk/gtz/graphedit/BuildConfig.java';
         if (JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
         }
