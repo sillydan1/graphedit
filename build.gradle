@@ -116,7 +116,7 @@ subprojects {
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0';
         implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.15.0';
         implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.15.0';
-        implementation group: 'dk.gtz.graphedit', name: 'graphedit-protobuf', version: '1.1.0';
+        implementation group: 'dk.gtz.graphedit', name: 'graphedit-protobuf', version: '1.2.0';
         implementation group: 'dk.yalibs', name: 'yadi', version: '1.1.0';
         implementation group: 'dk.yalibs', name: 'yaerrors', version: '1.0.0';
         implementation group: 'dk.yalibs', name: 'yafunc', version: '1.0.0';

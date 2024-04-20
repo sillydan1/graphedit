@@ -212,7 +212,12 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		var diff = ViewModelDiff.compare(a, newVal);
 		oldVal.set(newVal.toModel());
 		var gDiff = converter.toDiff(diff, bufferName);
-		handleDiff(gDiff);
+		if(isServerCapable(Capability.CAPABILITY_DIFFS))
+			handleDiff(gDiff);
+		else {
+			var so = new SingleResponseStreamObserver<Empty>();
+			stub.get().handleChange(converter.toBuffer(newVal, bufferName), so);
+		}
 	}
 
 	private void projectOpened() {
@@ -240,8 +245,6 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 				var so = new SingleResponseStreamObserver<Empty>();
 				var changedVal = c.getValueAdded();
 				stub.get().bufferCreated(converter.toBuffer(changedVal, c.getKey()), so);
-				if(!isServerCapable(Capability.CAPABILITY_DIFFS))
-					return;
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
 				changedVal.addListener((e,o,n) -> bufferChanged(syntaxFactory, c.getKey(), old, n));
 			}
