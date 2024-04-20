@@ -19,11 +19,13 @@ import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgress;
 import dk.gtz.graphedit.model.lsp.ModelLanguageServerProgressType;
 import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
+import dk.gtz.graphedit.proto.Buffer;
 import dk.gtz.graphedit.proto.Capability;
 import dk.gtz.graphedit.proto.DiagnosticsList;
 import dk.gtz.graphedit.proto.Diff;
 import dk.gtz.graphedit.proto.Edge;
 import dk.gtz.graphedit.proto.Empty;
+import dk.gtz.graphedit.proto.Graph;
 import dk.gtz.graphedit.proto.LanguageServerGrpc;
 import dk.gtz.graphedit.proto.LanguageServerGrpc.LanguageServerStub;
 import dk.gtz.graphedit.proto.Notification;
@@ -42,6 +44,7 @@ import dk.gtz.graphedit.util.RetryUtils;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelDiff;
 import dk.gtz.graphedit.viewmodel.ViewModelEdge;
+import dk.gtz.graphedit.viewmodel.ViewModelGraph;
 import dk.gtz.graphedit.viewmodel.ViewModelProject;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelVertex;
@@ -230,15 +233,21 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	@Override
 	public void initialize(File projectFile, IBufferContainer bufferContainer) {
 		projectOpened();
-		final var ltsSyntax = MetadataUtils.getSyntaxFactory(getLanguageName());
+		final var syntaxFactory = MetadataUtils.getSyntaxFactory(getLanguageName());
 		this.bufferContainer = bufferContainer;
 		this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
-			if(!isServerCapable(Capability.CAPABILITY_DIFFS))
-				return;
 			if(c.wasAdded()) {
+				var so = new SingleResponseStreamObserver<Empty>();
 				var changedVal = c.getValueAdded();
+				stub.get().bufferCreated(converter.toBuffer(changedVal, c.getKey()), so);
+				if(!isServerCapable(Capability.CAPABILITY_DIFFS))
+					return;
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
-				changedVal.addListener((e,o,n) -> bufferChanged(ltsSyntax, c.getKey(), old, n));
+				changedVal.addListener((e,o,n) -> bufferChanged(syntaxFactory, c.getKey(), old, n));
+			}
+			if(c.wasRemoved()) {
+				var so = new SingleResponseStreamObserver<Empty>();
+				stub.get().bufferDeleted(converter.toBuffer(c.getValueRemoved(), c.getKey()), so);
 			}
 		});
 	}
@@ -404,6 +413,23 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 				b.addEdgeAdditions(toEdge(e));
 			for(var e : diff.getEdgeDeletions())
 				b.addEdgeDeletions(toEdge(e));
+			return b.build();
+		}
+
+		public Buffer toBuffer(ViewModelProjectResource buffer, String key) {
+			var b = Buffer.newBuilder();
+			b.setPath(key);
+			b.putAllMetadata(buffer.metadata());
+			b.setGraph(toGraph(buffer.syntax()));
+			return b.build();
+		}
+
+		public Graph toGraph(ViewModelGraph graph) {
+			var b = Graph.newBuilder();
+			for(var v : graph.vertices().entrySet())
+				b.addVertices(toVertex(v.getValue()));
+			for(var e : graph.edges().entrySet())
+				b.addEdges(toEdge(e.getValue()));
 			return b.build();
 		}
 	}
