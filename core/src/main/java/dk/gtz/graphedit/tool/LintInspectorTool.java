@@ -12,6 +12,7 @@ import dk.gtz.graphedit.events.VertexMouseEvent;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.yalibs.yadi.DI;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -60,18 +61,22 @@ public class LintInspectorTool extends AbstractBaseTool {
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-            var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.vertexId())).toList();
-            if(!affectingLints.isEmpty())
-                e.vertex().hover(createLintList(affectingLints));
+            Platform.runLater(() -> {
+                var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.vertexId())).toList();
+                if(!affectingLints.isEmpty())
+                    e.vertex().hover(createLintList(affectingLints));
+            });
         }
     }
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {
         if(e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-            var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.edgeId())).toList();
-            if(!affectingLints.isEmpty())
-                e.edge().hover(createLintList(affectingLints));
+            Platform.runLater(() -> {
+                var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.edgeId())).toList();
+                if(!affectingLints.isEmpty())
+                    e.edge().hover(createLintList(affectingLints));
+            });
         }
     }
 

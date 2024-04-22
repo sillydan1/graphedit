@@ -84,7 +84,7 @@ public class MassDeleteTool extends AbstractBaseTool {
 		    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())); 
 		for(var edge : linkedEdges.entrySet()) 
 		    buffer.syntax().edges().remove(edge.getKey());
-		buffer.syntax().vertices().remove(elem.id());
+		buffer.syntax().vertices().remove(elem.id()); // TODO: This triggers a lot of changehandlers. We need an "atomicallyRemoveAll/addAll" funcitonality in the graph viewmodel
 		buffer.syntax().edges().remove(elem.id());
 	    }
 	    var diff = ViewModelDiff.compare(prev, buffer);

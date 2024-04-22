@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelEdge;
 import dk.gtz.graphedit.model.ModelVertex;
 import javafx.beans.property.BooleanProperty;
@@ -18,6 +21,8 @@ import javafx.scene.Node;
  * A vertex is the most basic part of a graph. It can be connected with other vertices via {@link ModelEdge}s.
  */
 public class ViewModelVertex extends AutoProperty<ViewModelVertex> implements IInspectable, IHoverable, ISelectable, IFocusable {
+    private final static Logger logger = LoggerFactory.getLogger(ViewModelVertex.class);
+
     private final UUID uuid;
     private final ViewModelVertexShape shape;
     private final BooleanProperty isSelected;
@@ -160,6 +165,17 @@ public class ViewModelVertex extends AutoProperty<ViewModelVertex> implements II
     @Override
     public void unhover() {
 	hoverElement.set(null);
+    }
+
+    /**
+     * Indicates whether or not the provided diff is significant in terms of the semantics.
+     * If this returns true, then a change-event is triggered towards the language server (if available).
+     * @param other The other vertex to compare with
+     * @return True if the change is significant, false otherwise
+     */
+    public boolean isChangeSignificant(ViewModelVertex other) {
+	// TODO: return true by default. This is just a hack so I dont have to create a whole new graphedit release for now.
+	return false; // NOTE: only the position can change (this function is meant to be overridden)
     }
 
     @Override

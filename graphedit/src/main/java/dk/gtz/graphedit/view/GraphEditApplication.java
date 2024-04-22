@@ -314,7 +314,7 @@ public class GraphEditApplication extends Application implements IRestartableApp
 	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
 	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
 	EditorLogAppender.subscribe(Level.TRACE, Toast::trace);
-	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
+	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: (%s) %s".formatted(e.getClass().getSimpleName(), e.getMessage()), e));
     }
 
     @Override

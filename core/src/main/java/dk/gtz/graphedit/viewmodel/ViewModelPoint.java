@@ -1,25 +1,19 @@
 package dk.gtz.graphedit.viewmodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dk.gtz.graphedit.model.ModelPoint;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 /**
  * View model representation of a 2D point.
  * Also contains vector-math functions, so it can also be used as a vector.
  */
-public class ViewModelPoint implements Property<ViewModelPoint> {
-    private List<ChangeListener<? super ViewModelPoint>> changeListeners;
-    private final DoubleProperty x;
-    private final DoubleProperty y;
+public class ViewModelPoint extends AutoProperty<ViewModelPoint> {
+    @Autolisten
+    public final DoubleProperty x;
+    @Autolisten
+    public final DoubleProperty y;
 
     /**
      * Constructs a new view model point based on the provided model point
@@ -39,19 +33,6 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
     }
 
     /**
-     * Constructs a new view model point with the provided x and y coordinate properties
-     * @param x the x-coordinate property
-     * @param y the y-coordinate property
-     */
-    public ViewModelPoint(DoubleProperty x, DoubleProperty y) {
-	this.x = x;
-	this.y = y;
-	this.changeListeners = new ArrayList<>();
-	this.x.addListener((e,o,n) -> this.changeListeners.stream().forEach(l -> l.changed(this, this, this)));
-	this.y.addListener((e,o,n) -> this.changeListeners.stream().forEach(l -> l.changed(this, this, this)));
-    }
-
-    /**
      * Constructs a new view model point with the provided x and y coordinate property bindings
      * @param x the x-coordinate property binding
      * @param y the y-coordinate property binding
@@ -60,6 +41,17 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
 	this(x.get(), y.get());
 	this.x.bind(x);
 	this.y.bind(y);
+    }
+
+    /**
+     * Constructs a new view model point with the provided x and y coordinate properties
+     * @param x the x-coordinate property
+     * @param y the y-coordinate property
+     */
+    public ViewModelPoint(DoubleProperty x, DoubleProperty y) {
+	loadFields(getClass(), this);
+	this.x = x;
+	this.y = y;
     }
 
     /**
@@ -196,23 +188,8 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
     }
 
     @Override
-    public Object getBean() {
-	return null;
-    }
-
-    @Override
     public String getName() {
 	return "";
-    }
-
-    @Override
-    public void addListener(ChangeListener<? super ViewModelPoint> listener) {
-	changeListeners.add(listener);
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super ViewModelPoint> listener) {
-	changeListeners.remove(listener);
     }
 
     @Override
@@ -221,49 +198,9 @@ public class ViewModelPoint implements Property<ViewModelPoint> {
     }
 
     @Override
-    public void addListener(InvalidationListener listener) {
-	x.addListener(listener);
-	y.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-	x.removeListener(listener);
-	y.removeListener(listener);
-    }
-
-    @Override
     public void setValue(ViewModelPoint value) {
-	x.set(value.getX());
-	y.set(value.getY());
-    }
-
-    @Override
-    public void bind(ObservableValue<? extends ViewModelPoint> observable) {
-	x.bind(observable.getValue().getYProperty());
-	y.bind(observable.getValue().getYProperty());
-    }
-
-    @Override
-    public void unbind() {
-	throw new UnsupportedOperationException("Unimplemented method 'unbind'");
-    }
-
-    @Override
-    public boolean isBound() {
-	return x.isBound() || y.isBound();
-    }
-
-    @Override
-    public void bindBidirectional(Property<ViewModelPoint> other) {
-	x.bindBidirectional(other.getValue().x);
-	y.bindBidirectional(other.getValue().y);
-    }
-
-    @Override
-    public void unbindBidirectional(Property<ViewModelPoint> other) {
-	x.unbindBidirectional(other.getValue().x);
-	y.unbindBidirectional(other.getValue().y);
+	x.setValue(value.x.getValue());
+	y.setValue(value.y.getValue());
     }
 
     @Override
