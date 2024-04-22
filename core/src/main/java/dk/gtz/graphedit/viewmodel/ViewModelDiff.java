@@ -365,6 +365,52 @@ public class ViewModelDiff {
         return result;
     }
 
+    private Optional<ViewModelVertex> getVertex(List<ViewModelVertex> list, UUID query) {
+        for(var v : list)
+            if(v.id().equals(query))
+                return Optional.of(v);
+        return Optional.empty();
+    }
+
+    private Optional<ViewModelEdge> getEdge(List<ViewModelEdge> list, UUID query) {
+        for(var v : list)
+            if(v.id().equals(query))
+                return Optional.of(v);
+        return Optional.empty();
+    }
+
+    public boolean isSignificant() {
+        for(var vertex : vertexDeletions) {
+            var other = getVertex(vertexAdditions, vertex.id());
+            if(other.isEmpty())
+                return true;
+            if(vertex.isChangeSignificant(other.get()))
+                return true;
+        }
+        for(var vertex : vertexAdditions) {
+            var other = getVertex(vertexDeletions, vertex.id());
+            if(other.isEmpty())
+                return true;
+            if(vertex.isChangeSignificant(other.get()))
+                return true;
+        }
+        for(var edge : edgeDeletions) {
+            var other = getEdge(edgeAdditions, edge.id());
+            if(other.isEmpty())
+                return true;
+            if(edge.isChangeSignificant(other.get()))
+                return true;
+        }
+        for(var edge : edgeAdditions) {
+            var other = getEdge(edgeDeletions, edge.id());
+            if(other.isEmpty())
+                return true;
+            if(edge.isChangeSignificant(other.get()))
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object other) {
         if(other == null)
@@ -402,13 +448,13 @@ public class ViewModelDiff {
         var result = new StringBuilder();
         result.append("syntaxStyle=").append(syntaxStyle);
         for(var x : vertexDeletions)
-            result.append("\n").append("-v ").append(x.id().toString());
+            result.append("\n").append("-v ").append(x.id().toString()).append(" ").append(x.hashCode());
         for(var x : vertexAdditions)
-            result.append("\n").append("+v ").append(x.id().toString());
+            result.append("\n").append("+v ").append(x.id().toString()).append(" ").append(x.hashCode());
         for(var x : edgeDeletions)
-            result.append("\n").append("-e ").append(x.id().toString());
+            result.append("\n").append("-e ").append(x.id().toString()).append(" ").append(x.hashCode());
         for(var x : edgeAdditions)
-            result.append("\n").append("+e ").append(x.id().toString());
+            result.append("\n").append("+e ").append(x.id().toString()).append(" ").append(x.hashCode());
         return result.toString();
     }
 }

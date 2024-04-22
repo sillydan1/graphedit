@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.property.MapProperty;
@@ -18,6 +21,7 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
+    private static final Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     @Autolisten
     private StringProperty declarations;
     @Autolisten
@@ -130,7 +134,7 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
             listener.changed(this,this,this);
         });
         ChangeListener<? super ViewModelEdge> edgeChangeListener = (e,o,n) -> listener.changed(this,this,this);
-        edges.forEach((k,v) -> v.addListener((e,o,n) -> listener.changed(this,this,this)));
+        edges.forEach((k,v) -> v.addListener(edgeChangeListener));
         edges.addListener((MapChangeListener<UUID,ViewModelEdge>)event -> {
             if(event.wasAdded())
                 event.getValueAdded().addListener(edgeChangeListener);

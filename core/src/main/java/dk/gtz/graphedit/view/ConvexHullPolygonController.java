@@ -120,6 +120,10 @@ public class ConvexHullPolygonController extends Group {
 		a = point;
 	    }
 	}
+	if(a == null)
+	    return points;
+	if(b == null)
+	    return points;
 	hull.add(a);
 	hull.add(b);
 	var s1 = new ArrayList<ViewModelPoint>();

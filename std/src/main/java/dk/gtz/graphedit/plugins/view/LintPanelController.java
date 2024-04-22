@@ -1,6 +1,8 @@
 package dk.gtz.graphedit.plugins.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import atlantafx.base.controls.Card;
@@ -8,6 +10,7 @@ import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.viewmodel.LintContainer;
 import dk.gtz.graphedit.viewmodel.ViewModelLint;
 import dk.yalibs.yadi.DI;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -36,12 +39,12 @@ public class LintPanelController extends StackPane {
 	scrollPane.setFitToWidth(true);
 	getChildren().add(scrollPane);
 	lints = DI.get(LintContainer.class);
-	setLints();
+	Platform.runLater(() -> setLints());
 	initializeEventHandlers();
     }
 
     private void setLints() {
-	container.getChildren().clear();
+	var newNodes = new ArrayList<Node>();
 	for(var lintCollection : lints.getProperty().entrySet()) {
 	    var bufferKeyTitle = new Label(lintCollection.getKey());
 	    bufferKeyTitle.getStyleClass().add(Styles.TITLE_3);
@@ -53,21 +56,31 @@ public class LintPanelController extends StackPane {
 		addLint(lintContainer, lint);
 	    lintCollection.getValue().addListener((ListChangeListener<ViewModelLint>)c -> {
 		c.next();
-		for(var lint : c.getAddedSubList())
-		    addLint(lintContainer, lint);
-		for(var lint : c.getRemoved()) {
-		    var lintNode = lintNodeMapping.get(lint);
-		    if(lintNode == null)
-			continue;
-		    lintContainer.getChildren().remove(lintNode);
-		    lintNodeMapping.remove(lint);
+		var addedList = c.getAddedSubList();
+		var removed = c.getRemoved();
+		if(addedList != null) {
+		    var newLints = addedList.stream().map(this::createLint).toList();
+		    Platform.runLater(() -> lintContainer.getChildren().addAll(newLints));
 		}
+		var removeLints = removed.stream().filter(e -> lintNodeMapping.containsKey(e)).map(e -> lintNodeMapping.get(e)).toList();
+		Platform.runLater(() -> lintContainer.getChildren().removeAll(removeLints));
+		for(var lint : removed)
+		    lintNodeMapping.remove(lint);
 	    });
-	    container.getChildren().addAll(lintContainer, new Separator());
+	    newNodes.add(lintContainer);
+	    newNodes.add(new Separator());
 	}
+	Platform.runLater(() -> {
+	    container.getChildren().clear();
+	    container.getChildren().addAll(newNodes);
+	});
     }
 
     private void addLint(VBox container, ViewModelLint lint) {
+	container.getChildren().add(createLint(lint));
+    }
+
+    private Node createLint(ViewModelLint lint) {
 	var card = new Card();
 	card.getStyleClass().add(Styles.INTERACTIVE);
 	var icon = IconUtils.getLintTypeIcon(lint.severity().get());
@@ -86,10 +99,10 @@ public class LintPanelController extends StackPane {
 	card.setBody(body);
 	card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> lint.focus());
 	lintNodeMapping.put(lint, card);
-	container.getChildren().add(card);
+	return card;
     }
 
     private void initializeEventHandlers() {
-	lints.getProperty().addListener((e,o,n) -> setLints());
+	lints.getProperty().addListener((e,o,n) -> Platform.runLater(() -> setLints()));
     }
 }

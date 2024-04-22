@@ -21,6 +21,7 @@ import dk.gtz.graphedit.model.lsp.ModelNotification;
 import dk.gtz.graphedit.model.lsp.ModelNotificationLevel;
 import dk.gtz.graphedit.proto.Buffer;
 import dk.gtz.graphedit.proto.Capability;
+import dk.gtz.graphedit.proto.Diagnostic;
 import dk.gtz.graphedit.proto.DiagnosticsList;
 import dk.gtz.graphedit.proto.Diff;
 import dk.gtz.graphedit.proto.Edge;
@@ -55,6 +56,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
 
 /**
@@ -155,6 +157,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 	 * @return A class of language server information
 	 */
 	protected ServerInfo getServerInfo() {
+		return RetryUtils.tryTimes(maxConnectionAttempts, connectionAttemptWaitMilliseconds, this::tryGetServerInfo);
+	}
+
+	private ServerInfo tryGetServerInfo() {
 		try {
 			var so = new SingleResponseStreamObserver<ServerInfo>();
 			stub.get().getServerInfo(empty, so);
@@ -210,11 +216,13 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		if(!ViewModelDiff.areComparable(a, newVal))
 			return;
 		var diff = ViewModelDiff.compare(a, newVal);
+		if(!diff.isSignificant())
+			return;
 		oldVal.set(newVal.toModel());
 		var gDiff = converter.toDiff(diff, bufferName);
-		if(isServerCapable(Capability.CAPABILITY_DIFFS))
+		if(isServerCapable(Capability.CAPABILITY_DIFFS)) {
 			handleDiff(gDiff);
-		else {
+		} else {
 			var so = new SingleResponseStreamObserver<Empty>();
 			stub.get().handleChange(converter.toBuffer(newVal, bufferName), so);
 		}
@@ -241,15 +249,16 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		final var syntaxFactory = MetadataUtils.getSyntaxFactory(getLanguageName());
 		this.bufferContainer = bufferContainer;
 		this.bufferContainer.getBuffers().addListener((MapChangeListener<String,ViewModelProjectResource>)c -> {
+			var so = new SingleResponseStreamObserver<Empty>();
 			if(c.wasAdded()) {
-				var so = new SingleResponseStreamObserver<Empty>();
-				var changedVal = c.getValueAdded();
-				stub.get().bufferCreated(converter.toBuffer(changedVal, c.getKey()), so);
+				var changedVal = this.bufferContainer.get(c.getKey());
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
-				changedVal.addListener((e,o,n) -> bufferChanged(syntaxFactory, c.getKey(), old, n));
+				changedVal.addListener((ChangeListener<? super ViewModelProjectResource>)(e,o,n) -> {
+					bufferChanged(syntaxFactory, c.getKey(), old, n);
+				});
+				stub.get().bufferCreated(converter.toBuffer(changedVal, c.getKey()), so);
 			}
 			if(c.wasRemoved()) {
-				var so = new SingleResponseStreamObserver<Empty>();
 				stub.get().bufferDeleted(converter.toBuffer(c.getValueRemoved(), c.getKey()), so);
 			}
 		});
@@ -261,6 +270,32 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		return List.of();
 	}
 
+	private void logDiagnostic(Diagnostic diag) {
+		// TODO: verbosity check or something
+		var sb = new StringBuilder();
+		var sep = "";
+		for(var e : diag.getAffectedElementsList()) {
+			sb.append(sep).append("[elem](%s)".formatted(e));
+			sep = ",";
+		}
+		switch(diag.getSeverity()) {
+			case SEVERITY_ERROR:
+				logger.error("{}: {} ({})", diag.getTitle(), diag.getMessage(), sb.toString());
+				break;
+			case SEVERITY_WARNING:
+				logger.warn("{}: {} ({})", diag.getTitle(), diag.getMessage(), sb.toString());
+				break;
+			case SEVERITY_HINT:
+			case SEVERITY_INFO:
+				logger.info("{}: {} ({})", diag.getTitle(), diag.getMessage(), sb.toString());
+				break;
+			case UNRECOGNIZED:
+			default:
+				logger.error("UNRECOGNIZED {}: {} ({})", diag.getTitle(), diag.getMessage(), sb.toString());
+				break;
+		}
+	}
+
 	@Override
 	public void addDiagnosticsCallback(IRunnable1<Collection<ModelLint>> callback) {
 		if(!isServerCapable(Capability.CAPABILITY_DIAGNOSTICS))
@@ -269,7 +304,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			@Override
 			public void onNext(DiagnosticsList value) {
 				var converted = new ArrayList<ModelLint>();
-				for(var protoDiagnostic : value.getDiagnosticsList())
+				for(var protoDiagnostic : value.getDiagnosticsList()) {
+					// NOTE: disabled for now: logDiagnostic(protoDiagnostic);
+					logDiagnostic(protoDiagnostic);
 					converted.add(new ModelLint(
 								protoDiagnostic.getModelkey(),
 								protoDiagnostic.getLintIdentifier(),
@@ -279,6 +316,7 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 								Optional.of(protoDiagnostic.getDescription()),
 								converter.toUUIDList(protoDiagnostic.getAffectedElementsList()),
 								converter.toPolygonList(protoDiagnostic.getAffectedRegionsList())));
+				}
 				callback.run(converted);
 			}
 

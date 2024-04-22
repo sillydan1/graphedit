@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -104,10 +105,11 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
     @Override
     public void addListener(InvalidationListener listener) {
         for(var field : fields) {
-            if(!field.getType().isAssignableFrom(ObservableValue.class))
+            var isObservable = Observable.class.isAssignableFrom(field.getType());
+            if(!isObservable)
                 continue;
             try {
-                var observable = (ObservableValue<?>)field.get(value);
+                var observable = (Observable)field.get(value);
                 if(!invalidationListeners.containsKey(field))
                     invalidationListeners.put(field, listener);
                 observable.addListener(invalidationListeners.get(field));
@@ -120,11 +122,11 @@ public abstract class AutoProperty<T extends Property<T>> implements Property<T>
     @Override
     public void removeListener(InvalidationListener listener) {
         for(var field : fields) {
-            var isObservable = ObservableValue.class.isAssignableFrom(field.getType());
+            var isObservable = Observable.class.isAssignableFrom(field.getType());
             if(!isObservable)
                 continue;
             try {
-                var observable = (ObservableValue<?>)field.get(value);
+                var observable = (Observable)field.get(value);
                 if(invalidationListeners.containsKey(field))
                     observable.addListener(invalidationListeners.get(field));
                 else // BUG: This probably doesnt work, but it doesn't hurt to try

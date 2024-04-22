@@ -32,7 +32,6 @@ import javafx.scene.transform.Rotate;
  * If you extend from this and dont want all the features, you should overwrite the unwanted initialize functions
  */
 public class EdgeController extends Group {
-    private static record PointShape(ViewModelPoint point, ViewModelVertexShape shape) {}
     /**
      * A construct that tracks the mouse position. Useful when the edge is being edited
      */

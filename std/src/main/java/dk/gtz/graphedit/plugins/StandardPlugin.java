@@ -73,7 +73,8 @@ public class StandardPlugin implements IPlugin {
 
     @Override
     public Collection<ILanguageServer> getLanguageServers() throws Exception {
-        return List.of(new LTSLanguageServer());
+        return List.of(); // BUG: Language servers eat the "edge.target" changelistener...
+        // return List.of(new LTSLanguageServer());
     }
 
     @Override

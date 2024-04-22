@@ -122,6 +122,10 @@ public class ViewModelEdge extends AutoProperty<ViewModelEdge> implements IInspe
 	return true;
     }
 
+    public boolean isChangeSignificant(ViewModelEdge other) {
+	return true; // NOTE: return true by default, since only the source / target can change.
+    }
+
     @Override
     public BooleanProperty getIsSelected() {
 	return isSelected;
