@@ -252,6 +252,9 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 			var so = new SingleResponseStreamObserver<Empty>();
 			if(c.wasAdded()) {
 				var changedVal = this.bufferContainer.get(c.getKey());
+				var syn = changedVal.getValue().getSyntaxName();
+				if(syn.isEmpty() || !syn.get().equals(getLanguageName()))
+					return;
 				var old = new SimpleObjectProperty<>(changedVal.toModel());
 				changedVal.addListener((ChangeListener<? super ViewModelProjectResource>)(e,o,n) -> {
 					bufferChanged(syntaxFactory, c.getKey(), old, n);
