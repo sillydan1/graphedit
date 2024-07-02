@@ -56,6 +56,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
 
@@ -234,11 +235,10 @@ public abstract class GrpcLanguageServer implements ILanguageServer {
 		var project = DI.get(ViewModelProject.class);
 		var builder = Project.newBuilder()
 			.setPath(project.rootDirectory().get())
-			.setName(project.name().get());
-		for(var excludeFile : project.excludeFiles())
-			builder.addExcludeFiles(excludeFile.get());
+			.setName(project.name().get())
+			.addAllExcludeFiles(project.excludeFiles().stream().map(StringProperty::get).toList());
 		for(var metadata : project.metadata())
-			builder.putMetadata(metadata.getKey().get(), metadata.getValue().getValue());
+			builder.putMetadata(metadata.getKey().get(), metadata.getValue().get());
 		var so = new SingleResponseStreamObserver<Empty>();
 		stub.get().projectOpened(builder.build(), so);
 	}
