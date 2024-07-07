@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,5 +158,19 @@ public class PlatformUtils {
 	    if(p != null)
 		p.destroy();
 	}
+    }
+
+    /**
+     * Find an executable on the PATH environment variable and return the full path to it.
+     * @param name The name of the executable to find
+     * @return An optional containing the full path to the executable if it was found, or an empty optional if it was not found
+     */
+    public static Optional<String> findExecutableOnPath(String name) {
+	for(var dirname : System.getenv().get("PATH").split(File.pathSeparator)) {
+	    var file = new File(dirname, name);
+	    if(file.isFile() && file.canExecute())
+		return Optional.of(file.getAbsolutePath());
+	}
+	return Optional.empty();
     }
 }
