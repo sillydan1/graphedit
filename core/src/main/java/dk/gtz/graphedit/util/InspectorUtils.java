@@ -5,6 +5,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
+import dk.gtz.graphedit.view.ExpandingTextArea;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -241,7 +242,7 @@ public class InspectorUtils {
      * @return a javafx component that can modify the value of the provided {@link StringProperty}
      */
     public static Node getPropertyInspector(StringProperty property) {
-	var result = new TextArea(property.get());
+	var result = new ExpandingTextArea(property.get());
 	result.setPrefRowCount(3);
 	result.setPrefColumnCount(10);
 	result.textProperty().bindBidirectional(property);
