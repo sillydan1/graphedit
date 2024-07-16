@@ -10,8 +10,15 @@ import javafx.beans.property.SimpleDoubleProperty;
  * Also contains vector-math functions, so it can also be used as a vector.
  */
 public class ViewModelPoint extends AutoProperty<ViewModelPoint> {
+    /**
+     * The x-coordinate property of the point
+     */
     @Autolisten
     public final DoubleProperty x;
+
+    /**
+     * The y-coordinate property of the point
+     */
     @Autolisten
     public final DoubleProperty y;
 

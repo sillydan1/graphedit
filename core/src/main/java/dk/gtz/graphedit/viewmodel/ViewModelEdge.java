@@ -122,6 +122,12 @@ public class ViewModelEdge extends AutoProperty<ViewModelEdge> implements IInspe
 	return true;
     }
 
+    /**
+     * Indicates whether or not the provided diff is significant in terms of the semantics.
+     * If this returns true, then a change-event is triggered towards the language server (if available).
+     * @param other The other edge to compare with
+     * @return true if the change is significant, false otherwise
+     */
     public boolean isChangeSignificant(ViewModelEdge other) {
 	return true; // NOTE: return true by default, since only the source / target can change.
     }

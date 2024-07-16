@@ -379,6 +379,11 @@ public class ViewModelDiff {
         return Optional.empty();
     }
 
+    /**
+     * Check if the diff contains significant changes.
+     * Signifigance is determined by the viewmodel object implementations, e.g. {@link ViewModelVertex#isChangeSignificant}
+     * @return True if the diff contains significant changes, otherwise false.
+     */
     public boolean isSignificant() {
         for(var vertex : vertexDeletions) {
             var other = getVertex(vertexAdditions, vertex.id());

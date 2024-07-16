@@ -34,6 +34,10 @@ import javafx.util.Duration;
 public class LintLayerController extends Pane {
     private final Affine transform;
     private final ViewModelProjectResource resource;
+
+    /**
+     * Tracker object that tracks the mouse cursor position.
+     */
     protected final MouseTracker tracker;
 
     /**
