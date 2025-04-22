@@ -20,7 +20,7 @@
 
 ## Build 💾
 The project is compiled using `gradle` (version 7+):
-```shell
+```sh
 # Just build the app
 gradle build
 # Compile and start the editor
@@ -51,22 +51,16 @@ We welcome all contributions. If you want to contribute, please take a look at t
 ### Linux 🐧
 We provide `.deb` and `.rpm` packaging formats directly from the github releases
 
-<!-- #### Flatpak -->
-<!-- Flatpak is not possible yet. Not enough github stars (yet) -->
-<!-- ```shell -->
-<!-- flatpak install sillydan1/graphedit/graphedit -->
-<!-- ``` -->
-
 #### Ubuntu or Debian
 Download the `.deb` file from the latest github release
-```shell
+```sh
 wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.deb
 dpkg -i graphedit.deb
 ```
 
 #### RPM
 Download the `.rpm` file from the latest github release
-```shell
+```sh
 wget https://github.com/sillydan1/graphedit/releases/latest/download/graphedit.rpm
 rpg -i graphedit.rpm
 ```

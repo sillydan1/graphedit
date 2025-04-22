@@ -41,6 +41,7 @@ example.json
 build-dir
 var
 metadata
+**/bin/
 
 # never commit this file
 donotcommit.txt
