@@ -5,26 +5,26 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Feature {
-    @JacksonXmlProperty(isAttribute = true)
-    private boolean isGame;
-    @JacksonXmlProperty(isAttribute = true)
-    private boolean isTimed;
+	@JacksonXmlProperty(isAttribute = true)
+	private boolean isGame;
+	@JacksonXmlProperty(isAttribute = true)
+	private boolean isTimed;
 
-    public boolean isGame() {
-	return isGame;
-    }
+	public boolean isGame() {
+		return isGame;
+	}
 
-    public Feature setIsGame(boolean isGame) {
-	this.isGame = isGame;
-	return this;
-    }
+	public Feature setIsGame(boolean isGame) {
+		this.isGame = isGame;
+		return this;
+	}
 
-    public boolean isTimed() {
-	return isTimed;
-    }
+	public boolean isTimed() {
+		return isTimed;
+	}
 
-    public Feature setIsTimed(boolean isTimed) {
-	this.isTimed = isTimed;
-	return this;
-    }
+	public Feature setIsTimed(boolean isTimed) {
+		this.isTimed = isTimed;
+		return this;
+	}
 }

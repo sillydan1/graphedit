@@ -28,7 +28,7 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 	public ViewModelTransition(UUID uuid, ModelEdge edge) {
 		super(uuid, edge);
 		this.action = new SimpleStringProperty("tau");
-		if(edge instanceof ModelTransition tedge)
+		if (edge instanceof ModelTransition tedge)
 			this.action.set(tedge.action());
 	}
 
@@ -45,8 +45,9 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return A list of inspectable objects
-	 * */
+	 */
 	@Override
 	public List<InspectableProperty> getInspectableObjects() {
 		var inspectables = new ArrayList<>(super.getInspectableObjects());
@@ -66,9 +67,9 @@ public class ViewModelTransition extends ViewModelEdge implements ISearchable {
 
 	@Override
 	public boolean equals(Object other) {
-		if(!super.equals(other))
+		if (!super.equals(other))
 			return false;
-		if(!(other instanceof ViewModelTransition vother))
+		if (!(other instanceof ViewModelTransition vother))
 			return false;
 		return action.get().equals(vother.action.get());
 	}

@@ -34,33 +34,35 @@ public class TextSyntaxFactory implements ISyntaxFactory {
 	@Override
 	public String getSyntaxDescription() {
 		return """
-			A basic syntax where vertices and edges can be optionally labelled with a string of plaintext
-			""";
+				A basic syntax where vertices and edges can be optionally labelled with a string of plaintext
+				""";
 	}
 
 	@Override
-	public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
+	public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue,
+			ViewModelGraph graph, Affine viewportTransform) {
 		var toolbox = DI.get(IToolbox.class);
 		var vertex = new ViewModelTextVertex(vertexKey, vertexValue);
-		if(vertexValue instanceof ViewModelTextVertex textVertexValue)
+		if (vertexValue instanceof ViewModelTextVertex textVertexValue)
 			vertex = textVertexValue;
-		return new TextVertexController(vertexKey, vertex, 
-			viewportTransform,
-			graph,
-			DI.get(ViewModelEditorSettings.class),
-			toolbox.getSelectedTool(),
-			this, bufferKey);
+		return new TextVertexController(vertexKey, vertex,
+				viewportTransform,
+				graph,
+				DI.get(ViewModelEditorSettings.class),
+				toolbox.getSelectedTool(),
+				this, bufferKey);
 	}
 
 	@Override
-	public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
+	public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph,
+			Affine viewportTransform) {
 		var toolbox = DI.get(IToolbox.class);
 		return new EdgeController(edgeKey, edgeValue,
-			graph,
-			viewportTransform,
-			DI.get(ViewModelEditorSettings.class),
-			toolbox.getSelectedTool(),
-			this, bufferKey);
+				graph,
+				viewportTransform,
+				DI.get(ViewModelEditorSettings.class),
+				toolbox.getSelectedTool(),
+				this, bufferKey);
 	}
 
 	@Override

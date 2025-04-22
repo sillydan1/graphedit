@@ -10,24 +10,24 @@ import dk.gtz.graphedit.spi.IPluginPanel;
 import javafx.scene.Node;
 
 public class InspectorPanel implements IPluginPanel {
-    private final Node panel;
+	private final Node panel;
 
-    public InspectorPanel() throws IOException {
-        panel = new InspectorController();
-    }
+	public InspectorPanel() throws IOException {
+		panel = new InspectorController();
+	}
 
-    @Override
-    public String getTooltip() {
-        return "Attribute Inspector";
-    }
+	@Override
+	public String getTooltip() {
+		return "Attribute Inspector";
+	}
 
-    @Override
-    public Node getIcon() {
-        return new FontIcon(BootstrapIcons.CARD_TEXT);
-    }
+	@Override
+	public Node getIcon() {
+		return new FontIcon(BootstrapIcons.CARD_TEXT);
+	}
 
-    @Override
-    public Node getPanel() {
-        return panel;
-    }
+	@Override
+	public Node getPanel() {
+		return panel;
+	}
 }

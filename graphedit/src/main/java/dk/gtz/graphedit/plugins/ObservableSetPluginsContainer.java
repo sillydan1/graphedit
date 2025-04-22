@@ -26,14 +26,14 @@ public class ObservableSetPluginsContainer implements IPluginsContainer {
 
 	@Override
 	public IPluginsContainer add(List<IPlugin> plugins) {
-		for(var plugin : plugins)
+		for (var plugin : plugins)
 			this.plugins.add(plugin);
 		return this;
 	}
 
 	@Override
 	public IPluginsContainer add(IPlugin... plugins) {
-		for(var plugin : plugins)
+		for (var plugin : plugins)
 			this.plugins.add(plugin);
 		return this;
 	}
@@ -46,8 +46,8 @@ public class ObservableSetPluginsContainer implements IPluginsContainer {
 
 	@Override
 	public Optional<IPlugin> get(String name) {
-		for(var plugin : plugins)
-			if(plugin.getName().equals(name))
+		for (var plugin : plugins)
+			if (plugin.getName().equals(name))
 				return Optional.of(plugin);
 		return Optional.empty();
 	}

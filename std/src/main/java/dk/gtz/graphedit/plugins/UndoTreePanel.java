@@ -8,24 +8,24 @@ import dk.gtz.graphedit.spi.IPluginPanel;
 import javafx.scene.Node;
 
 public class UndoTreePanel implements IPluginPanel {
-    private final Node panel;
+	private final Node panel;
 
-    public UndoTreePanel() {
-	panel = new UndoTreePanelController();
-    }
+	public UndoTreePanel() {
+		panel = new UndoTreePanelController();
+	}
 
-    @Override
-    public String getTooltip() {
-	return "Undo History";
-    }
+	@Override
+	public String getTooltip() {
+		return "Undo History";
+	}
 
-    @Override
-    public Node getIcon() {
-	return new FontIcon(BootstrapIcons.ARROW_CLOCKWISE);
-    }
+	@Override
+	public Node getIcon() {
+		return new FontIcon(BootstrapIcons.ARROW_CLOCKWISE);
+	}
 
-    @Override
-    public Node getPanel() {
-	return panel;
-    }
+	@Override
+	public Node getPanel() {
+		return panel;
+	}
 }

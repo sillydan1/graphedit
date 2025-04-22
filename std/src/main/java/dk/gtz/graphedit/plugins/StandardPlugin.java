@@ -17,72 +17,72 @@ import dk.gtz.graphedit.spi.IPluginPanel;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 
 public class StandardPlugin implements IPlugin {
-    private final LTSSyntaxFactory lts;
-    private final PNSyntaxFactory pn;
-    private final TextSyntaxFactory text;
+	private final LTSSyntaxFactory lts;
+	private final PNSyntaxFactory pn;
+	private final TextSyntaxFactory text;
 
-    public StandardPlugin() {
-        this.lts = new LTSSyntaxFactory();
-        this.pn = new PNSyntaxFactory();
-        this.text = new TextSyntaxFactory();
-    }
+	public StandardPlugin() {
+		this.lts = new LTSSyntaxFactory();
+		this.pn = new PNSyntaxFactory();
+		this.text = new TextSyntaxFactory();
+	}
 
-    @Override
-    public String getName() {
-        return "Standard";
-    }
+	@Override
+	public String getName() {
+		return "Standard";
+	}
 
-    @Override
-    public String getDescription() {
-        return """
-            Standard plugin. Provides all the basics. Be careful disabling this.
-            
-            Syntaxes provided:
-                - LTS
-                - Petrinet
-                - Simple
+	@Override
+	public String getDescription() {
+		return """
+				Standard plugin. Provides all the basics. Be careful disabling this.
 
-            Language Servers provided:
-                - lts-ls (Example language server for LTS syntax)
+				Syntaxes provided:
+				    - LTS
+				    - Petrinet
+				    - Simple
 
-            Panels provided:
-                - Files panel
-                - Syntax Element Property Editor panel
-                - Lint Inspector panel
-                - Plugin panel
+				Language Servers provided:
+				    - lts-ls (Example language server for LTS syntax)
 
-            Importers provided:
-                - Tapaal PNML importer
-            """;
-    }
+				Panels provided:
+				    - Files panel
+				    - Syntax Element Property Editor panel
+				    - Lint Inspector panel
+				    - Plugin panel
 
-    @Override
-    public List<ISyntaxFactory> getSyntaxFactories() throws Exception {
-        return List.of(lts, pn, text);
-    }
+				Importers provided:
+				    - Tapaal PNML importer
+				""";
+	}
 
-    @Override
-    public List<IPluginPanel> getPanels() throws Exception {
-        return List.of(
-                new ProjectFilesViewPanel(),
-                new InspectorPanel(),
-                new LintPanel(),
-                new PluginManagementPanel(),
-                new UndoTreePanel());
-    }
+	@Override
+	public List<ISyntaxFactory> getSyntaxFactories() throws Exception {
+		return List.of(lts, pn, text);
+	}
 
-    @Override
-    public Collection<ILanguageServer> getLanguageServers() throws Exception {
-        return List.of(new LTSLanguageServer());
-    }
+	@Override
+	public List<IPluginPanel> getPanels() throws Exception {
+		return List.of(
+				new ProjectFilesViewPanel(),
+				new InspectorPanel(),
+				new LintPanel(),
+				new PluginManagementPanel(),
+				new UndoTreePanel());
+	}
 
-    @Override
-    public Collection<IImporter> getImporters() {
-        return List.of(new TapaalPNMLImporter(pn.getSyntaxName()));
-    }
+	@Override
+	public Collection<ILanguageServer> getLanguageServers() throws Exception {
+		return List.of(new LTSLanguageServer());
+	}
 
-    @Override
-    public Collection<IExporter> getExporters() {
-        return List.of(new TapaalPNMLExporter(pn.getSyntaxName()));
-    }
+	@Override
+	public Collection<IImporter> getImporters() {
+		return List.of(new TapaalPNMLImporter(pn.getSyntaxName()));
+	}
+
+	@Override
+	public Collection<IExporter> getExporters() {
+		return List.of(new TapaalPNMLExporter(pn.getSyntaxName()));
+	}
 }

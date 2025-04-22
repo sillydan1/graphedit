@@ -6,55 +6,56 @@ import java.util.Optional;
 
 /**
  * Segment operations implementation for {@link Hyperlink} instances
+ * 
  * @param <S> Styles type
  */
 public class HyperlinkOps<S> extends SegmentOpsBase<Hyperlink, S> {
-    /**
-     * Construct a new instance
-     */
-    public HyperlinkOps() {
-        super(new Hyperlink("", "", ""));
-    }
+	/**
+	 * Construct a new instance
+	 */
+	public HyperlinkOps() {
+		super(new Hyperlink("", "", ""));
+	}
 
-    @Override
-    public int length(Hyperlink hyperlink) {
-        return hyperlink.length();
-    }
+	@Override
+	public int length(Hyperlink hyperlink) {
+		return hyperlink.length();
+	}
 
-    @Override
-    public char realCharAt(Hyperlink hyperlink, int index) {
-        return hyperlink.charAt(index);
-    }
+	@Override
+	public char realCharAt(Hyperlink hyperlink, int index) {
+		return hyperlink.charAt(index);
+	}
 
-    @Override
-    public String realGetText(Hyperlink hyperlink) {
-        return hyperlink.getDisplayedText();
-    }
+	@Override
+	public String realGetText(Hyperlink hyperlink) {
+		return hyperlink.getDisplayedText();
+	}
 
-    @Override
-    public Hyperlink realSubSequence(Hyperlink hyperlink, int start, int end) {
-        return hyperlink.subSequence(start, end);
-    }
+	@Override
+	public Hyperlink realSubSequence(Hyperlink hyperlink, int start, int end) {
+		return hyperlink.subSequence(start, end);
+	}
 
-    @Override
-    public Hyperlink realSubSequence(Hyperlink hyperlink, int start) {
-        return hyperlink.subSequence(start);
-    }
+	@Override
+	public Hyperlink realSubSequence(Hyperlink hyperlink, int start) {
+		return hyperlink.subSequence(start);
+	}
 
-    @Override
-    public Optional<Hyperlink> joinSeg(Hyperlink currentSeg, Hyperlink nextSeg) {
-        if (currentSeg.isEmpty() && nextSeg.isEmpty())
-            return Optional.empty();
-        if(currentSeg.isEmpty())
-            return Optional.of(nextSeg);
-        if (nextSeg.isEmpty())
-            return Optional.of(currentSeg);
-        return concatHyperlinks(currentSeg, nextSeg);
-    }
+	@Override
+	public Optional<Hyperlink> joinSeg(Hyperlink currentSeg, Hyperlink nextSeg) {
+		if (currentSeg.isEmpty() && nextSeg.isEmpty())
+			return Optional.empty();
+		if (currentSeg.isEmpty())
+			return Optional.of(nextSeg);
+		if (nextSeg.isEmpty())
+			return Optional.of(currentSeg);
+		return concatHyperlinks(currentSeg, nextSeg);
+	}
 
-    private Optional<Hyperlink> concatHyperlinks(Hyperlink leftSeg, Hyperlink rightSeg) {
-        if (!leftSeg.shareSameAncestor(rightSeg))
-            return Optional.empty();
-        return Optional.of(leftSeg.mapDisplayedText(leftSeg.getDisplayedText() + rightSeg.getDisplayedText()));
-    }
+	private Optional<Hyperlink> concatHyperlinks(Hyperlink leftSeg, Hyperlink rightSeg) {
+		if (!leftSeg.shareSameAncestor(rightSeg))
+			return Optional.empty();
+		return Optional.of(leftSeg.mapDisplayedText(leftSeg.getDisplayedText() + rightSeg.getDisplayedText()));
+	}
 }

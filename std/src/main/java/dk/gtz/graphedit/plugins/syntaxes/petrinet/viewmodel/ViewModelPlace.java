@@ -26,7 +26,7 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 	public ViewModelPlace(UUID uuid, ModelVertex vertex) {
 		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
 		initialTokenCount = new SimpleIntegerProperty(0);
-		if(vertex instanceof ModelPlace tvertex)
+		if (vertex instanceof ModelPlace tvertex)
 			initialTokenCount.set(tvertex.initialTokenCount());
 	}
 
@@ -46,8 +46,9 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return A list of inspectable objects
-	 * */
+	 */
 	@Override
 	public List<InspectableProperty> getInspectableObjects() {
 		var inspectables = new ArrayList<>(super.getInspectableObjects());
@@ -57,9 +58,9 @@ public class ViewModelPlace extends ViewModelVertex implements ISearchable {
 
 	@Override
 	public boolean equals(Object other) {
-		if(!super.equals(other))
+		if (!super.equals(other))
 			return false;
-		if(!(other instanceof ViewModelPlace vother))
+		if (!(other instanceof ViewModelPlace vother))
 			return false;
 		return initialTokenCount.get() == vother.initialTokenCount.get();
 	}

@@ -11,28 +11,31 @@ import dk.gtz.graphedit.events.ViewportMouseEvent;
  * Most of the default implementations for a simple {@link ITool}
  */
 public abstract class AbstractBaseTool implements ITool {
-    /**
-     * Create a new instance
-     */
-    protected AbstractBaseTool() {
+	/**
+	 * Create a new instance
+	 */
+	protected AbstractBaseTool() {
 
-    }
+	}
 
-    @Override
-    public Optional<String> getTooltip() {
-        return Optional.empty();
-    }
+	@Override
+	public Optional<String> getTooltip() {
+		return Optional.empty();
+	}
 
-    @Override
-    public void onViewportMouseEvent(ViewportMouseEvent e) {}
+	@Override
+	public void onViewportMouseEvent(ViewportMouseEvent e) {
+	}
 
-    @Override
-    public void onVertexMouseEvent(VertexMouseEvent e) {}
+	@Override
+	public void onVertexMouseEvent(VertexMouseEvent e) {
+	}
 
-    @Override
-    public void onEdgeMouseEvent(EdgeMouseEvent e) {}
+	@Override
+	public void onEdgeMouseEvent(EdgeMouseEvent e) {
+	}
 
-    @Override
-    public void onKeyEvent(ViewportKeyEvent e) {}
+	@Override
+	public void onKeyEvent(ViewportKeyEvent e) {
+	}
 }
-

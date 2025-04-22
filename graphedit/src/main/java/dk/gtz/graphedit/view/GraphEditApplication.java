@@ -71,284 +71,298 @@ import javafx.stage.Window;
  * The primary entrypoint class for Graphedit.
  */
 public class GraphEditApplication extends Application implements IRestartableApplication {
-    private static Logger logger = (Logger)LoggerFactory.getLogger(GraphEditApplication.class);
-    private Stage primaryStage;
-    private List<Thread> lspThreads;
+	private static Logger logger = (Logger) LoggerFactory.getLogger(GraphEditApplication.class);
+	private Stage primaryStage;
+	private List<Thread> lspThreads;
 
-    public static void launchApp(final String[] args) {
-	launch(args);
-    }
-
-    @Override
-    public void init() {
-	DI.add(IRestartableApplication.class, this);
-	setupApplication();
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-	this.primaryStage = primaryStage;
-	var settings = DI.get(ViewModelEditorSettings.class);
-	if(settings.autoOpenLastProject().get())
-	    kickoff(primaryStage);
-    }
-
-    private void kickoff(Stage primaryStage) throws Exception {
-	loadProject();
-	setupToolbox();
-	setupPreferences();
-	setupLogging();
-	loadAndStartPlugins();
-	setupStage(primaryStage);
-	DI.add(Window.class, primaryStage.getScene().getWindow());
-	if(DI.get(ViewModelEditorSettings.class).showTips().get())
-	    EditorActions.openTipOfTheDay();
-	setupDefaultKeymaps();
-    }
-
-    @Override
-    public void restart() {
-	primaryStage.close();
-        DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(IPlugin::onDestroy);
-        DI.get(IPluginsContainer.class).clear();
-	DI.get(LanguageServerCollection.class).clear();
-	try {
-	    var newStage = new Stage();
-	    kickoff(newStage);
-	    primaryStage = newStage;
-	} catch(Exception e) {
-	    primaryStage.show();
-	    logger.error(e.getMessage());
+	public static void launchApp(final String[] args) {
+		launch(args);
 	}
-    }
 
-    private void loadAndStartPlugins() {
-	var loader = DI.get(PluginLoader.class);
-	loader.loadPlugins();
-	var loadedPlugins = loader.getLoadedPlugins();
-	var factories = DI.get(SyntaxFactoryCollection.class);
-        DI.add(IPluginsContainer.class, loadedPlugins);
-	loadedPlugins.getEnabledPlugins().forEach(IPlugin::onInitialize);
+	@Override
+	public void init() {
+		DI.add(IRestartableApplication.class, this);
+		setupApplication();
+	}
 
-        for(var plugin : loadedPlugins.getEnabledPlugins()) {
-            try {
-                factories.add(plugin.getSyntaxFactories());
-            } catch (Exception e) {
-                logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
-            }
-        }
-        if(factories.isEmpty())
-            throw new RuntimeException("Failed to load any syntax factories. Please check your plugins directory");
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
+		var settings = DI.get(ViewModelEditorSettings.class);
+		if (settings.autoOpenLastProject().get())
+			kickoff(primaryStage);
+	}
 
-	loadedPlugins.getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
-	loadedPlugins.getEnabledPlugins().forEach(e -> {
-	    var t = new Thread(() -> {
+	private void kickoff(Stage primaryStage) throws Exception {
+		loadProject();
+		setupToolbox();
+		setupPreferences();
+		setupLogging();
+		loadAndStartPlugins();
+		setupStage(primaryStage);
+		DI.add(Window.class, primaryStage.getScene().getWindow());
+		if (DI.get(ViewModelEditorSettings.class).showTips().get())
+			EditorActions.openTipOfTheDay();
+		setupDefaultKeymaps();
+	}
+
+	@Override
+	public void restart() {
+		primaryStage.close();
+		DI.get(IPluginsContainer.class).getEnabledPlugins().forEach(IPlugin::onDestroy);
+		DI.get(IPluginsContainer.class).clear();
+		DI.get(LanguageServerCollection.class).clear();
 		try {
-		    DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
-		} catch(Exception ex) {
-		    logger.error("could not load language servers for plugin '{}': {}", e.getName(), ex.getMessage(), ex);
+			var newStage = new Stage();
+			kickoff(newStage);
+			primaryStage = newStage;
+		} catch (Exception e) {
+			primaryStage.show();
+			logger.error(e.getMessage());
 		}
-	    });
-	    t.setName("lsp-init-" + e.getName());
-	    t.start();
-	});
-    }
-
-    private void setupApplication() {
-	DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
-	DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
-	DI.add(IObservableUndoSystem.class, () -> new ObservableTreeUndoSystem());
-	if(!DI.contains(IModelSerializer.class))
-	    DI.add(IModelSerializer.class, new JacksonModelSerializer());
-	DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
-	DI.add(LintContainer.class, new LintContainer());
-	ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
-	DI.add("selectedElements", selectedElementsList);
-	DI.add(TipContainer.class, TipLoader.loadTips());
-    }
-
-    private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers, LintContainer lints) {
-	if(lspThreads == null)
-	    lspThreads = new ArrayList<>();
-	for(var lspThread : lspThreads) {
-	    logger.trace("interrupting lsp thread {}", lspThread.getName());
-	    lspThread.interrupt();
 	}
-	for(var server : servers.entrySet())
-	    setupServer(server.getValue(), projectFile, buffers, lints);
-	servers.addListener((MapChangeListener<String,ILanguageServer>)e -> {
-	    if(e.wasAdded())
-		setupServer(e.getValueAdded(), projectFile, buffers, lints);
-	});
-    }
 
-    private void setupServer(ILanguageServer server, File projectFile, IBufferContainer buffers, LintContainer lints) {
-	logger.trace("initializing language server {} {}", server.getServerName(), server.getServerVersion());
-	server.initialize(projectFile, buffers);
-	server.addNotificationCallback(this::logNotification);
-	server.addDiagnosticsCallback(lints::replaceAll);
-	logger.trace("starting thread for language server {} {}", server.getServerName(), server.getServerVersion());
-	var t = new Thread(server::start);
-	t.setName(server.getServerName());
-	lspThreads.add(t);
-	t.start();
-	lints.replaceAll(server.getDiagnostics());
-    }
+	private void loadAndStartPlugins() {
+		var loader = DI.get(PluginLoader.class);
+		loader.loadPlugins();
+		var loadedPlugins = loader.getLoadedPlugins();
+		var factories = DI.get(SyntaxFactoryCollection.class);
+		DI.add(IPluginsContainer.class, loadedPlugins);
+		loadedPlugins.getEnabledPlugins().forEach(IPlugin::onInitialize);
 
-    private void logNotification(ModelNotification n) {
-	switch (n.level()) {
-	    case DEBUG:
-		logger.debug(n.message());
-		break;
-	    case ERROR:
-		logger.error(n.message());
-		break;
-	    case INFO:
-		logger.info(n.message());
-		break;
-	    case TRACE:
-		logger.trace(n.message());
-		break;
-	    case WARNING:
-		logger.warn(n.message());
-		break;
-	    default:
-		logger.trace(n.level() + ": " + n.message());
-		break;
+		for (var plugin : loadedPlugins.getEnabledPlugins()) {
+			try {
+				factories.add(plugin.getSyntaxFactories());
+			} catch (Exception e) {
+				logger.error("could not load syntax factories for plugin: {}", plugin.getName(), e);
+			}
+		}
+		if (factories.isEmpty())
+			throw new RuntimeException(
+					"Failed to load any syntax factories. Please check your plugins directory");
+
+		loadedPlugins.getEnabledPlugins().forEach(e -> Platform.runLater(e::onStart));
+		loadedPlugins.getEnabledPlugins().forEach(e -> {
+			var t = new Thread(() -> {
+				try {
+					DI.get(LanguageServerCollection.class).add(e.getLanguageServers());
+				} catch (Exception ex) {
+					logger.error("could not load language servers for plugin '{}': {}", e.getName(),
+							ex.getMessage(), ex);
+				}
+			});
+			t.setName("lsp-init-" + e.getName());
+			t.start();
+		});
 	}
-    }
 
-    private void loadProject() throws Exception {
-	try {
-	    var settings = DI.get(ViewModelEditorSettings.class);
-	    var projectFilePath = Path.of(settings.lastOpenedProject().get());
-	    if(!projectFilePath.toFile().exists())
-		throw new Exception("project file path does not exist '" + projectFilePath.toString() + "', loading tmp project instead");
-	    var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
-	    DI.add(ViewModelProject.class, new ViewModelProject(project, Optional.of(projectFilePath.toFile().getParent())));
-	    setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
-	} catch(Exception e) {
-	    logger.error(e.getMessage(), e);
-	    var newProject = new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty());
-	    DI.add(ViewModelProject.class, newProject);
-	    // Save the temp project and start the LSPs
-	    var tmpPath = Path.of(newProject.rootDirectory().get() + File.separator + "tmp.json");
-	    EditorActions.saveProject(newProject.toModel(), tmpPath); // NOTE: This does not set the project to the lastOpenedProject setting
-	    setupLSPs(DI.get(LanguageServerCollection.class), tmpPath.toFile(), DI.get(IBufferContainer.class), DI.get(LintContainer.class));
+	private void setupApplication() {
+		DI.add(MouseTracker.class, new MouseTracker(primaryStage, true));
+		DI.add(IMimeTypeChecker.class, new TikaMimeTypeChecker());
+		DI.add(IObservableUndoSystem.class, () -> new ObservableTreeUndoSystem());
+		if (!DI.contains(IModelSerializer.class))
+			DI.add(IModelSerializer.class, new JacksonModelSerializer());
+		DI.add(IBufferContainer.class, new FileBufferContainer(DI.get(IModelSerializer.class)));
+		DI.add(LintContainer.class, new LintContainer());
+		ObservableList<ISelectable> selectedElementsList = FXCollections.observableArrayList();
+		DI.add("selectedElements", selectedElementsList);
+		DI.add(TipContainer.class, TipLoader.loadTips());
 	}
-    }
 
-    private void setupToolbox() {
-	var toolbox = new Toolbox("edit", new UnifiedModellingTool(),
-		new VertexDragMoveTool(),
-		new EdgeCreateTool(),
-		new EdgeDeleteTool(),
-		new VertexCreateTool(),
-		new VertexDeleteTool(),
-		new SelectTool(),
-		new LintInspectorTool(),
-		new ClipboardTool(),
-		new MassDeleteTool());
-	toolbox.add("inspect", new ViewTool());
-	DI.add(IToolbox.class, toolbox);
-	toolbox.selectTool(toolbox.getDefaultTool());
-    }
-
-    private void setupPreferences() {
-	if(!DI.contains(SyntaxFactoryCollection.class))
-	    DI.add(SyntaxFactoryCollection.class, new SyntaxFactoryCollection());
-
-	var settings = DI.get(ViewModelEditorSettings.class);
-	onUseLightThemeChange(settings.useLightTheme().get());
-        settings.useLightTheme().addListener((e,o,n) -> onUseLightThemeChange(n));
-    }
-
-    private void onUseLightThemeChange(boolean useLightTheme) {
-	if(useLightTheme)
-	    Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
-	else
-	    Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-    }
-
-    private void setupStage(Stage primaryStage) throws Exception {
-	var project = DI.get(ViewModelProject.class);
-	primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
-	project.name().addListener((e,o,n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
-	var keymap = new Keymap();
-	DI.add(Keymap.class, keymap);
-	setupModalPane();
-	var mainScene = loadMainScene();
-	keymap.onNewKeymap(e -> {
-	    // NOTE: only add the blank category keybinds to the main scene accelerators
-	    // the rest will be added to the menubar automatically (see EditorController.setKeymap)
-	    // (this is to avoid duplicate keybinds in the menubar and the main scene accelerators)
-	    // I personally dont like this setup, as the responsibility is now split between two classes,
-	    // so it may change in the future
-	    if(e.getValue().category().isBlank())
-		mainScene.getAccelerators().put(e.getKey(), e.getValue().action());
-	});
-	primaryStage.setScene(mainScene);
-	primaryStage.show();
-    }
-
-    private void setupDefaultKeymaps() {
-	var keymap = DI.get(Keymap.class);
-	keymap.set("Shortcut+N", EditorActions::createNewModelFile, "Create new model", "File");
-	keymap.set("Shortcut+O", EditorActions::openModel, "Open model", "File");
-	keymap.set("Shortcut+Shift+N", EditorActions::newProject, "Create new project", "File");
-	keymap.set("Shortcut+Shift+O", EditorActions::openProject, "Open project", "File");
-	keymap.set("Shortcut+S", EditorActions::save, "Save", "File");
-	keymap.set("Shortcut+Shift+S", EditorActions::saveAs, "Save As", "File");
-	keymap.set("Shortcut+Q", EditorActions::quit, "Quit", "File");
-
-	keymap.set("Shortcut+Z", EditorActions::undo, "Undo", "Edit");
-	keymap.set("Shortcut+Shift+Z", EditorActions::redo, "Redo", "Edit");
-
-	keymap.set("Shortcut+T", EditorActions::toggleTheme, "Toggle Theme", "View");
-	keymap.set("Shortcut+F", EditorActions::openSearchPane, "Open Search", "View");
-    }
-
-    private void setupLogging() {
-	((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
-	EditorLogAppender.subscribe(Level.INFO, Toast::info);
-	EditorLogAppender.subscribe(Level.WARN, Toast::warn);
-	EditorLogAppender.subscribe(Level.ERROR, Toast::error);
-	EditorLogAppender.subscribe(Level.TRACE, Toast::trace);
-	Thread.setDefaultUncaughtExceptionHandler((t,e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
-    }
-
-    @Override
-    public void stop() {
-	logger.trace("shutting down...");
-	if(lspThreads == null)
-	    return;
-	for(var lspThread : lspThreads) {
-	    logger.trace("interrupting lsp thread {}", lspThread.getName());
-	    lspThread.interrupt();
+	private void setupLSPs(LanguageServerCollection servers, File projectFile, IBufferContainer buffers,
+			LintContainer lints) {
+		if (lspThreads == null)
+			lspThreads = new ArrayList<>();
+		for (var lspThread : lspThreads) {
+			logger.trace("interrupting lsp thread {}", lspThread.getName());
+			lspThread.interrupt();
+		}
+		for (var server : servers.entrySet())
+			setupServer(server.getValue(), projectFile, buffers, lints);
+		servers.addListener((MapChangeListener<String, ILanguageServer>) e -> {
+			if (e.wasAdded())
+				setupServer(e.getValueAdded(), projectFile, buffers, lints);
+		});
 	}
-    }
 
-    private Scene loadMainScene() throws Exception {
-	var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
-	var page = (StackPane) loader.load();
-        var screenBounds = Screen.getPrimary().getVisualBounds();
-        var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
-	scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-	Toast.initialize(page);
-	page.getChildren().add(DI.get(ModalPane.class));
-	return scene;
-    }
+	private void setupServer(ILanguageServer server, File projectFile, IBufferContainer buffers,
+			LintContainer lints) {
+		logger.trace("initializing language server {} {}", server.getServerName(), server.getServerVersion());
+		server.initialize(projectFile, buffers);
+		server.addNotificationCallback(this::logNotification);
+		server.addDiagnosticsCallback(lints::replaceAll);
+		logger.trace("starting thread for language server {} {}", server.getServerName(),
+				server.getServerVersion());
+		var t = new Thread(server::start);
+		t.setName(server.getServerName());
+		lspThreads.add(t);
+		t.start();
+		lints.replaceAll(server.getDiagnostics());
+	}
 
-    private void setupModalPane() {
-	var modalPane = new ModalPane();
-	modalPane.setId("modal pane");
-	modalPane.displayProperty().addListener((e,o,n) -> {
-	    if(n)
-		return;
-	    modalPane.setAlignment(Pos.CENTER);
-	    modalPane.usePredefinedTransitionFactories(null);
-	});
-	DI.add(ModalPane.class, modalPane);
-    }
+	private void logNotification(ModelNotification n) {
+		switch (n.level()) {
+			case DEBUG:
+				logger.debug(n.message());
+				break;
+			case ERROR:
+				logger.error(n.message());
+				break;
+			case INFO:
+				logger.info(n.message());
+				break;
+			case TRACE:
+				logger.trace(n.message());
+				break;
+			case WARNING:
+				logger.warn(n.message());
+				break;
+			default:
+				logger.trace(n.level() + ": " + n.message());
+				break;
+		}
+	}
+
+	private void loadProject() throws Exception {
+		try {
+			var settings = DI.get(ViewModelEditorSettings.class);
+			var projectFilePath = Path.of(settings.lastOpenedProject().get());
+			if (!projectFilePath.toFile().exists())
+				throw new Exception("project file path does not exist '" + projectFilePath.toString()
+						+ "', loading tmp project instead");
+			var project = DI.get(IModelSerializer.class).deserializeProject(projectFilePath.toFile());
+			DI.add(ViewModelProject.class, new ViewModelProject(project,
+					Optional.of(projectFilePath.toFile().getParent())));
+			setupLSPs(DI.get(LanguageServerCollection.class), projectFilePath.toFile(),
+					DI.get(IBufferContainer.class), DI.get(LintContainer.class));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			var newProject = new ViewModelProject(new ModelProject("MyGraphEditProject"), Optional.empty());
+			DI.add(ViewModelProject.class, newProject);
+			// Save the temp project and start the LSPs
+			var tmpPath = Path.of(newProject.rootDirectory().get() + File.separator + "tmp.json");
+			EditorActions.saveProject(newProject.toModel(), tmpPath); // NOTE: This does not set the project
+											// to the lastOpenedProject
+											// setting
+			setupLSPs(DI.get(LanguageServerCollection.class), tmpPath.toFile(),
+					DI.get(IBufferContainer.class), DI.get(LintContainer.class));
+		}
+	}
+
+	private void setupToolbox() {
+		var toolbox = new Toolbox("edit", new UnifiedModellingTool(),
+				new VertexDragMoveTool(),
+				new EdgeCreateTool(),
+				new EdgeDeleteTool(),
+				new VertexCreateTool(),
+				new VertexDeleteTool(),
+				new SelectTool(),
+				new LintInspectorTool(),
+				new ClipboardTool(),
+				new MassDeleteTool());
+		toolbox.add("inspect", new ViewTool());
+		DI.add(IToolbox.class, toolbox);
+		toolbox.selectTool(toolbox.getDefaultTool());
+	}
+
+	private void setupPreferences() {
+		if (!DI.contains(SyntaxFactoryCollection.class))
+			DI.add(SyntaxFactoryCollection.class, new SyntaxFactoryCollection());
+
+		var settings = DI.get(ViewModelEditorSettings.class);
+		onUseLightThemeChange(settings.useLightTheme().get());
+		settings.useLightTheme().addListener((e, o, n) -> onUseLightThemeChange(n));
+	}
+
+	private void onUseLightThemeChange(boolean useLightTheme) {
+		if (useLightTheme)
+			Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+		else
+			Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+	}
+
+	private void setupStage(Stage primaryStage) throws Exception {
+		var project = DI.get(ViewModelProject.class);
+		primaryStage.setTitle("%s %s".formatted("Graphedit", project.name().get()));
+		project.name().addListener((e, o, n) -> primaryStage.setTitle("%s %s".formatted("Graphedit", n)));
+		var keymap = new Keymap();
+		DI.add(Keymap.class, keymap);
+		setupModalPane();
+		var mainScene = loadMainScene();
+		keymap.onNewKeymap(e -> {
+			// NOTE: only add the blank category keybinds to the main scene accelerators
+			// the rest will be added to the menubar automatically (see
+			// EditorController.setKeymap)
+			// (this is to avoid duplicate keybinds in the menubar and the main scene
+			// accelerators)
+			// I personally dont like this setup, as the responsibility is now split between
+			// two classes,
+			// so it may change in the future
+			if (e.getValue().category().isBlank())
+				mainScene.getAccelerators().put(e.getKey(), e.getValue().action());
+		});
+		primaryStage.setScene(mainScene);
+		primaryStage.show();
+	}
+
+	private void setupDefaultKeymaps() {
+		var keymap = DI.get(Keymap.class);
+		keymap.set("Shortcut+N", EditorActions::createNewModelFile, "Create new model", "File");
+		keymap.set("Shortcut+O", EditorActions::openModel, "Open model", "File");
+		keymap.set("Shortcut+Shift+N", EditorActions::newProject, "Create new project", "File");
+		keymap.set("Shortcut+Shift+O", EditorActions::openProject, "Open project", "File");
+		keymap.set("Shortcut+S", EditorActions::save, "Save", "File");
+		keymap.set("Shortcut+Shift+S", EditorActions::saveAs, "Save As", "File");
+		keymap.set("Shortcut+Q", EditorActions::quit, "Quit", "File");
+
+		keymap.set("Shortcut+Z", EditorActions::undo, "Undo", "Edit");
+		keymap.set("Shortcut+Shift+Z", EditorActions::redo, "Redo", "Edit");
+
+		keymap.set("Shortcut+T", EditorActions::toggleTheme, "Toggle Theme", "View");
+		keymap.set("Shortcut+F", EditorActions::openSearchPane, "Open Search", "View");
+	}
+
+	private void setupLogging() {
+		((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).addAppender(new EditorLogAppender());
+		EditorLogAppender.subscribe(Level.INFO, Toast::info);
+		EditorLogAppender.subscribe(Level.WARN, Toast::warn);
+		EditorLogAppender.subscribe(Level.ERROR, Toast::error);
+		EditorLogAppender.subscribe(Level.TRACE, Toast::trace);
+		Thread.setDefaultUncaughtExceptionHandler(
+				(t, e) -> logger.error("Uncaught error: %s".formatted(e.getMessage()), e));
+	}
+
+	@Override
+	public void stop() {
+		logger.trace("shutting down...");
+		if (lspThreads == null)
+			return;
+		for (var lspThread : lspThreads) {
+			logger.trace("interrupting lsp thread {}", lspThread.getName());
+			lspThread.interrupt();
+		}
+	}
+
+	private Scene loadMainScene() throws Exception {
+		var loader = new FXMLLoader(EditorController.class.getResource("Editor.fxml"));
+		var page = (StackPane) loader.load();
+		var screenBounds = Screen.getPrimary().getVisualBounds();
+		var scene = new Scene(page, screenBounds.getWidth() * 0.8, screenBounds.getHeight() * 0.8);
+		scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+		Toast.initialize(page);
+		page.getChildren().add(DI.get(ModalPane.class));
+		return scene;
+	}
+
+	private void setupModalPane() {
+		var modalPane = new ModalPane();
+		modalPane.setId("modal pane");
+		modalPane.displayProperty().addListener((e, o, n) -> {
+			if (n)
+				return;
+			modalPane.setAlignment(Pos.CENTER);
+			modalPane.usePredefinedTransitionFactories(null);
+		});
+		DI.add(ModalPane.class, modalPane);
+	}
 }
-

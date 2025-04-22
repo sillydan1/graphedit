@@ -31,97 +31,97 @@ import javafx.scene.layout.VBox;
  * View controller for the Tip-of-the-day system.
  */
 public class TipOfTheDayController {
-    private static final Logger logger = LoggerFactory.getLogger(TipOfTheDayController.class);
-    @FXML
-    private BorderPane root;
-    @FXML
-    private VBox inspectorPane;
-    private ViewModelEditorSettings editorSettings;
-    private Tip tip;
-    private final TipContainer tips;
-    private int currentTipIndex;
+	private static final Logger logger = LoggerFactory.getLogger(TipOfTheDayController.class);
+	@FXML
+	private BorderPane root;
+	@FXML
+	private VBox inspectorPane;
+	private ViewModelEditorSettings editorSettings;
+	private Tip tip;
+	private final TipContainer tips;
+	private int currentTipIndex;
 
-    /**
-     * Construct a new instance of {@link TipOfTheDayController}.
-     */
-    public TipOfTheDayController() {
-	this.editorSettings = DI.get(ViewModelEditorSettings.class);
-	this.tips = DI.get(TipContainer.class);
-	currentTipIndex = editorSettings.tipIndex().get();
-    }
-
-    @FXML
-    private void initialize() {
-	tip = tips.get(currentTipIndex);
-	inspectorPane.getChildren().clear();
-	inspectorPane.getChildren().add(new Separator());
-	var title = new Label(tip.category());
-	title.getStyleClass().add(Styles.TITLE_3);
-	title.getStyleClass().add(Styles.CENTER);
-	inspectorPane.getChildren().add(title);
-	inspectorPane.getChildren().add(BBCodeParser.createLayout(preProcessDescription(tip.description())));
-	if(tip.image().isPresent()) {
-	    try {
-		var image = new Image(tip.image().get());
-		var imageView = new ImageView(image);
-		imageView.setFitWidth(tip.imageWidth());
-		imageView.setPreserveRatio(true);
-		var imagePane = new BorderPane();
-		imagePane.getStyleClass().add(Styles.CENTER);
-		imagePane.setCenter(imageView);
-		inspectorPane.getChildren().add(imagePane);
-	    } catch(IllegalArgumentException e) {
-		logger.error("Failed to load tip image", e);
-	    }
+	/**
+	 * Construct a new instance of {@link TipOfTheDayController}.
+	 */
+	public TipOfTheDayController() {
+		this.editorSettings = DI.get(ViewModelEditorSettings.class);
+		this.tips = DI.get(TipContainer.class);
+		currentTipIndex = editorSettings.tipIndex().get();
 	}
-	inspectorPane.getChildren().add(new Separator());
-	root.setTop(getTopPane());
-	root.setBottom(getBottomPane("Show", "Show tip of the day on startup", editorSettings.showTips()));
-	editorSettings.tipIndex().set(currentTipIndex+1 % tips.size());
-	EditorActions.saveEditorSettings(editorSettings);
-    }
 
-    private String preProcessDescription(String description) {
-	var shortcut = PlatformUtils.isMac() ? "Cmd" : "Ctrl";
-	return description.replace("$shortcut", shortcut);
-    }
+	@FXML
+	private void initialize() {
+		tip = tips.get(currentTipIndex);
+		inspectorPane.getChildren().clear();
+		inspectorPane.getChildren().add(new Separator());
+		var title = new Label(tip.category());
+		title.getStyleClass().add(Styles.TITLE_3);
+		title.getStyleClass().add(Styles.CENTER);
+		inspectorPane.getChildren().add(title);
+		inspectorPane.getChildren().add(BBCodeParser.createLayout(preProcessDescription(tip.description())));
+		if (tip.image().isPresent()) {
+			try {
+				var image = new Image(tip.image().get());
+				var imageView = new ImageView(image);
+				imageView.setFitWidth(tip.imageWidth());
+				imageView.setPreserveRatio(true);
+				var imagePane = new BorderPane();
+				imagePane.getStyleClass().add(Styles.CENTER);
+				imagePane.setCenter(imageView);
+				inspectorPane.getChildren().add(imagePane);
+			} catch (IllegalArgumentException e) {
+				logger.error("Failed to load tip image", e);
+			}
+		}
+		inspectorPane.getChildren().add(new Separator());
+		root.setTop(getTopPane());
+		root.setBottom(getBottomPane("Show", "Show tip of the day on startup", editorSettings.showTips()));
+		editorSettings.tipIndex().set(currentTipIndex + 1 % tips.size());
+		EditorActions.saveEditorSettings(editorSettings);
+	}
 
-    private Node getTopPane() {
-	var pane = new BorderPane();
-	var prevBtn = new Button("Previous");
-	prevBtn.setGraphic(new FontIcon(BootstrapIcons.ARROW_LEFT));
-	prevBtn.setOnAction(e -> {
-	    currentTipIndex--;
-	    if(currentTipIndex < 0)
-		currentTipIndex = tips.size()-1;
-	    initialize();
-	});
-	pane.setLeft(prevBtn);
+	private String preProcessDescription(String description) {
+		var shortcut = PlatformUtils.isMac() ? "Cmd" : "Ctrl";
+		return description.replace("$shortcut", shortcut);
+	}
 
-	var nextBtn = new Button("Next");
-	nextBtn.setGraphic(new FontIcon(BootstrapIcons.ARROW_RIGHT));
-	nextBtn.setOnAction(e -> {
-	    currentTipIndex++;
-	    currentTipIndex %= tips.size();
-	    initialize();
-	});
-	pane.setRight(nextBtn);
+	private Node getTopPane() {
+		var pane = new BorderPane();
+		var prevBtn = new Button("Previous");
+		prevBtn.setGraphic(new FontIcon(BootstrapIcons.ARROW_LEFT));
+		prevBtn.setOnAction(e -> {
+			currentTipIndex--;
+			if (currentTipIndex < 0)
+				currentTipIndex = tips.size() - 1;
+			initialize();
+		});
+		pane.setLeft(prevBtn);
 
-	pane.setCenter(new Label("%d/%d".formatted((currentTipIndex % tips.size())+1, tips.size())));
-	return pane;
-    }
+		var nextBtn = new Button("Next");
+		nextBtn.setGraphic(new FontIcon(BootstrapIcons.ARROW_RIGHT));
+		nextBtn.setOnAction(e -> {
+			currentTipIndex++;
+			currentTipIndex %= tips.size();
+			initialize();
+		});
+		pane.setRight(nextBtn);
 
-    private Node getBottomPane(String labelName, String description, Observable observable) {
-	var inspector = InspectorUtils.getObservableInspector(observable);
-	var tile = new Tile(labelName, description);
-	tile.setAction(inspector);
-	tile.setActionHandler(() -> {
-	    if(inspector instanceof ToggleSwitch ts)
-		ts.fire();
-	    else
-		inspector.requestFocus();
-	    EditorActions.saveEditorSettings(editorSettings);
-	});
-	return tile;
-    }
+		pane.setCenter(new Label("%d/%d".formatted((currentTipIndex % tips.size()) + 1, tips.size())));
+		return pane;
+	}
+
+	private Node getBottomPane(String labelName, String description, Observable observable) {
+		var inspector = InspectorUtils.getObservableInspector(observable);
+		var tile = new Tile(labelName, description);
+		tile.setAction(inspector);
+		tile.setActionHandler(() -> {
+			if (inspector instanceof ToggleSwitch ts)
+				ts.fire();
+			else
+				inspector.requestFocus();
+			EditorActions.saveEditorSettings(editorSettings);
+		});
+		return tile;
+	}
 }

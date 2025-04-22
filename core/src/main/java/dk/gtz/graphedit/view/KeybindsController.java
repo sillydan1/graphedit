@@ -16,28 +16,28 @@ import javafx.scene.layout.VBox;
  * Controller for the keybinds view.
  */
 public class KeybindsController {
-    @FXML
-    private BorderPane root;
-    @FXML
-    private VBox inspectorPane;
-    private Keymap keymap;
+	@FXML
+	private BorderPane root;
+	@FXML
+	private VBox inspectorPane;
+	private Keymap keymap;
 
-    /**
-     * Construct a new keybinds controller instance.
-     */
-    public KeybindsController() {
-	this.keymap = DI.get(Keymap.class);
-    }
+	/**
+	 * Construct a new keybinds controller instance.
+	 */
+	public KeybindsController() {
+		this.keymap = DI.get(Keymap.class);
+	}
 
-    @FXML
-    private void initialize() {
-	for(var keybind : keymap.get().entrySet())
-	    inspectorPane.getChildren().add(getTile(keybind));
-    }
+	@FXML
+	private void initialize() {
+		for (var keybind : keymap.get().entrySet())
+			inspectorPane.getChildren().add(getTile(keybind));
+	}
 
-    private Node getTile(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {
-	var tile = new Tile(keybind.getValue().description(), keybind.getValue().category());
-	tile.setAction(new Label(keybind.getKey().getDisplayText()));
-	return tile;
-    }
+	private Node getTile(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {
+		var tile = new Tile(keybind.getValue().description(), keybind.getValue().category());
+		tile.setAction(new Label(keybind.getKey().getDisplayText()));
+		return tile;
+	}
 }

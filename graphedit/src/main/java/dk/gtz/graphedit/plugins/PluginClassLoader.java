@@ -5,7 +5,8 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 /**
- * Loads a plugin leveraging a {@link URLClassLoader}. However, it restricts the plugin from
+ * Loads a plugin leveraging a {@link URLClassLoader}. However, it restricts the
+ * plugin from
  * using the system classloader thereby trimming access to all system classes.
  *
  * Only the classes in SHARED_PACKAGES are visible to the plugin.
@@ -15,7 +16,8 @@ public class PluginClassLoader extends URLClassLoader {
 	public static final List<String> SHARED_PACKAGES = List.of(
 			"dk.gtz.graphedit.events",
 			"dk.gtz.graphedit.exceptions",
-			// "dk.gtz.graphedit.internal", // NOTE: We explicitly dont include internal. It is internal, not shared.
+			// "dk.gtz.graphedit.internal", // NOTE: We explicitly dont include internal. It
+			// is internal, not shared.
 			"dk.gtz.graphedit.logging",
 			"dk.gtz.graphedit.model",
 			"dk.gtz.graphedit.serialization",
@@ -32,8 +34,7 @@ public class PluginClassLoader extends URLClassLoader {
 			"org.fxmisc.richtext",
 			"io.grpc",
 			"com.google.protobuf",
-			"com.fasterxml.jackson"
-	);
+			"com.fasterxml.jackson");
 
 	public PluginClassLoader(URL[] urls, ClassLoader parentClassLoader) {
 		super(urls, null);
@@ -56,4 +57,3 @@ public class PluginClassLoader extends URLClassLoader {
 		return loadedClass;
 	}
 }
-

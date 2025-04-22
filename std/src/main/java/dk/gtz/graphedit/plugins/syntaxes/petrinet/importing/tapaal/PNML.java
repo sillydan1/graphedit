@@ -30,7 +30,7 @@ public class PNML {
 	public KBound getkBound() {
 		return kBound;
 	}
-	
+
 	public PNML setkBound(KBound kBound) {
 		this.kBound = kBound;
 		return this;

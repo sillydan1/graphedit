@@ -20,4 +20,3 @@ public class ModelTextVertex extends ModelVertex {
 		this.label = label;
 	}
 }
-

@@ -5,15 +5,15 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KBound {
-    @JacksonXmlProperty(isAttribute = true)
-    private int bound;
+	@JacksonXmlProperty(isAttribute = true)
+	private int bound;
 
-    public int getBound() {
-	return bound;
-    }
+	public int getBound() {
+		return bound;
+	}
 
-    public KBound setBound(int bound) {
-	this.bound = bound;
-	return this;
-    }
+	public KBound setBound(int bound) {
+		this.bound = bound;
+		return this;
+	}
 }

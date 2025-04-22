@@ -43,11 +43,11 @@ public class TapaalPNMLImporter implements IImporter {
 	public List<ImportResult> importFiles(List<File> importFiles) throws ImportException {
 		var result = new ArrayList<ImportResult>();
 		var preferedFileExtension = DI.get(IModelSerializer.class).getPreferedFileExtension();
-		for(var importFile : importFiles) {
+		for (var importFile : importFiles) {
 			try {
 				var pnml = xmlMapper.readValue(importFile, PNML.class);
 				var nets = pnml.getNets();
-				for(var net : nets) {
+				for (var net : nets) {
 					var projectPath = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
 					var filename = net.getId() + preferedFileExtension;
 					result.add(new ImportResult(Path.of(projectPath, filename), fromNet(net)));
@@ -60,41 +60,41 @@ public class TapaalPNMLImporter implements IImporter {
 	}
 
 	private UUID getUUIDFromPnmlId(String id) {
-		if(!id.startsWith("_"))
+		if (!id.startsWith("_"))
 			return UUID.randomUUID();
 		try {
-			return UUID.fromString(id.substring(1).replace('_','-'));
-		} catch(IllegalArgumentException e) {
+			return UUID.fromString(id.substring(1).replace('_', '-'));
+		} catch (IllegalArgumentException e) {
 			return UUID.randomUUID();
 		}
 	}
 
 	private ModelProjectResource fromNet(Net net) {
-		var vertexIdMapping = new HashMap<String,UUID>();
-		var vertices = new HashMap<UUID,ModelVertex>();
-		for(var place : net.getPlaces()) {
+		var vertexIdMapping = new HashMap<String, UUID>();
+		var vertices = new HashMap<UUID, ModelVertex>();
+		for (var place : net.getPlaces()) {
 			var placeLocation = new ModelPoint(place.getPositionX(), place.getPositionY());
 			var modelPlace = new ModelPlace(placeLocation, place.getInitialMarking());
 			var newUUID = getUUIDFromPnmlId(place.getId());
 			vertices.put(newUUID, modelPlace);
 			vertexIdMapping.put(place.getId(), newUUID);
 		}
-		for(var transition : net.getTransitions()) {
+		for (var transition : net.getTransitions()) {
 			var transitionLocation = new ModelPoint(transition.getPositionX(), transition.getPositionY());
 			var modelTransition = new ModelTransition(transitionLocation);
 			var newUUID = getUUIDFromPnmlId(transition.getId());
 			vertices.put(newUUID, modelTransition);
 			vertexIdMapping.put(transition.getId(), newUUID);
 		}
-		var edges = new HashMap<UUID,dk.gtz.graphedit.model.ModelEdge>();
-		for(var arc : net.getArcs()) {
+		var edges = new HashMap<UUID, dk.gtz.graphedit.model.ModelEdge>();
+		for (var arc : net.getArcs()) {
 			var sourceUUID = vertexIdMapping.get(arc.getSource());
 			var targetUUID = vertexIdMapping.get(arc.getTarget());
 			var modelEdge = new ModelArc(sourceUUID, targetUUID, arc.getWeight());
 			var newUUID = getUUIDFromPnmlId(arc.getId());
 			edges.put(newUUID, modelEdge);
 		}
-		var metadata = new HashMap<String,String>();
+		var metadata = new HashMap<String, String>();
 		metadata.put("graphedit_syntax", syntaxName);
 		metadata.put("name", net.getId());
 		return new ModelProjectResource(metadata, new ModelGraph("", vertices, edges));

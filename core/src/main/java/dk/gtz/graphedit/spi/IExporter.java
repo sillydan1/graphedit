@@ -13,7 +13,8 @@ public interface IExporter {
 	 * Exports the given resource to the given file path.
 	 *
 	 * Note that this will write the new file to the file system.
-	 * @param resource The resource to export.
+	 * 
+	 * @param resource    The resource to export.
 	 * @param newFilePath The file path to export to.
 	 * @throws ExportException If the export fails.
 	 */
@@ -21,12 +22,14 @@ public interface IExporter {
 
 	/**
 	 * Returns the name of the exporter.
+	 * 
 	 * @return The name of the exporter
 	 */
 	String getName();
 
 	/**
 	 * Returns the file extension that exported files will have.
+	 * 
 	 * @return A file extension e.g. ".json"
 	 */
 	String getFileExtension();

@@ -16,33 +16,37 @@ import javafx.scene.control.Label;
 import javafx.scene.transform.Affine;
 
 public class ArcController extends EdgeController {
-    private final ViewModelArc edge;
-    private Label label;
-    private DoubleProperty labelDirOffset;
+	private final ViewModelArc edge;
+	private Label label;
+	private DoubleProperty labelDirOffset;
 
-    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelGraph parentGraph, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
-        super(edgeKey, edge, parentGraph, viewportAffine, editorSettings, selectedTool, syntaxFactory, bufferKey);
-        this.edge = edge;
-        this.labelDirOffset = new SimpleDoubleProperty(0.5);
-        this.label = createWeightLabel();
-        edge.weight().addListener((e,o,n) -> setLabelGraphic(this.label, n));
-        getChildren().add(this.label);
-    }
+	public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelGraph parentGraph, Affine viewportAffine,
+			ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool,
+			ISyntaxFactory syntaxFactory, String bufferKey) {
+		super(edgeKey, edge, parentGraph, viewportAffine, editorSettings, selectedTool, syntaxFactory,
+				bufferKey);
+		this.edge = edge;
+		this.labelDirOffset = new SimpleDoubleProperty(0.5);
+		this.label = createWeightLabel();
+		edge.weight().addListener((e, o, n) -> setLabelGraphic(this.label, n));
+		getChildren().add(this.label);
+	}
 
-    private void setLabelGraphic(Label label, Number val) {
-        if(val.intValue() == 1)
-            label.textProperty().set("");
-        else
-            label.textProperty().set(val.toString());
-    }
+	private void setLabelGraphic(Label label, Number val) {
+		if (val.intValue() == 1)
+			label.textProperty().set("");
+		else
+			label.textProperty().set(val.toString());
+	}
 
-    private Label createWeightLabel() {
-        var result = new Label();
-        setLabelGraphic(result, edge.weight().get());
-        result.getStyleClass().add("outline");
-        result.translateXProperty().bind(BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
-        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset).subtract(result.heightProperty().divide(2)));
-        return result;
-    }
+	private Label createWeightLabel() {
+		var result = new Label();
+		setLabelGraphic(result, edge.weight().get());
+		result.getStyleClass().add("outline");
+		result.translateXProperty().bind(BindingsUtil.createLineOffsetXBinding(line, labelDirOffset)
+				.subtract(result.widthProperty().divide(2)));
+		result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset)
+				.subtract(result.heightProperty().divide(2)));
+		return result;
+	}
 }
-

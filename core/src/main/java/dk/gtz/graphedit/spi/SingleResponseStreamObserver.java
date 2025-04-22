@@ -8,18 +8,20 @@ import io.grpc.stub.StreamObserver;
  * Utility class for capturing a single gRPC response and returning it.
  *
  * Example Usage:
+ * 
  * <pre>
  * {@code
  * try {
- *     var so = new SingleResponseStreamObserver<GRPCObject>();
- *     stub.get().getValue(empty, so);
- *     so.await();
- *     return so.get();
- * } catch(InterruptedException e) {
- *	   // handle e
+ * 	var so = new SingleResponseStreamObserver<GRPCObject>();
+ * 	stub.get().getValue(empty, so);
+ * 	so.await();
+ * 	return so.get();
+ * } catch (InterruptedException e) {
+ * 	// handle e
  * }
  * }
  * </pre>
+ * 
  * @param <T> The type of return value
  */
 public class SingleResponseStreamObserver<T> implements StreamObserver<T> {
@@ -52,8 +54,10 @@ public class SingleResponseStreamObserver<T> implements StreamObserver<T> {
 
 	/**
 	 * Get the returned value.
+	 * 
 	 * @return An instance of T
-	 * @throws RuntimeException if an error had occurred or if the value is not present
+	 * @throws RuntimeException if an error had occurred or if the value is not
+	 *                          present
 	 */
 	public T get() {
 		return container.get();
@@ -61,7 +65,9 @@ public class SingleResponseStreamObserver<T> implements StreamObserver<T> {
 
 	/**
 	 * Wait for the request to complete.
-	 * @throws InterruptedException if the current thread is interrupted while waiting
+	 * 
+	 * @throws InterruptedException if the current thread is interrupted while
+	 *                              waiting
 	 */
 	public void await() throws InterruptedException {
 		latch.await();

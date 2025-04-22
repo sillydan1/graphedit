@@ -29,7 +29,7 @@ public class PluginLoader {
 
 	public PluginLoader(List<String> pluginsDirs, IModelSerializer serializer) {
 		this.pluginsDirs = new ArrayList<>(pluginsDirs.size());
-		for(var pluginStr : pluginsDirs)
+		for (var pluginStr : pluginsDirs)
 			this.pluginsDirs.add(new File(pluginStr));
 		loadedPlugins = new ObservableSetPluginsContainer();
 		this.serializer = serializer;
@@ -42,9 +42,10 @@ public class PluginLoader {
 	public PluginLoader loadPlugins() {
 		loadedPlugins.clear();
 		loadPlugin();
-		for(var pluginsDir : pluginsDirs) {
-			if(!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-				if(pluginsDir.toString().equals("plugins")) // Dont warn if the default plugins directory is not found
+		for (var pluginsDir : pluginsDirs) {
+			if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
+				if (pluginsDir.toString().equals("plugins")) // Dont warn if the default plugins
+										// directory is not found
 					continue;
 				logger.warn("cannot load plugins, no such directory: '{}'", pluginsDir);
 				continue;
@@ -52,7 +53,7 @@ public class PluginLoader {
 
 			logger.trace("looking for plugins in '{}'", pluginsDir.getAbsolutePath());
 			var files = requireNonNull(pluginsDir.listFiles());
-			for(var pluginDir : files)
+			for (var pluginDir : files)
 				loadPlugin(pluginDir);
 		}
 		return this;
@@ -60,9 +61,9 @@ public class PluginLoader {
 
 	private void loadPlugin() {
 		try {
-			for(var plugin : ServiceLoader.load(IPlugin.class))
+			for (var plugin : ServiceLoader.load(IPlugin.class))
 				loadPlugin(plugin);
-		} catch(ServiceConfigurationError e) {
+		} catch (ServiceConfigurationError e) {
 			logger.warn("failed to load plugin: {}", e.getMessage());
 		}
 	}
@@ -73,9 +74,9 @@ public class PluginLoader {
 			logger.trace("trying to load plugin: {}", pluginDir);
 			var pluginClassLoader = createPluginClassLoader(pluginDir, currentClassLoader);
 			Thread.currentThread().setContextClassLoader(pluginClassLoader);
-			for(var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
+			for (var plugin : ServiceLoader.load(IPlugin.class, pluginClassLoader))
 				loadPlugin(plugin, pluginClassLoader);
-		} catch(ServiceConfigurationError e) {
+		} catch (ServiceConfigurationError e) {
 			logger.warn("failed to load plugin: {}", e.getMessage());
 		} finally {
 			Thread.currentThread().setContextClassLoader(currentClassLoader);
@@ -94,11 +95,11 @@ public class PluginLoader {
 	}
 
 	private URLClassLoader createPluginClassLoader(File file, ClassLoader loader) {
-		var urls = Arrays.stream(Optional.ofNullable(file.listFiles()).orElse(new File[]{file}))
-			.sorted()
-			.map(File::toURI)
-			.map(this::toUrl)
-			.toArray(URL[]::new);
+		var urls = Arrays.stream(Optional.ofNullable(file.listFiles()).orElse(new File[] { file }))
+				.sorted()
+				.map(File::toURI)
+				.map(this::toUrl)
+				.toArray(URL[]::new);
 		return new PluginClassLoader(urls, loader);
 	}
 

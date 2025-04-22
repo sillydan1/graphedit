@@ -9,25 +9,24 @@ import dk.gtz.graphedit.tool.IToolbox;
 import javafx.scene.Node;
 
 public class TransitionTool extends ToolSelectorTool {
-    public TransitionTool(IToolbox parent) {
-	super(parent, "vertices");
-    }
+	public TransitionTool(IToolbox parent) {
+		super(parent, "vertices");
+	}
 
-    @Override
-    public Node getGraphic() {
-	return new FontIcon(BootstrapIcons.SQUARE_FILL);
-    }
+	@Override
+	public Node getGraphic() {
+		return new FontIcon(BootstrapIcons.SQUARE_FILL);
+	}
 
-    @Override
-    public String getHelpDescription() {
-	return """
-	    Create new petrinet transition vertices
-	    """;
-    }
+	@Override
+	public String getHelpDescription() {
+		return """
+				Create new petrinet transition vertices
+				""";
+	}
 
-    @Override
-    public Optional<String> getTooltip() {
-        return Optional.of("Create transition vertices");
-    }
+	@Override
+	public Optional<String> getTooltip() {
+		return Optional.of("Create transition vertices");
+	}
 }
-

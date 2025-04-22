@@ -11,22 +11,24 @@ import javafx.scene.transform.Affine;
 
 /**
  * When a {@link MouseEvent} occurs on an {@link ViewModelVertex}.
- * @param event The javafx {@link MouseEvent} that ocured
- * @param vertexId The id of the vertex that was interacted with
- * @param vertex The vertex that was interacted with
- * @param viewportAffine The {@link Affine} that controls where the viewport is looking
- * @param syntax The syntax factory associated with the current model
- * @param graph The current model graph
- * @param bufferId The related buffer key
+ * 
+ * @param event          The javafx {@link MouseEvent} that ocured
+ * @param vertexId       The id of the vertex that was interacted with
+ * @param vertex         The vertex that was interacted with
+ * @param viewportAffine The {@link Affine} that controls where the viewport is
+ *                       looking
+ * @param syntax         The syntax factory associated with the current model
+ * @param graph          The current model graph
+ * @param bufferId       The related buffer key
  * @param editorSettings The current editor settings
  */
 public record VertexMouseEvent(
-	MouseEvent event,
-	UUID vertexId,
-	ViewModelVertex vertex,
-	Affine viewportAffine,
-	ISyntaxFactory syntax,
-	ViewModelGraph graph,
-	String bufferId,
-	ViewModelEditorSettings editorSettings) {}
-
+		MouseEvent event,
+		UUID vertexId,
+		ViewModelVertex vertex,
+		Affine viewportAffine,
+		ISyntaxFactory syntax,
+		ViewModelGraph graph,
+		String bufferId,
+		ViewModelEditorSettings editorSettings) {
+}

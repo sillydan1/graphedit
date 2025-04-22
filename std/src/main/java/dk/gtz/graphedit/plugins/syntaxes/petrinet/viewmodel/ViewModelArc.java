@@ -25,7 +25,7 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 	public ViewModelArc(UUID uuid, ModelEdge edge) {
 		super(uuid, edge);
 		weight = new SimpleIntegerProperty(1);
-		if(edge instanceof ModelArc tedge)
+		if (edge instanceof ModelArc tedge)
 			weight.set(tedge.weight);
 	}
 
@@ -42,15 +42,15 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 	public boolean isTargetValid(UUID target, ViewModelGraph graph) {
 		var source = graph.vertices().get(source().get());
 		var targetCandidate = graph.vertices().get(target);
-		if(source instanceof ViewModelPlace) {
+		if (source instanceof ViewModelPlace) {
 			var targetIsTransition = targetCandidate instanceof ViewModelTransition;
-			if(!targetIsTransition)
+			if (!targetIsTransition)
 				logger.warn("arcs from places are only allowed to target transitions");
 			return targetIsTransition;
 		}
-		if(source instanceof ViewModelTransition) {
+		if (source instanceof ViewModelTransition) {
 			var targetIsPlace = targetCandidate instanceof ViewModelPlace;
-			if(!targetIsPlace)
+			if (!targetIsPlace)
 				logger.warn("arcs from transitions are only allowed to target places");
 			return targetIsPlace;
 		}
@@ -60,8 +60,9 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return A list of inspectable objects
-	 * */
+	 */
 	@Override
 	public List<InspectableProperty> getInspectableObjects() {
 		var inspectables = new ArrayList<>(super.getInspectableObjects());
@@ -76,9 +77,9 @@ public class ViewModelArc extends ViewModelEdge implements ISearchable {
 
 	@Override
 	public boolean equals(Object other) {
-		if(!super.equals(other))
+		if (!super.equals(other))
 			return false;
-		if(!(other instanceof ViewModelArc vother))
+		if (!(other instanceof ViewModelArc vother))
 			return false;
 		return weight.get() == vother.weight.get();
 	}

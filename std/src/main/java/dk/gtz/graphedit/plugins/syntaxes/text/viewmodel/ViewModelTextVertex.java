@@ -36,14 +36,15 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 	public ViewModelTextVertex(UUID uuid, ModelVertex vertex) {
 		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
 		this.text = new SimpleStringProperty("");
-		if(vertex instanceof ModelTextVertex textVertex)
+		if (vertex instanceof ModelTextVertex textVertex)
 			this.text.set(textVertex.label());
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return A list of inspectable objects
-	 * */
+	 */
 	@Override
 	public List<InspectableProperty> getInspectableObjects() {
 		var inspectables = new ArrayList<>(super.getInspectableObjects());
@@ -67,9 +68,9 @@ public class ViewModelTextVertex extends ViewModelVertex implements ISearchable 
 
 	@Override
 	public boolean equals(Object other) {
-		if(!super.equals(other))
+		if (!super.equals(other))
 			return false;
-		if(!(other instanceof ViewModelTextVertex vother))
+		if (!(other instanceof ViewModelTextVertex vother))
 			return false;
 		return text.get().equals(vother.text.get());
 	}

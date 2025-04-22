@@ -30,140 +30,147 @@ import javafx.scene.layout.VBox;
  * View controller for the search pane modal.
  */
 public class SearchPaneController implements IFocusable, ICloseable {
-    private static Logger logger = LoggerFactory.getLogger(SearchResultController.class);
-    @FXML
-    private Button searchButton;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private Button closeButton;
-    @FXML
-    private VBox root;
-    private ObservableList<SearchResultController> results;
-    private ListView<SearchResultController> resultsView;
-    private Optional<Runnable> onCloseRunner = Optional.empty();
-    private List<Runnable> focusEventHandlers;
-    private IBufferContainer bufferContainer;
+	private static Logger logger = LoggerFactory.getLogger(SearchResultController.class);
+	@FXML
+	private Button searchButton;
+	@FXML
+	private TextField searchField;
+	@FXML
+	private Button closeButton;
+	@FXML
+	private VBox root;
+	private ObservableList<SearchResultController> results;
+	private ListView<SearchResultController> resultsView;
+	private Optional<Runnable> onCloseRunner = Optional.empty();
+	private List<Runnable> focusEventHandlers;
+	private IBufferContainer bufferContainer;
 
-    /**
-     * Construct a new instance
-     */
-    public SearchPaneController() {
+	/**
+	 * Construct a new instance
+	 */
+	public SearchPaneController() {
 
-    }
-
-    @FXML
-    private void initialize() {
-	focusEventHandlers = new ArrayList<>();
-	bufferContainer = DI.get(IBufferContainer.class);
-	initButtons();
-	initResults();
-	initSearchEvents();
-    }
-
-    private void initButtons() {
-	searchButton.setGraphic(new FontIcon(BootstrapIcons.SEARCH));
-	closeButton.setOnAction(e -> close());
-    }
-
-    private void initResults() {
-	results = FXCollections.observableArrayList();
-	resultsView = new ListView<>(results);
-	Styles.addStyleClass(resultsView, Styles.DENSE);
-	Styles.addStyleClass(resultsView, Tweaks.EDGE_TO_EDGE);
-	root.getChildren().add(resultsView);
-	resultsView.setOnMouseClicked(e -> {
-	    if (e.getClickCount() == 2) {
-		resultsView.getSelectionModel().getSelectedItem().focus();
-		close();
-	    }
-	});
-    }
-
-    private void initSearchEvents() {
-	searchField.textProperty().addListener((e,o,n) -> updateSearchResults(n));
-	searchField.setOnKeyPressed(this::searchFieldKeyPress);
-    }
-
-    private boolean isLastSelected() {
-	return resultsView.getSelectionModel().getSelectedIndex() == results.size()-1;
-    }
-
-    private boolean isFirstSelected() {
-	return resultsView.getSelectionModel().getSelectedIndex() == 0;
-    }
-
-    private boolean isNoneSelected() {
-	return resultsView.getSelectionModel().getSelectedIndex() == -1;
-    }
-
-    private void searchFieldKeyPress(KeyEvent event) {
-	if(event.getCode().equals(KeyCode.TAB)) {
-	    if(event.isShiftDown()) {
-		if(isNoneSelected() || isFirstSelected())
-		    resultsView.getSelectionModel().selectLast();
-		else
-		    resultsView.getSelectionModel().selectPrevious();
-	    }
-	    else {
-		if(isNoneSelected() || isLastSelected())
-		    resultsView.getSelectionModel().selectFirst();
-		else
-		    resultsView.getSelectionModel().selectNext();
-	    }
-	    event.consume();
-	    searchField.requestFocus();
-	    searchField.positionCaret(searchField.getText().length());
 	}
-	if(event.getCode().equals(KeyCode.ENTER)) {
-	    if(isNoneSelected())
-		resultsView.getSelectionModel().selectFirst();
-	    resultsView.getSelectionModel().getSelectedItem().focus();
-	    close();
+
+	@FXML
+	private void initialize() {
+		focusEventHandlers = new ArrayList<>();
+		bufferContainer = DI.get(IBufferContainer.class);
+		initButtons();
+		initResults();
+		initSearchEvents();
 	}
-    }
 
-    private void updateSearchResults(String searchTerm) {
-	results.clear();
-	var lowerCaseSearchTerm = searchTerm.toLowerCase();
-	for(var buffer : bufferContainer.getBuffers().entrySet()) {
-	    for(var metadata : buffer.getValue().metadata().entrySet())
-		if(metadata.getValue().toLowerCase().contains(lowerCaseSearchTerm))
-		    results.add(new SearchResultController(BootstrapIcons.HASH, metadata.getKey() + ": " + metadata.getValue(), buffer.getValue()));
-
-	    for(var edge : buffer.getValue().syntax().edges().entrySet())
-		if(edge.getValue() instanceof ISearchable searchable)
-		    if(searchable.getSearchValues().stream().anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
-			results.add(new SearchResultController(BootstrapIcons.ARROW_RIGHT_CIRCLE_FILL, edge.getKey().toString(), edge.getValue()));
-
-	    for(var vertex : buffer.getValue().syntax().vertices().entrySet())
-		if(vertex.getValue() instanceof ISearchable searchable)
-		    if(searchable.getSearchValues().stream().anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
-			results.add(new SearchResultController(BootstrapIcons.CIRCLE_FILL, vertex.getKey().toString(), vertex.getValue()));
-
-	    if(buffer.getKey().toLowerCase().contains(lowerCaseSearchTerm))
-		results.add(new SearchResultController(BootstrapIcons.FILE_EARMARK, buffer.getKey(), buffer.getValue()));
+	private void initButtons() {
+		searchButton.setGraphic(new FontIcon(BootstrapIcons.SEARCH));
+		closeButton.setOnAction(e -> close());
 	}
-    }
 
-    @Override
-    public void onClose(Runnable onClose) {
-	onCloseRunner = Optional.of(onClose);
-    }
+	private void initResults() {
+		results = FXCollections.observableArrayList();
+		resultsView = new ListView<>(results);
+		Styles.addStyleClass(resultsView, Styles.DENSE);
+		Styles.addStyleClass(resultsView, Tweaks.EDGE_TO_EDGE);
+		root.getChildren().add(resultsView);
+		resultsView.setOnMouseClicked(e -> {
+			if (e.getClickCount() == 2) {
+				resultsView.getSelectionModel().getSelectedItem().focus();
+				close();
+			}
+		});
+	}
 
-    @Override
-    public void close() {
-	onCloseRunner.ifPresent(Runnable::run);
-    }
+	private void initSearchEvents() {
+		searchField.textProperty().addListener((e, o, n) -> updateSearchResults(n));
+		searchField.setOnKeyPressed(this::searchFieldKeyPress);
+	}
 
-    @Override
-    public void addFocusListener(Runnable focusEventHandler) {
-	focusEventHandlers.add(focusEventHandler);
-    }
+	private boolean isLastSelected() {
+		return resultsView.getSelectionModel().getSelectedIndex() == results.size() - 1;
+	}
 
-    @Override
-    public void focus() {
-	searchField.requestFocus();
-	focusEventHandlers.forEach(Runnable::run);
-    }
+	private boolean isFirstSelected() {
+		return resultsView.getSelectionModel().getSelectedIndex() == 0;
+	}
+
+	private boolean isNoneSelected() {
+		return resultsView.getSelectionModel().getSelectedIndex() == -1;
+	}
+
+	private void searchFieldKeyPress(KeyEvent event) {
+		if (event.getCode().equals(KeyCode.TAB)) {
+			if (event.isShiftDown()) {
+				if (isNoneSelected() || isFirstSelected())
+					resultsView.getSelectionModel().selectLast();
+				else
+					resultsView.getSelectionModel().selectPrevious();
+			} else {
+				if (isNoneSelected() || isLastSelected())
+					resultsView.getSelectionModel().selectFirst();
+				else
+					resultsView.getSelectionModel().selectNext();
+			}
+			event.consume();
+			searchField.requestFocus();
+			searchField.positionCaret(searchField.getText().length());
+		}
+		if (event.getCode().equals(KeyCode.ENTER)) {
+			if (isNoneSelected())
+				resultsView.getSelectionModel().selectFirst();
+			resultsView.getSelectionModel().getSelectedItem().focus();
+			close();
+		}
+	}
+
+	private void updateSearchResults(String searchTerm) {
+		results.clear();
+		var lowerCaseSearchTerm = searchTerm.toLowerCase();
+		for (var buffer : bufferContainer.getBuffers().entrySet()) {
+			for (var metadata : buffer.getValue().metadata().entrySet())
+				if (metadata.getValue().toLowerCase().contains(lowerCaseSearchTerm))
+					results.add(new SearchResultController(BootstrapIcons.HASH,
+							metadata.getKey() + ": " + metadata.getValue(),
+							buffer.getValue()));
+
+			for (var edge : buffer.getValue().syntax().edges().entrySet())
+				if (edge.getValue() instanceof ISearchable searchable)
+					if (searchable.getSearchValues().stream()
+							.anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
+						results.add(new SearchResultController(
+								BootstrapIcons.ARROW_RIGHT_CIRCLE_FILL,
+								edge.getKey().toString(), edge.getValue()));
+
+			for (var vertex : buffer.getValue().syntax().vertices().entrySet())
+				if (vertex.getValue() instanceof ISearchable searchable)
+					if (searchable.getSearchValues().stream()
+							.anyMatch(s -> s.toLowerCase().contains(lowerCaseSearchTerm)))
+						results.add(new SearchResultController(BootstrapIcons.CIRCLE_FILL,
+								vertex.getKey().toString(), vertex.getValue()));
+
+			if (buffer.getKey().toLowerCase().contains(lowerCaseSearchTerm))
+				results.add(new SearchResultController(BootstrapIcons.FILE_EARMARK, buffer.getKey(),
+						buffer.getValue()));
+		}
+	}
+
+	@Override
+	public void onClose(Runnable onClose) {
+		onCloseRunner = Optional.of(onClose);
+	}
+
+	@Override
+	public void close() {
+		onCloseRunner.ifPresent(Runnable::run);
+	}
+
+	@Override
+	public void addFocusListener(Runnable focusEventHandler) {
+		focusEventHandlers.add(focusEventHandler);
+	}
+
+	@Override
+	public void focus() {
+		searchField.requestFocus();
+		focusEventHandlers.forEach(Runnable::run);
+	}
 }

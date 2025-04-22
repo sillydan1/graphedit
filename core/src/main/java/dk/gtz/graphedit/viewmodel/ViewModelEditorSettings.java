@@ -17,119 +17,136 @@ import javafx.collections.FXCollections;
 
 /**
  * View model representation of the global editor settings
- * @param gridSizeX Width of snapgrid cells
- * @param gridSizeY Height of snapgrid cells
- * @param gridSnap When true, vertices will snap to the grid
- * @param useLightTheme When true, the editor will use a light color scheme
- * @param autoOpenLastProject When true, the last opened project will be automatically opened next time you start the editor
- * @param showInspectorPane (Deprecated) doesn't do anything anymore
- * @param showInfoToasts When true, will display toasts on logger.info calls
- * @param showWarnToasts When true, will display toasts on logger.warn calls
- * @param showErrorToasts When true, will display toasts on logger.error calls
- * @param showTraceToasts When true, will display toasts on logger.trace calls
- * @param lastOpenedProject Filepath to the last opened graphedit project file
- * @param recentProjects List of filepaths that have been recently opened
- * @param disabledPlugins List of plugin names that are loaded, but not initialized
- * @param tipIndex Index of the last shown tip
- * @param showTips When true, will show tips on startup
+ * 
+ * @param gridSizeX           Width of snapgrid cells
+ * @param gridSizeY           Height of snapgrid cells
+ * @param gridSnap            When true, vertices will snap to the grid
+ * @param useLightTheme       When true, the editor will use a light color
+ *                            scheme
+ * @param autoOpenLastProject When true, the last opened project will be
+ *                            automatically opened next time you start the
+ *                            editor
+ * @param showInspectorPane   (Deprecated) doesn't do anything anymore
+ * @param showInfoToasts      When true, will display toasts on logger.info
+ *                            calls
+ * @param showWarnToasts      When true, will display toasts on logger.warn
+ *                            calls
+ * @param showErrorToasts     When true, will display toasts on logger.error
+ *                            calls
+ * @param showTraceToasts     When true, will display toasts on logger.trace
+ *                            calls
+ * @param lastOpenedProject   Filepath to the last opened graphedit project file
+ * @param recentProjects      List of filepaths that have been recently opened
+ * @param disabledPlugins     List of plugin names that are loaded, but not
+ *                            initialized
+ * @param tipIndex            Index of the last shown tip
+ * @param showTips            When true, will show tips on startup
  */
 public record ViewModelEditorSettings(
-                DoubleProperty gridSizeX,
-                DoubleProperty gridSizeY,
-                BooleanProperty gridSnap,
-                BooleanProperty useLightTheme,
-                BooleanProperty autoOpenLastProject,
-                @Deprecated BooleanProperty showInspectorPane,
-                BooleanProperty showInfoToasts,
-                BooleanProperty showWarnToasts,
-                BooleanProperty showErrorToasts,
-                BooleanProperty showTraceToasts,
-                StringProperty lastOpenedProject,
-                ListProperty<String> recentProjects,
-                ListProperty<String> disabledPlugins,
-                IntegerProperty tipIndex,
-                BooleanProperty showTips) {
+		DoubleProperty gridSizeX,
+		DoubleProperty gridSizeY,
+		BooleanProperty gridSnap,
+		BooleanProperty useLightTheme,
+		BooleanProperty autoOpenLastProject,
+		@Deprecated BooleanProperty showInspectorPane,
+		BooleanProperty showInfoToasts,
+		BooleanProperty showWarnToasts,
+		BooleanProperty showErrorToasts,
+		BooleanProperty showTraceToasts,
+		StringProperty lastOpenedProject,
+		ListProperty<String> recentProjects,
+		ListProperty<String> disabledPlugins,
+		IntegerProperty tipIndex,
+		BooleanProperty showTips) {
 
-        /**
-         * Construct a new instance
-         * @param settings The settings model object to base on
-         */
-        public ViewModelEditorSettings(ModelEditorSettings settings) {
-                this(
-                        settings.gridSizeX(),
-                        settings.gridSizeY(),
-                        settings.gridSnap(),
-                        settings.useLightTheme(),
-                        settings.autoOpenLastProject(),
-                        settings.showInspectorPane(),
-                        settings.showInfoToasts(),
-                        settings.showWarnToasts(),
-                        settings.showErrorToasts(),
-                        settings.showTraceToasts(),
-                        settings.lastOpenedProject(),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        settings.tipIndex(),
-                        settings.showTips()
-                    );
-                if(settings.recentProjects() != null)
-                        this.recentProjects.addAll(settings.recentProjects());
-                if(settings.disabledPlugins() != null)
-                        this.disabledPlugins.addAll(settings.disabledPlugins());
-        }
+	/**
+	 * Construct a new instance
+	 * 
+	 * @param settings The settings model object to base on
+	 */
+	public ViewModelEditorSettings(ModelEditorSettings settings) {
+		this(
+				settings.gridSizeX(),
+				settings.gridSizeY(),
+				settings.gridSnap(),
+				settings.useLightTheme(),
+				settings.autoOpenLastProject(),
+				settings.showInspectorPane(),
+				settings.showInfoToasts(),
+				settings.showWarnToasts(),
+				settings.showErrorToasts(),
+				settings.showTraceToasts(),
+				settings.lastOpenedProject(),
+				new SimpleListProperty<String>(FXCollections.observableArrayList()),
+				new SimpleListProperty<String>(FXCollections.observableArrayList()),
+				settings.tipIndex(),
+				settings.showTips());
+		if (settings.recentProjects() != null)
+			this.recentProjects.addAll(settings.recentProjects());
+		if (settings.disabledPlugins() != null)
+			this.disabledPlugins.addAll(settings.disabledPlugins());
+	}
 
-        /**
-         * Construct a new instance
-         * @param gridSizeX Width of snapgrid cells
-         * @param gridSizeY Height of snapgrid cells
-         * @param gridSnap When true, vertices will snap to the grid
-         * @param useLightTheme When true, the editor will use a light color scheme
-         * @param autoOpenLastProject When true, the last opened project will be automatically opened next time you start the editor
-         * @param showInspectorPane (Deprecated) doesn't do anything anymore
-         * @param showInfoToasts When true, will display toasts on logger.info calls
-         * @param showWarnToasts When true, will display toasts on logger.warn calls
-         * @param showErrorToasts When true, will display toasts on logger.error calls
-         * @param showTraceToasts When true, will display toasts on logger.trace calls
-         * @param lastOpenedProject Filepath to the last opened graphedit project file
-         * @param recentProjects List of filepaths that have been recently opened
-         * @param disabledPlugins List of plugin names that are loaded, but not initialized
-         * @param tipIndex Index of the last shown tip
-         * @param showTips When true, will show tips on startup
-         */
-        public ViewModelEditorSettings(
-                        double gridSizeX, 
-                        double gridSizeY,
-                        boolean gridSnap,
-                        boolean useLightTheme,
-                        boolean autoOpenLastProject,
-                        @Deprecated boolean showInspectorPane,
-                        boolean showInfoToasts,
-                        boolean showWarnToasts,
-                        boolean showErrorToasts,
-                        boolean showTraceToasts,
-                        String lastOpenedProject,
-                        List<String> recentProjects,
-                        List<String> disabledPlugins,
-                        int tipIndex,
-                        boolean showTips) {
-                this(
-                        new SimpleDoubleProperty(gridSizeX),
-                        new SimpleDoubleProperty(gridSizeY),
-                        new SimpleBooleanProperty(gridSnap),
-                        new SimpleBooleanProperty(useLightTheme),
-                        new SimpleBooleanProperty(autoOpenLastProject),
-                        new SimpleBooleanProperty(showInspectorPane),
-                        new SimpleBooleanProperty(showInfoToasts),
-                        new SimpleBooleanProperty(showWarnToasts),
-                        new SimpleBooleanProperty(showErrorToasts),
-                        new SimpleBooleanProperty(showTraceToasts),
-                        new SimpleStringProperty(lastOpenedProject),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        new SimpleListProperty<String>(FXCollections.observableArrayList()),
-                        new SimpleIntegerProperty(tipIndex),
-                        new SimpleBooleanProperty(showTips)
-                    );
-                this.recentProjects.addAll(recentProjects);
-                this.disabledPlugins.addAll(disabledPlugins);
-        }
+	/**
+	 * Construct a new instance
+	 * 
+	 * @param gridSizeX           Width of snapgrid cells
+	 * @param gridSizeY           Height of snapgrid cells
+	 * @param gridSnap            When true, vertices will snap to the grid
+	 * @param useLightTheme       When true, the editor will use a light color
+	 *                            scheme
+	 * @param autoOpenLastProject When true, the last opened project will be
+	 *                            automatically opened next time you start the
+	 *                            editor
+	 * @param showInspectorPane   (Deprecated) doesn't do anything anymore
+	 * @param showInfoToasts      When true, will display toasts on logger.info
+	 *                            calls
+	 * @param showWarnToasts      When true, will display toasts on logger.warn
+	 *                            calls
+	 * @param showErrorToasts     When true, will display toasts on logger.error
+	 *                            calls
+	 * @param showTraceToasts     When true, will display toasts on logger.trace
+	 *                            calls
+	 * @param lastOpenedProject   Filepath to the last opened graphedit project file
+	 * @param recentProjects      List of filepaths that have been recently opened
+	 * @param disabledPlugins     List of plugin names that are loaded, but not
+	 *                            initialized
+	 * @param tipIndex            Index of the last shown tip
+	 * @param showTips            When true, will show tips on startup
+	 */
+	public ViewModelEditorSettings(
+			double gridSizeX,
+			double gridSizeY,
+			boolean gridSnap,
+			boolean useLightTheme,
+			boolean autoOpenLastProject,
+			@Deprecated boolean showInspectorPane,
+			boolean showInfoToasts,
+			boolean showWarnToasts,
+			boolean showErrorToasts,
+			boolean showTraceToasts,
+			String lastOpenedProject,
+			List<String> recentProjects,
+			List<String> disabledPlugins,
+			int tipIndex,
+			boolean showTips) {
+		this(
+				new SimpleDoubleProperty(gridSizeX),
+				new SimpleDoubleProperty(gridSizeY),
+				new SimpleBooleanProperty(gridSnap),
+				new SimpleBooleanProperty(useLightTheme),
+				new SimpleBooleanProperty(autoOpenLastProject),
+				new SimpleBooleanProperty(showInspectorPane),
+				new SimpleBooleanProperty(showInfoToasts),
+				new SimpleBooleanProperty(showWarnToasts),
+				new SimpleBooleanProperty(showErrorToasts),
+				new SimpleBooleanProperty(showTraceToasts),
+				new SimpleStringProperty(lastOpenedProject),
+				new SimpleListProperty<String>(FXCollections.observableArrayList()),
+				new SimpleListProperty<String>(FXCollections.observableArrayList()),
+				new SimpleIntegerProperty(tipIndex),
+				new SimpleBooleanProperty(showTips));
+		this.recentProjects.addAll(recentProjects);
+		this.disabledPlugins.addAll(disabledPlugins);
+	}
 }
