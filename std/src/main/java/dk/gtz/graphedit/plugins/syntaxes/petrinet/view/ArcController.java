@@ -20,17 +20,19 @@ public class ArcController extends EdgeController {
     private Label label;
     private DoubleProperty labelDirOffset;
 
-    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelGraph parentGraph, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+    public ArcController(UUID edgeKey, ViewModelArc edge, ViewModelGraph parentGraph, Affine viewportAffine,
+            ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory,
+            String bufferKey) {
         super(edgeKey, edge, parentGraph, viewportAffine, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
         this.label = createWeightLabel();
-        edge.weight().addListener((e,o,n) -> setLabelGraphic(this.label, n));
+        edge.weight().addListener((e, o, n) -> setLabelGraphic(this.label, n));
         getChildren().add(this.label);
     }
 
     private void setLabelGraphic(Label label, Number val) {
-        if(val.intValue() == 1)
+        if (val.intValue() == 1)
             label.textProperty().set("");
         else
             label.textProperty().set(val.toString());
@@ -40,9 +42,10 @@ public class ArcController extends EdgeController {
         var result = new Label();
         setLabelGraphic(result, edge.weight().get());
         result.getStyleClass().add("outline");
-        result.translateXProperty().bind(BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
-        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset).subtract(result.heightProperty().divide(2)));
+        result.translateXProperty().bind(
+                BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
+        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset)
+                .subtract(result.heightProperty().divide(2)));
         return result;
     }
 }
-

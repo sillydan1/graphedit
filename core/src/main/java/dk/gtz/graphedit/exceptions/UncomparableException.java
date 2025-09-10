@@ -6,6 +6,7 @@ package dk.gtz.graphedit.exceptions;
 public class UncomparableException extends RuntimeException {
     /**
      * Construct a new instance
+     * 
      * @param message The detail message
      */
     public UncomparableException(String message) {
@@ -14,8 +15,9 @@ public class UncomparableException extends RuntimeException {
 
     /**
      * Construct a new instance
+     * 
      * @param message The detail message
-     * @param inner The throwable that caused this
+     * @param inner   The throwable that caused this
      */
     public UncomparableException(String message, Throwable inner) {
         super(message, inner);
@@ -23,6 +25,7 @@ public class UncomparableException extends RuntimeException {
 
     /**
      * Construct a new instance
+     * 
      * @param inner The throwable that caused this
      */
     public UncomparableException(Throwable inner) {

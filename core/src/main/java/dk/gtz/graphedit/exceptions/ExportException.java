@@ -6,6 +6,7 @@ package dk.gtz.graphedit.exceptions;
 public class ExportException extends RuntimeException {
     /**
      * Construct a new instance with a message
+     * 
      * @param message The detail message
      */
     public ExportException(String message) {
@@ -14,6 +15,7 @@ public class ExportException extends RuntimeException {
 
     /**
      * Construct a new instance with a message and a cause
+     * 
      * @param cause The cause
      */
     public ExportException(Throwable cause) {
@@ -22,8 +24,9 @@ public class ExportException extends RuntimeException {
 
     /**
      * Construct a new instance with a message and a cause
+     * 
      * @param message The detail message
-     * @param cause The cause
+     * @param cause   The cause
      */
     public ExportException(String message, Throwable cause) {
         super(message, cause);

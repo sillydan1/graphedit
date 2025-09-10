@@ -21,4 +21,3 @@ public class ModelTransition extends ModelEdge {
         this.action = action;
     }
 }
-

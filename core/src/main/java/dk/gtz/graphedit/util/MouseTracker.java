@@ -17,25 +17,27 @@ public class MouseTracker {
 
     /**
      * Construct a new instance
-     * @param owner The root stage
+     * 
+     * @param owner   The root stage
      * @param managed Whether if this tracker is externally managed or not
      */
     public MouseTracker(Stage owner, boolean managed) {
         uuid = UUID.randomUUID();
         xProperty = new SimpleDoubleProperty();
         yProperty = new SimpleDoubleProperty();
-        if(managed)
+        if (managed)
             return;
         owner.addEventFilter(MouseEvent.ANY, event -> {
-            if(!Double.isNaN(event.getX()))
+            if (!Double.isNaN(event.getX()))
                 xProperty.set(event.getX());
-            if(!Double.isNaN(event.getY()))
+            if (!Double.isNaN(event.getY()))
                 yProperty.set(event.getY());
         });
     }
 
     /**
      * Get the X value property
+     * 
      * @return The X-value property of the mouse
      */
     public DoubleProperty getXProperty() {
@@ -44,6 +46,7 @@ public class MouseTracker {
 
     /**
      * Get the Y value property
+     * 
      * @return The Y-value property of the mouse
      */
     public DoubleProperty getYProperty() {
@@ -52,7 +55,9 @@ public class MouseTracker {
 
     /**
      * Get the uuid of the mousetracker.
-     * This is useful when determining if an edge is targeting the mousetracker or a vertex
+     * This is useful when determining if an edge is targeting the mousetracker or a
+     * vertex
+     * 
      * @return The uuid of the mousetracker
      */
     public UUID getTrackerUUID() {

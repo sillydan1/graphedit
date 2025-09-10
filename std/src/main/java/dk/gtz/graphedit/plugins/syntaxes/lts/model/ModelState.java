@@ -16,7 +16,7 @@ public class ModelState extends ModelVertex {
     }
 
     public ModelState() {
-        this(new ModelPoint(0,0), "", false);
+        this(new ModelPoint(0, 0), "", false);
     }
 
     public ModelState(ModelPoint position, boolean isInitial) {
@@ -33,4 +33,3 @@ public class ModelState extends ModelVertex {
         this.initial = isInitial;
     }
 }
-

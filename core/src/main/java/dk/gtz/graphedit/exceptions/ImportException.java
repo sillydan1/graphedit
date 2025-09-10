@@ -6,6 +6,7 @@ package dk.gtz.graphedit.exceptions;
 public class ImportException extends RuntimeException {
     /**
      * Construct a new instance with a message
+     * 
      * @param message The detail message
      */
     public ImportException(String message) {
@@ -14,6 +15,7 @@ public class ImportException extends RuntimeException {
 
     /**
      * Construct a new instance with a cause
+     * 
      * @param cause The cause
      */
     public ImportException(Throwable cause) {
@@ -22,8 +24,9 @@ public class ImportException extends RuntimeException {
 
     /**
      * Construct a new instance with a message and a cause
+     * 
      * @param message The detail message
-     * @param cause The cause
+     * @param cause   The cause
      */
     public ImportException(String message, Throwable cause) {
         super(message, cause);

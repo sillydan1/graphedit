@@ -38,38 +38,42 @@ public class SidePanelController {
 
     @FXML
     private void initialize() {
-	var plugins = DI.get(IPluginsContainer.class);
-	if(plugins.getPlugins().isEmpty()) {
-	    logger.warn("No plugins are loaded, cannot show sidepanel");
-	    return;
-	}
-	left.setSpacing(20);
-	left.setPadding(new Insets(15));
-	for(var plugin : plugins.getEnabledPlugins()) {
-	    try {
-		initializePluginTab(plugin);
-	    } catch(Exception e) {
-		logger.error("could not initialize plugin tab for plugin: {}", plugin.getName(), e);
-	    }
-	}
-	selectedPlugin.addListener((e,o,n) -> root.setCenter(n.getPanel()));
+        var plugins = DI.get(IPluginsContainer.class);
+        if (plugins.getPlugins().isEmpty()) {
+            logger.warn("No plugins are loaded, cannot show sidepanel");
+            return;
+        }
+        left.setSpacing(20);
+        left.setPadding(new Insets(15));
+        for (var plugin : plugins.getEnabledPlugins()) {
+            try {
+                initializePluginTab(plugin);
+            } catch (Exception e) {
+                logger.error("could not initialize plugin tab for plugin: {}", plugin.getName(), e);
+            }
+        }
+        selectedPlugin.addListener((e, o, n) -> root.setCenter(n.getPanel()));
     }
 
     private void initializePluginTab(IPlugin plugin) throws Exception {
-	for(var panel : plugin.getPanels()) {
-	    var btn = new ToggleButton(null, panel.getIcon());
-	    btn.setScaleX(PLUGIN_ICON_SCALE_FACTOR);
-	    btn.setScaleY(PLUGIN_ICON_SCALE_FACTOR);
-	    btn.setTooltip(new Tooltip(panel.getTooltip()));
-	    btn.getStyleClass().addAll(Styles.BUTTON_ICON);
-	    btn.setOnMouseClicked(e -> selectedPlugin.set(panel));
-	    btn.selectedProperty().set(selectedPlugin.get() == panel);
-	    selectedPlugin.addListener((e,o,n) -> btn.selectedProperty().set(n == panel));
-	    left.getChildren().add(btn);
-	    if(selectedPlugin.get() == null) {
-		selectedPlugin.set(panel);
-		root.setCenter(panel.getPanel());
-	    }
-	}
+        for (var panel : plugin.getPanels()) {
+            var btn = new ToggleButton(null, panel.getIcon());
+            btn.setScaleX(PLUGIN_ICON_SCALE_FACTOR);
+            btn.setScaleY(PLUGIN_ICON_SCALE_FACTOR);
+            btn.setTooltip(new Tooltip(panel.getTooltip()));
+            btn.getStyleClass().addAll(Styles.BUTTON_ICON);
+            btn.setOnMouseClicked(e -> selectedPlugin.set(panel));
+            btn.selectedProperty().set(selectedPlugin.get() == panel);
+            selectedPlugin.addListener((e, o, n) -> btn.selectedProperty().set(n == panel));
+            left.getChildren().add(btn);
+            if (selectedPlugin.get() == null) {
+                selectedPlugin.set(panel);
+                root.setCenter(panel.getPanel());
+            }
+        }
+    }
+
+    public void selectPluginPanel(IPluginPanel panel) {
+        selectedPlugin.set(panel);
     }
 }

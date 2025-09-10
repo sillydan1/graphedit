@@ -16,56 +16,57 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class ViewModelPlace extends ViewModelVertex implements ISearchable {
-	@Autolisten
-	public final IntegerProperty initialTokenCount;
+    @Autolisten
+    public final IntegerProperty initialTokenCount;
 
-	public IntegerProperty initialTokenCount() {
-		return initialTokenCount;
-	}
+    public IntegerProperty initialTokenCount() {
+        return initialTokenCount;
+    }
 
-	public ViewModelPlace(UUID uuid, ModelVertex vertex) {
-		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
-		initialTokenCount = new SimpleIntegerProperty(0);
-		if(vertex instanceof ModelPlace tvertex)
-			initialTokenCount.set(tvertex.initialTokenCount());
-	}
+    public ViewModelPlace(UUID uuid, ModelVertex vertex) {
+        super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+        initialTokenCount = new SimpleIntegerProperty(0);
+        if (vertex instanceof ModelPlace tvertex)
+            initialTokenCount.set(tvertex.initialTokenCount());
+    }
 
-	public ViewModelPlace(UUID uuid, ViewModelVertex vertex) {
-		this(uuid, vertex.toModel());
-	}
+    public ViewModelPlace(UUID uuid, ViewModelVertex vertex) {
+        this(uuid, vertex.toModel());
+    }
 
-	@Override
-	public List<String> getSearchValues() {
-		return List.of("tokens: %d".formatted(initialTokenCount.get()));
-	}
+    @Override
+    public List<String> getSearchValues() {
+        return List.of("tokens: %d".formatted(initialTokenCount.get()));
+    }
 
-	@Override
-	public ModelPlace toModel() {
-		return new ModelPlace(position().getValue().toModel(), initialTokenCount.get());
-	}
+    @Override
+    public ModelPlace toModel() {
+        return new ModelPlace(position().getValue().toModel(), initialTokenCount.get());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * @return A list of inspectable objects
-	 * */
-	@Override
-	public List<InspectableProperty> getInspectableObjects() {
-		var inspectables = new ArrayList<>(super.getInspectableObjects());
-		inspectables.add(new InspectableProperty("Initial Token Count", initialTokenCount));
-		return inspectables;
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @return A list of inspectable objects
+     */
+    @Override
+    public List<InspectableProperty> getInspectableObjects() {
+        var inspectables = new ArrayList<>(super.getInspectableObjects());
+        inspectables.add(new InspectableProperty("Initial Token Count", initialTokenCount));
+        return inspectables;
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if(!super.equals(other))
-			return false;
-		if(!(other instanceof ViewModelPlace vother))
-			return false;
-		return initialTokenCount.get() == vother.initialTokenCount.get();
-	}
+    @Override
+    public boolean equals(Object other) {
+        if (!super.equals(other))
+            return false;
+        if (!(other instanceof ViewModelPlace vother))
+            return false;
+        return initialTokenCount.get() == vother.initialTokenCount.get();
+    }
 
-	@Override
-	public int hashCode() {
-		return super.hashCode() ^ initialTokenCount.getValue().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ initialTokenCount.getValue().hashCode();
+    }
 }

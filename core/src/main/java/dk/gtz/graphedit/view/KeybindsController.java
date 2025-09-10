@@ -26,18 +26,18 @@ public class KeybindsController {
      * Construct a new keybinds controller instance.
      */
     public KeybindsController() {
-	this.keymap = DI.get(Keymap.class);
+        this.keymap = DI.get(Keymap.class);
     }
 
     @FXML
     private void initialize() {
-	for(var keybind : keymap.get().entrySet())
-	    inspectorPane.getChildren().add(getTile(keybind));
+        for (var keybind : keymap.get().entrySet())
+            inspectorPane.getChildren().add(getTile(keybind));
     }
 
     private Node getTile(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {
-	var tile = new Tile(keybind.getValue().description(), keybind.getValue().category());
-	tile.setAction(new Label(keybind.getKey().getDisplayText()));
-	return tile;
+        var tile = new Tile(keybind.getValue().description(), keybind.getValue().category());
+        tile.setAction(new Label(keybind.getKey().getDisplayText()));
+        return tile;
     }
 }

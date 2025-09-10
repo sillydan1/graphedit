@@ -61,12 +61,12 @@ public class ClipboardTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool that enables cut/copy/paste support
+                Tool that enables cut/copy/paste support
 
-             - <Shortcut> + X to cut
-             - <Shortcut> + C to copy
-             - <Shortcut> + V to paste
-            """;
+                 - <Shortcut> + X to cut
+                 - <Shortcut> + C to copy
+                 - <Shortcut> + V to paste
+                """;
     }
 
     @Override
@@ -81,45 +81,50 @@ public class ClipboardTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        if(!e.event().isShortcutDown())
+        if (!e.event().isShortcutDown())
             return;
-        if(!e.event().getEventType().equals(KeyEvent.KEY_PRESSED))
+        if (!e.event().getEventType().equals(KeyEvent.KEY_PRESSED))
             return;
-        if(e.event().getCode().equals(KeyCode.C))
+        if (e.event().getCode().equals(KeyCode.C))
             copySelection(e);
-        if(e.event().getCode().equals(KeyCode.V))
+        if (e.event().getCode().equals(KeyCode.V))
             pasteModel(e);
-        if(e.event().getCode().equals(KeyCode.X))
+        if (e.event().getCode().equals(KeyCode.X))
             cutSelection(e);
     }
 
     /**
      * Copy the currently selected elements into the system's clipboard.
+     * 
      * @param e The key event
      */
     public void copySelection(ViewportKeyEvent e) {
         try {
-            if(selectedElements.isEmpty())
+            if (selectedElements.isEmpty())
                 return;
             var buffer = buffers.get(e.bufferId());
             var selectedVertices = buffer.syntax().vertices().entrySet().stream()
                     .filter(elem -> selectedElements.stream().anyMatch(s -> s.id().equals(elem.getKey())))
                     .collect(Collectors.toMap(
-                                elem -> elem.getKey(),
-                                elem -> elem.getValue().toModel()));
+                            elem -> elem.getKey(),
+                            elem -> elem.getValue().toModel()));
             var selectedEdges = buffer.syntax().edges().entrySet().stream()
                     .filter(elem -> selectedElements.stream().anyMatch(s -> s.id().equals(elem.getKey())))
                     .collect(Collectors.toMap(
-                                elem -> elem.getKey(),
-                                elem -> elem.getValue().toModel()));
-            for(var edge : selectedEdges.entrySet()) {
-                if(!selectedVertices.containsKey(edge.getValue().source))
-                    selectedVertices.put(edge.getValue().source, buffer.syntax().vertices().get(edge.getValue().source).toModel());
-                if(!selectedVertices.containsKey(edge.getValue().target))
-                    selectedVertices.put(edge.getValue().target, buffer.syntax().vertices().get(edge.getValue().target).toModel());
+                            elem -> elem.getKey(),
+                            elem -> elem.getValue().toModel()));
+            for (var edge : selectedEdges.entrySet()) {
+                if (!selectedVertices.containsKey(edge.getValue().source))
+                    selectedVertices.put(edge.getValue().source,
+                            buffer.syntax().vertices().get(edge.getValue().source).toModel());
+                if (!selectedVertices.containsKey(edge.getValue().target))
+                    selectedVertices.put(edge.getValue().target,
+                            buffer.syntax().vertices().get(edge.getValue().target).toModel());
             }
-            var modelGraph = new ModelGraph("", selectedVertices, selectedEdges); // NOTE: Declarations string cannot be copied by this tool
-            var resource = new ViewModelProjectResource(buffer.metadata(), new ViewModelGraph(modelGraph, e.syntax())).toModel();
+            var modelGraph = new ModelGraph("", selectedVertices, selectedEdges); // NOTE: Declarations string cannot be
+                                                                                  // copied by this tool
+            var resource = new ViewModelProjectResource(buffer.metadata(), new ViewModelGraph(modelGraph, e.syntax()))
+                    .toModel();
             var serializedModel = serializer.serialize(resource);
             var content = new ClipboardContent();
             content.putString(serializedModel);
@@ -131,12 +136,14 @@ public class ClipboardTool extends AbstractBaseTool {
     }
 
     /**
-     * Paste the current content of the system clipboard. If the content is not a valid serialized model an error is logged and nothing will happen
+     * Paste the current content of the system clipboard. If the content is not a
+     * valid serialized model an error is logged and nothing will happen
+     * 
      * @param e The key event
      */
     public void pasteModel(ViewportKeyEvent e) {
         try {
-            if(!clipboard.hasString()) {
+            if (!clipboard.hasString()) {
                 logger.error("no plain text in clipboard");
                 return;
             }
@@ -144,18 +151,19 @@ public class ClipboardTool extends AbstractBaseTool {
             var buffer = buffers.get(e.bufferId());
             var content = clipboard.getString();
             var resource = new ViewModelProjectResource(serializer.deserializeProjectResource(content), e.syntax());
-            var vertexOffset = new ViewModelPoint(e.editorSettings().gridSizeX().get(), e.editorSettings().gridSizeY().get());
-            var rerolledVertex = new HashMap<UUID,ViewModelVertex>();
-            var rerolledEdges = new HashMap<UUID,ViewModelEdge>();
-            var remapping = new HashMap<UUID,UUID>();
-            for(var vertex : resource.syntax().vertices().entrySet()) {
+            var vertexOffset = new ViewModelPoint(e.editorSettings().gridSizeX().get(),
+                    e.editorSettings().gridSizeY().get());
+            var rerolledVertex = new HashMap<UUID, ViewModelVertex>();
+            var rerolledEdges = new HashMap<UUID, ViewModelEdge>();
+            var remapping = new HashMap<UUID, UUID>();
+            for (var vertex : resource.syntax().vertices().entrySet()) {
                 var v = vertex.getValue();
                 var rerolled = UUID.randomUUID();
                 v.position().setValue(v.position().add(vertexOffset));
                 rerolledVertex.put(rerolled, syntaxFactory.createVertexViewModel(rerolled, v.toModel()));
                 remapping.put(vertex.getKey(), rerolled);
             }
-            for(var edge : resource.syntax().edges().entrySet()) {
+            for (var edge : resource.syntax().edges().entrySet()) {
                 var ev = edge.getValue();
                 var rerolled = UUID.randomUUID();
                 ev.source().set(remapping.get(ev.source().get()));
@@ -171,8 +179,8 @@ public class ClipboardTool extends AbstractBaseTool {
             var diff = ViewModelDiff.compare(buffer, resource);
             ViewModelDiff.applyAdditiveOnly(buffer, diff);
             buffer.getUndoSystem().push(new Undoable("paste content",
-                        () -> ViewModelDiff.revertSubtractiveOnly(buffer, diff),
-                        () -> ViewModelDiff.applyAdditiveOnly(buffer, diff)));
+                    () -> ViewModelDiff.revertSubtractiveOnly(buffer, diff),
+                    () -> ViewModelDiff.applyAdditiveOnly(buffer, diff)));
         } catch (SerializationException exc) {
             logger.trace("clipboard value not deserializable {}", exc.getMessage());
         } catch (UncomparableException exc) {
@@ -183,16 +191,18 @@ public class ClipboardTool extends AbstractBaseTool {
     }
 
     /**
-     * Copy the currently selected elements into the system's clipboard and delete the elements.
+     * Copy the currently selected elements into the system's clipboard and delete
+     * the elements.
+     * 
      * @param e The key event
      */
     public void cutSelection(ViewportKeyEvent e) {
         try {
-            if(selectedElements.isEmpty())
+            if (selectedElements.isEmpty())
                 return;
             copySelection(e);
             deleteTool.deleteSelectedElements(e);
-        } catch(Exception exc) {
+        } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
     }

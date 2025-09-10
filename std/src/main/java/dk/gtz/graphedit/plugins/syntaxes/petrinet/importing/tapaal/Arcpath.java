@@ -15,34 +15,34 @@ public class Arcpath {
     private double yCoord;
 
     public boolean getArcPointType() {
-	return arcPointType;
+        return arcPointType;
     }
 
     public void setArcPointType(boolean arcPointType) {
-	this.arcPointType = arcPointType;
+        this.arcPointType = arcPointType;
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+        this.id = id;
     }
 
     public double getXCoord() {
-	return xCoord;
+        return xCoord;
     }
 
     public void setXCoord(double xCoord) {
-	this.xCoord = xCoord;
+        this.xCoord = xCoord;
     }
 
     public double getYCoord() {
-	return yCoord;
+        return yCoord;
     }
 
     public void setYCoord(double yCoord) {
-	this.yCoord = yCoord;
+        this.yCoord = yCoord;
     }
 }

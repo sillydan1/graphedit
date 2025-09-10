@@ -33,10 +33,10 @@ public class VertexCreateTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool to create vertices.
+                Tool to create vertices.
 
-            When selected, click anywhere on the canvas to create a vertex.
-            """;
+                When selected, click anywhere on the canvas to create a vertex.
+                """;
     }
 
     @Override
@@ -51,23 +51,24 @@ public class VertexCreateTool extends AbstractBaseTool {
 
     @Override
     public void onViewportMouseEvent(ViewportMouseEvent e) {
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
             var buffer = DI.get(IBufferContainer.class).get(e.bufferId());
             var posX = (e.event().getX() - e.viewportAffine().getTx()) / e.viewportAffine().getMxx();
             var posY = (e.event().getY() - e.viewportAffine().getTy()) / e.viewportAffine().getMyy();
             var point = new ViewModelPoint(posX, posY);
-            if(e.editorSettings().gridSnap().get())
+            if (e.editorSettings().gridSnap().get())
                 point.snapToGrid(e.editorSettings());
             createCircleVertex(buffer, point, e.graph(), e.syntax());
         }
     }
 
-    private void createCircleVertex(ViewModelProjectResource buffer, ViewModelPoint point, ViewModelGraph graph, ISyntaxFactory syntaxFactory) {
+    private void createCircleVertex(ViewModelProjectResource buffer, ViewModelPoint point, ViewModelGraph graph,
+            ISyntaxFactory syntaxFactory) {
         var id = UUID.randomUUID();
         var vertex = syntaxFactory.createVertexViewModel(id, new ModelVertex(point.toModel()));
         graph.vertices().put(id, vertex);
         buffer.getUndoSystem().push(new Undoable("vertex create action",
-                    () -> graph.vertices().remove(id),
-                    () -> graph.vertices().put(id, vertex)));
+                () -> graph.vertices().remove(id),
+                () -> graph.vertices().put(id, vertex)));
     }
 }

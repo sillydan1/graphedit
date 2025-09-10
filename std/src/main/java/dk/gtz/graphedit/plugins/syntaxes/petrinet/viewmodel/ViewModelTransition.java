@@ -10,30 +10,30 @@ import dk.gtz.graphedit.viewmodel.ViewModelVertex;
 
 public class ViewModelTransition extends ViewModelVertex implements ISearchable {
     public ViewModelTransition(UUID uuid, ModelVertex vertex) {
-	super(uuid, vertex);
+        super(uuid, vertex);
     }
 
     @Override
     public List<String> getSearchValues() {
-	return List.of();
+        return List.of();
     }
 
     @Override
     public ModelTransition toModel() {
-	return new ModelTransition(position().getValue().toModel());
+        return new ModelTransition(position().getValue().toModel());
     }
 
     @Override
     public boolean equals(Object other) {
-	if(!super.equals(other))
-	    return false;
-	if(!(other instanceof ViewModelTransition))
-	    return false;
-	return true;
+        if (!super.equals(other))
+            return false;
+        if (!(other instanceof ViewModelTransition))
+            return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
-	return super.hashCode();
+        return super.hashCode();
     }
 }

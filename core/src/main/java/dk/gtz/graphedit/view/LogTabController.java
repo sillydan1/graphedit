@@ -17,7 +17,8 @@ import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 
 /**
- * The javafx controller for a tab containing rich-text logs with support for markdown-style linking to syntax elements
+ * The javafx controller for a tab containing rich-text logs with support for
+ * markdown-style linking to syntax elements
  */
 public class LogTabController extends StackPane {
     private static Logger logger = LoggerFactory.getLogger(LogTabController.class);
@@ -31,9 +32,9 @@ public class LogTabController extends StackPane {
      * Create a new instance
      */
     public LogTabController() {
-	linkMatcher = getPattern();
+        linkMatcher = getPattern();
         bufferContainer = DI.get(IBufferContainer.class);
-	initializeTextArea();
+        initializeTextArea();
     }
 
     /**
@@ -41,21 +42,23 @@ public class LogTabController extends StackPane {
      * A log message can include markdown-style links to syntax elements' uuid.
      * 
      * Example:
+     * 
      * <pre>
      * {@code
      * var logMessageWithALink = "error at [this vertex](f53ec9f0-dd57-4099-b3dd-3b72bda282df).";
      * }
      * </pre>
+     * 
      * @param logMessage The log message to add
      */
     public void addLog(String logMessage) {
-        if(logMessage == null) {
+        if (logMessage == null) {
             logger.warn("null message occurred");
             return;
         }
         var matcher = linkMatcher.matcher(logMessage);
         var index = 0;
-        while(matcher.find()) {
+        while (matcher.find()) {
             textArea.appendText(logMessage.substring(index, matcher.start()));
             index = matcher.end();
             textArea.appendWithLink(matcher.group("display"), matcher.group("identifier"));
@@ -65,15 +68,15 @@ public class LogTabController extends StackPane {
 
     private Pattern getPattern() {
         // For humans:
-	// identifiers are uuid v4's
+        // identifiers are uuid v4's
         // [<display>](<identifier>)
-	var uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-        var z = "\\[(?<display>[^]]+)\\]\\((?<identifier>"+uuidRegex+")\\)";
+        var uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+        var z = "\\[(?<display>[^]]+)\\]\\((?<identifier>" + uuidRegex + ")\\)";
         return Pattern.compile(z);
     }
 
     private void initializeTextArea() {
-	textArea = new HyperlinkTextArea(this::onLinkClick, "log-text");
+        textArea = new HyperlinkTextArea(this::onLinkClick, "log-text");
         scrollPane = new VirtualizedScrollPane<>(textArea);
         textArea.textProperty().addListener((e, o, n) -> {
             if (!autoscroll)
@@ -82,7 +85,7 @@ public class LogTabController extends StackPane {
         });
         textArea.getStyleClass().add("log-text");
         textArea.setEditable(false);
-	getChildren().add(textArea);
+        getChildren().add(textArea);
     }
 
     private void onLinkClick(Hyperlink link) {
@@ -93,11 +96,11 @@ public class LogTabController extends StackPane {
     }
 
     private Optional<IFocusable> getFocusable(UUID lookupId) {
-        for(var buffer : bufferContainer.getBuffers().entrySet()) {
+        for (var buffer : bufferContainer.getBuffers().entrySet()) {
             var syntax = buffer.getValue().syntax();
-            if(syntax.vertices().containsKey(lookupId))
+            if (syntax.vertices().containsKey(lookupId))
                 return Optional.of(syntax.vertices().get(lookupId));
-            if(syntax.edges().containsKey(lookupId))
+            if (syntax.edges().containsKey(lookupId))
                 return Optional.of(syntax.edges().get(lookupId));
         }
         return Optional.empty();
@@ -107,4 +110,3 @@ public class LogTabController extends StackPane {
         Platform.runLater(() -> scrollPane.scrollYBy(textArea.totalHeightEstimateProperty().getValue()));
     }
 }
-

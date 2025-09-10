@@ -31,110 +31,110 @@ public class Transition {
     private boolean urgent;
 
     public int getAngle() {
-	return angle;
+        return angle;
     }
 
     public Transition setAngle(int angle) {
-	this.angle = angle;
-	return this;
+        this.angle = angle;
+        return this;
     }
 
     public boolean isDisplayName() {
-	return displayName;
+        return displayName;
     }
 
     public Transition setDisplayName(boolean displayName) {
-	this.displayName = displayName;
-	return this;
+        this.displayName = displayName;
+        return this;
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public Transition setId(String id) {
-	this.id = id;
-	return this;
+        this.id = id;
+        return this;
     }
 
     public boolean isInfiniteServer() {
-	return infiniteServer;
+        return infiniteServer;
     }
 
     public Transition setInfiniteServer(boolean infiniteServer) {
-	this.infiniteServer = infiniteServer;
-	return this;
+        this.infiniteServer = infiniteServer;
+        return this;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public Transition setName(String name) {
-	this.name = name;
-	return this;
+        this.name = name;
+        return this;
     }
 
     public double getNameOffsetX() {
-	return nameOffsetX;
+        return nameOffsetX;
     }
 
     public Transition setNameOffsetX(double nameOffsetX) {
-	this.nameOffsetX = nameOffsetX;
-	return this;
+        this.nameOffsetX = nameOffsetX;
+        return this;
     }
 
     public double getNameOffsetY() {
-	return nameOffsetY;
+        return nameOffsetY;
     }
 
     public Transition setNameOffsetY(double nameOffsetY) {
-	this.nameOffsetY = nameOffsetY;
-	return this;
+        this.nameOffsetY = nameOffsetY;
+        return this;
     }
 
     public int getPlayer() {
-	return player;
+        return player;
     }
 
     public Transition setPlayer(int player) {
-	this.player = player;
-	return this;
+        this.player = player;
+        return this;
     }
 
     public double getPositionX() {
-	return positionX;
+        return positionX;
     }
 
     public Transition setPositionX(double positionX) {
-	this.positionX = positionX;
-	return this;
+        this.positionX = positionX;
+        return this;
     }
 
     public double getPositionY() {
-	return positionY;
+        return positionY;
     }
 
     public Transition setPositionY(double positionY) {
-	this.positionY = positionY;
-	return this;
+        this.positionY = positionY;
+        return this;
     }
 
     public int getPriority() {
-	return priority;
+        return priority;
     }
 
     public Transition setPriority(int priority) {
-	this.priority = priority;
-	return this;
+        this.priority = priority;
+        return this;
     }
 
     public boolean isUrgent() {
-	return urgent;
+        return urgent;
     }
 
     public Transition setUrgent(boolean urgent) {
-	this.urgent = urgent;
-	return this;
+        this.urgent = urgent;
+        return this;
     }
 }

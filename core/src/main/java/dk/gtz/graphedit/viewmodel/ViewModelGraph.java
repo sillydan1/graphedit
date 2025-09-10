@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.gtz.graphedit.model.ModelGraph;
 import dk.gtz.graphedit.spi.ISyntaxFactory;
 import javafx.beans.property.MapProperty;
@@ -18,16 +21,19 @@ import javafx.collections.MapChangeListener;
  * View model representation of a graphedit graph
  */
 public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
+    private static final Logger logger = LoggerFactory.getLogger(ViewModelGraph.class);
     @Autolisten
     private StringProperty declarations;
     @Autolisten
-    private MapProperty<UUID,ViewModelVertex> vertices;
+    private MapProperty<UUID, ViewModelVertex> vertices;
     @Autolisten
-    private MapProperty<UUID,ViewModelEdge> edges;
+    private MapProperty<UUID, ViewModelEdge> edges;
 
     /**
      * Get the declarations portion of the graph.
-     * The declarations are a string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
+     * The declarations are a string that can contain extraneous textual syntax such
+     * as variable declarations, readme data, value ranges, functions etc.
+     * 
      * @return The string property value of the declarations
      */
     public StringProperty declarations() {
@@ -36,6 +42,7 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     /**
      * Get the vertices mapping
+     * 
      * @return The mapping of vertex ids to viewmodel entries
      */
     public MapProperty<UUID, ViewModelVertex> vertices() {
@@ -44,6 +51,7 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     /**
      * Get the edges mapping
+     * 
      * @return The mapping of edge ids to viewmodel entries
      */
     public MapProperty<UUID, ViewModelEdge> edges() {
@@ -51,13 +59,16 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
     }
 
     /**
-     * Checks that all the edges' sources and edges are present in the vertices collection.
+     * Checks that all the edges' sources and edges are present in the vertices
+     * collection.
+     * 
      * @return True if the graph is valid, otherwise false.
      */
     public boolean isValid() {
-        for(var edge : edges().entrySet()) {
-            var containsSourceAndTargetVertex = vertices().containsKey(edge.getValue().source().get()) && vertices().containsKey(edge.getValue().target().get());
-            if(!containsSourceAndTargetVertex)
+        for (var edge : edges().entrySet()) {
+            var containsSourceAndTargetVertex = vertices().containsKey(edge.getValue().source().get())
+                    && vertices().containsKey(edge.getValue().target().get());
+            if (!containsSourceAndTargetVertex)
                 return false;
         }
         return true;
@@ -65,11 +76,15 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     /**
      * Construct a new instance
-     * @param declarations A string that can contain extraneous textual syntax such as variable declarations, readme data, value ranges, functions etc.
-     * @param vertices A mapping of vertex ids to model vertex-values
-     * @param edges A mapping of edge ids to model edge-values
+     * 
+     * @param declarations A string that can contain extraneous textual syntax such
+     *                     as variable declarations, readme data, value ranges,
+     *                     functions etc.
+     * @param vertices     A mapping of vertex ids to model vertex-values
+     * @param edges        A mapping of edge ids to model edge-values
      */
-    public ViewModelGraph(StringProperty declarations, MapProperty<UUID,ViewModelVertex> vertices, MapProperty<UUID,ViewModelEdge> edges) {
+    public ViewModelGraph(StringProperty declarations, MapProperty<UUID, ViewModelVertex> vertices,
+            MapProperty<UUID, ViewModelEdge> edges) {
         super();
         loadFields(getClass(), this);
         this.declarations = declarations;
@@ -79,23 +94,27 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     /**
      * Constructs a new view model graph instance based on a model graph instance
-     * @param graph The model graph to convert
+     * 
+     * @param graph         The model graph to convert
      * @param syntaxFactory The associated syntax factory
      */
     public ViewModelGraph(ModelGraph graph, ISyntaxFactory syntaxFactory) {
-        this(new SimpleStringProperty(graph.declarations()),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
-        for(var v : graph.vertices().entrySet())
+        this(new SimpleStringProperty(graph.declarations()),
+                new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())),
+                new SimpleMapProperty<>(FXCollections.observableMap(new HashMap<>())));
+        for (var v : graph.vertices().entrySet())
             vertices.put(v.getKey(), syntaxFactory.createVertexViewModel(v.getKey(), v.getValue()));
-        for(var e : graph.edges().entrySet())
+        for (var e : graph.edges().entrySet())
             edges.put(e.getKey(), syntaxFactory.createEdgeViewModel(e.getKey(), e.getValue()));
     }
 
     /**
      * Constructs a new model graph instance based on the current view model values
+     * 
      * @return a new model graph instance
      */
     public ModelGraph toModel() {
-        return new ModelGraph(declarations.get(), 
+        return new ModelGraph(declarations.get(),
                 vertices.get().entrySet().stream().collect(Collectors.toMap(
                         e -> e.getKey(),
                         e -> e.getValue().toModel())),
@@ -106,6 +125,7 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     /**
      * Check if the graph contains no syntactic elements
+     * 
      * @return true if there are no declarations, vertices or edges
      */
     public boolean isEmpty() {
@@ -119,45 +139,45 @@ public class ViewModelGraph extends AutoProperty<ViewModelGraph> {
 
     @Override
     public void addListener(ChangeListener<? super ViewModelGraph> listener) {
-        declarations.addListener((e,o,n) -> listener.changed(this,this,this));
-        ChangeListener<? super ViewModelVertex> vertexChangeListener = (e,o,n) -> listener.changed(this,this,this);
-        vertices.forEach((k,v) -> v.addListener(vertexChangeListener));
-        vertices.addListener((MapChangeListener<UUID,ViewModelVertex>)event -> {
-            if(event.wasAdded())
+        declarations.addListener((e, o, n) -> listener.changed(this, this, this));
+        ChangeListener<? super ViewModelVertex> vertexChangeListener = (e, o, n) -> listener.changed(this, this, this);
+        vertices.forEach((k, v) -> v.addListener(vertexChangeListener));
+        vertices.addListener((MapChangeListener<UUID, ViewModelVertex>) event -> {
+            if (event.wasAdded())
                 event.getValueAdded().addListener(vertexChangeListener);
-            if(event.wasRemoved())
+            if (event.wasRemoved())
                 event.getValueRemoved().removeListener(vertexChangeListener);
-            listener.changed(this,this,this);
+            listener.changed(this, this, this);
         });
-        ChangeListener<? super ViewModelEdge> edgeChangeListener = (e,o,n) -> listener.changed(this,this,this);
-        edges.forEach((k,v) -> v.addListener((e,o,n) -> listener.changed(this,this,this)));
-        edges.addListener((MapChangeListener<UUID,ViewModelEdge>)event -> {
-            if(event.wasAdded())
+        ChangeListener<? super ViewModelEdge> edgeChangeListener = (e, o, n) -> listener.changed(this, this, this);
+        edges.forEach((k, v) -> v.addListener(edgeChangeListener));
+        edges.addListener((MapChangeListener<UUID, ViewModelEdge>) event -> {
+            if (event.wasAdded())
                 event.getValueAdded().addListener(edgeChangeListener);
-            if(event.wasRemoved())
+            if (event.wasRemoved())
                 event.getValueRemoved().removeListener(edgeChangeListener);
-            listener.changed(this,this,this);
+            listener.changed(this, this, this);
         });
     }
 
     @Override
     public void removeListener(ChangeListener<? super ViewModelGraph> listener) {
-        declarations.removeListener((e,o,n) -> listener.changed(this,this,this));
-        vertices.forEach((k,v) -> v.removeListener((e,o,n) -> listener.changed(this,this,this)));
-        vertices.removeListener((MapChangeListener<UUID,ViewModelVertex>)event -> {
-            if(event.wasAdded())
-                event.getValueAdded().addListener((e,o,n) -> listener.changed(this,this,this));
-            if(event.wasRemoved())
-                event.getValueRemoved().removeListener((e,o,n) -> listener.changed(this,this,this));
-            listener.changed(this,this,this);
+        declarations.removeListener((e, o, n) -> listener.changed(this, this, this));
+        vertices.forEach((k, v) -> v.removeListener((e, o, n) -> listener.changed(this, this, this)));
+        vertices.removeListener((MapChangeListener<UUID, ViewModelVertex>) event -> {
+            if (event.wasAdded())
+                event.getValueAdded().addListener((e, o, n) -> listener.changed(this, this, this));
+            if (event.wasRemoved())
+                event.getValueRemoved().removeListener((e, o, n) -> listener.changed(this, this, this));
+            listener.changed(this, this, this);
         });
-        edges.forEach((k,v) -> v.removeListener((e,o,n) -> listener.changed(this,this,this)));
-        edges.removeListener((MapChangeListener<UUID,ViewModelEdge>)event -> {
-            if(event.wasAdded())
-                event.getValueAdded().addListener((e,o,n) -> listener.changed(this,this,this));
-            if(event.wasRemoved())
-                event.getValueRemoved().removeListener((e,o,n) -> listener.changed(this,this,this));
-            listener.changed(this,this,this);
+        edges.forEach((k, v) -> v.removeListener((e, o, n) -> listener.changed(this, this, this)));
+        edges.removeListener((MapChangeListener<UUID, ViewModelEdge>) event -> {
+            if (event.wasAdded())
+                event.getValueAdded().addListener((e, o, n) -> listener.changed(this, this, this));
+            if (event.wasRemoved())
+                event.getValueRemoved().removeListener((e, o, n) -> listener.changed(this, this, this));
+            listener.changed(this, this, this);
         });
     }
 

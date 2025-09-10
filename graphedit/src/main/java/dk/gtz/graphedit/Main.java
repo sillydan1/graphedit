@@ -17,19 +17,19 @@ import dk.gtz.graphedit.viewmodel.ViewModelEditorSettings;
 import dk.yalibs.yadi.DI;
 
 public class Main {
-    private static Logger logger = (Logger)LoggerFactory.getLogger(Main.class);
+    private static Logger logger = (Logger) LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] argv) throws Exception {
         var args = new Args();
         var builder = JCommander.newBuilder()
-            .programName(BuildConfig.APP_NAME)
-            .acceptUnknownOptions(true)
-            .addObject(args)
-            .build();
+                .programName(BuildConfig.APP_NAME)
+                .acceptUnknownOptions(true)
+                .addObject(args)
+                .build();
         builder.parse(argv);
-        ((Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.toLevel(args.verbosity));
-        ((Logger)LoggerFactory.getLogger("io.grpc")).setLevel(Level.toLevel(args.grpcVerbosity));
-        if(args.help) {
+        ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.toLevel(args.verbosity));
+        ((Logger) LoggerFactory.getLogger("io.grpc")).setLevel(Level.toLevel(args.grpcVerbosity));
+        if (args.help) {
             builder.usage();
             return;
         }

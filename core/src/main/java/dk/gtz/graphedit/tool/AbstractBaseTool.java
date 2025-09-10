@@ -24,15 +24,18 @@ public abstract class AbstractBaseTool implements ITool {
     }
 
     @Override
-    public void onViewportMouseEvent(ViewportMouseEvent e) {}
+    public void onViewportMouseEvent(ViewportMouseEvent e) {
+    }
 
     @Override
-    public void onVertexMouseEvent(VertexMouseEvent e) {}
+    public void onVertexMouseEvent(VertexMouseEvent e) {
+    }
 
     @Override
-    public void onEdgeMouseEvent(EdgeMouseEvent e) {}
+    public void onEdgeMouseEvent(EdgeMouseEvent e) {
+    }
 
     @Override
-    public void onKeyEvent(ViewportKeyEvent e) {}
+    public void onKeyEvent(ViewportKeyEvent e) {
+    }
 }
-

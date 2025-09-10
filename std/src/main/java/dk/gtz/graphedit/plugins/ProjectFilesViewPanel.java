@@ -1,6 +1,5 @@
 package dk.gtz.graphedit.plugins;
 
-
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -30,4 +29,3 @@ public class ProjectFilesViewPanel implements IPluginPanel {
         return panel;
     }
 }
-

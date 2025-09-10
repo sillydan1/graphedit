@@ -19,13 +19,15 @@ import dk.gtz.graphedit.viewmodel.TipContainer;
 public class TipLoader {
     private static final Logger logger = LoggerFactory.getLogger(TipLoader.class);
 
-    private static record Tips(ArrayList<Tip> tips) {}
-    
+    private static record Tips(ArrayList<Tip> tips) {
+    }
+
     private TipLoader() {
     }
 
     /**
      * Load tips from the given file
+     * 
      * @param tipsFile The file to load tips from
      * @return A container with the loaded tips
      */
@@ -37,12 +39,14 @@ public class TipLoader {
             return new TipContainer(tips.tips());
         } catch (Exception e) {
             logger.error("Failed to load tips", e);
-            return new TipContainer(List.of(new Tip("Error", "Failed to load tips file [font=monospace]'%s'[/font]".formatted(tipsFile))));
+            return new TipContainer(List
+                    .of(new Tip("Error", "Failed to load tips file [font=monospace]'%s'[/font]".formatted(tipsFile))));
         }
     }
 
     /**
      * Load tips from the default file
+     * 
      * @return A container with the loaded tips
      */
     public static TipContainer loadTips() {

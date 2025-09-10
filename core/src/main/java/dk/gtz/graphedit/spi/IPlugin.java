@@ -13,12 +13,14 @@ public interface IPlugin {
     /**
      * Get the name of this plugin.
      * Should try to be unique
+     * 
      * @return The name of this plugin implementation
      */
     String getName();
 
     /**
      * Get a general description of this plugin
+     * 
      * @return A description of what kinds of utilities this plugin provides
      */
     default String getDescription() {
@@ -26,7 +28,8 @@ public interface IPlugin {
     }
 
     /**
-     * Event called when the plugin is initialized (before any syntax factories or panels are requested)
+     * Event called when the plugin is initialized (before any syntax factories or
+     * panels are requested)
      * At this point, only some things are registered in {@link DI}.
      */
     default void onInitialize() {
@@ -50,34 +53,45 @@ public interface IPlugin {
     }
 
     /**
-     * Get a collection of syntax factories provided by this plugin. Will return an empty list by default.
+     * Get a collection of syntax factories provided by this plugin. Will return an
+     * empty list by default.
+     * 
      * @return A collection of syntax factories
-     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     * @throws Exception Allowed to throw any kind of exception. See the specific
+     *                   plugin implementation for details
      */
     default Collection<ISyntaxFactory> getSyntaxFactories() throws Exception {
         return List.of();
     }
 
     /**
-     * Get a collection of panels provided by this plugin. Will return an empty list by default.
+     * Get a collection of panels provided by this plugin. Will return an empty list
+     * by default.
+     * 
      * @return A collection of plugin panels
-     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     * @throws Exception Allowed to throw any kind of exception. See the specific
+     *                   plugin implementation for details
      */
     default Collection<IPluginPanel> getPanels() throws Exception {
         return List.of();
     }
 
     /**
-     * Get a collection of language servers provided by this plugin. Will return an empty list by default.
+     * Get a collection of language servers provided by this plugin. Will return an
+     * empty list by default.
+     * 
      * @return A collection of language servers
-     * @throws Exception Allowed to throw any kind of exception. See the specific plugin implementation for details
+     * @throws Exception Allowed to throw any kind of exception. See the specific
+     *                   plugin implementation for details
      */
     default Collection<ILanguageServer> getLanguageServers() throws Exception {
         return List.of();
     }
 
     /**
-     * Get a collection of importers provided by this plugin. Will return an empty list by default.
+     * Get a collection of importers provided by this plugin. Will return an empty
+     * list by default.
+     * 
      * @return A collection of importers
      */
     default Collection<IImporter> getImporters() {
@@ -85,7 +99,9 @@ public interface IPlugin {
     }
 
     /**
-     * Get a collection of exporters provided by this plugin. Will return an empty list by default.
+     * Get a collection of exporters provided by this plugin. Will return an empty
+     * list by default.
+     * 
      * @return A collection of exporters
      */
     default Collection<IExporter> getExporters() {

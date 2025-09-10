@@ -17,65 +17,66 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class ViewModelTextVertex extends ViewModelVertex implements ISearchable {
-	@Autolisten
-	public final StringProperty text;
+    @Autolisten
+    public final StringProperty text;
 
-	public StringProperty text() {
-		return text;
-	}
+    public StringProperty text() {
+        return text;
+    }
 
-	public ViewModelTextVertex(UUID uuid, ViewModelVertex base) {
-		this(uuid, base.position(), base.shape());
-	}
+    public ViewModelTextVertex(UUID uuid, ViewModelVertex base) {
+        this(uuid, base.position(), base.shape());
+    }
 
-	public ViewModelTextVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
-		super(uuid, position, shape);
-		this.text = new SimpleStringProperty("");
-	}
+    public ViewModelTextVertex(UUID uuid, ViewModelPoint position, ViewModelVertexShape shape) {
+        super(uuid, position, shape);
+        this.text = new SimpleStringProperty("");
+    }
 
-	public ViewModelTextVertex(UUID uuid, ModelVertex vertex) {
-		super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
-		this.text = new SimpleStringProperty("");
-		if(vertex instanceof ModelTextVertex textVertex)
-			this.text.set(textVertex.label());
-	}
+    public ViewModelTextVertex(UUID uuid, ModelVertex vertex) {
+        super(uuid, vertex, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+        this.text = new SimpleStringProperty("");
+        if (vertex instanceof ModelTextVertex textVertex)
+            this.text.set(textVertex.label());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * @return A list of inspectable objects
-	 * */
-	@Override
-	public List<InspectableProperty> getInspectableObjects() {
-		var inspectables = new ArrayList<>(super.getInspectableObjects());
-		inspectables.add(new InspectableProperty("Label Text", text));
-		return inspectables;
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @return A list of inspectable objects
+     */
+    @Override
+    public List<InspectableProperty> getInspectableObjects() {
+        var inspectables = new ArrayList<>(super.getInspectableObjects());
+        inspectables.add(new InspectableProperty("Label Text", text));
+        return inspectables;
+    }
 
-	@Override
-	public List<String> getSearchValues() {
-		return List.of(text.getValueSafe());
-	}
+    @Override
+    public List<String> getSearchValues() {
+        return List.of(text.getValueSafe());
+    }
 
-	public StringProperty getTextProperty() {
-		return text;
-	}
+    public StringProperty getTextProperty() {
+        return text;
+    }
 
-	@Override
-	public ModelVertex toModel() {
-		return new ModelTextVertex(position().toModel(), text.getValueSafe());
-	}
+    @Override
+    public ModelVertex toModel() {
+        return new ModelTextVertex(position().toModel(), text.getValueSafe());
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if(!super.equals(other))
-			return false;
-		if(!(other instanceof ViewModelTextVertex vother))
-			return false;
-		return text.get().equals(vother.text.get());
-	}
+    @Override
+    public boolean equals(Object other) {
+        if (!super.equals(other))
+            return false;
+        if (!(other instanceof ViewModelTextVertex vother))
+            return false;
+        return text.get().equals(vother.text.get());
+    }
 
-	@Override
-	public int hashCode() {
-		return super.hashCode() ^ text.get().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ text.get().hashCode();
+    }
 }

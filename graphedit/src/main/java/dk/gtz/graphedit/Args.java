@@ -15,5 +15,6 @@ public class Args {
     @Parameter(names = { "-G", "--grpc-verbosity" }, description = "Set grpc verbosity level")
     public String grpcVerbosity = "WARN";
     @Parameter(names = { "-P", "--plugin-dir" }, description = "Set directory to look for plugins in")
-    public List<String> pluginDirs = List.of("plugins", String.join(File.separator, EditorActions.getConfigDir(), "plugins"));
+    public List<String> pluginDirs = List.of("plugins",
+            String.join(File.separator, EditorActions.getConfigDir(), "plugins"));
 }

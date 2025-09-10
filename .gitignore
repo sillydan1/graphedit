@@ -44,3 +44,7 @@ metadata
 
 # never commit this file
 donotcommit.txt
+
+core/bin/
+graphedit/bin/
+std/bin/

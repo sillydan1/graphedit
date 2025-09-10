@@ -5,7 +5,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
 /**
- * javafx utility for adding vertical drag-to-resize functionality to a {@code Region}
+ * javafx utility for adding vertical drag-to-resize functionality to a
+ * {@code Region}
  */
 public class HeightDragResizer {
     /**
@@ -35,7 +36,9 @@ public class HeightDragResizer {
     }
 
     /**
-     * Make the provided region height-resizable with a handle on the bottom of the region
+     * Make the provided region height-resizable with a handle on the bottom of the
+     * region
+     * 
      * @param region the region to add the handle to
      */
     public static void makeResizableDown(Region region) {
@@ -43,7 +46,9 @@ public class HeightDragResizer {
     }
 
     /**
-     * Make the provided region height-resizable with a handle on the top of the region
+     * Make the provided region height-resizable with a handle on the top of the
+     * region
+     * 
      * @param region the region to add the handle to
      */
     public static void makeResizableUp(Region region) {
@@ -58,20 +63,20 @@ public class HeightDragResizer {
     }
 
     private void mouseOver(MouseEvent event) {
-        if(isInDraggableZone(event) || dragging)
+        if (isInDraggableZone(event) || dragging)
             region.setCursor(Cursor.V_RESIZE);
         else
             region.setCursor(Cursor.DEFAULT);
     }
 
     private boolean isInDraggableZone(MouseEvent event) {
-        if(dragFromTop)
+        if (dragFromTop)
             return event.getY() < RESIZE_MARGIN;
         return event.getY() < (region.getHeight() - RESIZE_MARGIN);
     }
 
     private void mouseDragged(MouseEvent event) {
-        if(!dragging)
+        if (!dragging)
             return;
         var mousey = event.getScreenY();
         var dy = (mousey - startY) * scalar;
@@ -80,7 +85,7 @@ public class HeightDragResizer {
     }
 
     private void mousePressed(MouseEvent event) {
-        if(!isInDraggableZone(event))
+        if (!isInDraggableZone(event))
             return;
         startY = event.getScreenY();
         startHeight = region.getHeight();
@@ -91,5 +96,3 @@ public class HeightDragResizer {
         }
     }
 }
-
-

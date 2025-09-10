@@ -11,7 +11,7 @@ public class ModelPlace extends ModelVertex {
     }
 
     public ModelPlace() {
-        this(new ModelPoint(0,0));
+        this(new ModelPoint(0, 0));
     }
 
     public ModelPlace(ModelPoint position) {
@@ -19,7 +19,7 @@ public class ModelPlace extends ModelVertex {
     }
 
     public ModelPlace(int initialTokenCount) {
-        this(new ModelPoint(0,0), initialTokenCount);
+        this(new ModelPoint(0, 0), initialTokenCount);
     }
 
     public ModelPlace(ModelPoint position, int initialTokenCount) {
@@ -27,4 +27,3 @@ public class ModelPlace extends ModelVertex {
         this.initialTokenCount = initialTokenCount;
     }
 }
-

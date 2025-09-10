@@ -27,10 +27,13 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * Tool to create edges between vertices.
- * When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
- * You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing ESC
+ * When selected, click a vertex to start creating an edge and complete the edge
+ * by clicking another vertex.
+ * You can cancel edge creation by clicking at the canvas, the initial vertex
+ * again or by pressing ESC
  *
- * Note that the action completes at edge completion (second click) rather than edge creation (first click).
+ * Note that the action completes at edge completion (second click) rather than
+ * edge creation (first click).
  */
 public class EdgeCreateTool extends AbstractBaseTool {
     private static Logger logger = LoggerFactory.getLogger(EdgeCreateTool.class);
@@ -48,13 +51,13 @@ public class EdgeCreateTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool to create edges between vertices.
+                Tool to create edges between vertices.
 
-            When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
-            You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing <ESC>
+                When selected, click a vertex to start creating an edge and complete the edge by clicking another vertex.
+                You can cancel edge creation by clicking at the canvas, the initial vertex again or by pressing <ESC>
 
-            Note that the action completes at edge completion (second click) rather than edge creation (first click).
-            """;
+                Note that the action completes at edge completion (second click) rather than edge creation (first click).
+                """;
     }
 
     @Override
@@ -70,22 +73,22 @@ public class EdgeCreateTool extends AbstractBaseTool {
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
         var buffer = DI.get(IBufferContainer.class).get(e.bufferId());
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-            if(!isCurrentlyCreatingEdge()) {
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+            if (!isCurrentlyCreatingEdge()) {
                 create(e.vertexId(), e.graph(), e.syntax());
                 return;
             }
-            if(e.vertexId().equals(currentEdge.get().source().get())) {
+            if (e.vertexId().equals(currentEdge.get().source().get())) {
                 cancel(e.graph());
                 return;
             }
             release(buffer, e.vertexId(), e.graph());
         }
 
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-            if(!isCurrentlyCreatingEdge())
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+            if (!isCurrentlyCreatingEdge())
                 return;
-            if(e.vertexId().equals(currentEdge.get().source().get()))
+            if (e.vertexId().equals(currentEdge.get().source().get()))
                 return;
             release(buffer, e.vertexId(), e.graph());
         }
@@ -100,14 +103,16 @@ public class EdgeCreateTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        if(e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
-            if(e.event().getCode() == KeyCode.ESCAPE)
+        if (e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
+            if (e.event().getCode() == KeyCode.ESCAPE)
                 cancel(e.graph());
     }
 
     /**
      * Check if the tool is currently creating a new edge or not
-     * @return true when the tool is in a state where an edge is being created, otherwise false
+     * 
+     * @return true when the tool is in a state where an edge is being created,
+     *         otherwise false
      */
     public boolean isCurrentlyCreatingEdge() {
         return currentEdge.isPresent();
@@ -115,10 +120,11 @@ public class EdgeCreateTool extends AbstractBaseTool {
 
     /**
      * Stops / cancels the edge creation process
+     * 
      * @param graph The graph where the current temporary edge is located in
      */
     public void cancel(ViewModelGraph graph) {
-        if(isCurrentlyCreatingEdge())
+        if (isCurrentlyCreatingEdge())
             graph.edges().remove(currenEdgeId.get());
         clear();
     }
@@ -129,38 +135,42 @@ public class EdgeCreateTool extends AbstractBaseTool {
 
     /**
      * Finishes the edge creation process.
-     * Will fail with a warning if the provided graph is not the same one you started creating the edge in
-     * @param buffer The buffer where the undo action should be stored in
+     * Will fail with a warning if the provided graph is not the same one you
+     * started creating the edge in
+     * 
+     * @param buffer        The buffer where the undo action should be stored in
      * @param releaseTarget Id of the target vertex to finalize the edge to
-     * @param graph The graph where the current temporary edge is located in
+     * @param graph         The graph where the current temporary edge is located in
      */
     public void release(ViewModelProjectResource buffer, UUID releaseTarget, ViewModelGraph graph) {
-        if(!isReleaseTargetAndSourceTargetInSameGraph(currentEdge.get().source().get(), releaseTarget, graph)) {
+        if (!isReleaseTargetAndSourceTargetInSameGraph(currentEdge.get().source().get(), releaseTarget, graph)) {
             logger.warn("edge release target is not in the same graph as the source target");
             return;
         }
-        if(!currentEdge.get().isTargetValid(releaseTarget, graph))
+        if (!currentEdge.get().isTargetValid(releaseTarget, graph))
             return;
         currentEdge.get().target().set(releaseTarget);
         var currentEdgeIdCopy = currenEdgeId.get();
         var currentEdgeCopy = currentEdge.get();
         buffer.getUndoSystem().push(new Undoable("add edge action",
-                    () -> graph.edges().remove(currentEdgeIdCopy),
-                    () -> graph.edges().put(currentEdgeIdCopy, currentEdgeCopy)));
+                () -> graph.edges().remove(currentEdgeIdCopy),
+                () -> graph.edges().put(currentEdgeIdCopy, currentEdgeCopy)));
         clear();
     }
 
     /**
      * Start the edge creation process.
+     * 
      * @param sourceTarget Id of the source vertex to start creating an edge from
-     * @param graph The graph where the temporary edge shall be located in
-     * @param factory The associated syntax factory
+     * @param graph        The graph where the temporary edge shall be located in
+     * @param factory      The associated syntax factory
      */
     public void create(UUID sourceTarget, ViewModelGraph graph, ISyntaxFactory factory) {
         var tracker = DI.get(MouseTracker.class);
         currenEdgeId = Optional.of(UUID.randomUUID());
-        currentEdge = Optional.of(factory.createEdgeViewModel(currenEdgeId.get(), new ModelEdge(sourceTarget, tracker.getTrackerUUID())));
-        if(!currentEdge.get().isSourceValid(sourceTarget, graph)) {
+        currentEdge = Optional.of(
+                factory.createEdgeViewModel(currenEdgeId.get(), new ModelEdge(sourceTarget, tracker.getTrackerUUID())));
+        if (!currentEdge.get().isSourceValid(sourceTarget, graph)) {
             clear();
             return;
         }

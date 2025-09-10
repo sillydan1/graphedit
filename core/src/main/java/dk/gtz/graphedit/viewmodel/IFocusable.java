@@ -6,6 +6,7 @@ package dk.gtz.graphedit.viewmodel;
 public interface IFocusable {
     /**
      * Add an event listener for when the focus is stolen
+     * 
      * @param focusEventHandler the handler to call
      */
     void addFocusListener(Runnable focusEventHandler);

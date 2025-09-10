@@ -24,104 +24,110 @@ public class GridPaneController extends Pane {
     private List<Line> linePool;
 
     /**
-     * Constructs a new GridPane with a square grid of a specified size and transformation matrix.
-     * @param gridsize the width and height size of the grid
-     * @param transform the transform matrix. Use this to zoom in/out and translate the grid
+     * Constructs a new GridPane with a square grid of a specified size and
+     * transformation matrix.
+     * 
+     * @param gridsize  the width and height size of the grid
+     * @param transform the transform matrix. Use this to zoom in/out and translate
+     *                  the grid
      */
     public GridPaneController(DoubleProperty gridsize, Affine transform) {
-	this(gridsize, gridsize, transform);
+        this(gridsize, gridsize, transform);
     }
 
     /**
-     * Constructs a new GridPane with a rectangle grid of a specified size and transformation matrix.
+     * Constructs a new GridPane with a rectangle grid of a specified size and
+     * transformation matrix.
+     * 
      * @param gridsizeX the width size of the grid
      * @param gridsizeY the height size of the grid
-     * @param transform the transform matrix. Use this to zoom in/out and translate the grid
+     * @param transform the transform matrix. Use this to zoom in/out and translate
+     *                  the grid
      */
     public GridPaneController(DoubleProperty gridsizeX, DoubleProperty gridsizeY, Affine transform) {
-	super();
-	this.gridsizeX = gridsizeX;
-	this.gridsizeY = gridsizeY;
-	this.offsetX = 0.0;
-	this.offsetY = 0.0;
-	this.gridscaleX = 1.0;
-	this.gridscaleY = 1.0;
-	this.linePool = new ArrayList<>();
-	initializeTransformEventHandler(transform);
+        super();
+        this.gridsizeX = gridsizeX;
+        this.gridsizeY = gridsizeY;
+        this.offsetX = 0.0;
+        this.offsetY = 0.0;
+        this.gridscaleX = 1.0;
+        this.gridscaleY = 1.0;
+        this.linePool = new ArrayList<>();
+        initializeTransformEventHandler(transform);
     }
 
     @Override
     public void layoutChildren() {
-	refreshLinesPooled();
+        refreshLinesPooled();
     }
 
     private void refreshLinesPooled() {
-	var width = getWidth();
-	var height = getHeight();
-	var adjustedGridsizeX = gridsizeX.get() * gridscaleX;
-	var adjustedGridsizeY = gridsizeY.get() * gridscaleY;
-	var i = 0;
+        var width = getWidth();
+        var height = getHeight();
+        var adjustedGridsizeX = gridsizeX.get() * gridscaleX;
+        var adjustedGridsizeY = gridsizeY.get() * gridscaleY;
+        var i = 0;
 
-	// column lines
-	for (var x = -adjustedGridsizeX; x < width + adjustedGridsizeX; x += adjustedGridsizeX) {
-	    var xx = x + offsetX;
-	    var line = getFromPool(i++);
-	    line.setStartX(xx);
-	    line.setStartY(0);
-	    line.setEndX(xx);
-	    line.setEndY(height);
-	    line.setVisible(true);
-	}
+        // column lines
+        for (var x = -adjustedGridsizeX; x < width + adjustedGridsizeX; x += adjustedGridsizeX) {
+            var xx = x + offsetX;
+            var line = getFromPool(i++);
+            line.setStartX(xx);
+            line.setStartY(0);
+            line.setEndX(xx);
+            line.setEndY(height);
+            line.setVisible(true);
+        }
 
-	// row lines
-	for (var y = -adjustedGridsizeY; y < height + adjustedGridsizeY; y += adjustedGridsizeY) {
-	    var yy = y + offsetY;
-	    var line = getFromPool(i++);
-	    line.setStartX(0);
-	    line.setStartY(yy);
-	    line.setEndX(width);
-	    line.setEndY(yy);
-	    line.setVisible(true);
-	}
+        // row lines
+        for (var y = -adjustedGridsizeY; y < height + adjustedGridsizeY; y += adjustedGridsizeY) {
+            var yy = y + offsetY;
+            var line = getFromPool(i++);
+            line.setStartX(0);
+            line.setStartY(yy);
+            line.setEndX(width);
+            line.setEndY(yy);
+            line.setVisible(true);
+        }
 
-	for( ; i < linePool.size(); i++)
-	    getFromPool(i).setVisible(false);
+        for (; i < linePool.size(); i++)
+            getFromPool(i).setVisible(false);
     }
 
     private Line getFromPool(int index) {
-	if(index > linePool.size()-1) {
-	    var newLine = new Line();
-	    newLine.styleProperty().set("-fx-stroke: -color-bg-subtle");
-	    linePool.add(newLine);
-	    getChildren().add(newLine);
-	    return newLine;
-	}
-	if(index < 0)
-	    throw new IndexOutOfBoundsException();
-	return linePool.get(index);
+        if (index > linePool.size() - 1) {
+            var newLine = new Line();
+            newLine.styleProperty().set("-fx-stroke: -color-bg-subtle");
+            linePool.add(newLine);
+            getChildren().add(newLine);
+            return newLine;
+        }
+        if (index < 0)
+            throw new IndexOutOfBoundsException();
+        return linePool.get(index);
     }
 
     /**
      * Change the grid size to some new value
+     * 
      * @param gridsizeX the new width of the grid
      * @param gridsizeY the new height of the grid
      */
     public void setGridSize(double gridsizeX, double gridsizeY) {
-	this.gridsizeX.set(gridsizeX);
-	this.gridsizeY.set(gridsizeY);
-	Platform.runLater(this::layoutChildren);
+        this.gridsizeX.set(gridsizeX);
+        this.gridsizeY.set(gridsizeY);
+        Platform.runLater(this::layoutChildren);
     }
 
     private void initializeTransformEventHandler(Affine newTransform) {
-	newTransform.addEventHandler(TransformChangedEvent.TRANSFORM_CHANGED, (e) -> {
-	    gridscaleX = newTransform.getMxx();
-	    gridscaleY = newTransform.getMyy();
-	    offsetX = newTransform.getTx() % (gridsizeX.get() * gridscaleX);
-	    offsetY = newTransform.getTy() % (gridsizeY.get() * gridscaleY);
-	    layoutChildren();
-	});
-	gridsizeX.addListener((e) -> layoutChildren());
-	gridsizeY.addListener((e) -> layoutChildren());
+        newTransform.addEventHandler(TransformChangedEvent.TRANSFORM_CHANGED, (e) -> {
+            gridscaleX = newTransform.getMxx();
+            gridscaleY = newTransform.getMyy();
+            offsetX = newTransform.getTx() % (gridsizeX.get() * gridscaleX);
+            offsetY = newTransform.getTy() % (gridsizeY.get() * gridscaleY);
+            layoutChildren();
+        });
+        gridsizeX.addListener((e) -> layoutChildren());
+        gridsizeY.addListener((e) -> layoutChildren());
     }
 }
-

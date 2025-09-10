@@ -1,6 +1,5 @@
 package dk.gtz.graphedit.view;
 
-
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -29,31 +28,31 @@ public class LogTabPaneController {
 
     @FXML
     private void initialize() {
-	tabpane.getTabs().add(createLogTab(Level.INFO, BootstrapIcons.INFO_CIRCLE, Styles.ACCENT));
-	tabpane.getTabs().add(createLogTab(Level.WARN, BootstrapIcons.EXCLAMATION_TRIANGLE, Styles.WARNING));
-	tabpane.getTabs().add(createLogTab(Level.ERROR, BootstrapIcons.EXCLAMATION_CIRCLE, Styles.DANGER));
-	tabpane.getTabs().add(createLogTab(Level.TRACE, BootstrapIcons.ARCHIVE, ""));
+        tabpane.getTabs().add(createLogTab(Level.INFO, BootstrapIcons.INFO_CIRCLE, Styles.ACCENT));
+        tabpane.getTabs().add(createLogTab(Level.WARN, BootstrapIcons.EXCLAMATION_TRIANGLE, Styles.WARNING));
+        tabpane.getTabs().add(createLogTab(Level.ERROR, BootstrapIcons.EXCLAMATION_CIRCLE, Styles.DANGER));
+        tabpane.getTabs().add(createLogTab(Level.TRACE, BootstrapIcons.ARCHIVE, ""));
     }
 
     private Tab createLogTab(Level level, BootstrapIcons icon, String highlightStyle) {
-	var tab = new Tab();
-	var fontIcon = new FontIcon(icon);
-	var tabLabel = new Label(level.levelStr);
-	var tabTitleBox = new HBox(fontIcon, tabLabel);
-	tabTitleBox.setSpacing(5);
-	tab.setGraphic(tabTitleBox);
-	var log = new LogTabController();
-	tabpane.selectionModelProperty().get().selectedItemProperty().addListener((e,o,n) -> {
-	    if(n == tab)
-		fontIcon.getStyleClass().removeAll(highlightStyle);
-	});
-	tab.setContent(log);
-	EditorLogAppender.subscribe(level, s -> {
-	    if(tabpane.selectionModelProperty().get().getSelectedItem() != tab)
-		fontIcon.getStyleClass().add(highlightStyle);
-	});
-	EditorLogAppender.subscribe(level, log::addLog);
-	tab.setClosable(false);
-	return tab;
+        var tab = new Tab();
+        var fontIcon = new FontIcon(icon);
+        var tabLabel = new Label(level.levelStr);
+        var tabTitleBox = new HBox(fontIcon, tabLabel);
+        tabTitleBox.setSpacing(5);
+        tab.setGraphic(tabTitleBox);
+        var log = new LogTabController();
+        tabpane.selectionModelProperty().get().selectedItemProperty().addListener((e, o, n) -> {
+            if (n == tab)
+                fontIcon.getStyleClass().removeAll(highlightStyle);
+        });
+        tab.setContent(log);
+        EditorLogAppender.subscribe(level, s -> {
+            if (tabpane.selectionModelProperty().get().getSelectedItem() != tab)
+                fontIcon.getStyleClass().add(highlightStyle);
+        });
+        EditorLogAppender.subscribe(level, log::addLog);
+        tab.setClosable(false);
+        return tab;
     }
 }

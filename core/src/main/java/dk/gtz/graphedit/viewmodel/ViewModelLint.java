@@ -16,7 +16,8 @@ import javafx.collections.FXCollections;
 
 /**
  * Viewmodel representation of {@link ModelLint}.
- * A Lint is a special kind of diagnostic annotation that can provide smart meta-insights about sections of a graph.
+ * A Lint is a special kind of diagnostic annotation that can provide smart
+ * meta-insights about sections of a graph.
  */
 public class ViewModelLint implements IFocusable {
     private final StringProperty lintIdentifier;
@@ -29,6 +30,7 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Construct a new viewmodel lint.
+     * 
      * @param lint The model lint to base on
      */
     public ViewModelLint(ModelLint lint) {
@@ -39,14 +41,16 @@ public class ViewModelLint implements IFocusable {
         this.affectedElements = new SimpleListProperty<>(FXCollections.observableList(lint.affectedElements()));
         this.affectedRegions = new SimpleListProperty<>();
         this.focustHandlers = new ArrayList<>();
-        for(var region : lint.affectedRegions()) {
-            var l = new SimpleListProperty<>(FXCollections.observableList(region.stream().map(ViewModelPoint::new).toList()));
+        for (var region : lint.affectedRegions()) {
+            var l = new SimpleListProperty<>(
+                    FXCollections.observableList(region.stream().map(ViewModelPoint::new).toList()));
             this.affectedRegions.add(l);
         }
     }
 
     /**
      * Get the unique identifier of the lint.
+     * 
      * @return A string property with the lint's unique identifier.
      */
     public StringProperty lintIdentifier() {
@@ -55,6 +59,7 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Get the severity level of the lint
+     * 
      * @return An object property with the severity level enumeration.
      */
     public ObjectProperty<ModelLintSeverity> severity() {
@@ -63,6 +68,7 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Get the brief headline describing the lint.
+     * 
      * @return A string property with the lint's title.
      */
     public StringProperty title() {
@@ -71,6 +77,7 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Get the lint's display message.
+     * 
      * @return A string property with the lint's display message.
      */
     public StringProperty message() {
@@ -79,6 +86,7 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Get the list of affected vertices or edges.
+     * 
      * @return A list property with the uuids of the affected syntactic elements.
      */
     public ListProperty<UUID> affectedElements() {
@@ -87,7 +95,9 @@ public class ViewModelLint implements IFocusable {
 
     /**
      * Get the list of affected regions.
-     * @return A list property of lists of clock-wise sorted points, each representing a polygon region.
+     * 
+     * @return A list property of lists of clock-wise sorted points, each
+     *         representing a polygon region.
      */
     public ListProperty<ListProperty<ViewModelPoint>> affectedRegions() {
         return affectedRegions;

@@ -29,6 +29,7 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IExporter;
+import dk.gtz.graphedit.spi.IPluginPanel;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -61,13 +62,15 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 
 /**
- * The central point of all scriptable editor actions. These actions can help you modify the editor to your hearts content
+ * The central point of all scriptable editor actions. These actions can help
+ * you modify the editor to your hearts content
  * 
  * Plans are in the works to have scripting language bindings to these functions
  */
 public class EditorActions {
     private static final Logger logger = LoggerFactory.getLogger(EditorActions.class);
     private static List<Runnable> saveListeners = new ArrayList<>();
+
     private EditorActions() {
 
     }
@@ -79,17 +82,17 @@ public class EditorActions {
         var w = DI.get(Window.class);
         // TODO: Check if there are unsaved changes
         var result = EditorActions.showConfirmDialog("Save and Exit?", "Save your changes before you exit?", w);
-        if(result.isEmpty())
+        if (result.isEmpty())
             return;
-            if(result.get())
+        if (result.get())
             EditorActions.save();
         Platform.exit();
     }
 
-
     /**
      * Register a callback function that will be called when the project is saved.
      * This is useful to detect things such as "unsaved changes" and similar
+     * 
      * @param runner The callback function to call when projects are saved
      */
     public static void addSaveListener(Runnable runner) {
@@ -98,6 +101,7 @@ public class EditorActions {
 
     /**
      * Remove a registered save callback function
+     * 
      * @param runner The callback function to remove
      * @return true if the callback function was removed
      */
@@ -106,11 +110,12 @@ public class EditorActions {
     }
 
     /**
-     * Saves the currently opened project to disk. Will prompt the user for a path to save to.
+     * Saves the currently opened project to disk. Will prompt the user for a path
+     * to save to.
      */
     public static void saveAs() {
         var result = newFile();
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             logger.warn("save action cancelled, will not save");
             return;
         }
@@ -125,11 +130,12 @@ public class EditorActions {
 
     /**
      * Saves the currently opened project to disk.
-     * Will not throw any exceptions, but errors may be logged if something went awry.
+     * Will not throw any exceptions, but errors may be logged if something went
+     * awry.
      */
     public static void save() {
         var project = DI.get(ViewModelProject.class);
-        if(project.isSavedInTemp().get()) {
+        if (project.isSavedInTemp().get()) {
             saveAs();
             return;
         }
@@ -163,7 +169,8 @@ public class EditorActions {
     /**
      * Loads the global editor settings file and returns a viewmodel version of it.
      *
-     * Note. Will provide a default setttings object if the file could not be loaded.
+     * Note. Will provide a default setttings object if the file could not be
+     * loaded.
      * Note. Will use the {@see DI} injected {@see IModelSerializer} to serialize.
      *
      * @return the viewmodel representation of the editor settings
@@ -172,20 +179,21 @@ public class EditorActions {
         try {
             var serializer = DI.get(IModelSerializer.class);
             var fileToLoad = ModelEditorSettings.getEditorSettingsFile();
-            if(!fileToLoad.toFile().exists()) {
+            if (!fileToLoad.toFile().exists()) {
                 var data = serializer.serialize(new ModelEditorSettings());
                 Files.createDirectories(fileToLoad.getParent());
                 Files.write(fileToLoad, data.getBytes());
             }
             return new ViewModelEditorSettings(serializer.deserializeEditorSettings(fileToLoad.toFile()));
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.warn("could not load or create editor settings file, will return to default settings", e);
             return new ViewModelEditorSettings(new ModelEditorSettings());
         }
     }
 
     /**
-     * Save the global editor settings to disk. The location of the file is determined by {@see ModelEditorSettings#getEditorSettingsFile}
+     * Save the global editor settings to disk. The location of the file is
+     * determined by {@see ModelEditorSettings#getEditorSettingsFile}
      *
      * Note. Will use the {@see DI} injected {@see IModelSerializer} to serialize.
      *
@@ -196,11 +204,11 @@ public class EditorActions {
             var serializer = DI.get(IModelSerializer.class);
             var data = serializer.serialize(new ModelEditorSettings(settings));
             var fileToSave = ModelEditorSettings.getEditorSettingsFile();
-            if(!fileToSave.toFile().exists())
+            if (!fileToSave.toFile().exists())
                 Files.createDirectories(fileToSave.getParent());
             Files.write(fileToSave, data.getBytes());
             logger.info("saved settings file {}", fileToSave.toString());
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error("could not save editor settings file", e);
         }
     }
@@ -219,7 +227,7 @@ public class EditorActions {
             serializer.deserializeProject(projectPath);
             var settings = DI.get(ViewModelEditorSettings.class);
             settings.lastOpenedProject().set(projectPath.getAbsolutePath().toString());
-            if(!settings.recentProjects().contains(projectPath.getAbsolutePath().toString()))
+            if (!settings.recentProjects().contains(projectPath.getAbsolutePath().toString()))
                 settings.recentProjects().add(projectPath.getAbsolutePath().toString());
             saveEditorSettings(settings);
             DI.get(IRestartableApplication.class).restart();
@@ -234,7 +242,7 @@ public class EditorActions {
     public static void openProject() {
         var w = DI.get(Window.class);
         var file = EditorActions.openProjectPicker(w);
-        if(file.isPresent())
+        if (file.isPresent())
             EditorActions.openProject(file.get());
     }
 
@@ -243,7 +251,7 @@ public class EditorActions {
      */
     public static void newProject() {
         var file = EditorActions.newFile();
-        if(!file.isPresent())
+        if (!file.isPresent())
             return;
         var modelProject = new ModelProject(PlatformUtils.removeFileExtension(file.get().getName()));
         EditorActions.saveProject(modelProject, Path.of(file.get().getAbsolutePath()));
@@ -261,18 +269,19 @@ public class EditorActions {
 
     /**
      * Save a model project to a specific file
-     * @param project The model project to save
+     * 
+     * @param project         The model project to save
      * @param projectFilePath The file to attempt to save to
      */
     public static void saveProject(ModelProject project, Path projectFilePath) {
         try {
             var serializer = DI.get(IModelSerializer.class);
             var data = serializer.serialize(project);
-            if(projectFilePath.toFile().isDirectory())
+            if (projectFilePath.toFile().isDirectory())
                 projectFilePath.resolve(project.name() + ".json");
             Files.write(projectFilePath, data.getBytes());
             logger.trace("saved project {} successfully", project.name());
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error("failed saving project: {}", e.getMessage(), e);
         }
     }
@@ -282,7 +291,7 @@ public class EditorActions {
      */
     public static void saveProject() {
         var project = DI.get(ViewModelProject.class);
-        if(project.isSavedInTemp().get()) {
+        if (project.isSavedInTemp().get()) {
             save();
             return;
         }
@@ -293,6 +302,7 @@ public class EditorActions {
 
     /**
      * Will open the project picker dialogue
+     * 
      * @param window the associated window
      * @return Optionally a file if one was chosen otherwise empty
      */
@@ -300,14 +310,14 @@ public class EditorActions {
         var fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Json files", "*.json"),
-                new ExtensionFilter("Any files", "*.*")
-                );
+                new ExtensionFilter("Any files", "*.*"));
         fileChooser.setTitle("Open Graphedit Project");
         return Optional.ofNullable(fileChooser.showOpenDialog(window));
     }
 
     /**
      * Will open a "save as" file picker OS-native dialogue
+     * 
      * @return Optionally a file if one was chosen otherwise empty
      */
     public static Optional<File> newFile() {
@@ -372,25 +382,27 @@ public class EditorActions {
      * Opens the about info pane modal
      */
     public static void openAboutPane() {
-        IFunction2<Text,String,String> createText = (String text, String style) -> {
+        IFunction2<Text, String, String> createText = (String text, String style) -> {
             var returnValue = new Text(text);
             returnValue.getStyleClass().add(style);
             return returnValue;
         };
         var aboutNode = new VBox(
-            createText.run("Graphedit", Styles.TITLE_1),
-            createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
-            new Text("""
-                Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes.
+                createText.run("Graphedit", Styles.TITLE_1),
+                createText.run(BuildConfig.APP_VERSION, Styles.TITLE_3),
+                new Text(
+                        """
+                                Graphedit is an application for visualising, creating, editing and debugging graph-based syntaxes.
 
-                We are always looking for more people to join the project, please check out the github: https://github.com/sillydan1/graphedit 
-                """));
+                                We are always looking for more people to join the project, please check out the github: https://github.com/sillydan1/graphedit
+                                """));
         openModal(aboutNode, "About");
     }
 
     /**
      * Opens an injected modal
-     * @param node The modal to show
+     * 
+     * @param node  The modal to show
      * @param title The title displayed at the top of the modal
      */
     public static void openModal(Node node, String title) {
@@ -414,22 +426,24 @@ public class EditorActions {
 
     /**
      * Opens an FXML based modal
-     * @param fxmlFile the .fxml file to open, must be from the perspective of {@see EditorController}
-     * @param title The title displayed at the top of the modal
+     * 
+     * @param fxmlFile the .fxml file to open, must be from the perspective of
+     *                 {@see EditorController}
+     * @param title    The title displayed at the top of the modal
      */
     public static void openModal(String fxmlFile, String title) {
         try {
             var loader = new FXMLLoader(EditorController.class.getResource(fxmlFile));
-            var content = (Node)loader.load();
+            var content = (Node) loader.load();
             openModal(content, title);
             var controller = loader.getController();
-            if(controller != null && controller instanceof IFocusable focusableController)
+            if (controller != null && controller instanceof IFocusable focusableController)
                 focusableController.focus();
-            if(controller != null && controller instanceof ICloseable closableController) {
+            if (controller != null && controller instanceof ICloseable closableController) {
                 var modalPane = DI.get(ModalPane.class);
                 closableController.onClose(modalPane::hide);
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
@@ -439,7 +453,7 @@ public class EditorActions {
      */
     public static void undo() {
         var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
-        if(currentlySelectedBuffer == null) {
+        if (currentlySelectedBuffer == null) {
             logger.warn("no buffer is currently selected");
             return;
         }
@@ -451,7 +465,7 @@ public class EditorActions {
      */
     public static void redo() {
         var currentlySelectedBuffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
-        if(currentlySelectedBuffer == null) {
+        if (currentlySelectedBuffer == null) {
             logger.warn("no buffer is currently selected");
             return;
         }
@@ -462,47 +476,48 @@ public class EditorActions {
      * Execute the provided runtarget
      *
      * Note. Will provide the action with all the default environment variables:
-     *   PROJECT_NAME - the name of the currently open project
-     *   PROJECT_DIR - the directory path to the currently open project
+     * PROJECT_NAME - the name of the currently open project
+     * PROJECT_DIR - the directory path to the currently open project
+     * 
      * @param selectedRunTarget the runtarget to execute
      */
     public static void executeRunTarget(ViewModelRunTarget selectedRunTarget) {
         // NOTE: Does not change the MenuItem labels
         // NOTE: This is a blocking call
         try {
-            if(selectedRunTarget.saveBeforeRun().get())
+            if (selectedRunTarget.saveBeforeRun().get())
                 save();
             var pb = new ProcessBuilder();
-            if(selectedRunTarget.runAsShell().get()) {
+            if (selectedRunTarget.runAsShell().get()) {
                 var sb = new StringBuilder(selectedRunTarget.command().get());
-                for(var argument : selectedRunTarget.arguments())
+                for (var argument : selectedRunTarget.arguments())
                     sb.append(" ").append(argument.getValueSafe());
                 pb.command("/bin/sh", "-c", sb.toString());
             } else {
                 pb.command(selectedRunTarget.command().get());
-                for(var argument : selectedRunTarget.arguments())
+                for (var argument : selectedRunTarget.arguments())
                     pb.command().add(argument.get());
             }
             var env = pb.environment();
             var project = DI.get(ViewModelProject.class);
             env.put("PROJECT_NAME", project.name().getValueSafe());
             env.put("PROJECT_DIR", project.rootDirectory().getValueSafe());
-            for(var e : selectedRunTarget.environment())
+            for (var e : selectedRunTarget.environment())
                 env.put(e.key().get(), e.value().get());
-            if(!selectedRunTarget.currentWorkingDirectory().get().isEmpty())
+            if (!selectedRunTarget.currentWorkingDirectory().get().isEmpty())
                 pb.directory(new File(selectedRunTarget.currentWorkingDirectory().get()));
             pb.redirectErrorStream(true);
             var p = pb.start();
             var outputGobbler = new StreamGobbler(p.getInputStream(), logger::info);
             new Thread(outputGobbler).start();
             p.waitFor();
-            if(p.exitValue() == 0) {
-                if(selectedRunTarget.restartAfterRun().get())
+            if (p.exitValue() == 0) {
+                if (selectedRunTarget.restartAfterRun().get())
                     restart();
             }
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             logger.warn("runtarget was interrupted", e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             logger.trace("runtarget finished");
@@ -511,10 +526,14 @@ public class EditorActions {
 
     /**
      * Will prompt the user for a Confirm / Cancel action
+     * 
      * @param questionTitle prompt title
-     * @param question the question to ask the user
-     * @param window the parent window
-     * @return {@code true} if the user selected the affirmative action, {@code false} if user selected the negative action or {@code Optional.empty} if the prompt was closed with no action selected
+     * @param question      the question to ask the user
+     * @param window        the parent window
+     * @return {@code true} if the user selected the affirmative action,
+     *         {@code false} if user selected the negative action or
+     *         {@code Optional.empty} if the prompt was closed with no action
+     *         selected
      */
     public static Optional<Boolean> showConfirmDialog(String questionTitle, String question, Window window) {
         var alert = new Alert(AlertType.CONFIRMATION);
@@ -525,19 +544,23 @@ public class EditorActions {
         alert.getButtonTypes().setAll(yesBtn, noBtn);
         alert.initOwner(window);
         var result = alert.showAndWait();
-        if(result.isEmpty())
+        if (result.isEmpty())
             return Optional.empty();
-        if(result.get().getButtonData().equals(ButtonData.NO))
+        if (result.get().getButtonData().equals(ButtonData.NO))
             return Optional.of(false);
         return Optional.of(true);
     }
 
     /**
      * Will prompt the user for a Confirm / Confirm All / Cancel action.
+     * 
      * @param questionTitle prompt title
-     * @param question the question to ask the user
-     * @param window the parent window
-     * @return {@code ButtonData.YES} if the user selected the Confirm action, {@code ButtonData.NO} if user selected cancel, {@code ButtonData.OTHER} if user selected confirm-all action or empty if the prompt was closed with no action selected
+     * @param question      the question to ask the user
+     * @param window        the parent window
+     * @return {@code ButtonData.YES} if the user selected the Confirm action,
+     *         {@code ButtonData.NO} if user selected cancel,
+     *         {@code ButtonData.OTHER} if user selected confirm-all action or empty
+     *         if the prompt was closed with no action selected
      */
     public static Optional<ButtonData> showConfirmAllDialog(String questionTitle, String question, Window window) {
         var alert = new Alert(AlertType.CONFIRMATION);
@@ -549,7 +572,7 @@ public class EditorActions {
         alert.getButtonTypes().setAll(yesBtn, yesAllBtn, noBtn);
         alert.initOwner(window);
         var result = alert.showAndWait();
-        if(result.isEmpty())
+        if (result.isEmpty())
             return Optional.empty();
         return Optional.of(result.get().getButtonData());
     }
@@ -557,18 +580,19 @@ public class EditorActions {
     /**
      * Prompt the user to create a new file and save the provided model
      * If the file already exists, nothing will be saved
+     * 
      * @param newModel The model to serialize and save
      */
     public static void createNewModelFile(ModelProjectResource newModel) {
         try {
             var fileName = EditorActions.newFile();
-            if(fileName.isEmpty())
+            if (fileName.isEmpty())
                 return;
             logger.trace("creating file {}", fileName.get());
             var newfile = new File("%s".formatted(fileName.get()));
             var newFilePath = Path.of(newfile.getCanonicalPath());
             Files.createDirectories(newFilePath.getParent());
-            if(!newfile.createNewFile()) {
+            if (!newfile.createNewFile()) {
                 logger.error("file already exists");
                 return;
             }
@@ -580,7 +604,9 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick a json file
-     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     * 
+     * @return Possibly a file reference. Will be empty if the user cancelled the
+     *         action
      */
     public static Optional<File> openJsonFile() {
         return openFile("JSON Files", List.of("*.json"));
@@ -588,9 +614,11 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick a file of some provided type
+     * 
      * @param description Description of the allowed type
      * @param filterTypes The accepted filename extensions
-     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     * @return Possibly a file reference. Will be empty if the user cancelled the
+     *         action
      */
     public static Optional<File> openFile(String description, List<String> filterTypes) {
         return openFile(new ExtensionFilter(description, filterTypes));
@@ -598,8 +626,10 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick a file
+     * 
      * @param filter filter the types of files that can be picked
-     * @return Possibly a file reference. Will be empty if the user cancelled the action
+     * @return Possibly a file reference. Will be empty if the user cancelled the
+     *         action
      */
     public static Optional<File> openFile(ExtensionFilter filter) {
         var fileChooser = new FileChooser();
@@ -611,7 +641,9 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick one or more json files
-     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     * 
+     * @return Possibly a list of file references. Will be empty if the user
+     *         cancelled the action or selected no files
      */
     public static List<File> openJsonFiles() {
         return openFiles("JSON Files", List.of("*.json"));
@@ -619,9 +651,11 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick one or more files of some provided type
+     * 
      * @param description Description of the allowed type
      * @param filterTypes The accepted filename extensions
-     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     * @return Possibly a list of file references. Will be empty if the user
+     *         cancelled the action or selected no files
      */
     public static List<File> openFiles(String description, List<String> filterTypes) {
         return openFiles(new ExtensionFilter(description, filterTypes));
@@ -629,8 +663,10 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick one or more files
+     * 
      * @param filter filter the types of files that can be picked
-     * @return Possibly a list of file references. Will be empty if the user cancelled the action or selected no files
+     * @return Possibly a list of file references. Will be empty if the user
+     *         cancelled the action or selected no files
      */
     public static List<File> openFiles(ExtensionFilter filter) {
         var fileChooser = new FileChooser();
@@ -642,7 +678,9 @@ public class EditorActions {
 
     /**
      * Prompt the user to pick a folder
-     * @return Possibly a folder reference. Will be empty if the user cancelled the action
+     * 
+     * @return Possibly a folder reference. Will be empty if the user cancelled the
+     *         action
      */
     public static Optional<File> openFolder() {
         var fileChooser = new DirectoryChooser();
@@ -654,47 +692,50 @@ public class EditorActions {
     /**
      * Export the provided files using the provided exporter
      * This will prompt the user to pick a folder to export to
+     * 
      * @param exporter The exporter to use
-     * @param files The files to export
+     * @param files    The files to export
      */
     public static void exportFiles(IExporter exporter, Collection<File> files) {
         var newFolderPath = EditorActions.openFolder();
-        if(newFolderPath.isEmpty())
+        if (newFolderPath.isEmpty())
             return;
         EditorActions.exportFiles(exporter, files, newFolderPath.get().toPath());
     }
 
     /**
      * Export the provided files using the provided exporter to the provided folder
-     * @param exporter The exporter to use
-     * @param files The files to export
+     * 
+     * @param exporter     The exporter to use
+     * @param files        The files to export
      * @param exportFolder The folder to export to
      */
     public static void exportFiles(IExporter exporter, Collection<File> files, Path exportFolder) {
         var serializer = DI.get(IModelSerializer.class);
         var overwrite = false;
         var exportedFilesCount = 0;
-        for(var file : files) {
+        for (var file : files) {
             try {
                 var fileName = PlatformUtils.removeFileExtension(file.getName());
                 var resource = serializer.deserializeProjectResource(file);
                 var newFilePath = exportFolder.resolve(fileName + exporter.getFileExtension());
-                if(Files.exists(newFilePath) && !overwrite) {
+                if (Files.exists(newFilePath) && !overwrite) {
                     var result = EditorActions.showConfirmAllDialog(
                             "Overwrite file?",
-                            "file already exists in export folder, overwrite?\n'%s'".formatted(newFilePath.getFileName().toString()),
+                            "file already exists in export folder, overwrite?\n'%s'"
+                                    .formatted(newFilePath.getFileName().toString()),
                             DI.get(Window.class));
-                    if(result.isEmpty())
+                    if (result.isEmpty())
                         return;
-                    if(result.get().equals(ButtonData.NO))
+                    if (result.get().equals(ButtonData.NO))
                         continue;
-                    if(result.get().equals(ButtonData.OTHER))
+                    if (result.get().equals(ButtonData.OTHER))
                         overwrite = true;
                 }
                 exporter.exportFile(resource, newFilePath);
                 logger.info("successfully exported '{}'", newFilePath.getFileName().toString());
                 exportedFilesCount++;
-            } catch(Exception exc) {
+            } catch (Exception exc) {
                 logger.warn("unable to export file: '{}', reason: {}", file.getName(), exc.getMessage());
             }
         }
@@ -707,24 +748,25 @@ public class EditorActions {
      */
     public static void openModel() {
         var file = openJsonFile();
-        if(file.isPresent())
+        if (file.isPresent())
             openModel(file.get().toPath());
     }
 
     /**
      * Open specified path as a model file.
+     * 
      * @param path Path to a file to try to open as a model
      */
     public static void openModel(Path path) {
         try {
-            if(!Files.isRegularFile(path)) {
+            if (!Files.isRegularFile(path)) {
                 logger.warn("not a file {}", path.toString());
                 return;
             }
             logger.trace("opening file {}", path.toString());
             var fileType = DI.get(IMimeTypeChecker.class).getMimeType(path);
             var serializer = DI.get(IModelSerializer.class);
-            if(!serializer.getSupportedContentTypes().contains(fileType)) {
+            if (!serializer.getSupportedContentTypes().contains(fileType)) {
                 logger.error("cannot open unsupported filetype '{}'", fileType);
                 return;
             }
@@ -738,19 +780,20 @@ public class EditorActions {
     }
 
     /**
-     * Prompt the user to create a new file, that will become a new {@link ModelProjectResource} and save it
+     * Prompt the user to create a new file, that will become a new
+     * {@link ModelProjectResource} and save it
      * If the file already exists, nothing will be saved
      */
     public static void createNewModelFile() {
         try {
             var fileName = EditorActions.newFile();
-            if(fileName.isEmpty())
+            if (fileName.isEmpty())
                 return;
             logger.trace("creating file {}", fileName.get());
             var newfile = new File("%s".formatted(fileName.get()));
             var newFilePath = Path.of(newfile.getCanonicalPath());
             Files.createDirectories(newFilePath.getParent());
-            if(!newfile.createNewFile()) {
+            if (!newfile.createNewFile()) {
                 logger.error("file already exists");
                 return;
             }
@@ -763,8 +806,9 @@ public class EditorActions {
 
     /**
      * Save a specified model to a specified file path
+     * 
      * @param newFilePath The path to write to
-     * @param newModel The model to serialize and save
+     * @param newModel    The model to serialize and save
      * @throws IOException If an I/O error ocurs writing or creating the file
      */
     public static void saveModelToFile(Path newFilePath, ModelProjectResource newModel) throws IOException {
@@ -776,13 +820,14 @@ public class EditorActions {
 
     /**
      * Create a new empty project resource model object with a specified name
+     * 
      * @param modelName The name of the model
      * @return A new empty model project resource with no syntactic elements
      */
     public static ModelProjectResource createNewModel(String modelName) {
-        var exampleVertices = new HashMap<UUID,ModelVertex>();
-        var exampleEdges = new HashMap<UUID,ModelEdge>();
-        var exampleMetaData = new HashMap<String,String>();
+        var exampleVertices = new HashMap<UUID, ModelVertex>();
+        var exampleEdges = new HashMap<UUID, ModelEdge>();
+        var exampleMetaData = new HashMap<String, String>();
         exampleMetaData.put("name", modelName);
         var exampleGraph = new ModelGraph("", exampleVertices, exampleEdges);
         return new ModelProjectResource(exampleMetaData, exampleGraph);
@@ -790,14 +835,25 @@ public class EditorActions {
 
     /**
      * Get the primary directory where Graphedit looks for configurations
+     * 
      * @return Filepath as a string
      */
     public static String getConfigDir() {
-        if(PlatformUtils.isWindows())
+        if (PlatformUtils.isWindows())
             return String.join(File.separator, System.getenv("AppData"), "graphedit").toString();
         var userHome = System.getProperty("user.home");
-        if(PlatformUtils.isMac())
+        if (PlatformUtils.isMac())
             return String.join(File.separator, userHome, "Library", "Application Support", "Graphedit");
         return String.join(File.separator, userHome, ".local", "graphedit");
+    }
+
+    /**
+     * Focus the provided plugin panel in the editor UI
+     *
+     * @param panel The panel to focus on
+     */
+    public static void focusPluginPanel(IPluginPanel panel) {
+        if (DI.contains(EditorController.class))
+            DI.get(EditorController.class).focusSidePanel(panel);
     }
 }

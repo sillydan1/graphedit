@@ -36,8 +36,8 @@ public class ObservableStackUndoSystem implements IObservableUndoSystem {
 
     @Override
     public void push(Undoable action) {
-        if(actions.size()-1 > cursorIndex)
-            removeInRange(actions, cursorIndex+1, actions.size()-1);
+        if (actions.size() - 1 > cursorIndex)
+            removeInRange(actions, cursorIndex + 1, actions.size() - 1);
         var oldAction = cursorIndex == -1 ? null : actions.get(cursorIndex);
         actions.add(++cursorIndex, action);
         currentAction.set(actions.get(cursorIndex));
@@ -46,10 +46,10 @@ public class ObservableStackUndoSystem implements IObservableUndoSystem {
 
     @Override
     public void undo() {
-        if(cursorIndex-1 < -1)
+        if (cursorIndex - 1 < -1)
             return;
         actions.get(cursorIndex--).undo();
-        if(cursorIndex == -1)
+        if (cursorIndex == -1)
             currentAction.set(null);
         else
             currentAction.set(actions.get(cursorIndex));
@@ -57,14 +57,14 @@ public class ObservableStackUndoSystem implements IObservableUndoSystem {
 
     @Override
     public void redo() {
-        if(cursorIndex+1 > actions.size()-1)
+        if (cursorIndex + 1 > actions.size() - 1)
             return;
         actions.get(++cursorIndex).redo();
         currentAction.set(actions.get(cursorIndex));
     }
 
     private <T> void removeInRange(List<T> list, int startInd, int endInd) {
-        for(var i = endInd; i >= startInd; i--)
+        for (var i = endInd; i >= startInd; i--)
             list.remove(i);
     }
 

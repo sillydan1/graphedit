@@ -14,6 +14,7 @@ public class Hyperlink {
 
     /**
      * Checks if the hyperlink display is empty or now
+     * 
      * @return true if {@link Hyperlink#length} returns 0, false otherwise
      */
     public boolean isEmpty() {
@@ -22,6 +23,7 @@ public class Hyperlink {
 
     /**
      * Checks if this hyperlink links to the same base link as another one.
+     * 
      * @param other The other hyperlink to check
      * @return true if the other hyperlink is refering to the same link
      */
@@ -31,6 +33,7 @@ public class Hyperlink {
 
     /**
      * Get the length of the displayed text in the hyperlink
+     * 
      * @return The string-length of the displayed hyperlink text
      */
     public int length() {
@@ -39,9 +42,11 @@ public class Hyperlink {
 
     /**
      * Get the displayed character at some index
+     * 
      * @param index of the character to get
      * @return The char value at the specified index
-     * @throws IndexOutOfBoundsException if the index argument is negative or larger than the displayed text length
+     * @throws IndexOutOfBoundsException if the index argument is negative or larger
+     *                                   than the displayed text length
      */
     public char charAt(int index) {
         return isEmpty() ? '\0' : displayedText.charAt(index);
@@ -49,6 +54,7 @@ public class Hyperlink {
 
     /**
      * Get the original text
+     * 
      * @return String with the original text
      */
     public String getOriginalDisplayedText() {
@@ -57,6 +63,7 @@ public class Hyperlink {
 
     /**
      * Get the displayed text
+     * 
      * @return String with the displayed text
      */
     public String getDisplayedText() {
@@ -65,6 +72,7 @@ public class Hyperlink {
 
     /**
      * Get the link component of the hyperlink
+     * 
      * @return String with the link
      */
     public String getLink() {
@@ -72,28 +80,37 @@ public class Hyperlink {
     }
 
     /**
-     * Create a new hyperlink where the displayed text is a subsequence of this hyperlink's displayed text
+     * Create a new hyperlink where the displayed text is a subsequence of this
+     * hyperlink's displayed text
+     * 
      * @param start the beginning index, inclusive
-     * @param end the ending index, exclusive
-     * @return A new hyperlink with the same original text and link, but a subsequence for the displayed text
+     * @param end   the ending index, exclusive
+     * @return A new hyperlink with the same original text and link, but a
+     *         subsequence for the displayed text
      */
     public Hyperlink subSequence(int start, int end) {
         return new Hyperlink(originalDisplayedText, displayedText.substring(start, end), link);
     }
 
     /**
-     * Create a new hyperlink where the displayed text is a subsequence of this hyperlink's displayed text
+     * Create a new hyperlink where the displayed text is a subsequence of this
+     * hyperlink's displayed text
+     * 
      * @param start the beginning index, inclusive
-     * @return A new hyperlink with the same original text and link, but a subsequence for the displayed text
+     * @return A new hyperlink with the same original text and link, but a
+     *         subsequence for the displayed text
      */
     public Hyperlink subSequence(int start) {
         return new Hyperlink(originalDisplayedText, displayedText.substring(start), link);
     }
 
     /**
-     * Create a new hyperlink where the displayed text is replaced with a provided string value
+     * Create a new hyperlink where the displayed text is replaced with a provided
+     * string value
+     * 
      * @param text The new displayed text
-     * @return A new hyperlink with the same original text and link, but an updated displayed text
+     * @return A new hyperlink with the same original text and link, but an updated
+     *         displayed text
      */
     public Hyperlink mapDisplayedText(String text) {
         return new Hyperlink(originalDisplayedText, text, link);
@@ -104,6 +121,6 @@ public class Hyperlink {
         return isEmpty()
                 ? String.format("EmptyHyperlink[original=%s link=%s]", originalDisplayedText, link)
                 : String.format("RealHyperlink[original=%s displayedText=%s, link=%s]",
-                originalDisplayedText, displayedText, link);
+                        originalDisplayedText, displayedText, link);
     }
 }
