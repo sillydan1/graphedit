@@ -72,4 +72,8 @@ public class SidePanelController {
             }
         }
     }
+
+    public void selectPluginPanel(IPluginPanel panel) {
+        selectedPlugin.set(panel);
+    }
 }

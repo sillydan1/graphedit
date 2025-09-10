@@ -1,9 +1,13 @@
 package dk.gtz.graphedit.plugins.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import atlantafx.base.theme.Styles;
 import dk.gtz.graphedit.util.InspectorUtils;
@@ -12,6 +16,7 @@ import dk.gtz.graphedit.viewmodel.IInspectable;
 import dk.gtz.graphedit.viewmodel.ViewModelProjectResource;
 import dk.gtz.graphedit.viewmodel.ViewModelSelection;
 import dk.yalibs.yadi.DI;
+import javafx.application.Platform;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -37,13 +42,16 @@ import javafx.scene.layout.VBox;
  * The javafx controller for the syntax property inspector panel
  */
 public class InspectorController extends StackPane {
+    private static Logger logger = LoggerFactory.getLogger(InspectorController.class);
     private final VBox bufferPropertiesContainer;
     private final VBox propertiesContainer;
+    private final Map<String, Node> inspectors;
     private final ScrollPane scrollPane;
     private final ObservableList<ViewModelSelection> selectedElements;
     private final IBufferContainer openBuffers;
 
     public InspectorController() {
+        inspectors = new HashMap<String, Node>();
         openBuffers = DI.get(IBufferContainer.class);
         selectedElements = DI.get("selectedElements");
         var padding = new Insets(10);
@@ -157,6 +165,7 @@ public class InspectorController extends StackPane {
     private void initializeSelectionEventHandlers() {
         selectedElements.addListener((ListChangeListener<ViewModelSelection>) (n) -> {
             propertiesContainer.getChildren().clear();
+            inspectors.clear();
             addAllSelected();
         });
         openBuffers.getBuffers().addListener((MapChangeListener<String, ViewModelProjectResource>) c -> {
@@ -172,6 +181,7 @@ public class InspectorController extends StackPane {
             var box = new BorderPane();
             var inspector = InspectorUtils.getObservableInspector(p.property());
             var label = new Label(p.name());
+            this.inspectors.put(p.name(), inspector);
             BorderPane.setAlignment(label, Pos.CENTER);
             BorderPane.setAlignment(inspector, Pos.CENTER);
             box.setLeft(label);
@@ -184,5 +194,13 @@ public class InspectorController extends StackPane {
         var pane = new TitledPane(inspectable.getClass().getSimpleName(), box);
         pane.getStyleClass().add(Styles.DENSE);
         propertiesContainer.getChildren().add(pane);
+    }
+
+    public void inspect(IInspectable inspectable, String propertyName) {
+        if (!inspectors.containsKey(propertyName)) {
+            logger.info("No such property '{}'", propertyName);
+            return;
+        }
+        Platform.runLater(() -> inspectors.get(propertyName).requestFocus());
     }
 }

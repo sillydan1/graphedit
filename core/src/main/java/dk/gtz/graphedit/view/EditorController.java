@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.gtz.graphedit.spi.IPluginPanel;
 import dk.gtz.graphedit.spi.IPluginsContainer;
 import dk.gtz.graphedit.util.EditorActions;
 import dk.gtz.graphedit.util.HeightDragResizer;
@@ -67,6 +68,10 @@ public class EditorController {
 
     }
 
+    public void focusSidePanel(IPluginPanel panel) {
+        sidePanelController.selectPluginPanel(panel);
+    }
+
     @FXML
     private void initialize() {
         selectedRunTarget = Optional.empty();
@@ -81,6 +86,7 @@ public class EditorController {
         bottomBorderPane.setBottom(new StatusBarController());
         DI.get(Keymap.class).onNewKeymap(this::setKeymap);
         DI.get(Keymap.class).onKeymapOverridden(this::removeKeymap);
+        DI.add(EditorController.class, this);
     }
 
     private void removeKeymap(Map.Entry<KeyCombination, Keymap.Keybind> keybind) {

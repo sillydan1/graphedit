@@ -29,6 +29,7 @@ import dk.gtz.graphedit.model.ModelVertex;
 import dk.gtz.graphedit.serialization.IMimeTypeChecker;
 import dk.gtz.graphedit.serialization.IModelSerializer;
 import dk.gtz.graphedit.spi.IExporter;
+import dk.gtz.graphedit.spi.IPluginPanel;
 import dk.gtz.graphedit.view.EditorController;
 import dk.gtz.graphedit.view.IRestartableApplication;
 import dk.gtz.graphedit.viewmodel.IBufferContainer;
@@ -844,5 +845,15 @@ public class EditorActions {
         if (PlatformUtils.isMac())
             return String.join(File.separator, userHome, "Library", "Application Support", "Graphedit");
         return String.join(File.separator, userHome, ".local", "graphedit");
+    }
+
+    /**
+     * Focus the provided plugin panel in the editor UI
+     *
+     * @param panel The panel to focus on
+     */
+    public static void focusPluginPanel(IPluginPanel panel) {
+        if (DI.contains(EditorController.class))
+            DI.get(EditorController.class).focusSidePanel(panel);
     }
 }
