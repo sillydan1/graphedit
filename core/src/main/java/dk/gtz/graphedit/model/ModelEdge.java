@@ -27,6 +27,7 @@ public class ModelEdge {
 
     /**
      * Create a new instance with a provided source and target
+     * 
      * @param source Id of the source vertex
      * @param target Id of the target vertex
      */

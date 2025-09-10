@@ -25,7 +25,8 @@ import javafx.scene.text.Text;
 /**
  * Tool to inspect lints of vertices.
  *
- * When selected, simply hover over a vertex, and all the lints that are affecting
+ * When selected, simply hover over a vertex, and all the lints that are
+ * affecting
  * that vertex will be displayed in a context menu
  */
 public class LintInspectorTool extends AbstractBaseTool {
@@ -52,7 +53,7 @@ public class LintInspectorTool extends AbstractBaseTool {
     public String getHelpDescription() {
         return """
                 Tool to inspect lints of vertices.
-                
+
                 When selected, simply hover over a vertex, and all the lints that are affecting
                 that vertex will be displayed in a context menu
                 """;
@@ -60,10 +61,11 @@ public class LintInspectorTool extends AbstractBaseTool {
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
             Platform.runLater(() -> {
-                var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.vertexId())).toList();
-                if(!affectingLints.isEmpty())
+                var affectingLints = lints.get(e.bufferId()).stream()
+                        .filter(l -> l.affectedElements().contains(e.vertexId())).toList();
+                if (!affectingLints.isEmpty())
                     e.vertex().hover(createLintList(affectingLints));
             });
         }
@@ -71,10 +73,11 @@ public class LintInspectorTool extends AbstractBaseTool {
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
             Platform.runLater(() -> {
-                var affectingLints = lints.get(e.bufferId()).stream().filter(l -> l.affectedElements().contains(e.edgeId())).toList();
-                if(!affectingLints.isEmpty())
+                var affectingLints = lints.get(e.bufferId()).stream()
+                        .filter(l -> l.affectedElements().contains(e.edgeId())).toList();
+                if (!affectingLints.isEmpty())
                     e.edge().hover(createLintList(affectingLints));
             });
         }
@@ -83,7 +86,7 @@ public class LintInspectorTool extends AbstractBaseTool {
     private Node createLintList(List<ViewModelLint> lints) {
         var result = new VBox();
         result.setSpacing(5);
-        for(var lint : lints)
+        for (var lint : lints)
             result.getChildren().addAll(createLint(lint), new Separator());
         return result;
     }
@@ -91,7 +94,7 @@ public class LintInspectorTool extends AbstractBaseTool {
     private Node createLint(ViewModelLint lint) {
         var box = new VBox();
         var icon = new FontIcon(BootstrapIcons.INFO_CIRCLE);
-        switch(lint.severity().get()) {
+        switch (lint.severity().get()) {
             case ERROR:
                 icon = new FontIcon(BootstrapIcons.X_CIRCLE);
                 icon.getStyleClass().add(Styles.DANGER);
@@ -103,7 +106,8 @@ public class LintInspectorTool extends AbstractBaseTool {
             case INFO:
                 icon = new FontIcon(BootstrapIcons.INFO_CIRCLE);
                 break;
-            default: break;
+            default:
+                break;
         }
         var title = new HBox(icon, new Label(lint.title().get()));
         title.setSpacing(5);

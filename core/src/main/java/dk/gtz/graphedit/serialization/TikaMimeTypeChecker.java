@@ -15,16 +15,16 @@ public class TikaMimeTypeChecker implements IMimeTypeChecker {
      * Construct a new instance
      */
     public TikaMimeTypeChecker() {
-	tika = new Tika();
+        tika = new Tika();
     }
 
     @Override
     public String getMimeType(Path path) throws IOException {
-	return tika.detect(path);
+        return tika.detect(path);
     }
 
     @Override
     public String getMimeType(String filePath) throws IOException {
-	return getMimeType(Path.of(filePath));
+        return getMimeType(Path.of(filePath));
     }
 }

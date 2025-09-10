@@ -35,45 +35,50 @@ public class EditorSettingsController {
 
     @FXML
     private void initialize() {
-	editorSettings = DI.get(ViewModelEditorSettings.class);
-	addInspector("Use GridSnap", "Makes vertices snap to the background grid", editorSettings.gridSnap());
-	addInspector("GridSnap XSize", "", editorSettings.gridSizeX());
-	addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
-	addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
-	addInspector("Auto Open", "Automatically open the project you closed last", editorSettings.autoOpenLastProject());
-	addInspector("Show Tips", "Show tip of the day on startup", editorSettings.showTips());
-	inspectorPane.getChildren().add(new Separator());
-	addInspector("Info Popups", "Show toast popups when info level logs are added", editorSettings.showInfoToasts());
-	addInspector("Warn Popups", "Show toast popups when warning level logs are added", editorSettings.showWarnToasts());
-	addInspector("Error Popups", "Show toast popups when error level logs are added", editorSettings.showErrorToasts());
-	addInspector("Trace Popups", "Show toast popups when trace level logs are added", editorSettings.showTraceToasts());
-	inspectorPane.getChildren().add(new Separator());
-	addButton("Clear LOP", "Clear the last opened project data", () -> editorSettings.lastOpenedProject().set(""));
-	addSaveButton();
+        editorSettings = DI.get(ViewModelEditorSettings.class);
+        addInspector("Use GridSnap", "Makes vertices snap to the background grid", editorSettings.gridSnap());
+        addInspector("GridSnap XSize", "", editorSettings.gridSizeX());
+        addInspector("GridSnap YSize", "", editorSettings.gridSizeY());
+        addInspector("Light Theme", "Use light theme", editorSettings.useLightTheme());
+        addInspector("Auto Open", "Automatically open the project you closed last",
+                editorSettings.autoOpenLastProject());
+        addInspector("Show Tips", "Show tip of the day on startup", editorSettings.showTips());
+        inspectorPane.getChildren().add(new Separator());
+        addInspector("Info Popups", "Show toast popups when info level logs are added",
+                editorSettings.showInfoToasts());
+        addInspector("Warn Popups", "Show toast popups when warning level logs are added",
+                editorSettings.showWarnToasts());
+        addInspector("Error Popups", "Show toast popups when error level logs are added",
+                editorSettings.showErrorToasts());
+        addInspector("Trace Popups", "Show toast popups when trace level logs are added",
+                editorSettings.showTraceToasts());
+        inspectorPane.getChildren().add(new Separator());
+        addButton("Clear LOP", "Clear the last opened project data", () -> editorSettings.lastOpenedProject().set(""));
+        addSaveButton();
     }
 
     private void addInspector(String labelName, String description, Observable observable) {
-	var inspector = InspectorUtils.getObservableInspector(observable);
-	var tile = new Tile(labelName, description);
-	tile.setAction(inspector);
-	if(inspector instanceof ToggleSwitch ts)
-	    tile.setActionHandler(ts::fire);
-	else
-	    tile.setActionHandler(inspector::requestFocus);
-	inspectorPane.getChildren().add(tile);
+        var inspector = InspectorUtils.getObservableInspector(observable);
+        var tile = new Tile(labelName, description);
+        tile.setAction(inspector);
+        if (inspector instanceof ToggleSwitch ts)
+            tile.setActionHandler(ts::fire);
+        else
+            tile.setActionHandler(inspector::requestFocus);
+        inspectorPane.getChildren().add(tile);
     }
 
     private void addButton(String labelName, String description, Runnable action) {
-	var tile = new Tile(labelName, description);
-	tile.setActionHandler(action);
-	inspectorPane.getChildren().add(tile);
+        var tile = new Tile(labelName, description);
+        tile.setActionHandler(action);
+        inspectorPane.getChildren().add(tile);
     }
 
     private void addSaveButton() {
-	var saveButton = new Button("Save Changes");
-	saveButton.setOnAction((e) -> EditorActions.saveEditorSettings(editorSettings));
-	var pane = new HBox(saveButton);
-	pane.setAlignment(Pos.CENTER);
-	inspectorPane.getChildren().addAll(new Separator(), pane);
+        var saveButton = new Button("Save Changes");
+        saveButton.setOnAction((e) -> EditorActions.saveEditorSettings(editorSettings));
+        var pane = new HBox(saveButton);
+        pane.setAlignment(Pos.CENTER);
+        inspectorPane.getChildren().addAll(new Separator(), pane);
     }
 }

@@ -8,18 +8,18 @@ import dk.gtz.graphedit.spi.IPluginPanel;
 import javafx.scene.Node;
 
 public class PluginManagementPanel implements IPluginPanel {
-	@Override
-	public String getTooltip() {
-		return "Plugins";
-	}
+    @Override
+    public String getTooltip() {
+        return "Plugins";
+    }
 
-	@Override
-	public Node getIcon() {
-		return new FontIcon(BootstrapIcons.PLUG);
-	}
+    @Override
+    public Node getIcon() {
+        return new FontIcon(BootstrapIcons.PLUG);
+    }
 
-	@Override
-	public Node getPanel() {
-		return new PluginManagementPanelController();
-	}
+    @Override
+    public Node getPanel() {
+        return new PluginManagementPanelController();
+    }
 }

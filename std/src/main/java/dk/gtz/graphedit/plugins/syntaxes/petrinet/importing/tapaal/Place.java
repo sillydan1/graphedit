@@ -25,83 +25,83 @@ public class Place {
     private double positionY;
 
     public boolean isDisplayName() {
-	return displayName;
+        return displayName;
     }
 
     public Place setDisplayName(boolean displayName) {
-	this.displayName = displayName;
-	return this;
+        this.displayName = displayName;
+        return this;
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public Place setId(String id) {
-	this.id = id;
-	return this;
+        this.id = id;
+        return this;
     }
 
     public int getInitialMarking() {
-	return initialMarking;
+        return initialMarking;
     }
 
     public Place setInitialMarking(int initialMarking) {
-	this.initialMarking = initialMarking;
-	return this;
+        this.initialMarking = initialMarking;
+        return this;
     }
 
     public String getInvariant() {
-	return invariant;
+        return invariant;
     }
 
     public Place setInvariant(String invariant) {
-	this.invariant = invariant;
-	return this;
+        this.invariant = invariant;
+        return this;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public Place setName(String name) {
-	this.name = name;
-	return this;
+        this.name = name;
+        return this;
     }
 
     public double getNameOffsetX() {
-	return nameOffsetX;
+        return nameOffsetX;
     }
 
     public Place setNameOffsetX(double nameOffsetX) {
-	this.nameOffsetX = nameOffsetX;
-	return this;
+        this.nameOffsetX = nameOffsetX;
+        return this;
     }
 
     public double getNameOffsetY() {
-	return nameOffsetY;
+        return nameOffsetY;
     }
 
     public Place setNameOffsetY(double nameOffsetY) {
-	this.nameOffsetY = nameOffsetY;
-	return this;
+        this.nameOffsetY = nameOffsetY;
+        return this;
     }
 
     public double getPositionX() {
-	return positionX;
+        return positionX;
     }
 
     public Place setPositionX(double positionX) {
-	this.positionX = positionX;
-	return this;
+        this.positionX = positionX;
+        return this;
     }
 
     public double getPositionY() {
-	return positionY;
+        return positionY;
     }
 
     public Place setPositionY(double positionY) {
-	this.positionY = positionY;
-	return this;
+        this.positionY = positionY;
+        return this;
     }
 }

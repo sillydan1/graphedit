@@ -21,40 +21,39 @@ public abstract class ToolSelectorTool extends AbstractBaseTool {
 
     @Override
     public void onKeyEvent(ViewportKeyEvent e) {
-        if(!e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
+        if (!e.event().getEventType().equals(KeyEvent.KEY_RELEASED))
             return;
-        if(!e.isTargetDrawpane())
+        if (!e.isTargetDrawpane())
             return;
-        if(e.event().getCode().equals(KeyCode.DIGIT1))
+        if (e.event().getCode().equals(KeyCode.DIGIT1))
             safeSelectTool(0);
-        if(e.event().getCode().equals(KeyCode.DIGIT2))
+        if (e.event().getCode().equals(KeyCode.DIGIT2))
             safeSelectTool(1);
-        if(e.event().getCode().equals(KeyCode.DIGIT3))
+        if (e.event().getCode().equals(KeyCode.DIGIT3))
             safeSelectTool(2);
-        if(e.event().getCode().equals(KeyCode.DIGIT4))
+        if (e.event().getCode().equals(KeyCode.DIGIT4))
             safeSelectTool(3);
-        if(e.event().getCode().equals(KeyCode.DIGIT5))
+        if (e.event().getCode().equals(KeyCode.DIGIT5))
             safeSelectTool(4);
-        if(e.event().getCode().equals(KeyCode.DIGIT6))
+        if (e.event().getCode().equals(KeyCode.DIGIT6))
             safeSelectTool(5);
-        if(e.event().getCode().equals(KeyCode.DIGIT7))
+        if (e.event().getCode().equals(KeyCode.DIGIT7))
             safeSelectTool(6);
-        if(e.event().getCode().equals(KeyCode.DIGIT8))
+        if (e.event().getCode().equals(KeyCode.DIGIT8))
             safeSelectTool(7);
-        if(e.event().getCode().equals(KeyCode.DIGIT9))
+        if (e.event().getCode().equals(KeyCode.DIGIT9))
             safeSelectTool(8);
-        if(e.event().getCode().equals(KeyCode.DIGIT0))
+        if (e.event().getCode().equals(KeyCode.DIGIT0))
             safeSelectTool(9);
     }
 
     private void safeSelectTool(int index) {
-        if(index < 0)
+        if (index < 0)
             return;
         var tools = parentToolbox.getToolsByCategory().get(category);
-        if(index >= tools.size())
+        if (index >= tools.size())
             return;
         logger.trace("selecting " + tools.get(index).getClass().getName());
         parentToolbox.selectTool(tools.get(index));
     }
 }
-

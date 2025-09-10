@@ -24,8 +24,8 @@ public class UndoTreePanelController extends VBox {
     public UndoTreePanelController() {
         var bufferContainer = DI.get(IBufferContainer.class);
         initialize(bufferContainer);
-        bufferContainer.getCurrentlyFocusedBuffer().addListener((e,o,n) -> {
-            if(o != null) {
+        bufferContainer.getCurrentlyFocusedBuffer().addListener((e, o, n) -> {
+            if (o != null) {
                 o.getUndoSystem().getCurrentUndoableProperty().removeListener(undoListener);
                 o.getUndoSystem().removeListener(undoListener);
             }
@@ -44,22 +44,22 @@ public class UndoTreePanelController extends VBox {
         setList(bufferContainer.getCurrentlyFocusedBuffer().get());
         list.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             var index = list.getSelectionModel().getSelectedItem();
-            if(index == null)
+            if (index == null)
                 return;
             var buffer = DI.get(IBufferContainer.class).getCurrentlyFocusedBuffer().get();
-            if(buffer == null)
+            if (buffer == null)
                 return;
             buffer.getUndoSystem().gotoAction(index.undoable());
         });
     }
 
     private void setList(ViewModelProjectResource currentBuffer) {
-        if(currentBuffer == null) {
+        if (currentBuffer == null) {
             list.getItems().clear();
             return;
         }
         setList(currentBuffer.getUndoSystem());
-        undoListener = (e,o,n) -> setList(currentBuffer.getUndoSystem());
+        undoListener = (e, o, n) -> setList(currentBuffer.getUndoSystem());
         currentBuffer.getUndoSystem().getCurrentUndoableProperty().addListener(undoListener);
         currentBuffer.getUndoSystem().addListener(undoListener);
     }

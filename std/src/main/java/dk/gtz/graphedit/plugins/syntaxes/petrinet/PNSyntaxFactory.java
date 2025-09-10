@@ -50,22 +50,23 @@ public class PNSyntaxFactory implements ISyntaxFactory {
     @Override
     public String getSyntaxDescription() {
         return """
-            A Petri net consists of places, transitions, and arcs.
-            Arcs run from a place to a transition or vice versa, never between places or between transitions.
-            """;
+                A Petri net consists of places, transitions, and arcs.
+                Arcs run from a place to a transition or vice versa, never between places or between transitions.
+                """;
     }
 
     @Override
-    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph,
+            Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
-        if(vertexValue instanceof ViewModelPlace placeVertex)
+        if (vertexValue instanceof ViewModelPlace placeVertex)
             return new PlaceController(vertexKey, placeVertex,
                     viewportTransform,
                     graph,
                     DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
-        if(vertexValue instanceof ViewModelTransition transitionVertex)
+        if (vertexValue instanceof ViewModelTransition transitionVertex)
             return new TransitionController(vertexKey, transitionVertex,
                     viewportTransform,
                     graph,
@@ -73,14 +74,14 @@ public class PNSyntaxFactory implements ISyntaxFactory {
                     toolbox.getSelectedTool(),
                     this, bufferKey);
 
-        if(this.toolbox.getSelectedTool().get() instanceof PlaceTool)
+        if (this.toolbox.getSelectedTool().get() instanceof PlaceTool)
             return new PlaceController(vertexKey, new ViewModelPlace(vertexKey, vertexValue),
                     viewportTransform,
                     graph,
                     DI.get(ViewModelEditorSettings.class),
                     toolbox.getSelectedTool(),
                     this, bufferKey);
-        if(this.toolbox.getSelectedTool().get() instanceof TransitionTool)
+        if (this.toolbox.getSelectedTool().get() instanceof TransitionTool)
             return new TransitionController(vertexKey, new ViewModelTransition(vertexKey, vertexValue.toModel()),
                     viewportTransform,
                     graph,
@@ -93,24 +94,25 @@ public class PNSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
-        if(vertexValue instanceof ModelPlace place)
+        if (vertexValue instanceof ModelPlace place)
             return new ViewModelPlace(vertexKey, place);
-        if(vertexValue instanceof ModelTransition transition)
+        if (vertexValue instanceof ModelTransition transition)
             return new ViewModelTransition(vertexKey, transition);
 
-        if(toolbox.getSelectedTool().get() instanceof PlaceTool)
+        if (toolbox.getSelectedTool().get() instanceof PlaceTool)
             return new ViewModelPlace(vertexKey, vertexValue);
-        if(toolbox.getSelectedTool().get() instanceof TransitionTool)
+        if (toolbox.getSelectedTool().get() instanceof TransitionTool)
             return new ViewModelTransition(vertexKey, vertexValue);
 
         throw new RuntimeException("not a petrinet vertex: %s".formatted(vertexValue.getClass().getName()));
     }
 
     @Override
-    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph,
+            Affine viewportTransform) {
         var toolbox = DI.get(IToolbox.class);
         var arc = new ViewModelArc(edgeKey, edgeValue.toModel());
-        if(edgeValue instanceof ViewModelArc tarc)
+        if (edgeValue instanceof ViewModelArc tarc)
             arc = tarc;
         return new ArcController(edgeKey, arc,
                 graph,
@@ -122,7 +124,7 @@ public class PNSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
-        if(edgeValue instanceof ModelArc arc)
+        if (edgeValue instanceof ModelArc arc)
             return new ViewModelArc(edgeKey, arc);
         return new ViewModelArc(edgeKey, edgeValue);
     }

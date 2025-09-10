@@ -15,7 +15,9 @@ import javafx.scene.transform.Affine;
 public class PlaceController extends VertexController {
     private final ViewModelPlace vertex;
 
-    public PlaceController(UUID vertexKey, ViewModelPlace vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+    public PlaceController(UUID vertexKey, ViewModelPlace vertex, Affine viewportAffine, ViewModelGraph graph,
+            ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory,
+            String bufferKey) {
         super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.vertex = vertex;
         getChildren().add(createLabelGraphic());
@@ -29,15 +31,15 @@ public class PlaceController extends VertexController {
     private Label createLabelGraphic() {
         var label = new Label();
         setLabelGraphic(label, vertex.initialTokenCount().get());
-        vertex.initialTokenCount().addListener((e,o,n) -> setLabelGraphic(label, n));
+        vertex.initialTokenCount().addListener((e, o, n) -> setLabelGraphic(label, n));
         label.getStyleClass().add("outline");
         return label;
     }
 
     private void setLabelGraphic(Label label, Number val) {
-        if(val.intValue() == 0)
+        if (val.intValue() == 0)
             label.textProperty().set("");
         else
-            label.textProperty().set("#"+val.toString());
+            label.textProperty().set("#" + val.toString());
     }
 }

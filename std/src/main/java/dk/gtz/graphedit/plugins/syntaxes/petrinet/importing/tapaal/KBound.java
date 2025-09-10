@@ -9,11 +9,11 @@ public class KBound {
     private int bound;
 
     public int getBound() {
-	return bound;
+        return bound;
     }
 
     public KBound setBound(int bound) {
-	this.bound = bound;
-	return this;
+        this.bound = bound;
+        return this;
     }
 }

@@ -35,25 +35,25 @@ public class StandardPlugin implements IPlugin {
     @Override
     public String getDescription() {
         return """
-            Standard plugin. Provides all the basics. Be careful disabling this.
-            
-            Syntaxes provided:
-                - LTS
-                - Petrinet
-                - Simple
+                Standard plugin. Provides all the basics. Be careful disabling this.
 
-            Language Servers provided:
-                - lts-ls (Example language server for LTS syntax)
+                Syntaxes provided:
+                    - LTS
+                    - Petrinet
+                    - Simple
 
-            Panels provided:
-                - Files panel
-                - Syntax Element Property Editor panel
-                - Lint Inspector panel
-                - Plugin panel
+                Language Servers provided:
+                    - lts-ls (Example language server for LTS syntax)
 
-            Importers provided:
-                - Tapaal PNML importer
-            """;
+                Panels provided:
+                    - Files panel
+                    - Syntax Element Property Editor panel
+                    - Lint Inspector panel
+                    - Plugin panel
+
+                Importers provided:
+                    - Tapaal PNML importer
+                """;
     }
 
     @Override

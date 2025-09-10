@@ -6,6 +6,7 @@ package dk.gtz.graphedit.view;
 public interface IProjectResourceView {
     /**
      * Add an editor to the view
+     * 
      * @param editor The model editor to add
      */
     public void addEditor(ModelEditorController editor);

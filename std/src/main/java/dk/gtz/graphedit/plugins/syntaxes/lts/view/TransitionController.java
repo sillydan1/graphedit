@@ -20,7 +20,9 @@ public class TransitionController extends EdgeController {
     private Label label;
     private DoubleProperty labelDirOffset;
 
-    public TransitionController(UUID edgeKey, ViewModelTransition edge, ViewModelGraph parentGraph, Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+    public TransitionController(UUID edgeKey, ViewModelTransition edge, ViewModelGraph parentGraph,
+            Affine viewportAffine, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool,
+            ISyntaxFactory syntaxFactory, String bufferKey) {
         super(edgeKey, edge, parentGraph, viewportAffine, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.edge = edge;
         this.labelDirOffset = new SimpleDoubleProperty(0.5);
@@ -32,8 +34,10 @@ public class TransitionController extends EdgeController {
     private Label createActionLabel() {
         var result = new Label(edge.action().get());
         result.getStyleClass().add("outline");
-        result.translateXProperty().bind(BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
-        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset).subtract(result.heightProperty().divide(2)));
+        result.translateXProperty().bind(
+                BindingsUtil.createLineOffsetXBinding(line, labelDirOffset).subtract(result.widthProperty().divide(2)));
+        result.translateYProperty().bind(BindingsUtil.createLineOffsetYBinding(line, labelDirOffset)
+                .subtract(result.heightProperty().divide(2)));
         return result;
     }
 }

@@ -25,4 +25,3 @@ public class ModelArc extends ModelEdge {
         this.weight = weight;
     }
 }
-

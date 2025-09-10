@@ -21,27 +21,29 @@ public class TransitionController extends VertexController {
     private final ViewModelTransition vertex;
     private final Rectangle rectangleGraphic;
 
-    public TransitionController(UUID vertexKey, ViewModelTransition vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
-	super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
-	this.vertex = vertex;
+    public TransitionController(UUID vertexKey, ViewModelTransition vertex, Affine viewportAffine, ViewModelGraph graph,
+            ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory,
+            String bufferKey) {
+        super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
+        this.vertex = vertex;
         this.rectangleGraphic = createRectangleGraphic();
         initializeEventHandlers();
-	getChildren().add(rectangleGraphic);
+        getChildren().add(rectangleGraphic);
     }
 
     @Override
     protected void addGraphic() {
-	// do nothing
+        // do nothing
     }
 
     @Override
     protected void addLabel() {
-	// do nothing
+        // do nothing
     }
 
     private void initializeEventHandlers() {
-        vertex.getIsSelected().addListener((e,o,n) -> {
-            if(n)
+        vertex.getIsSelected().addListener((e, o, n) -> {
+            if (n)
                 rectangleGraphic.getStyleClass().add("stroke-selected");
             else
                 rectangleGraphic.getStyleClass().remove("stroke-selected");
@@ -49,15 +51,14 @@ public class TransitionController extends VertexController {
     }
 
     private Rectangle createRectangleGraphic() {
-        var result = new Rectangle(20,40);
+        var result = new Rectangle(20, 40);
         result.getStyleClass().add("vertex-node");
         result.setArcWidth(8);
         result.setArcHeight(8);
         addEventHandler(MouseEvent.MOUSE_ENTERED, event -> result.getStyleClass().add("stroke-hover"));
-        addEventHandler(MouseEvent.MOUSE_EXITED,  event -> result.getStyleClass().remove("stroke-hover"));
+        addEventHandler(MouseEvent.MOUSE_EXITED, event -> result.getStyleClass().remove("stroke-hover"));
         vertexValue.shape().widthProperty().bind(result.widthProperty());
         vertexValue.shape().heightProperty().bind(result.heightProperty());
         return result;
     }
 }
-

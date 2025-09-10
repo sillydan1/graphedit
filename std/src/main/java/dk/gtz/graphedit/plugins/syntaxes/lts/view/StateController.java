@@ -24,7 +24,9 @@ public class StateController extends VertexController {
     private Rectangle rectangleGraphic;
     private Rectangle outerRectangleGraphic;
 
-    public StateController(UUID vertexKey, ViewModelState vertex, Affine viewportAffine, ViewModelGraph graph, ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory, String bufferKey) {
+    public StateController(UUID vertexKey, ViewModelState vertex, Affine viewportAffine, ViewModelGraph graph,
+            ViewModelEditorSettings editorSettings, ObjectProperty<ITool> selectedTool, ISyntaxFactory syntaxFactory,
+            String bufferKey) {
         super(vertexKey, vertex, viewportAffine, graph, editorSettings, selectedTool, syntaxFactory, bufferKey);
         this.vertex = vertex;
         this.label = createLabelGraphic();
@@ -39,8 +41,8 @@ public class StateController extends VertexController {
     }
 
     private void initializeEventHandlers() {
-        vertexValue.getIsSelected().addListener((e,o,n) -> {
-            if(n) {
+        vertexValue.getIsSelected().addListener((e, o, n) -> {
+            if (n) {
                 rectangleGraphic.getStyleClass().add("stroke-selected");
                 outerRectangleGraphic.getStyleClass().add("stroke-selected");
             } else {
@@ -58,13 +60,13 @@ public class StateController extends VertexController {
     }
 
     private Rectangle createRectangleGraphic() {
-        var result = new Rectangle(40,40);
+        var result = new Rectangle(40, 40);
         result.getStyleClass().add("vertex-node");
         result.setArcWidth(8);
         result.setArcHeight(8);
-        vertex.name().addListener((e,o,n)-> resizeRectangle(n));
+        vertex.name().addListener((e, o, n) -> resizeRectangle(n));
         addEventHandler(MouseEvent.MOUSE_ENTERED, event -> result.getStyleClass().add("stroke-hover"));
-        addEventHandler(MouseEvent.MOUSE_EXITED,  event -> result.getStyleClass().remove("stroke-hover"));
+        addEventHandler(MouseEvent.MOUSE_EXITED, event -> result.getStyleClass().remove("stroke-hover"));
         return result;
     }
 
@@ -107,4 +109,3 @@ public class StateController extends VertexController {
         // Do nothing
     }
 }
-

@@ -33,10 +33,10 @@ public class EdgeDeleteTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool to delete edges between vertices.
+                Tool to delete edges between vertices.
 
-            When selected, click an edge to delete it.
-            """;
+                When selected, click an edge to delete it.
+                """;
     }
 
     @Override
@@ -56,23 +56,24 @@ public class EdgeDeleteTool extends AbstractBaseTool {
 
     @Override
     public void onEdgeMouseEvent(EdgeMouseEvent e) {
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
             delete(DI.get(IBufferContainer.class).get(e.bufferId()), e.edgeId(), e.edge(), e.graph());
     }
 
     /**
      * Deletes a specified edge
+     * 
      * @param buffer The buffer containing the edge to delete (used for undo/redo)
      * @param edgeId The id of the edge to delete
-     * @param edge The edge to delete
-     * @param graph The graph containing the edge to delete
+     * @param edge   The edge to delete
+     * @param graph  The graph containing the edge to delete
      */
     public void delete(ViewModelProjectResource buffer, UUID edgeId, ViewModelEdge edge, ViewModelGraph graph) {
         var deletedEdge = graph.edges().remove(edgeId);
-        if(deletedEdge == null)
+        if (deletedEdge == null)
             return;
         buffer.getUndoSystem().push(new Undoable("edge delete action",
-                    () -> graph.edges().put(edgeId, edge),
-                    () -> graph.edges().remove(edgeId)));
+                () -> graph.edges().put(edgeId, edge),
+                () -> graph.edges().remove(edgeId)));
     }
 }

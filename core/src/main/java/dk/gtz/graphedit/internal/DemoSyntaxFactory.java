@@ -34,62 +34,64 @@ public class DemoSyntaxFactory implements ISyntaxFactory {
 
     @Override
     public String getSyntaxName() {
-	return "Demo";
+        return "Demo";
     }
 
     @Override
     public List<String> getLegacyNames() {
-	return List.of("demo syntax");
+        return List.of("demo syntax");
     }
 
     @Override
     public String getSyntaxDescription() {
-	return """
-	    A very basic syntax for demonstration purposes
+        return """
+                A very basic syntax for demonstration purposes
 
-	    not meant for actual projects.
-	    """;
+                not meant for actual projects.
+                """;
     }
 
     @Override
-    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
-	var toolbox = DI.get(IToolbox.class);
-	return new VertexController(vertexKey, vertexValue, 
-		viewportTransform,
-		graph,
-		DI.get(ViewModelEditorSettings.class),
-		toolbox.getSelectedTool(),
-		this, bufferKey);
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph,
+            Affine viewportTransform) {
+        var toolbox = DI.get(IToolbox.class);
+        return new VertexController(vertexKey, vertexValue,
+                viewportTransform,
+                graph,
+                DI.get(ViewModelEditorSettings.class),
+                toolbox.getSelectedTool(),
+                this, bufferKey);
     }
 
     @Override
-    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
-	var toolbox = DI.get(IToolbox.class);
-	return new EdgeController(edgeKey, edgeValue,
-		graph,
-		viewportTransform,
-		DI.get(ViewModelEditorSettings.class),
-		toolbox.getSelectedTool(),
-		this, bufferKey);
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph,
+            Affine viewportTransform) {
+        var toolbox = DI.get(IToolbox.class);
+        return new EdgeController(edgeKey, edgeValue,
+                graph,
+                viewportTransform,
+                DI.get(ViewModelEditorSettings.class),
+                toolbox.getSelectedTool(),
+                this, bufferKey);
     }
 
     @Override
     public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
-	return new ViewModelVertex(vertexKey, vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
+        return new ViewModelVertex(vertexKey, vertexValue, new ViewModelVertexShape(ViewModelShapeType.OVAL));
     }
 
     @Override
     public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
-	return new ViewModelEdge(edgeKey, edgeValue);
+        return new ViewModelEdge(edgeKey, edgeValue);
     }
 
     @Override
     public Optional<ISyntaxMigrater> getMigrater() {
-	return Optional.of(new DemoSyntaxMigrater());
+        return Optional.of(new DemoSyntaxMigrater());
     }
 
     @Override
     public Optional<IToolbox> getSyntaxTools() {
-	return Optional.empty();
+        return Optional.empty();
     }
 }

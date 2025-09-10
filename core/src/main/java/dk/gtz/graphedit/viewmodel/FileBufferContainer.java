@@ -29,10 +29,11 @@ public class FileBufferContainer implements IBufferContainer {
 
     /**
      * Constructs a new filepath keyed buffer container.
+     * 
      * @param serializer The serializer to use when deserializing the buffers
      */
     public FileBufferContainer(IModelSerializer serializer) {
-        openBuffers = FXCollections.observableHashMap(); 
+        openBuffers = FXCollections.observableHashMap();
         this.serializer = serializer;
         this.focusedBuffer = new SimpleObjectProperty<>();
     }
@@ -44,7 +45,7 @@ public class FileBufferContainer implements IBufferContainer {
 
     @Override
     public ViewModelProjectResource get(String filename) throws NotFoundException {
-        if(!contains(filename))
+        if (!contains(filename))
             throw new NotFoundException("no such buffer: %s".formatted(filename));
         return openBuffers.get(filename);
     }
@@ -57,7 +58,7 @@ public class FileBufferContainer implements IBufferContainer {
     @Override
     public void close(String filename) {
         Platform.runLater(() -> {
-            if(openBuffers.containsKey(filename))
+            if (openBuffers.containsKey(filename))
                 openBuffers.remove(filename);
         });
     }
@@ -67,13 +68,13 @@ public class FileBufferContainer implements IBufferContainer {
         try {
             var baseDir = DI.get(ViewModelProject.class).rootDirectory().getValueSafe();
             var f = new File(baseDir + File.separator + filename);
-            if(openBuffers.containsKey(filename)) {
+            if (openBuffers.containsKey(filename)) {
                 openBuffers.get(filename).focus();
                 return;
             }
             var b = new StringBuilder();
             var s = new Scanner(f);
-            while(s.hasNextLine())
+            while (s.hasNextLine())
                 b.append(s.nextLine());
             s.close();
             var newModel = serializer.deserializeProjectResource(b.toString());

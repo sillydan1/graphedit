@@ -5,7 +5,8 @@ package dk.gtz.graphedit.model;
  */
 public enum ModelLintSeverity {
     /**
-     * Hint-level lints are meant for small notifications about things that could be optimized.
+     * Hint-level lints are meant for small notifications about things that could be
+     * optimized.
      */
     HINT,
 
@@ -15,12 +16,14 @@ public enum ModelLintSeverity {
     INFO,
 
     /**
-     * Warning-level lints are meant to indicate if something can potentially go wrong or if something is non-critically erronious.
+     * Warning-level lints are meant to indicate if something can potentially go
+     * wrong or if something is non-critically erronious.
      */
     WARNING,
 
     /**
-     * Error-level lints are meant to indicate when something is erronious and should be fixed.
+     * Error-level lints are meant to indicate when something is erronious and
+     * should be fixed.
      */
     ERROR
 }

@@ -21,11 +21,12 @@ public class ExpandingTextArea extends TextArea {
      * Construct a new expanding text area.
      */
     public ExpandingTextArea() {
-	this("");
+        this("");
     }
 
     /**
      * Construct a new expanding text area with the given text.
+     * 
      * @param text the text to display in the text area
      */
     public ExpandingTextArea(String text) {
@@ -33,11 +34,11 @@ public class ExpandingTextArea extends TextArea {
         getStyleClass().add("expanding-text-area");
         setWrapText(true);
         sceneProperty().addListener(it -> {
-            if(getScene() != null)
+            if (getScene() != null)
                 performBinding();
         });
         skinProperty().addListener(it -> {
-            if(getSkin() != null)
+            if (getSkin() != null)
                 performBinding();
         });
     }
@@ -45,51 +46,52 @@ public class ExpandingTextArea extends TextArea {
     private double computeHeight() {
         computeOffsets();
         var layoutBounds = localToScreen(text.getLayoutBounds());
-	if(layoutBounds == null)
-	    return 0;
-	double minY = layoutBounds.getMinY();
-	double maxY = layoutBounds.getMaxY();
-	return maxY - minY + topOffset + bottomOffset;
+        if (layoutBounds == null)
+            return 0;
+        double minY = layoutBounds.getMinY();
+        double maxY = layoutBounds.getMaxY();
+        return maxY - minY + topOffset + bottomOffset;
     }
 
     private void computeOffsets() {
         topOffset = getInsets().getTop();
         bottomOffset = getInsets().getBottom();
-        var scrollPane = (ScrollPane)lookup(".scroll-pane");
-	if(scrollPane == null)
-	    return;
-	var viewport = (Region)scrollPane.lookup(".viewport");
-	var content = (Region)scrollPane.lookup(".content");
-	topOffset += viewport.getInsets().getTop();
-	topOffset += content.getInsets().getTop();
-	bottomOffset += viewport.getInsets().getBottom();
-	bottomOffset += content.getInsets().getBottom();
+        var scrollPane = (ScrollPane) lookup(".scroll-pane");
+        if (scrollPane == null)
+            return;
+        var viewport = (Region) scrollPane.lookup(".viewport");
+        var content = (Region) scrollPane.lookup(".content");
+        topOffset += viewport.getInsets().getTop();
+        topOffset += content.getInsets().getTop();
+        bottomOffset += viewport.getInsets().getBottom();
+        bottomOffset += content.getInsets().getBottom();
     }
 
     private void performBinding() {
         ScrollPane scrollPane = (ScrollPane) lookup(".scroll-pane");
-	if(scrollPane == null)
-	    return;
-	scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	scrollPane.skinProperty().addListener(it -> {
-	    if(scrollPane.getSkin() == null)
-		return;
-	    if(text != null)
-		return;
-	    var newText = findTextNode();
-	    if(newText.isPresent()) {
-		text = newText.get();
-		prefHeightProperty().bind(Bindings.createDoubleBinding(this::computeHeight, text.layoutBoundsProperty()));
-	    }
-	});
+        if (scrollPane == null)
+            return;
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.skinProperty().addListener(it -> {
+            if (scrollPane.getSkin() == null)
+                return;
+            if (text != null)
+                return;
+            var newText = findTextNode();
+            if (newText.isPresent()) {
+                text = newText.get();
+                prefHeightProperty()
+                        .bind(Bindings.createDoubleBinding(this::computeHeight, text.layoutBoundsProperty()));
+            }
+        });
     }
 
     private Optional<Text> findTextNode() {
         var nodes = lookupAll(".text");
-        for(var node : nodes)
-            if(node.getParent() instanceof Group)
-                return Optional.of((Text)node);
+        for (var node : nodes)
+            if (node.getParent() instanceof Group)
+                return Optional.of((Text) node);
         return Optional.empty();
     }
 }

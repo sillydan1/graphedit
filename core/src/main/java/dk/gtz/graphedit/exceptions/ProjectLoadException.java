@@ -6,6 +6,7 @@ package dk.gtz.graphedit.exceptions;
 public class ProjectLoadException extends RuntimeException {
     /**
      * Construct a new instance with a message
+     * 
      * @param message The detail message
      */
     public ProjectLoadException(String message) {

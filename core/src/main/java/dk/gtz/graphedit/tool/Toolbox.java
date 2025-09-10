@@ -22,12 +22,14 @@ public class Toolbox implements IToolbox {
     private SimpleObjectProperty<ITool> selectedTool;
 
     /**
-     * {@link ITool} Constructor wrapper interface, where the constructor takes a parent toolbox argument. Use with: MyTool::new
+     * {@link ITool} Constructor wrapper interface, where the constructor takes a
+     * parent toolbox argument. Use with: MyTool::new
      */
     @FunctionalInterface
     public static interface IToolConstructor {
         /**
          * Constructor function that takes a parent toolbox
+         * 
          * @param parent The toolbox that should contain this tool
          * @return A new tool within the parent toolbox
          */
@@ -35,9 +37,12 @@ public class Toolbox implements IToolbox {
     }
 
     /**
-     * Construct a new toolbox with a default category and a constructor for the default tool
+     * Construct a new toolbox with a default category and a constructor for the
+     * default tool
+     * 
      * @param defaultCategory The category of the default tool
-     * @param defaultToolCtor Constructor function that can create the default tool. Will be created and selected immediately
+     * @param defaultToolCtor Constructor function that can create the default tool.
+     *                        Will be created and selected immediately
      */
     public Toolbox(String defaultCategory, IToolConstructor defaultToolCtor) {
         this.defaultCategory = defaultCategory;
@@ -50,8 +55,9 @@ public class Toolbox implements IToolbox {
 
     /**
      * Construct a new toolbox with a default category and a default tool
+     * 
      * @param defaultCategory The category of the default tool
-     * @param defaultTool The default tool. Will be selected immediately
+     * @param defaultTool     The default tool. Will be selected immediately
      */
     public Toolbox(String defaultCategory, ITool defaultTool) {
         this.defaultCategory = defaultCategory;
@@ -63,10 +69,13 @@ public class Toolbox implements IToolbox {
     }
 
     /**
-     * Construct a new toolbox with a default category, a default tool and a list of additional tools
+     * Construct a new toolbox with a default category, a default tool and a list of
+     * additional tools
+     * 
      * @param defaultCategory The category of the default tool
-     * @param defaultTool The default tool. Will be selected immediately
-     * @param tools List of additional tools to put in the default category
+     * @param defaultTool     The default tool. Will be selected immediately
+     * @param tools           List of additional tools to put in the default
+     *                        category
      */
     public Toolbox(String defaultCategory, ITool defaultTool, ITool... tools) {
         this.defaultCategory = defaultCategory;
@@ -96,10 +105,10 @@ public class Toolbox implements IToolbox {
 
     @Override
     public IToolbox add(String category, ITool... tool) {
-        if(!tools.containsKey(category))
+        if (!tools.containsKey(category))
             tools.put(category, new ArrayList<>());
         var catTools = tools.get(category);
-        for(var t : tool) {
+        for (var t : tool) {
             logger.trace("adding '{}' to toolbox category '{}'", t.getClass().getSimpleName(), category);
             catTools.add(t);
         }

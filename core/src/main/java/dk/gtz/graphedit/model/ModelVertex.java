@@ -15,11 +15,12 @@ public class ModelVertex {
      * Construct a new instance
      */
     public ModelVertex() {
-        this(new ModelPoint(0,0));
+        this(new ModelPoint(0, 0));
     }
 
     /**
      * Construct a new instance with a provided position
+     * 
      * @param position Point value for the vertex position
      */
     public ModelVertex(ModelPoint position) {

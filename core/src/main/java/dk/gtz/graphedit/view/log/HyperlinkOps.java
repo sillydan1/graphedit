@@ -6,6 +6,7 @@ import java.util.Optional;
 
 /**
  * Segment operations implementation for {@link Hyperlink} instances
+ * 
  * @param <S> Styles type
  */
 public class HyperlinkOps<S> extends SegmentOpsBase<Hyperlink, S> {
@@ -45,7 +46,7 @@ public class HyperlinkOps<S> extends SegmentOpsBase<Hyperlink, S> {
     public Optional<Hyperlink> joinSeg(Hyperlink currentSeg, Hyperlink nextSeg) {
         if (currentSeg.isEmpty() && nextSeg.isEmpty())
             return Optional.empty();
-        if(currentSeg.isEmpty())
+        if (currentSeg.isEmpty())
             return Optional.of(nextSeg);
         if (nextSeg.isEmpty())
             return Optional.of(currentSeg);

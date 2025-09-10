@@ -21,65 +21,67 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 public class TextSyntaxFactory implements ISyntaxFactory {
-	@Override
-	public String getSyntaxName() {
-		return "Simple";
-	}
+    @Override
+    public String getSyntaxName() {
+        return "Simple";
+    }
 
-	@Override
-	public List<String> getLegacyNames() {
-		return List.of("text");
-	}
+    @Override
+    public List<String> getLegacyNames() {
+        return List.of("text");
+    }
 
-	@Override
-	public String getSyntaxDescription() {
-		return """
-			A basic syntax where vertices and edges can be optionally labelled with a string of plaintext
-			""";
-	}
+    @Override
+    public String getSyntaxDescription() {
+        return """
+                A basic syntax where vertices and edges can be optionally labelled with a string of plaintext
+                """;
+    }
 
-	@Override
-	public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph, Affine viewportTransform) {
-		var toolbox = DI.get(IToolbox.class);
-		var vertex = new ViewModelTextVertex(vertexKey, vertexValue);
-		if(vertexValue instanceof ViewModelTextVertex textVertexValue)
-			vertex = textVertexValue;
-		return new TextVertexController(vertexKey, vertex, 
-			viewportTransform,
-			graph,
-			DI.get(ViewModelEditorSettings.class),
-			toolbox.getSelectedTool(),
-			this, bufferKey);
-	}
+    @Override
+    public Node createVertexView(String bufferKey, UUID vertexKey, ViewModelVertex vertexValue, ViewModelGraph graph,
+            Affine viewportTransform) {
+        var toolbox = DI.get(IToolbox.class);
+        var vertex = new ViewModelTextVertex(vertexKey, vertexValue);
+        if (vertexValue instanceof ViewModelTextVertex textVertexValue)
+            vertex = textVertexValue;
+        return new TextVertexController(vertexKey, vertex,
+                viewportTransform,
+                graph,
+                DI.get(ViewModelEditorSettings.class),
+                toolbox.getSelectedTool(),
+                this, bufferKey);
+    }
 
-	@Override
-	public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph, Affine viewportTransform) {
-		var toolbox = DI.get(IToolbox.class);
-		return new EdgeController(edgeKey, edgeValue,
-			graph,
-			viewportTransform,
-			DI.get(ViewModelEditorSettings.class),
-			toolbox.getSelectedTool(),
-			this, bufferKey);
-	}
+    @Override
+    public Node createEdgeView(String bufferKey, UUID edgeKey, ViewModelEdge edgeValue, ViewModelGraph graph,
+            Affine viewportTransform) {
+        var toolbox = DI.get(IToolbox.class);
+        return new EdgeController(edgeKey, edgeValue,
+                graph,
+                viewportTransform,
+                DI.get(ViewModelEditorSettings.class),
+                toolbox.getSelectedTool(),
+                this, bufferKey);
+    }
 
-	@Override
-	public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
-		return new ViewModelTextVertex(vertexKey, vertexValue);
-	}
+    @Override
+    public ViewModelVertex createVertexViewModel(UUID vertexKey, ModelVertex vertexValue) {
+        return new ViewModelTextVertex(vertexKey, vertexValue);
+    }
 
-	@Override
-	public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
-		return new ViewModelEdge(edgeKey, edgeValue);
-	}
+    @Override
+    public ViewModelEdge createEdgeViewModel(UUID edgeKey, ModelEdge edgeValue) {
+        return new ViewModelEdge(edgeKey, edgeValue);
+    }
 
-	@Override
-	public Optional<ISyntaxMigrater> getMigrater() {
-		return Optional.of(new TextSyntaxMigrater());
-	}
+    @Override
+    public Optional<ISyntaxMigrater> getMigrater() {
+        return Optional.of(new TextSyntaxMigrater());
+    }
 
-	@Override
-	public Optional<IToolbox> getSyntaxTools() {
-		return Optional.empty();
-	}
+    @Override
+    public Optional<IToolbox> getSyntaxTools() {
+        return Optional.empty();
+    }
 }

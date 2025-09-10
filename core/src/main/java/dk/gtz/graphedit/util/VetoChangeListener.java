@@ -7,6 +7,7 @@ import javafx.scene.control.SelectionModel;
 
 /**
  * Change listener that can veto a change if it was not a valid change.
+ * 
  * @param <T> The type of the wrapped value
  */
 public abstract class VetoChangeListener<T> implements ChangeListener<T> {
@@ -15,6 +16,7 @@ public abstract class VetoChangeListener<T> implements ChangeListener<T> {
 
     /**
      * Construct a new instance
+     * 
      * @param selectionModel The selection to listen for changes in
      */
     public VetoChangeListener(SelectionModel<T> selectionModel) {
@@ -32,12 +34,13 @@ public abstract class VetoChangeListener<T> implements ChangeListener<T> {
                 changing = false;
             });
         } else
-	    onChanged(oldValue, newValue);
+            onChanged(oldValue, newValue);
     }
 
     /**
      * Checks if the change was a valid one or not.
      * If the change is invalid, the selection will be reverted
+     * 
      * @param oldValue The old value
      * @param newValue The new value
      * @return true if the change was considered valid, false otherwise
@@ -46,6 +49,7 @@ public abstract class VetoChangeListener<T> implements ChangeListener<T> {
 
     /**
      * Callback for when the change was valid and accepted.
+     * 
      * @param oldValue The old value
      * @param newValue The new value
      */

@@ -5,7 +5,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
 /**
- * javafx utility for adding horizontal drag-to-resize functionality to a {@code Region}
+ * javafx utility for adding horizontal drag-to-resize functionality to a
+ * {@code Region}
  */
 public class WidthDragResizer {
     /**
@@ -35,7 +36,9 @@ public class WidthDragResizer {
     }
 
     /**
-     * Make the provided region width-resizable with a handle on the right side of the region
+     * Make the provided region width-resizable with a handle on the right side of
+     * the region
+     * 
      * @param region the region to add the handle to
      */
     public static void makeResizableRight(Region region) {
@@ -43,7 +46,9 @@ public class WidthDragResizer {
     }
 
     /**
-     * Make the provided region width-resizable with a handle on the left side of the region
+     * Make the provided region width-resizable with a handle on the left side of
+     * the region
+     * 
      * @param region the region to add the handle to
      */
     public static void makeResizableLeft(Region region) {
@@ -58,20 +63,20 @@ public class WidthDragResizer {
     }
 
     private void mouseOver(MouseEvent event) {
-        if(isInDraggableZone(event) || dragging)
+        if (isInDraggableZone(event) || dragging)
             region.setCursor(Cursor.H_RESIZE);
         else
             region.setCursor(Cursor.DEFAULT);
     }
 
     private boolean isInDraggableZone(MouseEvent event) {
-        if(dragFromLeft)
+        if (dragFromLeft)
             return event.getX() < RESIZE_MARGIN;
         return event.getX() > (region.getWidth() - RESIZE_MARGIN);
     }
 
     private void mouseDragged(MouseEvent event) {
-        if(!dragging)
+        if (!dragging)
             return;
         var mousex = event.getX();
         var dx = (mousex - startX) * scalar;
@@ -80,7 +85,7 @@ public class WidthDragResizer {
     }
 
     private void mousePressed(MouseEvent event) {
-        if(!isInDraggableZone(event))
+        if (!isInDraggableZone(event))
             return;
         startX = event.getX();
         startWidth = region.getWidth();
@@ -91,4 +96,3 @@ public class WidthDragResizer {
         }
     }
 }
-

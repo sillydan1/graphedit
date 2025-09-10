@@ -21,8 +21,8 @@ public class PlaceTool extends ToolSelectorTool {
     @Override
     public String getHelpDescription() {
         return """
-            Create new petrinet place vertices
-            """;
+                Create new petrinet place vertices
+                """;
     }
 
     @Override
@@ -30,4 +30,3 @@ public class PlaceTool extends ToolSelectorTool {
         return Optional.of("Create place vertices");
     }
 }
-

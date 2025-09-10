@@ -11,20 +11,20 @@ public class Feature {
     private boolean isTimed;
 
     public boolean isGame() {
-	return isGame;
+        return isGame;
     }
 
     public Feature setIsGame(boolean isGame) {
-	this.isGame = isGame;
-	return this;
+        this.isGame = isGame;
+        return this;
     }
 
     public boolean isTimed() {
-	return isTimed;
+        return isTimed;
     }
 
     public Feature setIsTimed(boolean isTimed) {
-	this.isTimed = isTimed;
-	return this;
+        this.isTimed = isTimed;
+        return this;
     }
 }

@@ -6,6 +6,7 @@ package dk.gtz.graphedit.viewmodel;
 public interface ICloseable {
     /**
      * Set a function to handle the close event.
+     * 
      * @param closer the function to call when {@link #close()} is called
      */
     void onClose(Runnable closer);
@@ -15,4 +16,3 @@ public interface ICloseable {
      */
     void close();
 }
-

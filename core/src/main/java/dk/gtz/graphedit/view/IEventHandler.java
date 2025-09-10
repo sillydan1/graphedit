@@ -9,11 +9,14 @@ import javafx.scene.input.MouseEvent;
 public interface IEventHandler {
     /**
      * Handles a mouse event.
+     * 
      * @param event The mouse event to handle.
      */
     void onMouseEvent(MouseEvent event);
+
     /**
      * Handles a key event.
+     * 
      * @param event The key event to handle.
      */
     void onKeyEvent(KeyEvent event);

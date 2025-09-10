@@ -29,83 +29,83 @@ public class Arc {
     private List<Arcpath> arcpaths;
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public Arc setId(String id) {
-	this.id = id;
-	return this;
+        this.id = id;
+        return this;
     }
 
     public String getInscription() {
-	return inscription;
+        return inscription;
     }
 
     public Arc setInscription(String inscription) {
-	this.inscription = inscription;
-	return this;
+        this.inscription = inscription;
+        return this;
     }
 
     public double getNameOffsetX() {
-	return nameOffsetX;
+        return nameOffsetX;
     }
 
     public Arc setNameOffsetX(double nameOffsetX) {
-	this.nameOffsetX = nameOffsetX;
-	return this;
+        this.nameOffsetX = nameOffsetX;
+        return this;
     }
 
     public double getNameOffsetY() {
-	return nameOffsetY;
+        return nameOffsetY;
     }
 
     public Arc setNameOffsetY(double nameOffsetY) {
-	this.nameOffsetY = nameOffsetY;
-	return this;
+        this.nameOffsetY = nameOffsetY;
+        return this;
     }
 
     public String getSource() {
-	return source;
+        return source;
     }
 
     public Arc setSource(String source) {
-	this.source = source;
-	return this;
+        this.source = source;
+        return this;
     }
 
     public String getTarget() {
-	return target;
+        return target;
     }
 
     public Arc setTarget(String target) {
-	this.target = target;
-	return this;
+        this.target = target;
+        return this;
     }
 
     public String getType() {
-	return type;
+        return type;
     }
 
     public Arc setType(String type) {
-	this.type = type;
-	return this;
+        this.type = type;
+        return this;
     }
 
     public int getWeight() {
-	return weight;
+        return weight;
     }
 
     public Arc setWeight(int weight) {
-	this.weight = weight;
-	return this;
+        this.weight = weight;
+        return this;
     }
 
     public List<Arcpath> getArcpaths() {
-	return arcpaths;
+        return arcpaths;
     }
 
     public Arc setArcpaths(List<Arcpath> argpaths) {
-	this.arcpaths = argpaths;
-	return this;
+        this.arcpaths = argpaths;
+        return this;
     }
 }

@@ -50,14 +50,14 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool that unifies the following tools:
+                Tool that unifies the following tools:
 
-             - vertex creation (Shift+click)
-             - vertex moving (Leftmouse Drag)
-             - edge creation (Shift+click vertex)
-             - selection management (Leftmouse Click (hold Ctrl to select more))
-             - element deletion (Delete or Backspace key to delete selection)
-            """;
+                 - vertex creation (Shift+click)
+                 - vertex moving (Leftmouse Drag)
+                 - edge creation (Shift+click vertex)
+                 - selection management (Leftmouse Click (hold Ctrl to select more))
+                 - element deletion (Delete or Backspace key to delete selection)
+                """;
     }
 
     @Override
@@ -68,9 +68,9 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     @Override
     public void onViewportMouseEvent(ViewportMouseEvent e) {
         edgeCreateTool.onViewportMouseEvent(e);
-        if(!e.isTargetDrawPane())
+        if (!e.isTargetDrawPane())
             return;
-        if(e.event().isShiftDown()) {
+        if (e.event().isShiftDown()) {
             vertexCreateTool.onViewportMouseEvent(e);
             return;
         }
@@ -81,11 +81,11 @@ public class UnifiedModellingTool extends AbstractBaseTool {
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
         hoverTool.onVertexMouseEvent(e);
-        if(edgeCreateTool.isCurrentlyCreatingEdge()) {
+        if (edgeCreateTool.isCurrentlyCreatingEdge()) {
             edgeCreateTool.onVertexMouseEvent(e);
             return;
         }
-        if(e.event().isShiftDown()) {
+        if (e.event().isShiftDown()) {
             edgeCreateTool.onVertexMouseEvent(e);
             return;
         }

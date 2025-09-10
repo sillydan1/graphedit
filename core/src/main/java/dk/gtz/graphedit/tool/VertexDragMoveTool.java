@@ -19,7 +19,8 @@ import javafx.scene.input.MouseEvent;
 /**
  * Tool to manipulate the position of vertices.
  *
- * When selected, press down on a vertex and move the mouse around to manipulate to position of said vertex.
+ * When selected, press down on a vertex and move the mouse around to manipulate
+ * to position of said vertex.
  * Note that the action completes when vertex is released.
  */
 public class VertexDragMoveTool extends AbstractBaseTool {
@@ -41,11 +42,11 @@ public class VertexDragMoveTool extends AbstractBaseTool {
     @Override
     public String getHelpDescription() {
         return """
-            Tool to manipulate the position of vertices.
+                Tool to manipulate the position of vertices.
 
-            When selected, press down on a vertex and move the mouse around to manipulate to position of said vertex.
-            Note that the action completes when vertex is released.
-            """;
+                When selected, press down on a vertex and move the mouse around to manipulate to position of said vertex.
+                Note that the action completes when vertex is released.
+                """;
     }
 
     @Override
@@ -60,17 +61,17 @@ public class VertexDragMoveTool extends AbstractBaseTool {
 
     @Override
     public void onVertexMouseEvent(VertexMouseEvent e) {
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED))
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_PRESSED))
             handleMousePressedEvent(e);
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_DRAGGED))
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_DRAGGED))
             handleMouseDraggedEvent(e);
-        if(e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
+        if (e.event().getEventType().equals(MouseEvent.MOUSE_RELEASED))
             handleMouseReleasedEvent(e);
     }
 
     private void handleMousePressedEvent(VertexMouseEvent e) {
         var point = e.vertex().position();
-        if(!e.event().isPrimaryButtonDown())
+        if (!e.event().isPrimaryButtonDown())
             return;
         oldX.set(e.event().getScreenX());
         oldY.set(e.event().getScreenY());
@@ -78,17 +79,17 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         var ycpy = point.getY();
         oldPointX.set(xcpy);
         oldPointY.set(ycpy);
-        undoAction.set(() -> { 
-            point.getXProperty().set(xcpy); 
-            point.getYProperty().set(ycpy); 
+        undoAction.set(() -> {
+            point.getXProperty().set(xcpy);
+            point.getYProperty().set(ycpy);
         });
     }
 
     private void handleMouseDraggedEvent(VertexMouseEvent e) {
-        if(undoAction.get() == null)
+        if (undoAction.get() == null)
             return;
         var point = e.vertex().position();
-        if(!e.event().isPrimaryButtonDown())
+        if (!e.event().isPrimaryButtonDown())
             return;
         var newX = e.event().getScreenX();
         var newY = e.event().getScreenY();
@@ -97,22 +98,22 @@ public class VertexDragMoveTool extends AbstractBaseTool {
         var newPoint = point.copy();
         newPoint.getXProperty().set(oldPointX.get() + moveDiffX);
         newPoint.getYProperty().set(oldPointY.get() + moveDiffY);
-        if(e.editorSettings().gridSnap().get())
+        if (e.editorSettings().gridSnap().get())
             newPoint.snapToGrid(e.editorSettings());
 
         var pointCpy = point.copy();
         point.setValue(newPoint);
-        redoAction.set(() -> { 
+        redoAction.set(() -> {
             point.setValue(pointCpy);
         });
     }
 
     private void handleMouseReleasedEvent(VertexMouseEvent e) {
-        if(undoAction.get() != null && redoAction.get() != null)
+        if (undoAction.get() != null && redoAction.get() != null)
             DI.get(IBufferContainer.class)
-                .get(e.bufferId())
-                .getUndoSystem()
-                .push(new Undoable("move action", undoAction.get(), redoAction.get()));
+                    .get(e.bufferId())
+                    .getUndoSystem()
+                    .push(new Undoable("move action", undoAction.get(), redoAction.get()));
         undoAction.set(null);
         redoAction.set(null);
     }
