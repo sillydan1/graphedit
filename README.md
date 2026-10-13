@@ -7,8 +7,11 @@
 </p>
 
 <p align="center">
-   Graphedit is an application for visualising, creating, editing and debugging graph-based languages
+   Graphedit is an application for visualising, creating, editing and debugging graph-based languages.
 </p>
+
+> [!CAUTION]
+> This project has been replaced by [graphedit-qt](https://git.gtz.dk/gtz-agent/graphedit-qt).
 
 ------
 
